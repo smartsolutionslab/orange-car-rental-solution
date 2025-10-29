@@ -6,15 +6,17 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// Represents an email address with validation.
 /// Email addresses are stored in lowercase for consistency.
 /// </summary>
-public sealed record EmailAddress
+public readonly record struct EmailAddress
 {
     private static readonly Regex EmailRegex = new(
         @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    public string Value { get; init; }
+    public string Value { get; }
 
-    public EmailAddress(string value)
+    private EmailAddress(string value) => Value = value;
+
+    public static EmailAddress Of(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
             throw new ArgumentException("Email address cannot be empty", nameof(value));
@@ -22,7 +24,7 @@ public sealed record EmailAddress
         if (!IsValidEmail(value))
             throw new ArgumentException($"Invalid email address format: {value}", nameof(value));
 
-        Value = value.Trim().ToLowerInvariant();
+        return new EmailAddress(value.Trim().ToLowerInvariant());
     }
 
     private static bool IsValidEmail(string email)
@@ -35,7 +37,7 @@ public sealed record EmailAddress
     /// </summary>
     public static EmailAddress Anonymized()
     {
-        return new EmailAddress($"anonymized-{Guid.NewGuid()}@gdpr-deleted.local");
+        return new EmailAddress($"anonymized-{Guid.CreateVersion7()}@gdpr-deleted.local");
     }
 
     public override string ToString() => Value;

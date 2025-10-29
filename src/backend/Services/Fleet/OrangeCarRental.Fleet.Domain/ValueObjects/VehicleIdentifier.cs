@@ -3,11 +3,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 /// <summary>
 /// Strongly-typed identifier for Vehicle aggregate.
 /// </summary>
-public sealed record VehicleIdentifier(Guid Value)
+public readonly record struct VehicleIdentifier
 {
-    public VehicleIdentifier() : this(Guid.Empty) { }
+    public Guid Value { get; }
 
-    public static VehicleIdentifier New() => new(Guid.NewGuid());
+    private VehicleIdentifier(Guid value) => Value = value;
+
+    public static VehicleIdentifier New() => new(Guid.CreateVersion7());
 
     public static VehicleIdentifier From(Guid value)
     {

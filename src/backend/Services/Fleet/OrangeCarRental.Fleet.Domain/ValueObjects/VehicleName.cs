@@ -3,11 +3,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 /// <summary>
 /// Vehicle name value object.
 /// </summary>
-public sealed record VehicleName
+public readonly record struct VehicleName
 {
-    public string Value { get; init; }
+    public string Value { get; }
 
-    public VehicleName(string value)
+    private VehicleName(string value) => Value = value;
+
+    public static VehicleName Of(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -19,7 +21,7 @@ public sealed record VehicleName
             throw new ArgumentException("Vehicle name cannot exceed 100 characters", nameof(value));
         }
 
-        Value = value.Trim();
+        return new VehicleName(value.Trim());
     }
 
     public static implicit operator string(VehicleName name) => name.Value;

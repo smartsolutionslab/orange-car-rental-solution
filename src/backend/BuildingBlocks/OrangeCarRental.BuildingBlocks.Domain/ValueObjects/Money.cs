@@ -4,22 +4,22 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// Represents monetary value with VAT support for German market compliance.
 /// Always stores amounts in the smallest currency unit (e.g., cents for EUR).
 /// </summary>
-public sealed record Money
+public readonly record struct Money
 {
     /// <summary>
     /// Net amount (before VAT).
     /// </summary>
-    public decimal NetAmount { get; init; }
+    public decimal NetAmount { get; }
 
     /// <summary>
     /// VAT amount.
     /// </summary>
-    public decimal VatAmount { get; init; }
+    public decimal VatAmount { get; }
 
     /// <summary>
     /// Currency code (ISO 4217).
     /// </summary>
-    public Currency Currency { get; init; }
+    public Currency Currency { get; }
 
     /// <summary>
     /// Gross amount (net + VAT).
@@ -31,29 +31,28 @@ public sealed record Money
     /// </summary>
     public decimal VatRate => NetAmount > 0 ? VatAmount / NetAmount : 0;
 
-    public Money(decimal netAmount, decimal vatAmount, Currency currency)
+    private Money(decimal netAmount, decimal vatAmount, Currency currency)
     {
-        if (netAmount < 0)
-            throw new ArgumentException("Net amount cannot be negative", nameof(netAmount));
-
-        if (vatAmount < 0)
-            throw new ArgumentException("VAT amount cannot be negative", nameof(vatAmount));
-
-        NetAmount = Math.Round(netAmount, 2);
-        VatAmount = Math.Round(vatAmount, 2);
-        Currency = currency ?? throw new ArgumentNullException(nameof(currency));
+        NetAmount = netAmount;
+        VatAmount = vatAmount;
+        Currency = currency;
     }
 
     /// <summary>
-    /// Creates money with VAT applied.
+    /// Creates money with VAT applied from net amount.
     /// </summary>
     /// <param name="netAmount">Net amount before VAT.</param>
     /// <param name="vatRate">VAT rate (e.g., 0.19 for 19%).</param>
     /// <param name="currency">Currency.</param>
-    public static Money CreateWithVat(decimal netAmount, decimal vatRate, Currency currency)
+    public static Money Of(decimal netAmount, decimal vatRate, Currency currency)
     {
-        var vatAmount = Math.Round(netAmount * vatRate, 2);
-        return new Money(netAmount, vatAmount, currency);
+        if (netAmount < 0)
+            throw new ArgumentException("Net amount cannot be negative", nameof(netAmount));
+
+        var roundedNetAmount = Math.Round(netAmount, 2);
+        var vatAmount = Math.Round(roundedNetAmount * vatRate, 2);
+
+        return new Money(roundedNetAmount, vatAmount, currency);
     }
 
     /// <summary>
@@ -62,20 +61,24 @@ public sealed record Money
     /// <param name="grossAmount">Total amount including VAT.</param>
     /// <param name="vatRate">VAT rate (e.g., 0.19 for 19%).</param>
     /// <param name="currency">Currency.</param>
-    public static Money CreateFromGross(decimal grossAmount, decimal vatRate, Currency currency)
+    public static Money FromGross(decimal grossAmount, decimal vatRate, Currency currency)
     {
+        if (grossAmount < 0)
+            throw new ArgumentException("Gross amount cannot be negative", nameof(grossAmount));
+
         var netAmount = Math.Round(grossAmount / (1 + vatRate), 2);
-        var vatAmount = grossAmount - netAmount;
+        var vatAmount = Math.Round(grossAmount - netAmount, 2);
+
         return new Money(netAmount, vatAmount, currency);
     }
 
     /// <summary>
-    /// Creates money in EUR with German VAT (19%).
+    /// Creates money in EUR with German VAT (19%) from net amount.
     /// </summary>
     /// <param name="netAmount">Net amount in EUR.</param>
     public static Money Euro(decimal netAmount)
     {
-        return CreateWithVat(netAmount, 0.19m, Currency.EUR);
+        return Of(netAmount, 0.19m, Currency.EUR);
     }
 
     /// <summary>
@@ -84,7 +87,7 @@ public sealed record Money
     /// <param name="grossAmount">Gross amount in EUR.</param>
     public static Money EuroGross(decimal grossAmount)
     {
-        return CreateFromGross(grossAmount, 0.19m, Currency.EUR);
+        return FromGross(grossAmount, 0.19m, Currency.EUR);
     }
 
     /// <summary>
@@ -97,7 +100,7 @@ public sealed record Money
 
     public static Money operator +(Money a, Money b)
     {
-        if (a.Currency != b.Currency)
+        if (a.Currency.Code != b.Currency.Code)
             throw new InvalidOperationException("Cannot add money with different currencies");
 
         return new Money(a.NetAmount + b.NetAmount, a.VatAmount + b.VatAmount, a.Currency);
@@ -105,7 +108,7 @@ public sealed record Money
 
     public static Money operator -(Money a, Money b)
     {
-        if (a.Currency != b.Currency)
+        if (a.Currency.Code != b.Currency.Code)
             throw new InvalidOperationException("Cannot subtract money with different currencies");
 
         return new Money(a.NetAmount - b.NetAmount, a.VatAmount - b.VatAmount, a.Currency);

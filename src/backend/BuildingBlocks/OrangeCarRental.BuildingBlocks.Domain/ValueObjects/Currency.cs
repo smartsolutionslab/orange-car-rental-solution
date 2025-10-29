@@ -3,14 +3,16 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// <summary>
 /// Represents a currency using ISO 4217 codes.
 /// </summary>
-public sealed record Currency
+public readonly record struct Currency
 {
     /// <summary>
     /// Three-letter currency code (ISO 4217).
     /// </summary>
-    public string Code { get; init; }
+    public string Code { get; }
 
-    public Currency(string code)
+    private Currency(string code) => Code = code;
+
+    public static Currency Of(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
             throw new ArgumentException("Currency code cannot be empty", nameof(code));
@@ -18,7 +20,7 @@ public sealed record Currency
         if (code.Length != 3)
             throw new ArgumentException("Currency code must be exactly 3 characters (ISO 4217)", nameof(code));
 
-        Code = code.ToUpperInvariant();
+        return new Currency(code.ToUpperInvariant());
     }
 
     /// <summary>

@@ -4,8 +4,17 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 /// Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
 /// German car rental standard categories.
 /// </summary>
-public sealed record VehicleCategory(string Code, string Name)
+public readonly record struct VehicleCategory
 {
+    public string Code { get; }
+    public string Name { get; }
+
+    private VehicleCategory(string code, string name)
+    {
+        Code = code;
+        Name = name;
+    }
+
     // Standard German car rental categories
     public static readonly VehicleCategory Kleinwagen = new("KLEIN", "Kleinwagen");
     public static readonly VehicleCategory Kompaktklasse = new("KOMPAKT", "Kompaktklasse");
@@ -36,7 +45,7 @@ public sealed record VehicleCategory(string Code, string Name)
         }
 
         string upperCode = code.ToUpperInvariant();
-        if (!_categories.TryGetValue(upperCode, out VehicleCategory? category))
+        if (!_categories.TryGetValue(upperCode, out VehicleCategory category))
         {
             throw new ArgumentException($"Unknown vehicle category code: {code}", nameof(code));
         }

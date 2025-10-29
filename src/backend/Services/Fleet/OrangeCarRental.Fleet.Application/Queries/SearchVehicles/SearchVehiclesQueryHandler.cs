@@ -136,8 +136,8 @@ public sealed class SearchVehiclesQueryHandler
         var vehicles = new List<Vehicle>();
 
         // Kleinwagen in Berlin
-        var golf = Vehicle.Create(
-            new VehicleName("VW Golf"),
+        var golf = Vehicle.From(
+            VehicleName.Of("VW Golf"),
             VehicleCategory.Kompaktklasse,
             Location.BerlinHauptbahnhof,
             Money.Euro(45m), // 45€ net, 53.55€ gross per day
@@ -149,8 +149,8 @@ public sealed class SearchVehiclesQueryHandler
         vehicles.Add(golf);
 
         // Mittelklasse in München
-        var bmw3 = Vehicle.Create(
-            new VehicleName("BMW 3er"),
+        var bmw3 = Vehicle.From(
+            VehicleName.Of("BMW 3er"),
             VehicleCategory.Mittelklasse,
             Location.MunichFlughafen,
             Money.Euro(75m), // 75€ net, 89.25€ gross per day
@@ -162,8 +162,8 @@ public sealed class SearchVehiclesQueryHandler
         vehicles.Add(bmw3);
 
         // SUV in Frankfurt
-        var x5 = Vehicle.Create(
-            new VehicleName("BMW X5"),
+        var x5 = Vehicle.From(
+            VehicleName.Of("BMW X5"),
             VehicleCategory.SUV,
             Location.FrankfurtFlughafen,
             Money.Euro(120m), // 120€ net, 142.80€ gross per day
@@ -175,8 +175,8 @@ public sealed class SearchVehiclesQueryHandler
         vehicles.Add(x5);
 
         // Elektro in Hamburg
-        var id3 = Vehicle.Create(
-            new VehicleName("VW ID.3"),
+        var id3 = Vehicle.From(
+            VehicleName.Of("VW ID.3"),
             VehicleCategory.Kompaktklasse,
             Location.HamburgHauptbahnhof,
             Money.Euro(55m), // 55€ net, 65.45€ gross per day
@@ -188,8 +188,8 @@ public sealed class SearchVehiclesQueryHandler
         vehicles.Add(id3);
 
         // Oberklasse in Köln
-        var mercedes = Vehicle.Create(
-            new VehicleName("Mercedes E-Klasse"),
+        var mercedes = Vehicle.From(
+            VehicleName.Of("Mercedes E-Klasse"),
             VehicleCategory.Oberklasse,
             Location.KolnHauptbahnhof,
             Money.Euro(95m), // 95€ net, 113.05€ gross per day

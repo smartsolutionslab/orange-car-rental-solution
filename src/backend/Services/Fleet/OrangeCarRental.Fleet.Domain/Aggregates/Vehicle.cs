@@ -29,10 +29,10 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     // For EF Core - properties will be set by EF Core during materialization
     private Vehicle() : base(VehicleIdentifier.New())
     {
-        Name = null!;
-        Category = null!;
-        CurrentLocation = null!;
-        DailyRate = null!;
+        Name = default;
+        Category = default;
+        CurrentLocation = default;
+        DailyRate = default;
     }
 
     private Vehicle(
@@ -46,10 +46,10 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         TransmissionType transmissionType)
         : base(id)
     {
-        Name = name ?? throw new ArgumentNullException(nameof(name));
-        Category = category ?? throw new ArgumentNullException(nameof(category));
-        CurrentLocation = currentLocation ?? throw new ArgumentNullException(nameof(currentLocation));
-        DailyRate = dailyRate ?? throw new ArgumentNullException(nameof(dailyRate));
+        Name = name;
+        Category = category;
+        CurrentLocation = currentLocation;
+        DailyRate = dailyRate;
         Seats = seats > 0 && seats <= 9
             ? seats
             : throw new ArgumentException("Seats must be between 1 and 9", nameof(seats));
@@ -63,7 +63,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// <summary>
     /// Create a new vehicle with German VAT-inclusive pricing.
     /// </summary>
-    public static Vehicle Create(
+    public static Vehicle From(
         VehicleName name,
         VehicleCategory category,
         Location currentLocation,
@@ -89,11 +89,6 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void UpdateDailyRate(Money newDailyRate)
     {
-        if (newDailyRate is null)
-        {
-            throw new ArgumentNullException(nameof(newDailyRate));
-        }
-
         if (newDailyRate == DailyRate)
         {
             return;
@@ -110,11 +105,6 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void MoveToLocation(Location newLocation)
     {
-        if (newLocation is null)
-        {
-            throw new ArgumentNullException(nameof(newLocation));
-        }
-
         if (newLocation == CurrentLocation)
         {
             return;
