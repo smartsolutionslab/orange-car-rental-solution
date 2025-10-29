@@ -1,46 +1,84 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Api;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Add services to the container
 builder.Services.AddOpenApi();
+
+// CORS for frontend applications
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// Register application handlers
+builder.Services.AddScoped<CreateReservationCommandHandler>();
+builder.Services.AddScoped<GetReservationQueryHandler>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+// Reservation endpoints
+var reservations = app.MapGroup("/api/reservations")
+    .WithTags("Reservations")
+    .WithOpenApi();
 
-app.MapGet("/weatherforecast", () =>
+reservations.MapPost("/", async (
+    CreateReservationCommand command,
+    CreateReservationCommandHandler handler) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    var result = await handler.HandleAsync(command);
+    return Results.Created($"/api/reservations/{result.ReservationId}", result);
 })
-.WithName("GetWeatherForecast");
+.WithName("CreateReservation")
+.WithSummary("Create a new vehicle reservation")
+.WithDescription(@"
+Creates a new reservation for a vehicle rental. The reservation will be created in 'Pending' status
+awaiting payment confirmation.
+
+**German Market Pricing:**
+- All prices include 19% German VAT (Mehrwertsteuer)
+- Provide the net amount, VAT will be calculated automatically
+- Currency is EUR
+
+**Date Requirements:**
+- Pickup date must be today or in the future
+- Return date must be after pickup date
+- Maximum rental period is 90 days
+");
+
+reservations.MapGet("/{id:guid}", async (
+    Guid id,
+    GetReservationQueryHandler handler) =>
+{
+    var query = new GetReservationQuery(id);
+    var result = await handler.HandleAsync(query);
+
+    return result is not null
+        ? Results.Ok(result)
+        : Results.NotFound(new { Message = $"Reservation {id} not found" });
+})
+.WithName("GetReservation")
+.WithSummary("Get reservation by ID")
+.WithDescription("Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.");
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { Status = "Healthy", Service = "Reservations" }))
+    .WithName("HealthCheck")
+    .WithTags("Health");
 
 app.Run();
-
-namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api
-{
-    record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-    {
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-    }
-}
