@@ -1,6 +1,17 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add YARP Reverse Proxy
+// Get backend service URLs from Aspire environment variables
+var fleetApiUrl = builder.Configuration["FLEET_API_URL"] ?? "http://localhost:5000";
+var reservationsApiUrl = builder.Configuration["RESERVATIONS_API_URL"] ?? "http://localhost:5001";
+
+Console.WriteLine($"Fleet API URL: {fleetApiUrl}");
+Console.WriteLine($"Reservations API URL: {reservationsApiUrl}");
+
+// Update configuration with actual URLs
+builder.Configuration["ReverseProxy:Clusters:fleet-cluster:Destinations:destination1:Address"] = fleetApiUrl;
+builder.Configuration["ReverseProxy:Clusters:reservations-cluster:Destinations:destination1:Address"] = reservationsApiUrl;
+
+// Add YARP Reverse Proxy with configuration
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
@@ -29,6 +40,6 @@ app.MapGet("/health", () => Results.Ok(new
     service = "API Gateway",
     status = "Healthy",
     timestamp = DateTime.UtcNow
-}));
+})).WithName("HealthCheck");
 
 app.Run();
