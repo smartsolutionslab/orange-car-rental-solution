@@ -1,14 +1,14 @@
-using OrangeCarRental.BuildingBlocks.Domain;
-using OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.BuildingBlocks.Domain;
+using SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
-namespace OrangeCarRental.Fleet.Domain.Events;
+namespace SmartSolutionsLab.Fleet.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a vehicle's daily rate is changed.
 /// </summary>
 public sealed record VehicleDailyRateChanged(
-    VehicleId VehicleId,
+    VehicleIdentifier VehicleId,
     Money OldRate,
     Money NewRate
 ) : DomainEvent;

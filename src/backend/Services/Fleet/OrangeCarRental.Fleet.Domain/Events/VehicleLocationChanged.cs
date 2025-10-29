@@ -1,13 +1,13 @@
-using OrangeCarRental.BuildingBlocks.Domain;
-using OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.BuildingBlocks.Domain;
+using SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
-namespace OrangeCarRental.Fleet.Domain.Events;
+namespace SmartSolutionsLab.Fleet.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a vehicle is moved to a different location.
 /// </summary>
 public sealed record VehicleLocationChanged(
-    VehicleId VehicleId,
+    VehicleIdentifier VehicleId,
     Location OldLocation,
     Location NewLocation
 ) : DomainEvent;

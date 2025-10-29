@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.BuildingBlocks.Testing;
+﻿namespace SmartSolutionsLab.BuildingBlocks.Testing;
 
 public class Class1
 {

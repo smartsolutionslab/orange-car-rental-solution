@@ -1,14 +1,14 @@
-using OrangeCarRental.BuildingBlocks.Domain;
-using OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.BuildingBlocks.Domain;
+using SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
-namespace OrangeCarRental.Fleet.Domain.Events;
+namespace SmartSolutionsLab.Fleet.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a new vehicle is added to the fleet.
 /// </summary>
 public sealed record VehicleAddedToFleet(
-    VehicleId VehicleId,
+    VehicleIdentifier VehicleId,
     VehicleName Name,
     VehicleCategory Category,
     Money DailyRate

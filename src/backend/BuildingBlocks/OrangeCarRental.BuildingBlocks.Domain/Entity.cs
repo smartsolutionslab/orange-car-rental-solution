@@ -1,4 +1,4 @@
-namespace OrangeCarRental.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BuildingBlocks.Domain;
 
 /// <summary>
 /// Base class for entities.

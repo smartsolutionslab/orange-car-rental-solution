@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.BuildingBlocks.Infrastructure;
+﻿namespace SmartSolutionsLab.BuildingBlocks.Infrastructure;
 
 public class Class1
 {

@@ -1,4 +1,4 @@
-namespace OrangeCarRental.Fleet.Domain.ValueObjects;
+namespace SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
 /// <summary>
 /// Vehicle name value object.

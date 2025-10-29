@@ -1,4 +1,4 @@
-using OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.Fleet.Application.Queries.SearchVehicles;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);

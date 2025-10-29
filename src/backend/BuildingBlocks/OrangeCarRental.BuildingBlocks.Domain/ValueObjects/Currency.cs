@@ -1,4 +1,4 @@
-namespace OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+namespace SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
 /// Represents a currency using ISO 4217 codes.

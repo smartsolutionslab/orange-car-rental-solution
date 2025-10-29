@@ -1,16 +1,16 @@
-using OrangeCarRental.BuildingBlocks.Domain;
-using OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using OrangeCarRental.Fleet.Domain.Enums;
-using OrangeCarRental.Fleet.Domain.Events;
-using OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.BuildingBlocks.Domain;
+using SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.Fleet.Domain.Enums;
+using SmartSolutionsLab.Fleet.Domain.Events;
+using SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
-namespace OrangeCarRental.Fleet.Domain.Aggregates;
+namespace SmartSolutionsLab.Fleet.Domain.Aggregates;
 
 /// <summary>
 /// Vehicle aggregate root.
 /// Represents a vehicle in the rental fleet with German market-specific pricing (19% VAT).
 /// </summary>
-public sealed class Vehicle : AggregateRoot<VehicleId>
+public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
 {
     public VehicleName Name { get; private set; }
     public VehicleCategory Category { get; private set; }
@@ -27,7 +27,7 @@ public sealed class Vehicle : AggregateRoot<VehicleId>
     public string? ImageUrl { get; private set; }
 
     // For EF Core - properties will be set by EF Core during materialization
-    private Vehicle() : base(VehicleId.New())
+    private Vehicle() : base(VehicleIdentifier.New())
     {
         Name = null!;
         Category = null!;
@@ -36,7 +36,7 @@ public sealed class Vehicle : AggregateRoot<VehicleId>
     }
 
     private Vehicle(
-        VehicleId id,
+        VehicleIdentifier id,
         VehicleName name,
         VehicleCategory category,
         Location currentLocation,
@@ -73,7 +73,7 @@ public sealed class Vehicle : AggregateRoot<VehicleId>
         TransmissionType transmissionType)
     {
         return new Vehicle(
-            VehicleId.New(),
+            VehicleIdentifier.New(),
             name,
             category,
             currentLocation,

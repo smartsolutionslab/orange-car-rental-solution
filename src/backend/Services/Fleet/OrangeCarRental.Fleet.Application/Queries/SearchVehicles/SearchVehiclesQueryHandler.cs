@@ -1,8 +1,8 @@
-using OrangeCarRental.Fleet.Domain.Aggregates;
-using OrangeCarRental.Fleet.Domain.Enums;
-using OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.Fleet.Domain.Aggregates;
+using SmartSolutionsLab.Fleet.Domain.Enums;
+using SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
-namespace OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+namespace SmartSolutionsLab.Fleet.Application.Queries.SearchVehicles;
 
 /// <summary>
 /// Handler for SearchVehiclesQuery.
@@ -139,7 +139,7 @@ public sealed class SearchVehiclesQueryHandler
             new VehicleName("VW Golf"),
             VehicleCategory.Kompaktklasse,
             Location.BerlinHauptbahnhof,
-            BuildingBlocks.Domain.ValueObjects.Money.Euro(45m), // 45€ net, 53.55€ gross per day
+            SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects.Money.Euro(45m), // 45€ net, 53.55€ gross per day
             5,
             FuelType.Petrol,
             TransmissionType.Manual
@@ -152,7 +152,7 @@ public sealed class SearchVehiclesQueryHandler
             new VehicleName("BMW 3er"),
             VehicleCategory.Mittelklasse,
             Location.MunichFlughafen,
-            BuildingBlocks.Domain.ValueObjects.Money.Euro(75m), // 75€ net, 89.25€ gross per day
+            SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects.Money.Euro(75m), // 75€ net, 89.25€ gross per day
             5,
             FuelType.Diesel,
             TransmissionType.Automatic
@@ -165,7 +165,7 @@ public sealed class SearchVehiclesQueryHandler
             new VehicleName("BMW X5"),
             VehicleCategory.SUV,
             Location.FrankfurtFlughafen,
-            BuildingBlocks.Domain.ValueObjects.Money.Euro(120m), // 120€ net, 142.80€ gross per day
+            SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects.Money.Euro(120m), // 120€ net, 142.80€ gross per day
             7,
             FuelType.Diesel,
             TransmissionType.Automatic
@@ -178,7 +178,7 @@ public sealed class SearchVehiclesQueryHandler
             new VehicleName("VW ID.3"),
             VehicleCategory.Kompaktklasse,
             Location.HamburgHauptbahnhof,
-            BuildingBlocks.Domain.ValueObjects.Money.Euro(55m), // 55€ net, 65.45€ gross per day
+            SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects.Money.Euro(55m), // 55€ net, 65.45€ gross per day
             5,
             FuelType.Electric,
             TransmissionType.Automatic
@@ -191,7 +191,7 @@ public sealed class SearchVehiclesQueryHandler
             new VehicleName("Mercedes E-Klasse"),
             VehicleCategory.Oberklasse,
             Location.KolnHauptbahnhof,
-            BuildingBlocks.Domain.ValueObjects.Money.Euro(95m), // 95€ net, 113.05€ gross per day
+            SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects.Money.Euro(95m), // 95€ net, 113.05€ gross per day
             5,
             FuelType.Hybrid,
             TransmissionType.Automatic

@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.Fleet.Application;
+﻿namespace SmartSolutionsLab.Fleet.Application;
 
 public class Class1
 {

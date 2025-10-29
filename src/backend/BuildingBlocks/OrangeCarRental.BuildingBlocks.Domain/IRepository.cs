@@ -1,4 +1,4 @@
-namespace OrangeCarRental.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.BuildingBlocks.Domain;
 
 /// <summary>
 /// Base repository interface for aggregate roots.

@@ -1,24 +1,24 @@
-namespace OrangeCarRental.Fleet.Domain.ValueObjects;
+namespace SmartSolutionsLab.Fleet.Domain.ValueObjects;
 
 /// <summary>
 /// Strongly-typed identifier for Vehicle aggregate.
 /// </summary>
-public sealed record VehicleId(Guid Value)
+public sealed record VehicleIdentifier(Guid Value)
 {
-    public VehicleId() : this(Guid.Empty) { }
+    public VehicleIdentifier() : this(Guid.Empty) { }
 
-    public static VehicleId New() => new(Guid.NewGuid());
+    public static VehicleIdentifier New() => new(Guid.NewGuid());
 
-    public static VehicleId From(Guid value)
+    public static VehicleIdentifier From(Guid value)
     {
         if (value == Guid.Empty)
         {
             throw new ArgumentException("Vehicle ID cannot be empty", nameof(value));
         }
-        return new VehicleId(value);
+        return new VehicleIdentifier(value);
     }
 
-    public static VehicleId From(string value)
+    public static VehicleIdentifier From(string value)
     {
         if (!Guid.TryParse(value, out var guid))
         {

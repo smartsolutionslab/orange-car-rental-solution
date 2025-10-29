@@ -1,4 +1,4 @@
-namespace OrangeCarRental.Fleet.Domain.Enums;
+namespace SmartSolutionsLab.Fleet.Domain.Enums;
 
 /// <summary>
 /// Current status of a vehicle.
