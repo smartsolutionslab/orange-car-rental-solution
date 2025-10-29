@@ -24,7 +24,7 @@ var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-ga
     .WithReference(reservationsApi)
     .WithExternalHttpEndpoints();
 
-// Frontend Applications
+// Frontend Applications (Aspire passes port via PORT environment variable)
 var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal", "start")
     .WithHttpEndpoint(port: 4200, env: "PORT")
     .WithReference(apiGateway)
