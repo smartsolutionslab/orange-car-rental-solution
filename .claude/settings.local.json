@@ -22,7 +22,8 @@
       "Bash(git add:*)",
       "Bash(dotnet clean:*)",
       "Bash(del:*)",
-      "Bash(dotnet run:*)"
+      "Bash(dotnet run:*)",
+      "Bash(dotnet add:*)"
     ],
     "deny": [],
     "ask": []

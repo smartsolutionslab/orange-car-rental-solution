@@ -25,12 +25,12 @@ var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-ga
     .WithExternalHttpEndpoints();
 
 // Frontend Applications
-var publicPortal = builder.AddNpmApp("public-portal", "../../../../frontend/apps/public-portal", "start")
+var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal", "start")
     .WithHttpEndpoint(port: 4200, env: "PORT")
     .WithReference(apiGateway)
     .WithExternalHttpEndpoints();
 
-var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../../frontend/apps/call-center-portal", "start")
+var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal", "start")
     .WithHttpEndpoint(port: 4201, env: "PORT")
     .WithReference(apiGateway)
     .WithExternalHttpEndpoints();
