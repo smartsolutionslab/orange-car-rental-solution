@@ -1,4 +1,4 @@
-﻿namespace SmartSolutionsLab.Fleet.Tests;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests;
 
 public class UnitTest1
 {

@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.Fleet.Domain.ValueObjects;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 
 /// <summary>
 /// Strongly-typed identifier for Vehicle aggregate.

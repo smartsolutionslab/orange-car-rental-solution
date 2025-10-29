@@ -1,7 +1,7 @@
-using SmartSolutionsLab.BuildingBlocks.Domain;
-using SmartSolutionsLab.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.Fleet.Domain.Events;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a vehicle is moved to a different location.

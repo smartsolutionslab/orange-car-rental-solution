@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.Fleet.Application.Queries.SearchVehicles;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
 /// <summary>
 /// Result of vehicle search query with pagination information.

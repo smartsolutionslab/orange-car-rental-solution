@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.Pricing.Domain;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain;
 
 public class Class1
 {

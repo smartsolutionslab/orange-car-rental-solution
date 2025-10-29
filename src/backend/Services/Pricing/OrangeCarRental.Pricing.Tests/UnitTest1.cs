@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.Pricing.Tests;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests;
 
 public class UnitTest1
 {

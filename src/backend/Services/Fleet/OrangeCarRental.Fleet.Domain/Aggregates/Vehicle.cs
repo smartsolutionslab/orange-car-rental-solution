@@ -1,10 +1,10 @@
-using SmartSolutionsLab.BuildingBlocks.Domain;
-using SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.Fleet.Domain.Enums;
-using SmartSolutionsLab.Fleet.Domain.Events;
-using SmartSolutionsLab.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Events;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.Fleet.Domain.Aggregates;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
 
 /// <summary>
 /// Vehicle aggregate root.

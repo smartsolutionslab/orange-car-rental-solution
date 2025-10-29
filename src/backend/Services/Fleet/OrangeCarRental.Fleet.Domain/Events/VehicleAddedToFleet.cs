@@ -1,8 +1,8 @@
-using SmartSolutionsLab.BuildingBlocks.Domain;
-using SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.Fleet.Domain.Events;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Events;
 
 /// <summary>
 /// Domain event raised when a new vehicle is added to the fleet.

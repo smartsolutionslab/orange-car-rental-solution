@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.Fleet.Application.Queries.SearchVehicles;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
 /// <summary>
 /// Data transfer object for vehicle search results.

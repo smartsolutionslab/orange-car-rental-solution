@@ -1,4 +1,4 @@
-﻿namespace OrangeCarRental.Reservations.Domain;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 
 public class Class1
 {

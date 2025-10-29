@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
+namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
 /// Represents monetary value with VAT support for German market compliance.

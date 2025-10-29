@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.BuildingBlocks.Domain;
+namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
 /// Base class for domain events.

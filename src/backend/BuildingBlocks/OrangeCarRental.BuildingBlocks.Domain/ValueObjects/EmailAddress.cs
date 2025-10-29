@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace SmartSolutionsLab.BuildingBlocks.Domain.ValueObjects;
+namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
 /// Represents an email address with validation.
