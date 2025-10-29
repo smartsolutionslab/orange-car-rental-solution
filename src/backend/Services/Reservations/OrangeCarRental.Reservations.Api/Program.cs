@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
@@ -36,10 +38,27 @@ builder.Services.AddScoped<GetReservationQueryHandler>();
 
 var app = builder.Build();
 
+// Check if running as migration job
+if (args.Contains("--migrate-only"))
+{
+    var exitCode = await app.RunMigrationsAndExitAsync<ReservationsDbContext>();
+    Environment.Exit(exitCode);
+}
+
+// Apply database migrations (auto in dev/Aspire, manual in production)
+await app.MigrateDatabaseAsync<ReservationsDbContext>();
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Orange Car Rental - Reservations API")
+            .WithTheme(ScalarTheme.Mars)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
 }
 
 app.UseCors();

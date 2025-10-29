@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
@@ -34,6 +35,16 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();
 
 var app = builder.Build();
+
+// Check if running as migration job
+if (args.Contains("--migrate-only"))
+{
+    var exitCode = await app.RunMigrationsAndExitAsync<FleetDbContext>();
+    Environment.Exit(exitCode);
+}
+
+// Apply database migrations (auto in dev/Aspire, manual in production)
+await app.MigrateDatabaseAsync<FleetDbContext>();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
