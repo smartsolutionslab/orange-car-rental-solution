@@ -1,0 +1,6 @@
+@OrangeCarRental.Notifications.Api_HostAddress = http://localhost:5189
+
+GET {{OrangeCarRental.Notifications.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

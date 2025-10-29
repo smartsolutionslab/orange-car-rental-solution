@@ -1,0 +1,86 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      working-directory: src/backend
+      run: dotnet restore OrangeCarRental.sln
+
+    - name: Build solution
+      working-directory: src/backend
+      run: dotnet build OrangeCarRental.sln --no-restore --configuration Release
+
+    - name: Run unit tests
+      working-directory: src/backend
+      run: dotnet test OrangeCarRental.sln --no-build --configuration Release --filter "Category=Unit" --logger "trx;LogFileName=unit-tests.trx" --collect:"XPlat Code Coverage"
+
+    - name: Run integration tests
+      working-directory: src/backend
+      run: dotnet test OrangeCarRental.sln --no-build --configuration Release --filter "Category=Integration" --logger "trx;LogFileName=integration-tests.trx" --collect:"XPlat Code Coverage"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: '**/TestResults/**/*.trx'
+
+    - name: Upload coverage to Codecov
+      if: success()
+      uses: codecov/codecov-action@v4
+      with:
+        files: '**/coverage.cobertura.xml'
+        flags: backend
+        name: backend-coverage
+
+    - name: Build Docker images
+      if: github.event_name == 'push'
+      working-directory: src/backend
+      run: |
+        docker build -f Services/Fleet/OrangeCarRental.Fleet.Api/Dockerfile -t ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }} .
+        docker build -f Services/Reservations/OrangeCarRental.Reservations.Api/Dockerfile -t ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }} .
+        docker build -f Services/Customers/OrangeCarRental.Customers.Api/Dockerfile -t ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }} .
+        docker build -f Services/Pricing/OrangeCarRental.Pricing.Api/Dockerfile -t ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }} .
+        docker build -f Services/Payments/OrangeCarRental.Payments.Api/Dockerfile -t ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }} .
+        docker build -f Services/Notifications/OrangeCarRental.Notifications.Api/Dockerfile -t ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} .
+
+    - name: Log in to GitHub Container Registry
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Push Docker images
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        docker push ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }}
+        docker push ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }}

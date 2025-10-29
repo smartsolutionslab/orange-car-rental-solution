@@ -1,0 +1,598 @@
+# German Market Requirements
+
+This document outlines specific requirements for operating a car rental business in the German market.
+
+## Legal & Compliance
+
+### 1. GDPR (DSGVO) Compliance
+
+**Data Protection Requirements:**
+- ✅ Explicit consent for data collection
+- ✅ Right to access personal data
+- ✅ Right to erasure (data anonymization in event store)
+- ✅ Right to data portability
+- ✅ Privacy policy (Datenschutzerklärung)
+- ✅ Cookie consent banner
+- ✅ Data processing agreements with third parties
+
+**Implementation:**
+```csharp
+// Customer aggregate with GDPR support
+public sealed class Customer : AggregateRoot<CustomerId>
+{
+    public void AnonymizePersonalData()
+    {
+        // GDPR Right to erasure
+        Name = PersonName.Anonymized();
+        Email = EmailAddress.Anonymized();
+        DateOfBirth = DateOfBirth.Anonymized();
+        Address = Address.Anonymized();
+
+        AddDomainEvent(new CustomerDataAnonymized(Id));
+    }
+}
+```
+
+**Required Pages:**
+- Datenschutzerklärung (Privacy Policy)
+- Impressum (Legal Notice)
+- Allgemeine Geschäftsbedingungen (Terms & Conditions)
+- Widerrufsbelehrung (Right of Withdrawal)
+
+### 2. Impressum (Legal Notice)
+
+**Required Information:**
+- Company name and legal form
+- Full address
+- Contact information (phone, email)
+- Trade register number (Handelsregisternummer)
+- VAT ID (Umsatzsteuer-Identifikationsnummer)
+- Responsible person (Vertretungsberechtigter)
+- Professional association
+- Regulatory authority
+
+**Implementation:**
+- Static page in both frontend applications
+- Easily accessible footer link
+- Content managed via CMS or configuration
+
+### 3. VAT (Mehrwertsteuer) Handling
+
+**German VAT Requirements:**
+- Standard rate: 19%
+- Reduced rate: 7% (not applicable for car rentals)
+- VAT must be shown separately on invoices
+- VAT ID required for business customers (B2B)
+
+**Value Object Extension:**
+```csharp
+public sealed record Money(decimal NetAmount, decimal VatAmount, Currency Currency)
+{
+    public decimal GrossAmount => NetAmount + VatAmount;
+    public decimal VatRate => NetAmount > 0 ? VatAmount / NetAmount : 0;
+
+    public static Money CreateWithVat(decimal netAmount, decimal vatRate, Currency currency)
+    {
+        var vatAmount = netAmount * vatRate;
+        return new Money(netAmount, vatAmount, currency);
+    }
+}
+
+// Usage for German market
+var dailyRate = Money.CreateWithVat(100m, 0.19m, new Currency("EUR"));
+// Net: 100€, VAT: 19€, Gross: 119€
+```
+
+### 4. Invoice Requirements (Rechnungsstellung)
+
+**Mandatory Invoice Information:**
+- Invoice number (consecutive)
+- Invoice date
+- Delivery/service date
+- Seller details (see Impressum)
+- Customer details
+- VAT ID (if B2B)
+- Item description
+- Net amount per item
+- VAT rate and amount
+- Gross total
+- Payment terms
+
+**Implementation:**
+- Generate PDF invoices
+- Store in event store
+- Email to customer
+- Archive for 10 years (German tax law requirement)
+
+## Language & Localization
+
+### 1. German Language Support
+
+**Primary Language:**
+- German (de-DE) as default
+- English (en-US) as secondary option
+
+**Implementation:**
+```typescript
+// Angular i18n
+export const translations = {
+  'de-DE': {
+    'vehicle.search.title': 'Fahrzeugsuche',
+    'vehicle.search.pickup': 'Abholstation',
+    'vehicle.search.return': 'Rückgabestation',
+    'booking.renter.title': 'Mieter',
+    'booking.renter.firstName': 'Vorname',
+    'booking.renter.lastName': 'Nachname',
+    // ...
+  },
+  'en-US': {
+    'vehicle.search.title': 'Vehicle Search',
+    'vehicle.search.pickup': 'Pickup Location',
+    // ...
+  }
+};
+```
+
+### 2. Date & Time Formats
+
+**German Formats:**
+- Date: DD.MM.YYYY (e.g., 28.10.2025)
+- Time: HH:mm (24-hour format)
+- Currency: 1.234,56 € (thousand separator: dot, decimal: comma)
+
+**Value Object:**
+```csharp
+public sealed record FormattedDate(DateTime Value, CultureInfo Culture)
+{
+    public string ToGermanFormat() => Value.ToString("dd.MM.yyyy", new CultureInfo("de-DE"));
+    public string ToIsoFormat() => Value.ToString("yyyy-MM-dd");
+}
+```
+
+### 3. Address Format
+
+**German Address Structure:**
+```
+Title FirstName LastName
+Street HouseNumber
+PostalCode City
+Country
+```
+
+**Validation:**
+- PostalCode: 5 digits (e.g., 10115)
+- Phone: +49 (country code) + area code + number
+- Valid German states (Bundesländer)
+
+```csharp
+public sealed record GermanPostalCode : PostalCode
+{
+    public GermanPostalCode(string value) : base(value)
+    {
+        if (!Regex.IsMatch(value, @"^\d{5}$"))
+            throw new ArgumentException("German postal code must be 5 digits");
+    }
+}
+```
+
+## Payment Methods
+
+### 1. Common German Payment Methods
+
+**Must Support:**
+- ✅ SEPA Direct Debit (SEPA-Lastschrift)
+- ✅ Credit Card (Visa, Mastercard)
+- ✅ Debit Card (EC-Karte / Girocard)
+- ✅ PayPal
+
+**Nice to Have:**
+- Klarna (invoice payment)
+- Sofortüberweisung
+- Apple Pay / Google Pay
+
+### 2. SEPA Direct Debit
+
+**Requirements:**
+- SEPA mandate (SEPA-Lastschriftmandat)
+- Mandate reference number
+- Creditor ID (Gläubiger-Identifikationsnummer)
+- Pre-notification (Vorabankündigung) - at least 5 days before debit
+
+**Value Objects:**
+```csharp
+public sealed record IBAN(string Value)
+{
+    public IBAN(string value) : this()
+    {
+        Value = value.Replace(" ", "").ToUpperInvariant();
+
+        if (!IsValidIBAN(Value))
+            throw new ArgumentException("Invalid IBAN format");
+    }
+
+    private static bool IsValidIBAN(string iban)
+    {
+        // IBAN validation algorithm
+        // German IBANs start with DE and are 22 characters
+        return iban.StartsWith("DE") && iban.Length == 22;
+    }
+}
+
+public sealed record BIC(string Value);
+
+public sealed record SepaMandate(
+    MandateReference Reference,
+    IBAN Iban,
+    BIC Bic,
+    AccountHolder AccountHolder,
+    DateTime SignedDate);
+```
+
+### 3. Payment Gateway Integration
+
+**German-friendly gateways:**
+- Stripe (supports SEPA, Giropay)
+- Adyen (strong European presence)
+- Mollie (European payment provider)
+
+## Vehicle & Rental Specifics
+
+### 1. German Driving License
+
+**Validation Requirements:**
+- Valid German (EU) driving license required
+- Minimum age: 21 years
+- License held for at least 1 year
+- International licenses require additional validation
+
+**Value Object:**
+```csharp
+public sealed record DrivingLicense(
+    LicenseNumber Number,
+    LicenseType Type,
+    DateTime IssueDate,
+    DateTime? ExpiryDate,
+    Country IssuingCountry)
+{
+    public bool IsValidInGermany()
+    {
+        // EU licenses are valid
+        if (IssuingCountry.IsEU())
+            return true;
+
+        // International licenses need additional checks
+        return false;
+    }
+
+    public bool MeetsMinimumRequirements(DateTime rentalStartDate)
+    {
+        var licenseAge = (rentalStartDate - IssueDate).Days / 365.25;
+        return licenseAge >= 1;
+    }
+}
+```
+
+### 2. Insurance Requirements
+
+**Mandatory Coverage (Pflichtversicherung):**
+- Haftpflichtversicherung (Liability insurance)
+- Vollkasko (Comprehensive coverage) - optional but recommended
+- Teilkasko (Partial coverage)
+
+**Deductible (Selbstbeteiligung):**
+- Standard: 1.000€
+- Reduced: 500€
+- Full coverage: 0€ (additional cost)
+
+**Value Object:**
+```csharp
+public sealed record InsurancePackage(
+    InsuranceType Type,
+    Money Deductible,
+    Money DailySurcharge)
+{
+    public static readonly InsurancePackage Standard =
+        new(InsuranceType.Teilkasko,
+            Money.Euro(1000),
+            Money.Euro(0));
+
+    public static readonly InsurancePackage Premium =
+        new(InsuranceType.Vollkasko,
+            Money.Euro(0),
+            Money.Euro(15));
+}
+```
+
+### 3. Fuel Policy
+
+**Common in Germany:**
+- Full-to-Full (Voll-zu-Voll) - most common
+- Full-to-Empty (Voll-zu-Leer) - less common
+- Fair Fuel Policy (Faire Tankregelung)
+
+```csharp
+public sealed record FuelPolicy
+{
+    public static readonly FuelPolicy FullToFull = new("FullToFull");
+    public static readonly FuelPolicy FullToEmpty = new("FullToEmpty");
+
+    public string Value { get; }
+    private FuelPolicy(string value) => Value = value;
+}
+```
+
+### 4. Vehicle Categories (German Market)
+
+**Common Categories:**
+- Kleinwagen (Small Car) - VW Up, Fiat 500
+- Kompaktklasse (Compact) - VW Golf, Opel Astra
+- Mittelklasse (Mid-size) - VW Passat, BMW 3er
+- Oberklasse (Full-size) - BMW 5er, Mercedes E-Klasse
+- Van/Bus - VW T6, Mercedes Vito
+- SUV - VW Tiguan, BMW X3
+
+## Additional Features for German Market
+
+### 1. Kilometer Packages
+
+**Typical Offerings:**
+- 100 km/day included
+- 200 km/day package
+- Unlimited kilometers
+- Additional km charged at 0,20€/km
+
+```csharp
+public sealed record KilometerPackage(
+    KilometerLimit DailyLimit,
+    Money? AdditionalKilometerRate)
+{
+    public static readonly KilometerPackage Limited100 =
+        new(new KilometerLimit(100), Money.Euro(0.20m));
+
+    public static readonly KilometerPackage Unlimited =
+        new(KilometerLimit.Unlimited(), null);
+}
+
+public sealed record KilometerLimit(int? Value)
+{
+    public bool IsUnlimited => Value == null;
+    public static KilometerLimit Unlimited() => new(null);
+}
+```
+
+### 2. Additional Equipment (Extras)
+
+**Common in Germany:**
+- Navigationssystem (GPS)
+- Kindersitz (Child seat) - various age groups
+- Winterreifen (Winter tires) - mandatory Nov-Mar in certain conditions
+- Schneeketten (Snow chains)
+- Dachgepäckträger (Roof rack)
+- Anhängerkupplung (Trailer hitch)
+
+```csharp
+public sealed record VehicleExtra(
+    ExtraId Id,
+    ExtraName Name,
+    Money DailyRate,
+    bool RequiresAdvanceBooking);
+
+// Example extras
+public static class GermanMarketExtras
+{
+    public static readonly VehicleExtra GPS = new(
+        new ExtraId(Guid.NewGuid()),
+        new ExtraName("Navigationssystem"),
+        Money.Euro(5),
+        false);
+
+    public static readonly VehicleExtra ChildSeat = new(
+        new ExtraId(Guid.NewGuid()),
+        new ExtraName("Kindersitz (0-4 Jahre)"),
+        Money.Euro(8),
+        true);
+
+    public static readonly VehicleExtra WinterTires = new(
+        new ExtraId(Guid.NewGuid()),
+        new ExtraName("Winterreifen"),
+        Money.Euro(0), // Often included
+        false);
+}
+```
+
+### 3. Cross-Border Travel
+
+**Restrictions:**
+- Most rental companies allow EU travel
+- Eastern European countries may require permission
+- Additional insurance for certain countries
+- Separate daily charge for cross-border
+
+```csharp
+public sealed record CrossBorderPolicy(
+    bool AllowedInEU,
+    HashSet<Country> RestrictedCountries,
+    Money? DailySurcharge);
+```
+
+### 4. Business Customer (Geschäftskunde) Support
+
+**B2B Features:**
+- Corporate accounts
+- VAT ID validation
+- Framework agreements (Rahmenverträge)
+- Invoice payment terms (Zahlungsziel: 14/30 days)
+- Cost center allocation
+
+```csharp
+public sealed record BusinessCustomer : Customer
+{
+    public CompanyName Company { get; private set; }
+    public VATId VatId { get; private set; }
+    public PaymentTerms PaymentTerms { get; private set; }
+}
+
+public sealed record VATId(string Value)
+{
+    public VATId(string value) : this()
+    {
+        Value = value.Replace(" ", "").ToUpperInvariant();
+
+        // German VAT ID: DE + 9 digits
+        if (!Regex.IsMatch(Value, @"^DE\d{9}$"))
+            throw new ArgumentException("Invalid German VAT ID format");
+    }
+}
+
+public sealed record PaymentTerms(int DaysUntilDue)
+{
+    public static readonly PaymentTerms Immediate = new(0);
+    public static readonly PaymentTerms Net14 = new(14);
+    public static readonly PaymentTerms Net30 = new(30);
+}
+```
+
+## Accessibility & User Experience
+
+### 1. Accessibility (Barrierefreiheit)
+
+**Legal Requirement:**
+- Barrierefreie-Informationstechnik-Verordnung (BITV 2.0)
+- WCAG 2.1 Level AA compliance
+- Screen reader support
+- Keyboard navigation
+- Sufficient color contrast
+
+### 2. Cookie Consent
+
+**Requirements:**
+- Explicit consent required before setting non-essential cookies
+- Granular control (Analytics, Marketing, Essential)
+- Easy to decline
+- "Reject All" option must be as prominent as "Accept All"
+
+**Implementation:**
+```typescript
+// Use a GDPR-compliant cookie consent library
+import { CookieConsent } from '@cookieconsent/angular';
+
+export class AppComponent {
+  cookieConfig = {
+    categories: {
+      essential: { enabled: true, readOnly: true },
+      analytics: { enabled: false },
+      marketing: { enabled: false }
+    },
+    language: {
+      default: 'de',
+      translations: {
+        de: {
+          consentModal: {
+            title: 'Wir verwenden Cookies',
+            description: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern...',
+            acceptAll: 'Alle akzeptieren',
+            rejectAll: 'Alle ablehnen',
+            settings: 'Einstellungen'
+          }
+        }
+      }
+    }
+  };
+}
+```
+
+## Technical Considerations
+
+### 1. Email Templates
+
+**German Language Templates:**
+- Booking confirmation (Buchungsbestätigung)
+- Cancellation confirmation (Stornierungsbestätigung)
+- Reminder emails (Erinnerungen)
+- Invoice (Rechnung)
+
+### 2. Error Messages
+
+**User-Friendly German Messages:**
+```typescript
+export const errorMessages = {
+  'reservation.vehicle-unavailable': 'Das ausgewählte Fahrzeug ist für den gewünschten Zeitraum nicht verfügbar.',
+  'validation.min-age': 'Sie müssen mindestens 21 Jahre alt sein, um ein Fahrzeug zu mieten.',
+  'validation.invalid-postal-code': 'Bitte geben Sie eine gültige deutsche Postleitzahl ein (5 Ziffern).',
+  'payment.failed': 'Die Zahlung konnte nicht durchgeführt werden. Bitte überprüfen Sie Ihre Zahlungsinformationen.',
+};
+```
+
+### 3. Time Zones
+
+**German Time Zone:**
+- CET (Central European Time) / CEST (Central European Summer Time)
+- UTC+1 / UTC+2 (daylight saving)
+
+**Implementation:**
+```csharp
+public sealed record ZonedDateTime(DateTime UtcDateTime)
+{
+    public DateTime ToGermanTime()
+    {
+        var germanTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Central European Standard Time");
+        return TimeZoneInfo.ConvertTimeFromUtc(UtcDateTime, germanTimeZone);
+    }
+}
+```
+
+## Testing Checklist
+
+### German Market Compliance Testing
+
+- [ ] GDPR data anonymization works correctly
+- [ ] Impressum page accessible from all pages
+- [ ] Privacy policy (Datenschutzerklärung) accessible
+- [ ] Cookie consent banner displays correctly
+- [ ] German date format (DD.MM.YYYY) displays correctly
+- [ ] Currency format (1.234,56 €) displays correctly
+- [ ] VAT calculation is correct (19%)
+- [ ] Invoice contains all mandatory fields
+- [ ] SEPA mandate generation works
+- [ ] German postal code validation (5 digits)
+- [ ] Phone number format with +49 country code
+- [ ] German language translations complete
+- [ ] Error messages in German
+- [ ] Email templates in German
+- [ ] Driving license validation for German licenses
+- [ ] Age restriction (21+) enforced
+- [ ] Terms & Conditions acceptance tracked
+
+## Summary
+
+### High Priority for MVP
+1. ✅ GDPR compliance (anonymization, consent)
+2. ✅ German language UI
+3. ✅ VAT handling (19%)
+4. ✅ German date/currency formats
+5. ✅ Impressum & Datenschutzerklärung pages
+6. ✅ Age validation (21+)
+7. ✅ German postal code validation
+
+### Medium Priority
+1. ⚠️ SEPA payment method
+2. ⚠️ Invoice generation with legal requirements
+3. ⚠️ Driving license validation
+4. ⚠️ Cookie consent banner
+5. ⚠️ Kilometer packages
+6. ⚠️ Vehicle extras (GPS, child seats)
+
+### Future Enhancements
+1. ⏳ B2B customer support with VAT ID
+2. ⏳ Cross-border travel policies
+3. ⏳ Insurance package selection
+4. ⏳ Framework agreements for corporate customers
+5. ⏳ Multi-language support (English, French)
+
+## Resources
+
+- [DSGVO (GDPR)](https://dsgvo-gesetz.de/)
+- [Impressumspflicht](https://www.e-recht24.de/impressum-generator.html)
+- [German VAT Rates](https://www.bundeszentralamt-steuern.de/)
+- [SEPA Direct Debit](https://www.europeanpaymentscouncil.eu/what-we-do/sepa-direct-debit)
+- [BITV 2.0 Accessibility](https://www.gesetze-im-internet.de/bitv_2_0/)

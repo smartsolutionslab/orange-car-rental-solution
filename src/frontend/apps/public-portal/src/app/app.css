@@ -1,0 +1,298 @@
+/* Orange Car Rental Styles */
+
+:host {
+  --orange-primary: #ff7f00;
+  --orange-dark: #cc6600;
+  --orange-light: #ff9933;
+  --gray-100: #f8f9fa;
+  --gray-200: #e9ecef;
+  --gray-300: #dee2e6;
+  --gray-700: #495057;
+  --gray-900: #212529;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Layout */
+.header {
+  background: white;
+  border-bottom: 2px solid var(--orange-primary);
+  padding: 1rem 0;
+  box-shadow: var(--shadow);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--orange-primary);
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+}
+
+/* Main Content */
+.main-content {
+  padding: 2rem 0;
+  background: var(--gray-100);
+  min-height: calc(100vh - 80px);
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 0.5rem 0;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: var(--gray-700);
+}
+
+/* Search Filters */
+.vehicle-search {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.search-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.filter-group label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.5rem;
+}
+
+.filter-group select {
+  padding: 0.75rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  font-size: 1rem;
+  background: white;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-group select:hover,
+.filter-group select:focus {
+  border-color: var(--orange-primary);
+  outline: none;
+}
+
+.btn-primary {
+  grid-column: span 1;
+  padding: 0.75rem 2rem;
+  background: var(--orange-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: end;
+}
+
+.btn-primary:hover {
+  background: var(--orange-dark);
+}
+
+/* Loading & Error States */
+.loading,
+.error,
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-size: 1.125rem;
+}
+
+.error {
+  color: #dc3545;
+}
+
+.no-results {
+  color: var(--gray-700);
+}
+
+/* Vehicle Grid */
+.vehicles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Vehicle Card */
+.vehicle-card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.vehicle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.vehicle-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: var(--gray-100);
+}
+
+.vehicle-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder-image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--gray-200) 0%, var(--gray-100) 100%);
+}
+
+.placeholder-image svg {
+  width: 80px;
+  height: 80px;
+  color: var(--gray-300);
+}
+
+.vehicle-details {
+  padding: 1.5rem;
+}
+
+.vehicle-details h3 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-900);
+}
+
+.vehicle-info {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.vehicle-info .category,
+.vehicle-info .location {
+  font-size: 0.875rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  background: var(--gray-100);
+  color: var(--gray-700);
+}
+
+.vehicle-specs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+.vehicle-specs span {
+  display: flex;
+  align-items: center;
+}
+
+.vehicle-pricing {
+  border-top: 1px solid var(--gray-200);
+  padding-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.price-amount {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--orange-primary);
+}
+
+.price-period {
+  font-size: 0.875rem;
+  color: var(--gray-700);
+}
+
+.price-details {
+  font-size: 0.75rem;
+  color: var(--gray-700);
+}
+
+.btn-book {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--orange-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-book:hover {
+  background: var(--orange-dark);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .search-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicles-grid {
+    grid-template-columns: 1fr;
+  }
+}

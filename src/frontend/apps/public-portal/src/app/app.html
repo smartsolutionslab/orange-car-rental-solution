@@ -1,0 +1,127 @@
+<header class="header">
+  <div class="container">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+      </svg>
+      <span class="logo-text">Orange Car Rental</span>
+    </div>
+  </div>
+</header>
+
+<main class="main-content">
+  <div class="container">
+    <div class="hero">
+      <h1>Finden Sie Ihr perfektes Fahrzeug</h1>
+      <p class="subtitle">Günstige Mietwagen in ganz Deutschland</p>
+    </div>
+
+    <div class="vehicle-search">
+      <div class="search-filters">
+        <div class="filter-group">
+          <label for="location">Standort</label>
+          <select id="location" (change)="onFilterChange()">
+            <option value="">Alle Standorte</option>
+            <option value="BER-HBF">Berlin Hauptbahnhof</option>
+            <option value="MUC-FLG">München Flughafen</option>
+            <option value="FRA-FLG">Frankfurt Flughafen</option>
+            <option value="HAM-HBF">Hamburg Hauptbahnhof</option>
+            <option value="CGN-HBF">Köln Hauptbahnhof</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="category">Fahrzeugklasse</label>
+          <select id="category" (change)="onFilterChange()">
+            <option value="">Alle Klassen</option>
+            <option value="KLEIN">Kleinwagen</option>
+            <option value="KOMPAKT">Kompaktklasse</option>
+            <option value="MITTEL">Mittelklasse</option>
+            <option value="OBER">Oberklasse</option>
+            <option value="SUV">SUV</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="fuel">Kraftstoffart</label>
+          <select id="fuel" (change)="onFilterChange()">
+            <option value="">Alle</option>
+            <option value="Petrol">Benzin</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Electric">Elektro</option>
+            <option value="Hybrid">Hybrid</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="transmission">Getriebe</label>
+          <select id="transmission" (change)="onFilterChange()">
+            <option value="">Alle</option>
+            <option value="Manual">Manuell</option>
+            <option value="Automatic">Automatik</option>
+          </select>
+        </div>
+
+        <button class="btn-primary" (click)="searchVehicles()">Suchen</button>
+      </div>
+
+      @if (loading()) {
+        <div class="loading">Lade Fahrzeuge...</div>
+      }
+
+      @if (error()) {
+        <div class="error">{{ error() }}</div>
+      }
+
+      @if (!loading() && vehicles().length > 0) {
+        <div class="vehicles-grid">
+          @for (vehicle of vehicles(); track vehicle.id) {
+            <div class="vehicle-card">
+              <div class="vehicle-image">
+                @if (vehicle.imageUrl) {
+                  <img [src]="vehicle.imageUrl" [alt]="vehicle.name" />
+                } @else {
+                  <div class="placeholder-image">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                    </svg>
+                  </div>
+                }
+              </div>
+              <div class="vehicle-details">
+                <h3>{{ vehicle.name }}</h3>
+                <div class="vehicle-info">
+                  <span class="category">{{ vehicle.categoryName }}</span>
+                  <span class="location">{{ vehicle.city }}</span>
+                </div>
+                <div class="vehicle-specs">
+                  <span>{{ vehicle.seats }} Sitze</span>
+                  <span>{{ vehicle.transmissionType }}</span>
+                  <span>{{ vehicle.fuelType }}</span>
+                </div>
+                <div class="vehicle-pricing">
+                  <div class="price-main">
+                    <span class="price-amount">{{ vehicle.dailyRateGross | number:'1.2-2':'de-DE' }} €</span>
+                    <span class="price-period">pro Tag</span>
+                  </div>
+                  <div class="price-details">
+                    <span>inkl. 19% MwSt.</span>
+                  </div>
+                </div>
+                <button class="btn-book">Jetzt buchen</button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+
+      @if (!loading() && vehicles().length === 0 && !error()) {
+        <div class="no-results">
+          <p>Keine Fahrzeuge gefunden. Bitte ändern Sie Ihre Suchkriterien.</p>
+        </div>
+      }
+    </div>
+  </div>
+</main>
+
+<router-outlet />
