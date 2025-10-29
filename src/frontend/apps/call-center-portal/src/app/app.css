@@ -1,0 +1,7 @@
+/* Call Center Portal - Component Styles */
+
+:host {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
