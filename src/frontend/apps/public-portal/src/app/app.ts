@@ -2,6 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { ConfigService } from './services/config.service';
 
 // Vehicle models (inline)
 export interface Vehicle {
@@ -42,7 +43,11 @@ export interface VehicleSearchResult {
 })
 export class App implements OnInit {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:5046/api/vehicles';
+  private readonly configService = inject(ConfigService);
+
+  private get apiUrl(): string {
+    return `${this.configService.apiUrl}/api/vehicles`;
+  }
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);

@@ -18,7 +18,7 @@ var fleetApi = builder.AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api
 var reservationsApi = builder.AddProject<Projects.OrangeCarRental_Reservations_Api>("reservations-api")
     .WithReference(reservationsDb);
 
-// API Gateway
+// API Gateway (port 5002 configured in launchSettings.json)
 var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-gateway")
     .WithReference(fleetApi)
     .WithReference(reservationsApi)
@@ -28,11 +28,13 @@ var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-ga
 var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal", "start")
     .WithHttpEndpoint(port: 4200, env: "PORT")
     .WithReference(apiGateway)
+    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints();
 
 var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal", "start")
     .WithHttpEndpoint(port: 4201, env: "PORT")
     .WithReference(apiGateway)
+    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints();
 
 builder.Build().Run();
