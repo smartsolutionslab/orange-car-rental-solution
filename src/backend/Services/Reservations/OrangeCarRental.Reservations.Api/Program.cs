@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,15 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// Register database context
+builder.Services.AddDbContext<ReservationsDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("ReservationsDatabase"),
+        sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure")));
+
+// Register repositories
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register application handlers
 builder.Services.AddScoped<CreateReservationCommandHandler>();

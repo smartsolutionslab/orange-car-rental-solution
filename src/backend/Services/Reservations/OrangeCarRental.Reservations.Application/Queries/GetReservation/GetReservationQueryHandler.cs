@@ -1,5 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 
@@ -9,20 +11,21 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Get
 /// </summary>
 public sealed class GetReservationQueryHandler
 {
-    // TODO: Inject IReservationRepository when database is implemented
-    // For now, we'll return sample data for demonstration
+    private readonly IReservationRepository _repository;
 
-    public Task<ReservationDto?> HandleAsync(
+    public GetReservationQueryHandler(IReservationRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    public async Task<ReservationDto?> HandleAsync(
         GetReservationQuery query,
         CancellationToken cancellationToken = default)
     {
-        // TODO: Fetch from repository
-        // var reservation = await _repository.GetByIdAsync(query.ReservationId, cancellationToken);
-        // if (reservation == null) return null;
+        var reservationId = ReservationIdentifier.From(query.ReservationId);
+        var reservation = await _repository.GetByIdAsync(reservationId, cancellationToken);
 
-        // For now, return null (not found)
-        // In a real implementation, this would fetch from the database
-        return Task.FromResult<ReservationDto?>(null);
+        return reservation == null ? null : MapToDto(reservation);
     }
 
     private static ReservationDto MapToDto(Reservation reservation)

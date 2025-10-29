@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
@@ -11,16 +12,19 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehi
 /// </summary>
 public sealed class SearchVehiclesQueryHandler
 {
-    // In a real implementation, this would use IVehicleReadRepository
-    // For now, we'll return sample data to demonstrate the structure
+    private readonly IVehicleRepository _repository;
 
-    public Task<SearchVehiclesResult> HandleAsync(
+    public SearchVehiclesQueryHandler(IVehicleRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    public async Task<SearchVehiclesResult> HandleAsync(
         SearchVehiclesQuery query,
         CancellationToken cancellationToken = default)
     {
-        // TODO: Replace with actual database query
-        // For now, return sample vehicles to demonstrate the API
-        var vehicles = GetSampleVehicles();
+        // Get all vehicles from database
+        var vehicles = await _repository.GetAllAsync(cancellationToken);
 
         // Apply filters
         var filtered = ApplyFilters(vehicles, query);
@@ -38,7 +42,7 @@ public sealed class SearchVehiclesQueryHandler
         // Map to DTOs
         var dtos = paged.Select(MapToDto).ToList();
 
-        var result = new SearchVehiclesResult
+        return new SearchVehiclesResult
         {
             Vehicles = dtos,
             TotalCount = total,
@@ -46,8 +50,6 @@ public sealed class SearchVehiclesQueryHandler
             PageSize = pageSize,
             TotalPages = (int)Math.Ceiling((double)total / pageSize)
         };
-
-        return Task.FromResult(result);
     }
 
     private List<Vehicle> ApplyFilters(List<Vehicle> vehicles, SearchVehiclesQuery query)
@@ -128,78 +130,5 @@ public sealed class SearchVehiclesQueryHandler
             Year = vehicle.Year?.Value,
             ImageUrl = vehicle.ImageUrl
         };
-    }
-
-    // Sample data for demonstration - TODO: Remove when database is implemented
-    private List<Vehicle> GetSampleVehicles()
-    {
-        var vehicles = new List<Vehicle>();
-
-        // Kleinwagen in Berlin
-        var golf = Vehicle.From(
-            VehicleName.Of("VW Golf"),
-            VehicleCategory.Kompaktklasse,
-            Location.BerlinHauptbahnhof,
-            Money.Euro(45m), // 45€ net, 53.55€ gross per day
-            SeatingCapacity.Of(5),
-            FuelType.Petrol,
-            TransmissionType.Manual
-        );
-        golf.SetDetails(Manufacturer.Of("Volkswagen"), VehicleModel.Of("Golf"), ManufacturingYear.Of(2023), "https://example.com/golf.jpg");
-        vehicles.Add(golf);
-
-        // Mittelklasse in München
-        var bmw3 = Vehicle.From(
-            VehicleName.Of("BMW 3er"),
-            VehicleCategory.Mittelklasse,
-            Location.MunichFlughafen,
-            Money.Euro(75m), // 75€ net, 89.25€ gross per day
-            SeatingCapacity.Of(5),
-            FuelType.Diesel,
-            TransmissionType.Automatic
-        );
-        bmw3.SetDetails(Manufacturer.Of("BMW"), VehicleModel.Of("3er"), ManufacturingYear.Of(2024), "https://example.com/bmw3.jpg");
-        vehicles.Add(bmw3);
-
-        // SUV in Frankfurt
-        var x5 = Vehicle.From(
-            VehicleName.Of("BMW X5"),
-            VehicleCategory.SUV,
-            Location.FrankfurtFlughafen,
-            Money.Euro(120m), // 120€ net, 142.80€ gross per day
-            SeatingCapacity.Of(7),
-            FuelType.Diesel,
-            TransmissionType.Automatic
-        );
-        x5.SetDetails(Manufacturer.Of("BMW"), VehicleModel.Of("X5"), ManufacturingYear.Of(2024), "https://example.com/x5.jpg");
-        vehicles.Add(x5);
-
-        // Elektro in Hamburg
-        var id3 = Vehicle.From(
-            VehicleName.Of("VW ID.3"),
-            VehicleCategory.Kompaktklasse,
-            Location.HamburgHauptbahnhof,
-            Money.Euro(55m), // 55€ net, 65.45€ gross per day
-            SeatingCapacity.Of(5),
-            FuelType.Electric,
-            TransmissionType.Automatic
-        );
-        id3.SetDetails(Manufacturer.Of("Volkswagen"), VehicleModel.Of("ID.3"), ManufacturingYear.Of(2024), "https://example.com/id3.jpg");
-        vehicles.Add(id3);
-
-        // Oberklasse in Köln
-        var mercedes = Vehicle.From(
-            VehicleName.Of("Mercedes E-Klasse"),
-            VehicleCategory.Oberklasse,
-            Location.KolnHauptbahnhof,
-            Money.Euro(95m), // 95€ net, 113.05€ gross per day
-            SeatingCapacity.Of(5),
-            FuelType.Hybrid,
-            TransmissionType.Automatic
-        );
-        mercedes.SetDetails(Manufacturer.Of("Mercedes-Benz"), VehicleModel.Of("E-Klasse"), ManufacturingYear.Of(2024), "https://example.com/mercedes-e.jpg");
-        vehicles.Add(mercedes);
-
-        return vehicles;
     }
 }

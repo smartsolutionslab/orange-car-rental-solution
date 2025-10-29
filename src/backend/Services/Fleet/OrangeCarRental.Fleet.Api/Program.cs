@@ -1,5 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +19,15 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
+// Register database context
+builder.Services.AddDbContext<FleetDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("FleetDatabase"),
+        sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure")));
+
+// Register repositories
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 // Register application services
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();

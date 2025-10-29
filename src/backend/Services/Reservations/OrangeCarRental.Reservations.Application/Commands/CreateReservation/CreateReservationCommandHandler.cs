@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
@@ -10,10 +11,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 /// </summary>
 public sealed class CreateReservationCommandHandler
 {
-    // TODO: Inject IReservationRepository when database is implemented
-    // For now, we'll store in-memory for demonstration
+    private readonly IReservationRepository _repository;
 
-    public Task<CreateReservationResult> HandleAsync(
+    public CreateReservationCommandHandler(IReservationRepository repository)
+    {
+        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+    }
+
+    public async Task<CreateReservationResult> HandleAsync(
         CreateReservationCommand command,
         CancellationToken cancellationToken = default)
     {
@@ -31,18 +36,17 @@ public sealed class CreateReservationCommandHandler
             totalPrice
         );
 
-        // TODO: Save to repository
-        // await _repository.AddAsync(reservation, cancellationToken);
+        // Save to repository
+        await _repository.AddAsync(reservation, cancellationToken);
+        await _repository.SaveChangesAsync(cancellationToken);
 
         // Map to result
-        var result = new CreateReservationResult(
+        return new CreateReservationResult(
             reservation.Id.Value,
             reservation.Status.ToString(),
             reservation.TotalPrice.NetAmount,
             reservation.TotalPrice.VatAmount,
             reservation.TotalPrice.GrossAmount
         );
-
-        return Task.FromResult(result);
     }
 }
