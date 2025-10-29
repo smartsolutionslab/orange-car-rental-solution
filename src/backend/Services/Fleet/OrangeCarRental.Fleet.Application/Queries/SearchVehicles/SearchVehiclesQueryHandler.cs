@@ -71,7 +71,7 @@ public sealed class SearchVehiclesQueryHandler
         // Filter by minimum seats
         if (query.MinSeats.HasValue)
         {
-            filtered = filtered.Where(v => v.Seats >= query.MinSeats.Value);
+            filtered = filtered.Where(v => v.Seats.Value >= query.MinSeats.Value);
         }
 
         // Filter by fuel type
@@ -114,7 +114,7 @@ public sealed class SearchVehiclesQueryHandler
             CategoryName = vehicle.Category.Name,
             LocationCode = vehicle.CurrentLocation.Code,
             City = vehicle.CurrentLocation.City,
-            Seats = vehicle.Seats,
+            Seats = vehicle.Seats.Value,
             FuelType = vehicle.FuelType.ToString(),
             TransmissionType = vehicle.TransmissionType.ToString(),
             DailyRateNet = vehicle.DailyRate.NetAmount,
@@ -123,9 +123,9 @@ public sealed class SearchVehiclesQueryHandler
             Currency = vehicle.DailyRate.Currency.Code,
             Status = vehicle.Status.ToString(),
             LicensePlate = vehicle.LicensePlate,
-            Manufacturer = vehicle.Manufacturer,
-            Model = vehicle.Model,
-            Year = vehicle.Year,
+            Manufacturer = vehicle.Manufacturer?.Value,
+            Model = vehicle.Model?.Value,
+            Year = vehicle.Year?.Value,
             ImageUrl = vehicle.ImageUrl
         };
     }
@@ -141,11 +141,11 @@ public sealed class SearchVehiclesQueryHandler
             VehicleCategory.Kompaktklasse,
             Location.BerlinHauptbahnhof,
             Money.Euro(45m), // 45€ net, 53.55€ gross per day
-            5,
+            SeatingCapacity.Of(5),
             FuelType.Petrol,
             TransmissionType.Manual
         );
-        golf.SetDetails("Volkswagen", "Golf", 2023, "https://example.com/golf.jpg");
+        golf.SetDetails(Manufacturer.Of("Volkswagen"), VehicleModel.Of("Golf"), ManufacturingYear.Of(2023), "https://example.com/golf.jpg");
         vehicles.Add(golf);
 
         // Mittelklasse in München
@@ -154,11 +154,11 @@ public sealed class SearchVehiclesQueryHandler
             VehicleCategory.Mittelklasse,
             Location.MunichFlughafen,
             Money.Euro(75m), // 75€ net, 89.25€ gross per day
-            5,
+            SeatingCapacity.Of(5),
             FuelType.Diesel,
             TransmissionType.Automatic
         );
-        bmw3.SetDetails("BMW", "3er", 2024, "https://example.com/bmw3.jpg");
+        bmw3.SetDetails(Manufacturer.Of("BMW"), VehicleModel.Of("3er"), ManufacturingYear.Of(2024), "https://example.com/bmw3.jpg");
         vehicles.Add(bmw3);
 
         // SUV in Frankfurt
@@ -167,11 +167,11 @@ public sealed class SearchVehiclesQueryHandler
             VehicleCategory.SUV,
             Location.FrankfurtFlughafen,
             Money.Euro(120m), // 120€ net, 142.80€ gross per day
-            7,
+            SeatingCapacity.Of(7),
             FuelType.Diesel,
             TransmissionType.Automatic
         );
-        x5.SetDetails("BMW", "X5", 2024, "https://example.com/x5.jpg");
+        x5.SetDetails(Manufacturer.Of("BMW"), VehicleModel.Of("X5"), ManufacturingYear.Of(2024), "https://example.com/x5.jpg");
         vehicles.Add(x5);
 
         // Elektro in Hamburg
@@ -180,11 +180,11 @@ public sealed class SearchVehiclesQueryHandler
             VehicleCategory.Kompaktklasse,
             Location.HamburgHauptbahnhof,
             Money.Euro(55m), // 55€ net, 65.45€ gross per day
-            5,
+            SeatingCapacity.Of(5),
             FuelType.Electric,
             TransmissionType.Automatic
         );
-        id3.SetDetails("Volkswagen", "ID.3", 2024, "https://example.com/id3.jpg");
+        id3.SetDetails(Manufacturer.Of("Volkswagen"), VehicleModel.Of("ID.3"), ManufacturingYear.Of(2024), "https://example.com/id3.jpg");
         vehicles.Add(id3);
 
         // Oberklasse in Köln
@@ -193,11 +193,11 @@ public sealed class SearchVehiclesQueryHandler
             VehicleCategory.Oberklasse,
             Location.KolnHauptbahnhof,
             Money.Euro(95m), // 95€ net, 113.05€ gross per day
-            5,
+            SeatingCapacity.Of(5),
             FuelType.Hybrid,
             TransmissionType.Automatic
         );
-        mercedes.SetDetails("Mercedes-Benz", "E-Klasse", 2024, "https://example.com/mercedes-e.jpg");
+        mercedes.SetDetails(Manufacturer.Of("Mercedes-Benz"), VehicleModel.Of("E-Klasse"), ManufacturingYear.Of(2024), "https://example.com/mercedes-e.jpg");
         vehicles.Add(mercedes);
 
         return vehicles;

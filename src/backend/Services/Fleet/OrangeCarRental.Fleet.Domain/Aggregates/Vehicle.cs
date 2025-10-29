@@ -16,14 +16,14 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     public VehicleCategory Category { get; private set; }
     public Location CurrentLocation { get; private set; }
     public Money DailyRate { get; private set; }
-    public int Seats { get; private set; }
+    public SeatingCapacity Seats { get; private set; }
     public FuelType FuelType { get; private set; }
     public TransmissionType TransmissionType { get; private set; }
     public VehicleStatus Status { get; private set; }
     public string? LicensePlate { get; private set; }
-    public string? Manufacturer { get; private set; }
-    public string? Model { get; private set; }
-    public int? Year { get; private set; }
+    public Manufacturer? Manufacturer { get; private set; }
+    public VehicleModel? Model { get; private set; }
+    public ManufacturingYear? Year { get; private set; }
     public string? ImageUrl { get; private set; }
 
     // For EF Core - properties will be set by EF Core during materialization
@@ -41,7 +41,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         VehicleCategory category,
         Location currentLocation,
         Money dailyRate,
-        int seats,
+        SeatingCapacity seats,
         FuelType fuelType,
         TransmissionType transmissionType)
         : base(id)
@@ -50,9 +50,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         Category = category;
         CurrentLocation = currentLocation;
         DailyRate = dailyRate;
-        Seats = seats > 0 && seats <= 9
-            ? seats
-            : throw new ArgumentException("Seats must be between 1 and 9", nameof(seats));
+        Seats = seats;
         FuelType = fuelType;
         TransmissionType = transmissionType;
         Status = VehicleStatus.Available;
@@ -68,7 +66,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         VehicleCategory category,
         Location currentLocation,
         Money dailyRate,
-        int seats,
+        SeatingCapacity seats,
         FuelType fuelType,
         TransmissionType transmissionType)
     {
@@ -177,10 +175,10 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// <summary>
     /// Set additional details (manufacturer, model, year, image).
     /// </summary>
-    public void SetDetails(string? manufacturer, string? model, int? year, string? imageUrl)
+    public void SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year, string? imageUrl)
     {
-        Manufacturer = manufacturer?.Trim();
-        Model = model?.Trim();
+        Manufacturer = manufacturer;
+        Model = model;
         Year = year;
         ImageUrl = imageUrl?.Trim();
     }
