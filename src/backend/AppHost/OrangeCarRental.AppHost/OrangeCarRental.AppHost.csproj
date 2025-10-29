@@ -10,5 +10,10 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting.AppHost" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Api\OrangeCarRental.Fleet.Api.csproj" />
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Api\OrangeCarRental.Reservations.Api.csproj" />
   </ItemGroup>
 </Project>

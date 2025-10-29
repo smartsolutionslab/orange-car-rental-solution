@@ -20,11 +20,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Register database context
-builder.Services.AddDbContext<FleetDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("FleetDatabase"),
-        sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure")));
+// Register database context (connection string provided by Aspire)
+builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions: options =>
+{
+    options.UseSqlServer(sqlOptions =>
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure"));
+});
 
 // Register repositories
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();

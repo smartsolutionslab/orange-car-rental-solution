@@ -20,11 +20,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Register database context
-builder.Services.AddDbContext<ReservationsDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("ReservationsDatabase"),
-        sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure")));
+// Register database context (connection string provided by Aspire)
+builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDbContextOptions: options =>
+{
+    options.UseSqlServer(sqlOptions =>
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
+});
 
 // Register repositories
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
