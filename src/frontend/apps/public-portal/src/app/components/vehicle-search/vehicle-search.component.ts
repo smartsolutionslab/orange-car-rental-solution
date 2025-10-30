@@ -52,12 +52,10 @@ export class VehicleSearchComponent implements OnInit {
   protected readonly minReturnDate = signal(this.today);
 
   constructor() {
-    // Initialize form with default values
+    // Initialize form with default values (day-wise rentals)
     this.searchForm = this.fb.group({
       pickupDate: [''],
-      pickupTime: ['10:00'],
       returnDate: [''],
-      returnTime: ['10:00'],
       locationCode: [''],
       categoryCode: [''],
       fuelType: [''],
@@ -98,7 +96,7 @@ export class VehicleSearchComponent implements OnInit {
   }
 
   /**
-   * Handle search form submission
+   * Handle search form submission (day-wise rentals)
    */
   protected onSearch(): void {
     if (this.searchForm.invalid) {
@@ -107,19 +105,10 @@ export class VehicleSearchComponent implements OnInit {
 
     const formValue = this.searchForm.value;
 
-    // Combine date and time into ISO 8601 format
-    const pickupDateTime = formValue.pickupDate && formValue.pickupTime
-      ? `${formValue.pickupDate}T${formValue.pickupTime}:00`
-      : undefined;
-
-    const returnDateTime = formValue.returnDate && formValue.returnTime
-      ? `${formValue.returnDate}T${formValue.returnTime}:00`
-      : undefined;
-
-    // Build search query
+    // Build search query with dates only (YYYY-MM-DD format)
     const query: VehicleSearchQuery = {
-      pickupDate: pickupDateTime,
-      returnDate: returnDateTime,
+      pickupDate: formValue.pickupDate || undefined,
+      returnDate: formValue.returnDate || undefined,
       locationCode: formValue.locationCode || undefined,
       categoryCode: formValue.categoryCode || undefined,
       fuelType: formValue.fuelType || undefined,
@@ -141,9 +130,7 @@ export class VehicleSearchComponent implements OnInit {
   protected onReset(): void {
     this.searchForm.reset({
       pickupDate: '',
-      pickupTime: '10:00',
       returnDate: '',
-      returnTime: '10:00',
       locationCode: '',
       categoryCode: '',
       fuelType: '',

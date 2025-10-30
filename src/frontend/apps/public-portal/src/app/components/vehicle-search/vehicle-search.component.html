@@ -3,7 +3,7 @@
   <div class="search-section">
     <h3 class="section-title">Mietdauer</h3>
     <div class="date-range-group">
-      <!-- Pickup Date & Time -->
+      <!-- Pickup Date -->
       <div class="date-time-group">
         <label for="pickupDate" class="form-label">
           <svg class="label-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -20,16 +20,10 @@
             class="form-input date-input"
             required
           />
-          <input
-            type="time"
-            formControlName="pickupTime"
-            class="form-input time-input"
-            required
-          />
         </div>
       </div>
 
-      <!-- Return Date & Time -->
+      <!-- Return Date -->
       <div class="date-time-group">
         <label for="returnDate" class="form-label">
           <svg class="label-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -44,12 +38,6 @@
             formControlName="returnDate"
             [min]="minReturnDate()"
             class="form-input date-input"
-            required
-          />
-          <input
-            type="time"
-            formControlName="returnTime"
-            class="form-input time-input"
             required
           />
         </div>
