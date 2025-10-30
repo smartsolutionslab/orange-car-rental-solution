@@ -12,6 +12,13 @@ public interface IVehicleRepository
 
     Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// Searches vehicles with database-level filtering and pagination.
+    /// </summary>
+    Task<PagedResult<Vehicle>> SearchAsync(
+        VehicleSearchParameters parameters,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default);
 
     Task UpdateAsync(Vehicle vehicle, CancellationToken cancellationToken = default);
