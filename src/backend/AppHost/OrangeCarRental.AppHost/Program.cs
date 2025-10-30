@@ -1,25 +1,30 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 // SQL Server container for both databases
+// Persistent lifetime ensures data survives container restarts
 var sqlServer = builder.AddSqlServer("sql")
     .WithLifetime(ContainerLifetime.Persistent);
 
-// Fleet database
+// Fleet database - manages vehicle inventory and availability
 var fleetDb = sqlServer.AddDatabase("fleet", "OrangeCarRental_Fleet");
 
-// Reservations database
+// Reservations database - manages customer bookings and rental history
 var reservationsDb = sqlServer.AddDatabase("reservations", "OrangeCarRental_Reservations");
 
 // Check if we should run migrations as separate jobs (for Azure deployment simulation)
 var runMigrationJobs = builder.Configuration["RunMigrationJobs"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
 
+// Fleet API - Vehicle inventory and availability management
 IResourceBuilder<ProjectResource> fleetApi = builder
     .AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api")
-    .WithReference(fleetDb);
+    .WithReference(fleetDb)
+    .WaitFor(sqlServer);
 
+// Reservations API - Customer booking and rental management
 IResourceBuilder<ProjectResource> reservationsApi = builder
     .AddProject<Projects.OrangeCarRental_Reservations_Api>("reservations-api")
-    .WithReference(reservationsDb);
+    .WithReference(reservationsDb)
+    .WaitFor(sqlServer);
 
 if (runMigrationJobs)
 {
@@ -41,23 +46,32 @@ if (runMigrationJobs)
         .WaitFor(reservationsMigration);
 }
 
-// API Gateway (port 5002 configured in launchSettings.json)
+// API Gateway - YARP reverse proxy with service discovery
+// Routes /api/vehicles/* to Fleet API and /api/reservations/* to Reservations API
+// Configured on port 5002 (see launchSettings.json)
 var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("FLEET_API_URL", fleetApi.GetEndpoint("http"))
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WaitFor(fleetApi)
+    .WaitFor(reservationsApi);
 
-// Frontend Applications (Aspire passes port via PORT environment variable)
+// Public Portal - Customer-facing Angular application for vehicle search and booking
+// Accessible at http://localhost:4200
 var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal", "start")
     .WithHttpEndpoint(port: 4200, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WaitFor(apiGateway);
 
+// Call Center Portal - Agent-facing Angular application for reservation management
+// Accessible at http://localhost:4201
 var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal", "start")
     .WithHttpEndpoint(port: 4201, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
-    .WithExternalHttpEndpoints();
+    .WithExternalHttpEndpoints()
+    .WaitFor(apiGateway);
 
 builder.Build().Run();
