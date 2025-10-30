@@ -48,6 +48,9 @@ if (args.Contains("--migrate-only"))
 // Apply database migrations (auto in dev/Aspire, manual in production)
 await app.MigrateDatabaseAsync<ReservationsDbContext>();
 
+// Seed database with sample data (development only)
+await app.SeedReservationsDataAsync();
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
