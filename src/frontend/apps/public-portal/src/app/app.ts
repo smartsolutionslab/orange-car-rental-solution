@@ -1,94 +1,40 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { DecimalPipe } from '@angular/common';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { ConfigService } from './services/config.service';
-
-// Vehicle models (inline)
-export interface Vehicle {
-  id: string;
-  name: string;
-  categoryCode: string;
-  categoryName: string;
-  locationCode: string;
-  city: string;
-  seats: number;
-  fuelType: string;
-  transmissionType: string;
-  dailyRateNet: number;
-  dailyRateVat: number;
-  dailyRateGross: number;
-  currency: string;
-  status: string;
-  licensePlate: string | null;
-  manufacturer: string;
-  model: string;
-  year: number;
-  imageUrl: string | null;
-}
-
-export interface VehicleSearchResult {
-  vehicles: Vehicle[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-}
+import { VehicleService } from './services/vehicle.service';
+import { Vehicle } from './services/vehicle.model';
+import { VehicleSearchComponent, VehicleSearchQuery } from './components/vehicle-search/vehicle-search.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, DecimalPipe],
+  imports: [RouterOutlet, DecimalPipe, VehicleSearchComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App implements OnInit {
-  private readonly http = inject(HttpClient);
-  private readonly configService = inject(ConfigService);
-
-  private get apiUrl(): string {
-    return `${this.configService.apiUrl}/api/vehicles`;
-  }
+  private readonly vehicleService = inject(VehicleService);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
-
-  private selectedLocation = '';
-  private selectedCategory = '';
-  private selectedFuel = '';
-  private selectedTransmission = '';
+  protected readonly totalCount = signal(0);
 
   ngOnInit() {
-    // Load all vehicles on init
-    this.searchVehicles();
+    // Load all vehicles on init with empty search
+    this.onSearch({});
   }
 
-  protected onFilterChange() {
-    // Get values from select elements
-    const locationSelect = document.getElementById('location') as HTMLSelectElement;
-    const categorySelect = document.getElementById('category') as HTMLSelectElement;
-    const fuelSelect = document.getElementById('fuel') as HTMLSelectElement;
-    const transmissionSelect = document.getElementById('transmission') as HTMLSelectElement;
-
-    this.selectedLocation = locationSelect?.value || '';
-    this.selectedCategory = categorySelect?.value || '';
-    this.selectedFuel = fuelSelect?.value || '';
-    this.selectedTransmission = transmissionSelect?.value || '';
-  }
-
-  protected searchVehicles() {
+  /**
+   * Handle search event from vehicle search component
+   */
+  protected onSearch(query: VehicleSearchQuery) {
     this.loading.set(true);
     this.error.set(null);
 
-    let params = new HttpParams();
-    if (this.selectedLocation) params = params.set('locationCode', this.selectedLocation);
-    if (this.selectedCategory) params = params.set('categoryCode', this.selectedCategory);
-    if (this.selectedFuel) params = params.set('fuelType', this.selectedFuel);
-    if (this.selectedTransmission) params = params.set('transmissionType', this.selectedTransmission);
-
-    this.http.get<VehicleSearchResult>(this.apiUrl, { params }).subscribe({
+    this.vehicleService.searchVehicles(query).subscribe({
       next: (result) => {
         this.vehicles.set(result.vehicles);
+        this.totalCount.set(result.totalCount);
         this.loading.set(false);
       },
       error: (err) => {
