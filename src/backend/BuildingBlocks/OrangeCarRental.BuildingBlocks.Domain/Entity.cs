@@ -41,10 +41,7 @@ public abstract class Entity<TId> where TId : notnull
         return Id.Equals(other.Id);
     }
 
-    public override int GetHashCode()
-    {
-        return Id.GetHashCode();
-    }
+    public override int GetHashCode() => Id.GetHashCode();
 
     public static bool operator ==(Entity<TId>? a, Entity<TId>? b)
     {

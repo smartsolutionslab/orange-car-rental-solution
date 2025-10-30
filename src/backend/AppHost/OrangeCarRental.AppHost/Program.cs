@@ -13,8 +13,13 @@ var reservationsDb = sqlServer.AddDatabase("reservations", "OrangeCarRental_Rese
 // Check if we should run migrations as separate jobs (for Azure deployment simulation)
 var runMigrationJobs = builder.Configuration["RunMigrationJobs"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
 
-IResourceBuilder<ProjectResource> fleetApi;
-IResourceBuilder<ProjectResource> reservationsApi;
+IResourceBuilder<ProjectResource> fleetApi = builder
+    .AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api")
+    .WithReference(fleetDb);
+
+IResourceBuilder<ProjectResource> reservationsApi = builder
+    .AddProject<Projects.OrangeCarRental_Reservations_Api>("reservations-api")
+    .WithReference(reservationsDb);
 
 if (runMigrationJobs)
 {
@@ -28,25 +33,12 @@ if (runMigrationJobs)
         .WithArgs("--migrate-only");
 
     // Fleet API - wait for migrations to complete
-    fleetApi = builder.AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api")
-        .WithReference(fleetDb)
+    fleetApi = fleetApi
         .WaitFor(fleetMigration);
 
     // Reservations API - wait for migrations to complete
-    reservationsApi = builder.AddProject<Projects.OrangeCarRental_Reservations_Api>("reservations-api")
-        .WithReference(reservationsDb)
+    reservationsApi = reservationsApi
         .WaitFor(reservationsMigration);
-}
-else
-{
-    // Standard mode - APIs auto-migrate on startup (default for local development)
-    // Fleet API
-    fleetApi = builder.AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api")
-        .WithReference(fleetDb);
-
-    // Reservations API
-    reservationsApi = builder.AddProject<Projects.OrangeCarRental_Reservations_Api>("reservations-api")
-        .WithReference(reservationsDb);
 }
 
 // API Gateway (port 5002 configured in launchSettings.json)

@@ -87,10 +87,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void UpdateDailyRate(Money newDailyRate)
     {
-        if (newDailyRate == DailyRate)
-        {
-            return;
-        }
+        if (newDailyRate == DailyRate) return;
 
         var oldRate = DailyRate;
         DailyRate = newDailyRate;
@@ -103,15 +100,9 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void MoveToLocation(Location newLocation)
     {
-        if (newLocation == CurrentLocation)
-        {
-            return;
-        }
+        if (newLocation == CurrentLocation) return;
 
-        if (Status == VehicleStatus.Rented)
-        {
-            throw new InvalidOperationException("Cannot move a rented vehicle");
-        }
+        if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot move a rented vehicle");
 
         var oldLocation = CurrentLocation;
         CurrentLocation = newLocation;
@@ -124,10 +115,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void ChangeStatus(VehicleStatus newStatus)
     {
-        if (newStatus == Status)
-        {
-            return;
-        }
+        if (newStatus == Status) return;
 
         Status = newStatus;
         AddDomainEvent(new VehicleStatusChanged(Id, Status));
@@ -138,10 +126,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void MarkAsAvailable()
     {
-        if (Status == VehicleStatus.Available)
-        {
-            return;
-        }
+        if (Status == VehicleStatus.Available) return;
 
         ChangeStatus(VehicleStatus.Available);
     }
@@ -164,10 +149,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void MarkAsUnderMaintenance()
     {
-        if (Status == VehicleStatus.Rented)
-        {
-            throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
-        }
+        if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
 
         ChangeStatus(VehicleStatus.Maintenance);
     }
@@ -188,10 +170,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void SetLicensePlate(string licensePlate)
     {
-        if (string.IsNullOrWhiteSpace(licensePlate))
-        {
-            throw new ArgumentException("License plate cannot be empty", nameof(licensePlate));
-        }
+        if (string.IsNullOrWhiteSpace(licensePlate)) throw new ArgumentException("License plate cannot be empty", nameof(licensePlate));
 
         LicensePlate = licensePlate.ToUpperInvariant().Trim();
     }
@@ -199,8 +178,5 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// <summary>
     /// Check if vehicle is available for rental in the given period.
     /// </summary>
-    public bool IsAvailableForRental()
-    {
-        return Status == VehicleStatus.Available;
-    }
+    public bool IsAvailableForRental() => Status == VehicleStatus.Available;
 }

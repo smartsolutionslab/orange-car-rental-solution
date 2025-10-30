@@ -10,13 +10,9 @@ public abstract class AggregateRoot<TId> : Entity<TId> where TId : notnull
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 
-    protected AggregateRoot()
-    {
-    }
+    protected AggregateRoot() { }
 
-    protected AggregateRoot(TId id) : base(id)
-    {
-    }
+    protected AggregateRoot(TId id) : base(id) { }
 
     /// <summary>
     /// Gets the domain events that have been raised by this aggregate.
@@ -44,16 +40,10 @@ public abstract class AggregateRoot<TId> : Entity<TId> where TId : notnull
     /// <summary>
     /// Gets uncommitted events (for event sourcing).
     /// </summary>
-    public IEnumerable<IDomainEvent> GetUncommittedEvents()
-    {
-        return _domainEvents.ToList();
-    }
+    public IEnumerable<IDomainEvent> GetUncommittedEvents() => _domainEvents.ToList();
 
     /// <summary>
     /// Marks all events as committed (for event sourcing).
     /// </summary>
-    public void MarkEventsAsCommitted()
-    {
-        _domainEvents.Clear();
-    }
+    public void MarkEventsAsCommitted() => _domainEvents.Clear();
 }

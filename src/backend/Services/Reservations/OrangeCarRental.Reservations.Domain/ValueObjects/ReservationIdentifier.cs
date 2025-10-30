@@ -13,10 +13,8 @@ public readonly record struct ReservationIdentifier
 
     public static ReservationIdentifier From(Guid value)
     {
-        if (value == Guid.Empty)
-        {
-            throw new ArgumentException("Reservation ID cannot be empty", nameof(value));
-        }
+        if (value == Guid.Empty) throw new ArgumentException("Reservation ID cannot be empty", nameof(value));
+
         return new ReservationIdentifier(value);
     }
 

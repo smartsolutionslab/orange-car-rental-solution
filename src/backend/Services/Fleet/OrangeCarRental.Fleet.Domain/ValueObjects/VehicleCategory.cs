@@ -39,10 +39,7 @@ public readonly record struct VehicleCategory
 
     public static VehicleCategory FromCode(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-        {
-            throw new ArgumentException("Category code cannot be empty", nameof(code));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
 
         string upperCode = code.ToUpperInvariant();
         if (!_categories.TryGetValue(upperCode, out VehicleCategory category))

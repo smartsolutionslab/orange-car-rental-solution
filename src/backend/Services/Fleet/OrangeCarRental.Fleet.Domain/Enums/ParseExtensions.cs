@@ -2,7 +2,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
 
 public static class ParseExtensions
 {
-    private static TransmissionType? ParseTransmissionType(string value)
+    public static TransmissionType ParseTransmissionType(this string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        return Enum.Parse<TransmissionType>(value, ignoreCase: true);
+    }
+
+    public static TransmissionType? TryParseTransmissionType(this string? value)
     {
         if(Enum.TryParse(value, true, out TransmissionType parsedTransmissionType))
         {
@@ -12,7 +18,13 @@ public static class ParseExtensions
         return null;
     }
 
-    private static FuelType? ParseFuelType(string value)
+    public static FuelType ParseFuelType(this string value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        return Enum.Parse<FuelType>(value, ignoreCase: true);
+    }
+
+    public static FuelType? TryParseFuelType(this string? value)
     {
         if (Enum.TryParse(value, true, out FuelType parsedFuelType))
         {

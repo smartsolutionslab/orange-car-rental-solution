@@ -14,6 +14,7 @@ public readonly record struct BookingPeriod
     /// </summary>
     public int Days => (ReturnDate.Date - PickupDate.Date).Days + 1;
 
+
     private BookingPeriod(DateTime pickupDate, DateTime returnDate)
     {
         PickupDate = pickupDate;
@@ -51,10 +52,7 @@ public readonly record struct BookingPeriod
     /// <summary>
     /// Checks if this booking period overlaps with another period.
     /// </summary>
-    public bool OverlapsWith(BookingPeriod other)
-    {
-        return PickupDate <= other.ReturnDate && ReturnDate >= other.PickupDate;
-    }
+    public bool OverlapsWith(BookingPeriod other) => PickupDate <= other.ReturnDate && ReturnDate >= other.PickupDate;
 
     public override string ToString() => $"{PickupDate:yyyy-MM-dd} to {ReturnDate:yyyy-MM-dd} ({Days} days)";
 }
