@@ -7,11 +7,20 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="FluentAssertions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Reservations.Application\OrangeCarRental.Reservations.Application.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
   </ItemGroup>
 </Project>
