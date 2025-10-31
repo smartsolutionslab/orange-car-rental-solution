@@ -6,6 +6,7 @@
     <!-- ASP.NET Core -->
     <PackageVersion Include="Aspire.Hosting.NodeJs" Version="9.5.2" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.ServiceDiscovery" Version="9.5.2" />
     <PackageVersion Include="Scalar.AspNetCore" Version="1.2.41" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
@@ -21,6 +22,7 @@
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="9.5.2" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="9.5.2" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="9.5.2" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.8.1" />
     <!-- API Gateway -->
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.2.0" />
     <!-- Authentication & Authorization -->

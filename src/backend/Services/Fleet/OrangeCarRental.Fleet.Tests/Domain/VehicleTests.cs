@@ -326,6 +326,7 @@ public class VehicleTests
             TransmissionType.Manual
         );
         vehicle.SetLicensePlate("B-XY-1234");
+        vehicle.ClearDomainEvents();
         return vehicle;
     }
 }

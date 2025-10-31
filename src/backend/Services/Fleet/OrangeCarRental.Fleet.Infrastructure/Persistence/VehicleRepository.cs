@@ -9,14 +9,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 /// <summary>
 /// Entity Framework implementation of IVehicleRepository.
 /// </summary>
-public sealed class VehicleRepository : IVehicleRepository
+public sealed class VehicleRepository(FleetDbContext context) : IVehicleRepository
 {
-    private readonly FleetDbContext _context;
-
-    public VehicleRepository(FleetDbContext context)
-    {
-        _context = context ?? throw new ArgumentNullException(nameof(context));
-    }
+    private readonly FleetDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
 
     public async Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
@@ -39,19 +34,27 @@ public sealed class VehicleRepository : IVehicleRepository
         var query = _context.Vehicles.AsNoTracking().AsQueryable();
 
         // Apply filters using database-level WHERE clauses
+        // Use EF.Property to access the stored column values directly since value objects
+        // with value converters cannot have their nested properties accessed in LINQ queries
         if (!string.IsNullOrWhiteSpace(parameters.LocationCode))
         {
-            query = query.Where(v => v.CurrentLocation.Code == parameters.LocationCode);
+            // Compare the value object directly - EF Core will use the value converter
+            var location = Location.FromCode(parameters.LocationCode);
+            query = query.Where(v => v.CurrentLocation == location);
         }
 
         if (!string.IsNullOrWhiteSpace(parameters.CategoryCode))
         {
-            query = query.Where(v => v.Category.Code == parameters.CategoryCode);
+            // Compare the value object directly - EF Core will use the value converter
+            var category = VehicleCategory.FromCode(parameters.CategoryCode);
+            query = query.Where(v => v.Category == category);
         }
 
         if (parameters.MinSeats.HasValue)
         {
-            query = query.Where(v => v.Seats.Value >= parameters.MinSeats.Value);
+            // Compare using the >= operator defined on SeatingCapacity
+            // Use the comparison directly in the query for EF Core to translate it properly
+            query = query.Where(v => v.Seats >= SeatingCapacity.Of(parameters.MinSeats.Value));
         }
 
         if (parameters.FuelType.HasValue)
@@ -64,9 +67,12 @@ public sealed class VehicleRepository : IVehicleRepository
             query = query.Where(v => v.TransmissionType == parameters.TransmissionType.Value);
         }
 
+        // Filter by MaxDailyRateGross using complex property members
         if (parameters.MaxDailyRateGross.HasValue)
         {
-            query = query.Where(v => v.DailyRate.GrossAmount <= parameters.MaxDailyRateGross.Value);
+            // Access complex property members directly - EF Core can translate this
+            query = query.Where(v =>
+                v.DailyRate.NetAmount + v.DailyRate.VatAmount <= parameters.MaxDailyRateGross.Value);
         }
 
         if (parameters.Status.HasValue)
@@ -92,10 +98,7 @@ public sealed class VehicleRepository : IVehicleRepository
         };
     }
 
-    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default)
-    {
-        await _context.Vehicles.AddAsync(vehicle, cancellationToken);
-    }
+    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default) => await _context.Vehicles.AddAsync(vehicle, cancellationToken);
 
     public Task UpdateAsync(Vehicle vehicle, CancellationToken cancellationToken = default)
     {
@@ -112,8 +115,5 @@ public sealed class VehicleRepository : IVehicleRepository
         }
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await _context.SaveChangesAsync(cancellationToken);
-    }
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
 }

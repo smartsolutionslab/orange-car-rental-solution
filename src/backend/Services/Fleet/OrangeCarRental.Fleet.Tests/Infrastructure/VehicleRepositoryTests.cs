@@ -5,22 +5,43 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
+using Testcontainers.MsSql;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
 
-public class VehicleRepositoryTests : IDisposable
+public class VehicleRepositoryTests : IAsyncLifetime
 {
-    private readonly FleetDbContext _context;
-    private readonly VehicleRepository _repository;
+    private readonly MsSqlContainer _msSqlContainer;
+    private FleetDbContext _context = null!;
+    private VehicleRepository _repository = null!;
 
     public VehicleRepositoryTests()
     {
+        // Configure SQL Server container
+        _msSqlContainer = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .Build();
+    }
+
+    public async Task InitializeAsync()
+    {
+        // Start the SQL Server container
+        await _msSqlContainer.StartAsync();
+
+        // Create DbContext with SQL Server connection
         var options = new DbContextOptionsBuilder<FleetDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseSqlServer(_msSqlContainer.GetConnectionString())
             .Options;
 
         _context = new FleetDbContext(options);
+        await _context.Database.EnsureCreatedAsync();
         _repository = new VehicleRepository(_context);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _context.DisposeAsync();
+        await _msSqlContainer.DisposeAsync();
     }
 
     [Fact]
@@ -125,7 +146,8 @@ public class VehicleRepositoryTests : IDisposable
         var result = await _repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(3);
+        // Test data has: VW Golf (5), Tesla (5), Ford Focus (5), BMW X5 (7) = 4 vehicles with >= 5 seats
+        result.Items.Should().HaveCount(4);
         result.Items.Should().AllSatisfy(v =>
             v.Seats.Value.Should().BeGreaterThanOrEqualTo(5));
     }
@@ -298,10 +320,5 @@ public class VehicleRepositoryTests : IDisposable
         );
         vehicle.SetLicensePlate($"B-{Guid.NewGuid().ToString()[..6].ToUpper()}");
         return vehicle;
-    }
-
-    public void Dispose()
-    {
-        _context?.Dispose();
     }
 }

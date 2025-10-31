@@ -22,8 +22,8 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
         // Arrange
         var httpClient = _fixture.CreateHttpClient("api-gateway");
 
-        // Step 1: Search for available vehicles
-        var searchResponse = await httpClient.GetAsync("/api/vehicles?locationCode=BER");
+        // Step 1: Search for available vehicles at Berlin Hauptbahnhof
+        var searchResponse = await httpClient.GetAsync("/api/vehicles?locationCode=BER-HBF");
         searchResponse.EnsureSuccessStatusCode();
 
         var searchContent = await searchResponse.Content.ReadAsStringAsync();
@@ -47,8 +47,8 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
                 customerId = Guid.NewGuid(),
                 pickupDate = DateTime.UtcNow.AddDays(1).ToString("O"),
                 returnDate = DateTime.UtcNow.AddDays(3).ToString("O"),
-                pickupLocationCode = "BER",
-                returnLocationCode = "BER",
+                pickupLocationCode = "BER-HBF",
+                returnLocationCode = "BER-HBF",
                 dailyRateNet = selectedVehicle.DailyRateNet,
                 currency = "EUR"
             };
@@ -77,8 +77,9 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
         var httpClient = _fixture.CreateHttpClient("api-gateway");
 
         // Act - Search with multiple filters
+        // Using KOMPAKT (German for compact) which is the actual category code
         var response = await httpClient.GetAsync(
-            "/api/vehicles?locationCode=MUC&categoryCode=COMPACT&fuelType=Petrol");
+            "/api/vehicles?locationCode=MUC-FLG&categoryCode=KOMPAKT&fuelType=Petrol");
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -94,8 +95,8 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
         // All returned vehicles should match the filters
         foreach (var vehicle in result.Vehicles)
         {
-            Assert.Equal("MUC", vehicle.LocationCode);
-            Assert.Equal("COMPACT", vehicle.CategoryCode);
+            Assert.Equal("MUC-FLG", vehicle.LocationCode);
+            Assert.Equal("KOMPAKT", vehicle.CategoryCode);
             Assert.Equal("Petrol", vehicle.FuelType);
         }
     }

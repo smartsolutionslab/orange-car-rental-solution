@@ -24,9 +24,9 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     public DateTime? CompletedAt { get; private set; }
 
     // For EF Core
-    private Reservation() : base(ReservationIdentifier.New())
+    private Reservation()
     {
-        Period = default;
+        Period = default!;
         TotalPrice = default;
     }
 

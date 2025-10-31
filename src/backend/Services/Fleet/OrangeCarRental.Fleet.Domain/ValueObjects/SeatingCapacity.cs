@@ -27,5 +27,11 @@ public readonly record struct SeatingCapacity
 
     public static implicit operator int(SeatingCapacity capacity) => capacity.Value;
 
+    // Comparison operators for filtering and sorting
+    public static bool operator <(SeatingCapacity left, SeatingCapacity right) => left.Value < right.Value;
+    public static bool operator <=(SeatingCapacity left, SeatingCapacity right) => left.Value <= right.Value;
+    public static bool operator >(SeatingCapacity left, SeatingCapacity right) => left.Value > right.Value;
+    public static bool operator >=(SeatingCapacity left, SeatingCapacity right) => left.Value >= right.Value;
+
     public override string ToString() => Value.ToString();
 }

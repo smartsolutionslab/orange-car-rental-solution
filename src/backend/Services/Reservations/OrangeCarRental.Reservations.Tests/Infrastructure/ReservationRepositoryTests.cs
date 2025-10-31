@@ -4,22 +4,43 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
+using Testcontainers.MsSql;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Infrastructure;
 
-public class ReservationRepositoryTests : IDisposable
+public class ReservationRepositoryTests : IAsyncLifetime
 {
-    private readonly ReservationsDbContext _context;
-    private readonly ReservationRepository _repository;
+    private readonly MsSqlContainer _msSqlContainer;
+    private ReservationsDbContext _context = null!;
+    private ReservationRepository _repository = null!;
 
     public ReservationRepositoryTests()
     {
+        // Configure SQL Server container
+        _msSqlContainer = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+            .Build();
+    }
+
+    public async Task InitializeAsync()
+    {
+        // Start the SQL Server container
+        await _msSqlContainer.StartAsync();
+
+        // Create DbContext with SQL Server connection
         var options = new DbContextOptionsBuilder<ReservationsDbContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .UseSqlServer(_msSqlContainer.GetConnectionString())
             .Options;
 
         _context = new ReservationsDbContext(options);
+        await _context.Database.EnsureCreatedAsync();
         _repository = new ReservationRepository(_context);
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _context.DisposeAsync();
+        await _msSqlContainer.DisposeAsync();
     }
 
     #region GetByIdAsync Tests
@@ -365,11 +386,8 @@ public class ReservationRepositoryTests : IDisposable
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        return Reservation.Create(vehicleId, customerId, period, totalPrice);
-    }
-
-    public void Dispose()
-    {
-        _context?.Dispose();
+        var reservation = Reservation.Create(vehicleId, customerId, period, totalPrice);
+        reservation.ClearDomainEvents();
+        return reservation;
     }
 }

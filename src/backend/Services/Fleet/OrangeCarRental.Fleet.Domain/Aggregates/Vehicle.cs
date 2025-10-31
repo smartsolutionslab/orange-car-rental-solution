@@ -27,12 +27,13 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     public string? ImageUrl { get; private set; }
 
     // For EF Core - properties will be set by EF Core during materialization
-    private Vehicle() : base(VehicleIdentifier.New())
+    private Vehicle()
     {
-        Name = default;
-        Category = default;
-        CurrentLocation = default;
+        Name = default!;
+        Category = default!;
+        CurrentLocation = default!;
         DailyRate = default;
+        Seats = default!;
     }
 
     private Vehicle(
