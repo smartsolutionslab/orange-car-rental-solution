@@ -51,6 +51,8 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 // Register application services
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();
+builder.Services.AddScoped<SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations.GetLocationsQueryHandler>();
+builder.Services.AddScoped<SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations.GetLocationByCodeQueryHandler>();
 
 var app = builder.Build();
 
