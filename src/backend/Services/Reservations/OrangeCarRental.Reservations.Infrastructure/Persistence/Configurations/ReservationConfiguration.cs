@@ -47,6 +47,23 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .IsRequired();
         });
 
+        // LocationCode value objects
+        builder.Property(r => r.PickupLocationCode)
+            .HasColumnName("PickupLocationCode")
+            .HasConversion(
+                locationCode => locationCode.Value,
+                value => LocationCode.Of(value))
+            .HasMaxLength(20)
+            .IsRequired();
+
+        builder.Property(r => r.DropoffLocationCode)
+            .HasColumnName("DropoffLocationCode")
+            .HasConversion(
+                locationCode => locationCode.Value,
+                value => LocationCode.Of(value))
+            .HasMaxLength(20)
+            .IsRequired();
+
         // Money value object - complex type mapping for German VAT
         builder.ComplexProperty(r => r.TotalPrice, money =>
         {
@@ -101,6 +118,8 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         builder.HasIndex(r => r.VehicleId);
         builder.HasIndex(r => r.CustomerId);
         builder.HasIndex(r => r.Status);
+        builder.HasIndex(r => r.PickupLocationCode);
+        builder.HasIndex(r => r.DropoffLocationCode);
         builder.HasIndex(r => r.CreatedAt);
     }
 }

@@ -8,5 +8,7 @@ public sealed record CreateReservationCommand(
     Guid CustomerId,
     DateTime PickupDate,
     DateTime ReturnDate,
+    string PickupLocationCode,
+    string DropoffLocationCode,
     decimal TotalPriceNet
 );

@@ -29,6 +29,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(7),
             ReturnDate: DateTime.UtcNow.Date.AddDays(10),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 168.07m // Net amount (200 gross with 19% VAT)
         );
 
@@ -61,6 +63,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -82,6 +86,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -103,6 +109,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -136,6 +144,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -156,6 +166,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.Empty,
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -176,6 +188,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(-1), // Yesterday
             ReturnDate: DateTime.UtcNow.Date.AddDays(3),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -196,6 +210,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(10),
             ReturnDate: DateTime.UtcNow.Date.AddDays(5), // Before pickup
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -217,6 +233,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: pickupDate,
             ReturnDate: pickupDate, // Same as pickup
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -237,6 +255,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(100), // 95 days
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 5000.00m
         );
 
@@ -259,6 +279,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: pickupDate,
             ReturnDate: returnDate,
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 400.00m
         );
 
@@ -289,6 +311,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: customerId,
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 250.00m
         );
 
@@ -319,6 +343,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: Guid.NewGuid(),
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 
@@ -347,6 +373,8 @@ public class CreateReservationCommandHandlerTests
             CustomerId: customerId,
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
+            PickupLocationCode: "BER-HBF",
+            DropoffLocationCode: "BER-HBF",
             TotalPriceNet: 150.00m
         );
 

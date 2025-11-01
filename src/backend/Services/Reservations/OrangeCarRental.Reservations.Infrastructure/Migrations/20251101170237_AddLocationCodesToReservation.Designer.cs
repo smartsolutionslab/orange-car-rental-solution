@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -12,9 +13,11 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migrations
 {
     [DbContext(typeof(ReservationsDbContext))]
-    partial class ReservationsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251101170237_AddLocationCodesToReservation")]
+    partial class AddLocationCodesToReservation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

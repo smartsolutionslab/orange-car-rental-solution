@@ -15,6 +15,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     public Guid VehicleId { get; private set; }
     public Guid CustomerId { get; private set; }
     public BookingPeriod Period { get; private set; }
+    public LocationCode PickupLocationCode { get; private set; }
+    public LocationCode DropoffLocationCode { get; private set; }
     public Money TotalPrice { get; private set; }
     public ReservationStatus Status { get; private set; }
     public string? CancellationReason { get; private set; }
@@ -27,6 +29,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     private Reservation()
     {
         Period = default!;
+        PickupLocationCode = default;
+        DropoffLocationCode = default;
         TotalPrice = default;
     }
 
@@ -35,12 +39,16 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         Guid vehicleId,
         Guid customerId,
         BookingPeriod period,
+        LocationCode pickupLocationCode,
+        LocationCode dropoffLocationCode,
         Money totalPrice)
         : base(id)
     {
         VehicleId = vehicleId;
         CustomerId = customerId;
         Period = period;
+        PickupLocationCode = pickupLocationCode;
+        DropoffLocationCode = dropoffLocationCode;
         TotalPrice = totalPrice;
         Status = ReservationStatus.Pending;
         CreatedAt = DateTime.UtcNow;
@@ -55,6 +63,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         Guid vehicleId,
         Guid customerId,
         BookingPeriod period,
+        LocationCode pickupLocationCode,
+        LocationCode dropoffLocationCode,
         Money totalPrice)
     {
         if (vehicleId == Guid.Empty) throw new ArgumentException("Vehicle ID cannot be empty", nameof(vehicleId));
@@ -66,6 +76,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
             vehicleId,
             customerId,
             period,
+            pickupLocationCode,
+            dropoffLocationCode,
             totalPrice
         );
     }

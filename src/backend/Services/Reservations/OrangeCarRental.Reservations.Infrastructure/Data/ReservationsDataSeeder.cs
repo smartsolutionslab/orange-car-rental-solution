@@ -112,9 +112,17 @@ public class ReservationsDataSeeder
         Guid customerId,
         DateTime pickupDate,
         DateTime returnDate,
-        Money totalPrice)
+        Money totalPrice,
+        string pickupLocationCode = "BER-HBF",
+        string dropoffLocationCode = "BER-HBF")
     {
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        return Reservation.Create(vehicleId, customerId, period, totalPrice);
+        return Reservation.Create(
+            vehicleId,
+            customerId,
+            period,
+            LocationCode.Of(pickupLocationCode),
+            LocationCode.Of(dropoffLocationCode),
+            totalPrice);
     }
 }

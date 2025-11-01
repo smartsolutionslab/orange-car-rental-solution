@@ -37,6 +37,8 @@ public sealed class GetReservationQueryHandler
             CustomerId = reservation.CustomerId,
             PickupDate = reservation.Period.PickupDate,
             ReturnDate = reservation.Period.ReturnDate,
+            PickupLocationCode = reservation.PickupLocationCode.Value,
+            DropoffLocationCode = reservation.DropoffLocationCode.Value,
             RentalDays = reservation.Period.Days,
             TotalPriceNet = reservation.TotalPrice.NetAmount,
             TotalPriceVat = reservation.TotalPrice.VatAmount,

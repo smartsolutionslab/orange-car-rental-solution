@@ -190,7 +190,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, totalPrice);
+        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
         await _context.Reservations.AddAsync(reservation);
         await _context.SaveChangesAsync();
 
@@ -304,7 +304,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, totalPrice);
+        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
 
         // Act - Add
         await _repository.AddAsync(reservation, CancellationToken.None);
@@ -386,7 +386,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(vehicleId, customerId, period, totalPrice);
+        var reservation = Reservation.Create(vehicleId, customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
         reservation.ClearDomainEvents();
         return reservation;
     }

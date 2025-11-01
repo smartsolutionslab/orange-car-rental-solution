@@ -10,6 +10,8 @@ public sealed record ReservationDto
     public Guid CustomerId { get; init; }
     public DateTime PickupDate { get; init; }
     public DateTime ReturnDate { get; init; }
+    public string PickupLocationCode { get; init; } = string.Empty;
+    public string DropoffLocationCode { get; init; } = string.Empty;
     public int RentalDays { get; init; }
     public decimal TotalPriceNet { get; init; }
     public decimal TotalPriceVat { get; init; }

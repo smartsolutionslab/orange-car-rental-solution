@@ -25,6 +25,10 @@ public sealed class CreateReservationCommandHandler
         // Validate and create booking period
         var period = BookingPeriod.Of(command.PickupDate, command.ReturnDate);
 
+        // Parse location codes
+        var pickupLocationCode = LocationCode.Of(command.PickupLocationCode);
+        var dropoffLocationCode = LocationCode.Of(command.DropoffLocationCode);
+
         // Create Money value object with German VAT (19%)
         var totalPrice = Money.Euro(command.TotalPriceNet);
 
@@ -33,6 +37,8 @@ public sealed class CreateReservationCommandHandler
             command.VehicleId,
             command.CustomerId,
             period,
+            pickupLocationCode,
+            dropoffLocationCode,
             totalPrice
         );
 
