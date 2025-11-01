@@ -239,7 +239,7 @@ public class FleetDataSeeder
     private string GenerateLicensePlate(Location location)
     {
         // German license plate format: B-XX 1234 (City code - letters - numbers)
-        var cityCode = location.Code switch
+        var cityCode = location.Code.Value switch
         {
             "BER-HBF" => "B",      // Berlin
             "MUC-FLG" => "M",      // München

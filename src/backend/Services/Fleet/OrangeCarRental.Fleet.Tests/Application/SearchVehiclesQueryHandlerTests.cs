@@ -235,7 +235,7 @@ public class SearchVehiclesQueryHandlerTests
         firstDto.Id.Should().Be(firstVehicle.Id.Value);
         firstDto.Name.Should().Be(firstVehicle.Name.Value);
         firstDto.CategoryCode.Should().Be(firstVehicle.Category.Code);
-        firstDto.LocationCode.Should().Be(firstVehicle.CurrentLocation.Code);
+        firstDto.LocationCode.Should().Be(firstVehicle.CurrentLocation.Code.Value);
         firstDto.Seats.Should().Be(firstVehicle.Seats.Value);
         firstDto.FuelType.Should().Be(firstVehicle.FuelType.ToString());
         firstDto.TransmissionType.Should().Be(firstVehicle.TransmissionType.ToString());

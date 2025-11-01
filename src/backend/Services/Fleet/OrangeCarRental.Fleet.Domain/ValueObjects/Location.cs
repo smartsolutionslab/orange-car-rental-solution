@@ -6,73 +6,78 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 /// </summary>
 public readonly record struct Location
 {
-    public string Code { get; }
-    public string City { get; }
-    public string Address { get; }
-    public string PostalCode { get; }
+    public LocationCode Code { get; }
+    public LocationName Name { get; }
+    public Address Address { get; }
 
-    private Location(string code, string city, string address, string postalCode)
+    private Location(LocationCode code, LocationName name, Address address)
     {
         Code = code;
-        City = city;
+        Name = name;
         Address = address;
-        PostalCode = postalCode;
     }
 
+    public static Location Of(string code, string name, string street, string city, string postalCode)
+    {
+        return new Location(
+            LocationCode.Of(code),
+            LocationName.Of(name),
+            ValueObjects.Address.Of(street, city, postalCode)
+        );
+    }
+
+    /// <summary>
+    /// Convenience method for backward compatibility
+    /// </summary>
     public static Location Of(string code, string city, string address = "", string postalCode = "")
     {
-        if (string.IsNullOrWhiteSpace(code))
-        {
-            throw new ArgumentException("Location code cannot be empty", nameof(code));
-        }
-
-        if (string.IsNullOrWhiteSpace(city))
-        {
-            throw new ArgumentException("City cannot be empty", nameof(city));
-        }
-
+        // For backward compatibility, use city as both name and city in address
         return new Location(
-            code.ToUpperInvariant().Trim(),
-            city.Trim(),
-            address?.Trim() ?? string.Empty,
-            postalCode?.Trim() ?? string.Empty
+            LocationCode.Of(code),
+            LocationName.Of(city),
+            ValueObjects.Address.Of(address, city, postalCode)
         );
     }
 
     // Common German rental locations
-    public static readonly Location BerlinHauptbahnhof = new(
-        "BER-HBF",
-        "Berlin",
-        "Europaplatz 1",
-        "10557"
+    public static readonly Location BerlinHauptbahnhof = Location.Of(
+        code: "BER-HBF",
+        name: "Berlin Hauptbahnhof",
+        street: "Europaplatz 1",
+        city: "Berlin",
+        postalCode: "10557"
     );
 
-    public static readonly Location MunichFlughafen = new(
-        "MUC-FLG",
-        "München",
-        "Flughafen München",
-        "85356"
+    public static readonly Location MunichFlughafen = Location.Of(
+        code: "MUC-FLG",
+        name: "München Flughafen",
+        street: "Flughafen München",
+        city: "München",
+        postalCode: "85356"
     );
 
-    public static readonly Location FrankfurtFlughafen = new(
-        "FRA-FLG",
-        "Frankfurt",
-        "Flughafen Frankfurt",
-        "60547"
+    public static readonly Location FrankfurtFlughafen = Location.Of(
+        code: "FRA-FLG",
+        name: "Frankfurt Flughafen",
+        street: "Flughafen Frankfurt",
+        city: "Frankfurt",
+        postalCode: "60547"
     );
 
-    public static readonly Location HamburgHauptbahnhof = new(
-        "HAM-HBF",
-        "Hamburg",
-        "Hachmannplatz 16",
-        "20099"
+    public static readonly Location HamburgHauptbahnhof = Location.Of(
+        code: "HAM-HBF",
+        name: "Hamburg Hauptbahnhof",
+        street: "Hachmannplatz 16",
+        city: "Hamburg",
+        postalCode: "20099"
     );
 
-    public static readonly Location KolnHauptbahnhof = new(
-        "CGN-HBF",
-        "Köln",
-        "Trankgasse 11",
-        "50667"
+    public static readonly Location KolnHauptbahnhof = Location.Of(
+        code: "CGN-HBF",
+        name: "Köln Hauptbahnhof",
+        street: "Trankgasse 11",
+        city: "Köln",
+        postalCode: "50667"
     );
 
     private static readonly Dictionary<string, Location> _locations = new()
@@ -102,5 +107,5 @@ public readonly record struct Location
 
     public static IReadOnlyCollection<Location> All => _locations.Values.ToList();
 
-    public override string ToString() => $"{City} - {Code}";
+    public override string ToString() => $"{Name.Value} ({Code.Value})";
 }

@@ -96,7 +96,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         // Assert
         result.Items.Should().HaveCount(3);
         result.Items.Should().AllSatisfy(v =>
-            v.CurrentLocation.Code.Should().Be("BER-HBF"));
+            v.CurrentLocation.Code.Value.Should().Be("BER-HBF"));
         result.TotalCount.Should().Be(3);
     }
 
@@ -205,7 +205,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         result.Items.Should().HaveCount(2);
         result.Items.Should().AllSatisfy(v =>
         {
-            v.CurrentLocation.Code.Should().Be("BER-HBF");
+            v.CurrentLocation.Code.Value.Should().Be("BER-HBF");
             v.FuelType.Should().Be(FuelType.Petrol);
             v.Seats.Value.Should().BeGreaterThanOrEqualTo(4);
         });
