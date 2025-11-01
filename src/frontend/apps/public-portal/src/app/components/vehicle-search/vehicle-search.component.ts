@@ -1,5 +1,7 @@
 import { Component, output, signal, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { LocationService, Location } from '@ocr/data-access';
+import { CommonModule } from '@angular/common';
 
 /**
  * Vehicle search query interface
@@ -33,12 +35,13 @@ export interface VehicleSearchQuery {
 @Component({
   selector: 'ocr-vehicle-search',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css'
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly locationService = inject(LocationService);
 
   // Output event for search
   search = output<VehicleSearchQuery>();
@@ -46,6 +49,11 @@ export class VehicleSearchComponent implements OnInit {
   // Form state
   protected readonly searchForm: FormGroup;
   protected readonly searching = signal(false);
+
+  // Location data
+  protected readonly locations = signal<Location[]>([]);
+  protected readonly locationsLoading = signal(false);
+  protected readonly locationsError = signal<string | null>(null);
 
   // Minimum dates for validation
   protected readonly today = new Date().toISOString().split('T')[0];
@@ -65,6 +73,9 @@ export class VehicleSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Fetch locations from API
+    this.loadLocations();
+
     // Set default dates (tomorrow for pickup, +3 days for return)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -91,6 +102,26 @@ export class VehicleSearchComponent implements OnInit {
             returnDate: pickup.toISOString().split('T')[0]
           });
         }
+      }
+    });
+  }
+
+  /**
+   * Load locations from API
+   */
+  private loadLocations(): void {
+    this.locationsLoading.set(true);
+    this.locationsError.set(null);
+
+    this.locationService.getAllLocations().subscribe({
+      next: (locations) => {
+        this.locations.set(locations);
+        this.locationsLoading.set(false);
+      },
+      error: (error) => {
+        console.error('Error loading locations:', error);
+        this.locationsError.set('Failed to load locations');
+        this.locationsLoading.set(false);
       }
     });
   }

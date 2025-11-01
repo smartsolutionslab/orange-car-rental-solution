@@ -57,14 +57,15 @@
           </svg>
           Standort
         </label>
-        <select id="location" formControlName="locationCode" class="form-input">
-          <option value="">Alle Standorte</option>
-          <option value="BER-HBF">Berlin Hauptbahnhof</option>
-          <option value="MUC-FLG">München Flughafen</option>
-          <option value="FRA-FLG">Frankfurt Flughafen</option>
-          <option value="HAM-HBF">Hamburg Hauptbahnhof</option>
-          <option value="CGN-HBF">Köln Hauptbahnhof</option>
+        <select id="location" formControlName="locationCode" class="form-input" [disabled]="locationsLoading()">
+          <option value="">{{ locationsLoading() ? 'Lade Standorte...' : 'Alle Standorte' }}</option>
+          @for (location of locations(); track location.code) {
+            <option [value]="location.code">{{ location.name }}</option>
+          }
         </select>
+        @if (locationsError()) {
+          <div class="error-message">{{ locationsError() }}</div>
+        }
       </div>
 
       <!-- Category -->
