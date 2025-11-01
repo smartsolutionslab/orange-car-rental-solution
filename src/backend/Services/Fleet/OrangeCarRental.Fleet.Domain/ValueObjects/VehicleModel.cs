@@ -11,17 +11,13 @@ public readonly record struct VehicleModel
 
     public static VehicleModel Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("Model cannot be empty", nameof(value));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        if (value.Length > 100)
-        {
+        var trimmed = value.Trim();
+        if (trimmed.Length > 100)
             throw new ArgumentException("Model name cannot exceed 100 characters", nameof(value));
-        }
 
-        return new VehicleModel(value.Trim());
+        return new VehicleModel(trimmed);
     }
 
     public static implicit operator string(VehicleModel model) => model.Value;

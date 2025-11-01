@@ -13,15 +13,11 @@ public readonly record struct ManufacturingYear
     public static ManufacturingYear Of(int value)
     {
         if (value < 1990)
-        {
             throw new ArgumentException("Manufacturing year must be 1990 or later for rental vehicles", nameof(value));
-        }
 
         var currentYear = DateTime.UtcNow.Year;
         if (value > currentYear + 1)
-        {
             throw new ArgumentException($"Manufacturing year cannot be later than {currentYear + 1}", nameof(value));
-        }
 
         return new ManufacturingYear(value);
     }

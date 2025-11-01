@@ -11,17 +11,13 @@ public readonly record struct Manufacturer
 
     public static Manufacturer Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("Manufacturer cannot be empty", nameof(value));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        if (value.Length > 100)
-        {
+        var trimmed = value.Trim();
+        if (trimmed.Length > 100)
             throw new ArgumentException("Manufacturer name cannot exceed 100 characters", nameof(value));
-        }
 
-        return new Manufacturer(value.Trim());
+        return new Manufacturer(trimmed);
     }
 
     public static implicit operator string(Manufacturer manufacturer) => manufacturer.Value;

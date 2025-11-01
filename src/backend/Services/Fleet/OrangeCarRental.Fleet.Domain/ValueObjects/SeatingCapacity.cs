@@ -13,14 +13,10 @@ public readonly record struct SeatingCapacity
     public static SeatingCapacity Of(int value)
     {
         if (value < 2)
-        {
             throw new ArgumentException("Seating capacity must be at least 2", nameof(value));
-        }
 
         if (value > 9)
-        {
             throw new ArgumentException("Seating capacity cannot exceed 9 for rental vehicles", nameof(value));
-        }
 
         return new SeatingCapacity(value);
     }
