@@ -1,5 +1,6 @@
 using Moq;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
@@ -10,12 +11,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 public class CreateReservationCommandHandlerTests
 {
     private readonly Mock<IReservationRepository> _repositoryMock;
+    private readonly Mock<IPricingService> _pricingServiceMock;
     private readonly CreateReservationCommandHandler _handler;
 
     public CreateReservationCommandHandlerTests()
     {
         _repositoryMock = new Mock<IReservationRepository>();
-        _handler = new CreateReservationCommandHandler(_repositoryMock.Object);
+        _pricingServiceMock = new Mock<IPricingService>();
+        _handler = new CreateReservationCommandHandler(_repositoryMock.Object, _pricingServiceMock.Object);
     }
 
     #region HandleAsync Tests
@@ -27,6 +30,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(7),
             ReturnDate: DateTime.UtcNow.Date.AddDays(10),
             PickupLocationCode: "BER-HBF",
@@ -61,6 +65,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -84,6 +89,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -107,6 +113,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -142,6 +149,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.Empty,
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -164,6 +172,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.Empty,
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -186,6 +195,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(-1), // Yesterday
             ReturnDate: DateTime.UtcNow.Date.AddDays(3),
             PickupLocationCode: "BER-HBF",
@@ -208,6 +218,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(10),
             ReturnDate: DateTime.UtcNow.Date.AddDays(5), // Before pickup
             PickupLocationCode: "BER-HBF",
@@ -231,6 +242,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: pickupDate,
             ReturnDate: pickupDate, // Same as pickup
             PickupLocationCode: "BER-HBF",
@@ -253,6 +265,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(100), // 95 days
             PickupLocationCode: "BER-HBF",
@@ -277,6 +290,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: pickupDate,
             ReturnDate: returnDate,
             PickupLocationCode: "BER-HBF",
@@ -309,6 +323,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: vehicleId,
             CustomerId: customerId,
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -341,6 +356,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: Guid.NewGuid(),
             CustomerId: Guid.NewGuid(),
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -371,6 +387,7 @@ public class CreateReservationCommandHandlerTests
         var command = new CreateReservationCommand(
             VehicleId: vehicleId,
             CustomerId: customerId,
+            CategoryCode: "KOMPAKT",
             PickupDate: DateTime.UtcNow.Date.AddDays(5),
             ReturnDate: DateTime.UtcNow.Date.AddDays(8),
             PickupLocationCode: "BER-HBF",
@@ -400,12 +417,29 @@ public class CreateReservationCommandHandlerTests
     [Fact]
     public void Constructor_WithNullRepository_ThrowsArgumentNullException()
     {
+        // Arrange
+        var pricingServiceMock = new Mock<IPricingService>();
+
         // Act
-        var act = () => new CreateReservationCommandHandler(null!);
+        var act = () => new CreateReservationCommandHandler(null!, pricingServiceMock.Object);
 
         // Assert
         act.Should().Throw<ArgumentNullException>()
             .WithParameterName("repository");
+    }
+
+    [Fact]
+    public void Constructor_WithNullPricingService_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var repositoryMock = new Mock<IReservationRepository>();
+
+        // Act
+        var act = () => new CreateReservationCommandHandler(repositoryMock.Object, null!);
+
+        // Assert
+        act.Should().Throw<ArgumentNullException>()
+            .WithParameterName("pricingService");
     }
 
     #endregion

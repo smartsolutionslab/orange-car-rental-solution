@@ -25,9 +25,15 @@ public static class ReservationEndpoints
 Creates a new reservation for a vehicle rental. The reservation will be created in 'Pending' status
 awaiting payment confirmation.
 
+**Automatic Price Calculation:**
+- Price is automatically calculated based on vehicle category, rental period, and location
+- Pricing is retrieved from the Pricing Service API
+- No need to provide TotalPriceNet - it will be calculated for you
+- For backward compatibility, you can still provide TotalPriceNet to override automatic calculation
+
 **German Market Pricing:**
 - All prices include 19% German VAT (Mehrwertsteuer)
-- Provide the net amount, VAT will be calculated automatically
+- Price breakdown shows net, VAT, and gross amounts
 - Currency is EUR
 
 **Date Requirements:**

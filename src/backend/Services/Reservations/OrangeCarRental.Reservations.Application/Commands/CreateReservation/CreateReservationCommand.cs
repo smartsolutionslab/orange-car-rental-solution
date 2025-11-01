@@ -6,9 +6,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 public sealed record CreateReservationCommand(
     Guid VehicleId,
     Guid CustomerId,
+    string CategoryCode,
     DateTime PickupDate,
     DateTime ReturnDate,
     string PickupLocationCode,
     string DropoffLocationCode,
-    decimal TotalPriceNet
+    decimal? TotalPriceNet = null
 );

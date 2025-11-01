@@ -4,8 +4,10 @@ using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,6 +40,16 @@ builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDb
 {
     options.UseSqlServer(sqlOptions =>
         sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
+});
+
+// Register HTTP client for Pricing API
+var pricingApiUrl = builder.Configuration["PRICING_API_URL"] ?? "http://localhost:5002";
+Log.Information("Pricing API URL: {PricingApiUrl}", pricingApiUrl);
+
+builder.Services.AddHttpClient<IPricingService, PricingService>(client =>
+{
+    client.BaseAddress = new Uri(pricingApiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
 
 // Register repositories

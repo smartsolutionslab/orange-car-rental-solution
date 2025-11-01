@@ -15,13 +15,16 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Get backend service URLs from Aspire environment variables
 var fleetApiUrl = builder.Configuration["FLEET_API_URL"] ?? "http://localhost:5000";
 var reservationsApiUrl = builder.Configuration["RESERVATIONS_API_URL"] ?? "http://localhost:5001";
+var pricingApiUrl = builder.Configuration["PRICING_API_URL"] ?? "http://localhost:5002";
 
 Log.Information("Fleet API URL: {FleetApiUrl}", fleetApiUrl);
 Log.Information("Reservations API URL: {ReservationsApiUrl}", reservationsApiUrl);
+Log.Information("Pricing API URL: {PricingApiUrl}", pricingApiUrl);
 
 // Update configuration with actual URLs
 builder.Configuration["ReverseProxy:Clusters:fleet-cluster:Destinations:destination1:Address"] = fleetApiUrl;
 builder.Configuration["ReverseProxy:Clusters:reservations-cluster:Destinations:destination1:Address"] = reservationsApiUrl;
+builder.Configuration["ReverseProxy:Clusters:pricing-cluster:Destinations:destination1:Address"] = pricingApiUrl;
 
 // Add YARP Reverse Proxy with configuration
 builder.Services.AddReverseProxy()

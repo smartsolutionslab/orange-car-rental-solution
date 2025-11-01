@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
@@ -12,10 +13,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 public sealed class CreateReservationCommandHandler
 {
     private readonly IReservationRepository _repository;
+    private readonly IPricingService _pricingService;
 
-    public CreateReservationCommandHandler(IReservationRepository repository)
+    public CreateReservationCommandHandler(
+        IReservationRepository repository,
+        IPricingService pricingService)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _pricingService = pricingService ?? throw new ArgumentNullException(nameof(pricingService));
     }
 
     public async Task<CreateReservationResult> HandleAsync(
@@ -29,8 +34,25 @@ public sealed class CreateReservationCommandHandler
         var pickupLocationCode = LocationCode.Of(command.PickupLocationCode);
         var dropoffLocationCode = LocationCode.Of(command.DropoffLocationCode);
 
-        // Create Money value object with German VAT (19%)
-        var totalPrice = Money.Euro(command.TotalPriceNet);
+        // Determine the total price: either use provided value or calculate via Pricing API
+        Money totalPrice;
+        if (command.TotalPriceNet.HasValue)
+        {
+            // Use provided price (backward compatibility)
+            totalPrice = Money.Euro(command.TotalPriceNet.Value);
+        }
+        else
+        {
+            // Calculate price via Pricing API
+            var priceCalculation = await _pricingService.CalculatePriceAsync(
+                command.CategoryCode,
+                command.PickupDate,
+                command.ReturnDate,
+                command.PickupLocationCode,
+                cancellationToken);
+
+            totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
+        }
 
         // Create the reservation aggregate
         var reservation = Reservation.Create(

@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.Reservations.Application\OrangeCarRental.Reservations.Application.csproj" />
     <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj" />
   </ItemGroup>
 
