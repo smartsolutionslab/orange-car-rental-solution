@@ -15,9 +15,11 @@ var reservationsDb = sqlServer.AddDatabase("reservations", "OrangeCarRental_Rese
 var runMigrationJobs = builder.Configuration["RunMigrationJobs"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
 
 // Fleet API - Vehicle inventory and availability management
+// Also needs read-only access to Reservations database for date filtering
 IResourceBuilder<ProjectResource> fleetApi = builder
     .AddProject<Projects.OrangeCarRental_Fleet_Api>("fleet-api")
     .WithReference(fleetDb)
+    .WithReference(reservationsDb)
     .WaitFor(sqlServer);
 
 // Reservations API - Customer booking and rental management

@@ -14,6 +14,8 @@ public sealed class VehicleSearchParameters
     public TransmissionType? TransmissionType { get; init; }
     public decimal? MaxDailyRateGross { get; init; }
     public VehicleStatus? Status { get; init; }
+    public DateTime? PickupDate { get; init; }
+    public DateTime? ReturnDate { get; init; }
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 20;
 }

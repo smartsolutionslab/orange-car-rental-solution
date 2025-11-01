@@ -13,6 +13,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
 {
     private readonly MsSqlContainer _msSqlContainer;
     private FleetDbContext _context = null!;
+    private SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext _reservationsContext = null!;
     private VehicleRepository _repository = null!;
 
     public VehicleRepositoryTests()
@@ -35,12 +36,22 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
         _context = new FleetDbContext(options);
         await _context.Database.EnsureCreatedAsync();
-        _repository = new VehicleRepository(_context);
+
+        // Create Reservations DbContext with same SQL Server connection
+        var reservationsOptions = new DbContextOptionsBuilder<SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext>()
+            .UseSqlServer(_msSqlContainer.GetConnectionString())
+            .Options;
+
+        _reservationsContext = new SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext(reservationsOptions);
+        await _reservationsContext.Database.EnsureCreatedAsync();
+
+        _repository = new VehicleRepository(_context, _reservationsContext);
     }
 
     public async Task DisposeAsync()
     {
         await _context.DisposeAsync();
+        await _reservationsContext.DisposeAsync();
         await _msSqlContainer.DisposeAsync();
     }
 

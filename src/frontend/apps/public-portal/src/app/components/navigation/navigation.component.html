@@ -15,7 +15,7 @@
           [routerLinkActiveOptions]="{ exact: item.path === '/' }"
           class="nav__link"
         >
-          <span class="nav__link-icon">{{ item.icon }}</span>
+          <svg class="nav__link-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="item.icon"></svg>
           <span class="nav__link-text">{{ item.label }}</span>
         </a>
       </li>

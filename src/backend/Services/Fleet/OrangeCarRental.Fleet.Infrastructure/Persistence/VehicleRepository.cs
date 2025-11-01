@@ -3,15 +3,18 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 /// <summary>
 /// Entity Framework implementation of IVehicleRepository.
 /// </summary>
-public sealed class VehicleRepository(FleetDbContext context) : IVehicleRepository
+public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext) : IVehicleRepository
 {
     private readonly FleetDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+    private readonly ReservationsDbContext _reservationsContext = reservationsContext ?? throw new ArgumentNullException(nameof(reservationsContext));
 
     public async Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
@@ -80,14 +83,56 @@ public sealed class VehicleRepository(FleetDbContext context) : IVehicleReposito
             query = query.Where(v => v.Status == parameters.Status.Value);
         }
 
-        // Get total count before pagination
-        var totalCount = await query.CountAsync(cancellationToken);
+        // Get total count before date filtering and pagination
+        var totalCountBeforeDateFilter = await query.CountAsync(cancellationToken);
 
-        // Apply pagination
-        var items = await query
-            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-            .Take(parameters.PageSize)
-            .ToListAsync(cancellationToken);
+        // Filter by date availability - exclude vehicles with overlapping reservations
+        List<Vehicle> items;
+        int totalCount;
+
+        if (parameters.PickupDate.HasValue && parameters.ReturnDate.HasValue)
+        {
+            var pickupDate = parameters.PickupDate.Value.Date;
+            var returnDate = parameters.ReturnDate.Value.Date;
+
+            // Get vehicle IDs that have confirmed or active reservations overlapping with the requested period
+            var bookedVehicleIds = await _reservationsContext.Reservations
+                .Where(r =>
+                    (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
+                    r.Period.PickupDate <= returnDate &&
+                    r.Period.ReturnDate >= pickupDate)
+                .Select(r => r.VehicleId)
+                .ToListAsync(cancellationToken);
+
+            // Convert to HashSet for efficient lookup
+            var bookedIdsSet = bookedVehicleIds.ToHashSet();
+
+            // Get all matching vehicles and filter in memory
+            var allVehicles = await query.ToListAsync(cancellationToken);
+
+            // Filter out booked vehicles
+            var availableVehicles = allVehicles
+                .Where(v => !bookedIdsSet.Contains(v.Id.Value))
+                .ToList();
+
+            totalCount = availableVehicles.Count;
+
+            // Apply pagination in memory
+            items = availableVehicles
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToList();
+        }
+        else
+        {
+            totalCount = totalCountBeforeDateFilter;
+
+            // Apply pagination
+            items = await query
+                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
+                .Take(parameters.PageSize)
+                .ToListAsync(cancellationToken);
+        }
 
         return new PagedResult<Vehicle>
         {

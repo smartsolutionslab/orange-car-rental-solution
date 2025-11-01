@@ -1,4 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
@@ -26,4 +28,34 @@ public static class MappingExtensions
         Year = vehicle.Year?.Value,
         ImageUrl = vehicle.ImageUrl
     };
+
+    public static SearchVehiclesResult ToDto(this PagedResult<Vehicle> pagedResult)
+    {
+        return new()
+        {
+            Vehicles = pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
+            TotalCount = pagedResult.TotalCount,
+            PageNumber = pagedResult.PageNumber,
+            PageSize = pagedResult.PageSize,
+            TotalPages = pagedResult.TotalPages
+        };
+    }
+
+    public static VehicleSearchParameters ToVehicleSearchParameters(this SearchVehiclesQuery query)
+    {
+        return new VehicleSearchParameters
+        {
+            LocationCode = query.LocationCode,
+            CategoryCode = query.CategoryCode,
+            MinSeats = query.MinSeats,
+            FuelType = query.FuelType.TryParseFuelType(),
+            TransmissionType = query.TransmissionType.TryParseTransmissionType(),
+            MaxDailyRateGross = query.MaxDailyRateGross,
+            Status = VehicleStatus.Available, // Always filter to available vehicles
+            PickupDate = query.PickupDate,
+            ReturnDate = query.ReturnDate,
+            PageNumber = query.PageNumber ?? 1,
+            PageSize = query.PageSize ?? 20
+        };
+    }
 }

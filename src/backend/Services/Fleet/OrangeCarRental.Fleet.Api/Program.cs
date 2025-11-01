@@ -32,11 +32,18 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Register database context (connection string provided by Aspire)
+// Register database contexts (connection strings provided by Aspire)
 builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
         sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure"));
+});
+
+// Add read-only access to Reservations database for availability checking
+builder.AddSqlServerDbContext<SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext>("reservations", configureDbContextOptions: options =>
+{
+    options.UseSqlServer(sqlOptions =>
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
 });
 
 // Register repositories
