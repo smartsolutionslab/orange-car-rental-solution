@@ -15,17 +15,10 @@ public readonly record struct City
 
     public static City Of(string city)
     {
-        if (string.IsNullOrWhiteSpace(city))
-        {
-            throw new ArgumentException("City name cannot be empty", nameof(city));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
 
         var trimmed = city.Trim();
-
-        if (trimmed.Length > 100)
-        {
-            throw new ArgumentException("City name cannot exceed 100 characters", nameof(city));
-        }
+        if (trimmed.Length > 100) throw new ArgumentException("City name cannot exceed 100 characters", nameof(city));
 
         return new City(trimmed);
     }

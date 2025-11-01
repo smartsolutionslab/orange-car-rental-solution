@@ -17,12 +17,14 @@ public readonly record struct Location
         Address = address;
     }
 
+    public static Location Of(LocationCode code, LocationName name, Address address) => new(code, name, address);
+
     public static Location Of(string code, string name, string street, string city, string postalCode)
     {
         return new Location(
             LocationCode.Of(code),
             LocationName.Of(name),
-            ValueObjects.Address.Of(street, city, postalCode)
+            Address.Of(street, city, postalCode)
         );
     }
 
@@ -41,43 +43,33 @@ public readonly record struct Location
 
     // Common German rental locations
     public static readonly Location BerlinHauptbahnhof = Location.Of(
-        code: "BER-HBF",
-        name: "Berlin Hauptbahnhof",
-        street: "Europaplatz 1",
-        city: "Berlin",
-        postalCode: "10557"
+        LocationCode.Of("BER-HBF"),
+        LocationName.Of("Berlin Hauptbahnhof"),
+        Address.Of(Street.Of("Europaplatz 1"), City.Of("Berlin"), PostalCode.Of("10557"))
     );
 
     public static readonly Location MunichFlughafen = Location.Of(
-        code: "MUC-FLG",
-        name: "München Flughafen",
-        street: "Flughafen München",
-        city: "München",
-        postalCode: "85356"
+        LocationCode.Of("MUC-FLG"),
+        LocationName.Of("München Flughafen"),
+        Address.Of(Street.Of("Flughafen München"), City.Of("München"), PostalCode.Of("85356"))
     );
 
     public static readonly Location FrankfurtFlughafen = Location.Of(
-        code: "FRA-FLG",
-        name: "Frankfurt Flughafen",
-        street: "Flughafen Frankfurt",
-        city: "Frankfurt",
-        postalCode: "60547"
+        LocationCode.Of("FRA-FLG"),
+        LocationName.Of("Frankfurt Flughafen"),
+        Address.Of(Street.Of("Flughafen Frankfurt"), City.Of("Frankfurt"), PostalCode.Of("60547"))
     );
 
     public static readonly Location HamburgHauptbahnhof = Location.Of(
-        code: "HAM-HBF",
-        name: "Hamburg Hauptbahnhof",
-        street: "Hachmannplatz 16",
-        city: "Hamburg",
-        postalCode: "20099"
+        LocationCode.Of("HAM-HBF"),
+        LocationName.Of("Hamburg Hauptbahnhof"),
+        Address.Of(Street.Of("Hachmannplatz 16"), City.Of("Hamburg"), PostalCode.Of("20099"))
     );
 
     public static readonly Location KolnHauptbahnhof = Location.Of(
-        code: "CGN-HBF",
-        name: "Köln Hauptbahnhof",
-        street: "Trankgasse 11",
-        city: "Köln",
-        postalCode: "50667"
+        LocationCode.Of("CGN-HBF"),
+        LocationName.Of("Köln Hauptbahnhof"),
+        Address.Of(Street.Of("Trankgasse 11"), City.Of("Köln"), PostalCode.Of("50667"))
     );
 
     private static readonly Dictionary<string, Location> _locations = new()
@@ -91,10 +83,7 @@ public readonly record struct Location
 
     public static Location FromCode(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-        {
-            throw new ArgumentException("Location code cannot be empty", nameof(code));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
 
         string upperCode = code.ToUpperInvariant();
         if (!_locations.TryGetValue(upperCode, out Location location))

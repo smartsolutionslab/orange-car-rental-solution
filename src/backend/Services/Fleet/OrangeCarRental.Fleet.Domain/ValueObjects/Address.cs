@@ -17,12 +17,14 @@ public readonly record struct Address
         PostalCode = postalCode;
     }
 
+    public static Address Of(Street street, City city, PostalCode postalCode) => new(street, city, postalCode);
+
     public static Address Of(string street, string city, string postalCode)
     {
         return new Address(
-            ValueObjects.Street.Of(street),
-            ValueObjects.City.Of(city),
-            ValueObjects.PostalCode.Of(postalCode)
+            Street.Of(street),
+            City.Of(city),
+            PostalCode.Of(postalCode)
         );
     }
 
@@ -30,9 +32,9 @@ public readonly record struct Address
     /// Creates an empty address (for cases where address is not available)
     /// </summary>
     public static Address Empty => new(
-        ValueObjects.Street.Empty,
-        ValueObjects.City.Of("Unknown"),
-        ValueObjects.PostalCode.Empty
+        Street.Empty,
+        City.Of("Unknown"),
+        PostalCode.Empty
     );
 
     /// <summary>

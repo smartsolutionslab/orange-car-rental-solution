@@ -11,15 +11,9 @@ public readonly record struct VehicleName
 
     public static VehicleName Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("Vehicle name cannot be empty", nameof(value));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
-        if (value.Length > 100)
-        {
-            throw new ArgumentException("Vehicle name cannot exceed 100 characters", nameof(value));
-        }
+        if (value.Length > 100) throw new ArgumentException("Vehicle name cannot exceed 100 characters", nameof(value));
 
         return new VehicleName(value.Trim());
     }
