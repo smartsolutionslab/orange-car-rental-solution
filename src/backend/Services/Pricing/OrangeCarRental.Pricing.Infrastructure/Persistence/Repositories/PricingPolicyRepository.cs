@@ -1,0 +1,66 @@
+using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.ValueObjects;
+
+namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Repositories;
+
+/// <summary>
+/// Entity Framework implementation of IPricingPolicyRepository.
+/// </summary>
+public sealed class PricingPolicyRepository(PricingDbContext context) : IPricingPolicyRepository
+{
+    private readonly PricingDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+
+    public async Task<PricingPolicy?> GetByIdAsync(PricingPolicyId id, CancellationToken cancellationToken = default)
+    {
+        return await _context.PricingPolicies
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+
+    public async Task<PricingPolicy?> GetActivePolicyByCategoryAsync(
+        CategoryCode categoryCode,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.PricingPolicies
+            .Where(p => p.CategoryCode == categoryCode && p.IsActive)
+            .Where(p => p.LocationCode == null) // General pricing (not location-specific)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<PricingPolicy?> GetActivePolicyByCategoryAndLocationAsync(
+        CategoryCode categoryCode,
+        LocationCode locationCode,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.PricingPolicies
+            .Where(p => p.CategoryCode == categoryCode && p.IsActive)
+            .Where(p => p.LocationCode == locationCode)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyCollection<PricingPolicy>> GetAllActivePoliciesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.PricingPolicies
+            .Where(p => p.IsActive)
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task AddAsync(PricingPolicy policy, CancellationToken cancellationToken = default)
+    {
+        await _context.PricingPolicies.AddAsync(policy, cancellationToken);
+    }
+
+    public Task UpdateAsync(PricingPolicy policy, CancellationToken cancellationToken = default)
+    {
+        _context.PricingPolicies.Update(policy);
+        return Task.CompletedTask;
+    }
+
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.SaveChangesAsync(cancellationToken);
+    }
+}
