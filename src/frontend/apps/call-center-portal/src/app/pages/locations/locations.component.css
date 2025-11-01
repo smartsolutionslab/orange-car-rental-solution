@@ -164,6 +164,135 @@
   font-style: italic;
 }
 
+.loading-state,
+.error-message,
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.loading-state p,
+.error-message p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.error-message {
+  color: #dc3545;
+}
+
+.error-message p {
+  color: #dc3545;
+}
+
+.empty-state {
+  color: #6c757d;
+}
+
+.empty-icon {
+  width: 80px;
+  height: 80px;
+  color: #dee2e6;
+  margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+  font-size: 1.5rem;
+  color: #212529;
+  margin: 0 0 0.5rem 0;
+}
+
+.empty-state p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.locations-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.location-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.2s;
+}
+
+.location-card:hover {
+  border-color: #ff7f00;
+  box-shadow: 0 2px 8px rgba(255, 127, 0, 0.1);
+}
+
+.location-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 1rem;
+  gap: 1rem;
+}
+
+.location-header h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  flex: 1;
+}
+
+.location-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: #ff7f00;
+  color: white;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.location-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #495057;
+}
+
+.detail-icon {
+  width: 18px;
+  height: 18px;
+  color: #6c757d;
+  flex-shrink: 0;
+}
+
+.location-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.meta-item {
+  display: inline-block;
+}
+
+.meta-divider {
+  color: #dee2e6;
+}
+
 @media (max-width: 768px) {
   :host {
     padding: 1rem;
@@ -182,5 +311,9 @@
   .btn-primary {
     width: 100%;
     justify-content: center;
+  }
+
+  .locations-list {
+    grid-template-columns: 1fr;
   }
 }
