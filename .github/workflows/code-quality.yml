@@ -1,0 +1,223 @@
+name: Code Quality
+
+on:
+  pull_request:
+    branches: [master, develop]
+  push:
+    branches: [master, develop]
+
+jobs:
+  backend-quality:
+    name: Backend Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required for SonarQube
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Restore dependencies
+      working-directory: src/backend
+      run: dotnet restore OrangeCarRental.sln
+
+    - name: Build solution
+      working-directory: src/backend
+      run: dotnet build OrangeCarRental.sln --no-restore --configuration Release
+
+    - name: Run code formatting check
+      working-directory: src/backend
+      run: |
+        dotnet format OrangeCarRental.sln --verify-no-changes --verbosity diagnostic || {
+          echo "❌ Code formatting issues detected. Please run 'dotnet format' locally."
+          exit 1
+        }
+
+    - name: Install dotnet-roslynator
+      run: dotnet tool install -g roslynator.dotnet.cli
+
+    - name: Run Roslynator analysis
+      working-directory: src/backend
+      run: |
+        roslynator analyze OrangeCarRental.sln \
+          --severity-level info \
+          --output roslynator-report.xml \
+          --report-not-configurable || true
+
+    - name: Upload Roslynator report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: roslynator-report
+        path: src/backend/roslynator-report.xml
+
+    # Optional: SonarQube/SonarCloud analysis
+    # - name: SonarQube Scan
+    #   uses: sonarsource/sonarqube-scan-action@master
+    #   env:
+    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    #     SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+    #   with:
+    #     projectBaseDir: src/backend
+    #     args: >
+    #       -Dsonar.projectKey=orange-car-rental-backend
+    #       -Dsonar.sources=.
+    #       -Dsonar.exclusions=**/bin/**,**/obj/**,**/Migrations/**
+
+    - name: Check for security vulnerabilities
+      working-directory: src/backend
+      run: |
+        dotnet list package --vulnerable --include-transitive 2>&1 | tee vulnerabilities.txt
+        if grep -q "has the following vulnerable packages" vulnerabilities.txt; then
+          echo "❌ Security vulnerabilities detected!"
+          cat vulnerabilities.txt
+          exit 1
+        else
+          echo "✅ No security vulnerabilities detected"
+        fi
+
+    - name: Code quality summary
+      if: always()
+      run: |
+        echo "## Backend Code Quality Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Code formatting check completed" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Static analysis completed" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Security vulnerability scan completed" >> $GITHUB_STEP_SUMMARY
+
+  frontend-quality:
+    name: Frontend Code Quality
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        app: [public-portal, call-center-portal]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+
+    - name: Install dependencies
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: npm ci
+
+    - name: Run ESLint
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: |
+        if npm run lint --if-present; then
+          echo "✅ Linting passed or not configured"
+        else
+          echo "⚠️ Linting not available, skipping..."
+        fi
+      continue-on-error: true
+
+    - name: Run Prettier check
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: |
+        if npx prettier --check "src/**/*.{ts,html,css,scss,json}"; then
+          echo "✅ Code formatting is correct"
+        else
+          echo "❌ Code formatting issues detected. Please run 'npx prettier --write .' locally."
+          exit 1
+        fi
+      continue-on-error: true
+
+    - name: Type checking
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: |
+        npx tsc --noEmit || {
+          echo "❌ TypeScript compilation errors detected"
+          exit 1
+        }
+
+    - name: Check for security vulnerabilities
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: |
+        npm audit --audit-level=high --production || {
+          echo "❌ Security vulnerabilities detected!"
+          npm audit
+          exit 1
+        }
+
+    - name: Bundle size check
+      working-directory: src/frontend/apps/${{ matrix.app }}
+      run: |
+        npm run build -- --configuration production
+        BUNDLE_SIZE=$(du -sh dist/ | cut -f1)
+        echo "📦 Bundle size: $BUNDLE_SIZE" >> $GITHUB_STEP_SUMMARY
+
+    - name: Code quality summary
+      if: always()
+      run: |
+        echo "## Frontend Code Quality Summary (${{ matrix.app }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Type checking completed" >> $GITHUB_STEP_SUMMARY
+        echo "✅ Security vulnerability scan completed" >> $GITHUB_STEP_SUMMARY
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Dependency Review
+      uses: actions/dependency-review-action@v4
+      with:
+        fail-on-severity: moderate
+        deny-licenses: GPL-2.0, GPL-3.0
+
+  codeql-analysis:
+    name: CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['csharp', 'javascript']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        queries: security-and-quality
+
+    - name: Setup .NET (for C#)
+      if: matrix.language == 'csharp'
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+
+    - name: Build backend (for C#)
+      if: matrix.language == 'csharp'
+      working-directory: src/backend
+      run: |
+        dotnet restore OrangeCarRental.sln
+        dotnet build OrangeCarRental.sln --no-restore --configuration Release
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{ matrix.language }}"

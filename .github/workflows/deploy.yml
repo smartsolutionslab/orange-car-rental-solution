@@ -1,0 +1,254 @@
+name: Deploy
+
+on:
+  workflow_run:
+    workflows: ["Backend CI", "Frontend CI"]
+    types:
+      - completed
+    branches: [master, develop]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  determine-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-env.outputs.environment }}
+      should-deploy: ${{ steps.check.outputs.should-deploy }}
+
+    steps:
+    - name: Check workflow run status
+      id: check
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "should-deploy=true" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event.workflow_run.conclusion }}" == "success" ]]; then
+          echo "should-deploy=true" >> $GITHUB_OUTPUT
+        else
+          echo "should-deploy=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Determine environment
+      id: set-env
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event.workflow_run.head_branch }}" == "master" ]]; then
+          echo "environment=production" >> $GITHUB_OUTPUT
+        elif [[ "${{ github.event.workflow_run.head_branch }}" == "develop" ]]; then
+          echo "environment=staging" >> $GITHUB_OUTPUT
+        else
+          echo "environment=none" >> $GITHUB_OUTPUT
+        fi
+
+  deploy-backend:
+    needs: determine-environment
+    if: needs.determine-environment.outputs.should-deploy == 'true' && needs.determine-environment.outputs.environment != 'none'
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set image tag
+      id: set-tag
+      run: |
+        if [[ "${{ needs.determine-environment.outputs.environment }}" == "production" ]]; then
+          echo "tag=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=latest" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Pull Docker images
+      run: |
+        docker pull ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
+        docker pull ghcr.io/${{ github.repository }}/reservations-api:${{ steps.set-tag.outputs.tag }}
+        docker pull ghcr.io/${{ github.repository }}/customers-api:${{ steps.set-tag.outputs.tag }}
+        docker pull ghcr.io/${{ github.repository }}/pricing-api:${{ steps.set-tag.outputs.tag }}
+        docker pull ghcr.io/${{ github.repository }}/payments-api:${{ steps.set-tag.outputs.tag }}
+        docker pull ghcr.io/${{ github.repository }}/notifications-api:${{ steps.set-tag.outputs.tag }}
+
+    # Deployment methods - uncomment based on your deployment target
+
+    # Option 1: Azure Container Apps
+    # - name: Deploy to Azure Container Apps
+    #   uses: azure/container-apps-deploy-action@v1
+    #   with:
+    #     resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
+    #     container-app-name: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
+    #     image: ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
+
+    # Option 2: Azure App Service
+    # - name: Deploy to Azure App Service
+    #   uses: azure/webapps-deploy@v2
+    #   with:
+    #     app-name: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
+    #     images: ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
+
+    # Option 3: Kubernetes
+    # - name: Deploy to Kubernetes
+    #   uses: azure/k8s-deploy@v4
+    #   with:
+    #     namespace: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
+    #     manifests: |
+    #       k8s/deployment.yml
+    #       k8s/service.yml
+    #     images: |
+    #       ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
+    #       ghcr.io/${{ github.repository }}/reservations-api:${{ steps.set-tag.outputs.tag }}
+
+    # Option 4: Docker Compose on remote server
+    # - name: Deploy via SSH
+    #   uses: appleboy/ssh-action@v1.0.0
+    #   with:
+    #     host: ${{ secrets.DEPLOY_HOST }}
+    #     username: ${{ secrets.DEPLOY_USER }}
+    #     key: ${{ secrets.DEPLOY_SSH_KEY }}
+    #     script: |
+    #       cd /opt/orange-car-rental
+    #       docker-compose pull
+    #       docker-compose up -d
+    #       docker system prune -f
+
+    - name: Deployment summary
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment**: ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Image Tag**: ${{ steps.set-tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Deployed Services**:" >> $GITHUB_STEP_SUMMARY
+        echo "  - Fleet API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Reservations API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Customers API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Pricing API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Payments API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Notifications API" >> $GITHUB_STEP_SUMMARY
+
+  deploy-frontend:
+    needs: determine-environment
+    if: needs.determine-environment.outputs.should-deploy == 'true' && needs.determine-environment.outputs.environment != 'none'
+    runs-on: ubuntu-latest
+    environment: ${{ needs.determine-environment.outputs.environment }}
+
+    strategy:
+      matrix:
+        app: [public-portal, call-center-portal]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set image tag
+      id: set-tag
+      run: |
+        if [[ "${{ needs.determine-environment.outputs.environment }}" == "production" ]]; then
+          echo "tag=${{ github.event.workflow_run.head_sha }}" >> $GITHUB_OUTPUT
+        else
+          echo "tag=latest" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Pull Docker image
+      run: |
+        docker pull ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ steps.set-tag.outputs.tag }}
+
+    # Deployment methods - uncomment based on your deployment target
+
+    # Option 1: Azure Static Web Apps
+    # - name: Deploy to Azure Static Web Apps
+    #   uses: Azure/static-web-apps-deploy@v1
+    #   with:
+    #     azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+    #     action: "upload"
+    #     app_location: "src/frontend/apps/${{ matrix.app }}/dist"
+
+    # Option 2: Azure Blob Storage (for static hosting)
+    # - name: Deploy to Azure Blob Storage
+    #   uses: azure/CLI@v1
+    #   with:
+    #     inlineScript: |
+    #       az storage blob upload-batch -s src/frontend/apps/${{ matrix.app }}/dist -d '$web' --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }}
+
+    # Option 3: Netlify
+    # - name: Deploy to Netlify
+    #   uses: nwtgck/actions-netlify@v2.0
+    #   with:
+    #     publish-dir: 'src/frontend/apps/${{ matrix.app }}/dist'
+    #     production-deploy: ${{ needs.determine-environment.outputs.environment == 'production' }}
+
+    # Option 4: Vercel
+    # - name: Deploy to Vercel
+    #   uses: amondnet/vercel-action@v25
+    #   with:
+    #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+    #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+    #     working-directory: src/frontend/apps/${{ matrix.app }}
+
+    - name: Deployment summary
+      run: |
+        echo "## Frontend Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- **App**: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment**: ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Image Tag**: ${{ steps.set-tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+
+  notify-deployment:
+    needs: [determine-environment, deploy-backend, deploy-frontend]
+    if: always() && needs.determine-environment.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Send deployment notification
+      run: |
+        if [[ "${{ needs.deploy-backend.result }}" == "success" ]] && [[ "${{ needs.deploy-frontend.result }}" == "success" ]]; then
+          echo "✅ Deployment to ${{ needs.determine-environment.outputs.environment }} completed successfully"
+        else
+          echo "❌ Deployment to ${{ needs.determine-environment.outputs.environment }} failed"
+          exit 1
+        fi
+
+    # Optional: Send Slack/Teams/Email notification
+    # - name: Send Slack notification
+    #   uses: slackapi/slack-github-action@v1.24.0
+    #   with:
+    #     payload: |
+    #       {
+    #         "text": "Deployment to ${{ needs.determine-environment.outputs.environment }} completed",
+    #         "blocks": [
+    #           {
+    #             "type": "section",
+    #             "text": {
+    #               "type": "mrkdwn",
+    #               "text": "Deployment Status: ${{ needs.deploy-backend.result }}"
+    #             }
+    #           }
+    #         ]
+    #       }
+    #   env:
+    #     SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

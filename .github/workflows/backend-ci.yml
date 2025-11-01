@@ -2,12 +2,12 @@ name: Backend CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-ci.yml'
@@ -68,7 +68,7 @@ jobs:
         docker build -f Services/Notifications/OrangeCarRental.Notifications.Api/Dockerfile -t ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} .
 
     - name: Log in to GitHub Container Registry
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
@@ -76,7 +76,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push Docker images
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
       run: |
         docker push ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }}
