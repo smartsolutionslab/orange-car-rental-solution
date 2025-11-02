@@ -3,8 +3,21 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SmartSolutionsLab.OrangeCarRental.Customers.Api</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Enrichers.Environment" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Customers.Application\OrangeCarRental.Customers.Application.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Customers.Infrastructure\OrangeCarRental.Customers.Infrastructure.csproj" />
   </ItemGroup>
 </Project>

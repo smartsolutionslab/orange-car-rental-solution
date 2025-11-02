@@ -14,6 +14,9 @@ var reservationsDb = sqlServer.AddDatabase("reservations", "OrangeCarRental_Rese
 // Pricing database - manages pricing policies and rate calculations
 var pricingDb = sqlServer.AddDatabase("pricing", "OrangeCarRental_Pricing");
 
+// Customers database - manages customer profiles and driver's license information
+var customersDb = sqlServer.AddDatabase("customers", "OrangeCarRental_Customers");
+
 // Check if we should run migrations as separate jobs (for Azure deployment simulation)
 var runMigrationJobs = builder.Configuration["RunMigrationJobs"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ?? false;
 
@@ -41,6 +44,12 @@ IResourceBuilder<ProjectResource> reservationsApi = builder
     .WaitFor(sqlServer)
     .WaitFor(pricingApi);
 
+// Customers API - Customer profile and driver's license management
+IResourceBuilder<ProjectResource> customersApi = builder
+    .AddProject<Projects.OrangeCarRental_Customers_Api>("customers-api")
+    .WithReference(customersDb)
+    .WaitFor(sqlServer);
+
 if (runMigrationJobs)
 {
     // Migration jobs - run before APIs start (for Azure deployment pattern)
@@ -56,6 +65,10 @@ if (runMigrationJobs)
         .WithReference(pricingDb)
         .WithArgs("--migrate-only");
 
+    var customersMigration = builder.AddProject<Projects.OrangeCarRental_Customers_Api>("customers-migration")
+        .WithReference(customersDb)
+        .WithArgs("--migrate-only");
+
     // Fleet API - wait for migrations to complete
     fleetApi = fleetApi
         .WaitFor(fleetMigration);
@@ -67,19 +80,25 @@ if (runMigrationJobs)
     // Pricing API - wait for migrations to complete
     pricingApi = pricingApi
         .WaitFor(pricingMigration);
+
+    // Customers API - wait for migrations to complete
+    customersApi = customersApi
+        .WaitFor(customersMigration);
 }
 
 // API Gateway - YARP reverse proxy with service discovery
-// Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, and /api/pricing/* to Pricing API
+// Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, /api/pricing/* to Pricing API, and /api/customers/* to Customers API
 // Configured on port 5002 (see launchSettings.json)
 var apiGateway = builder.AddProject<Projects.OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("FLEET_API_URL", fleetApi.GetEndpoint("http"))
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
+    .WithEnvironment("CUSTOMERS_API_URL", customersApi.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
     .WaitFor(fleetApi)
     .WaitFor(reservationsApi)
-    .WaitFor(pricingApi);
+    .WaitFor(pricingApi)
+    .WaitFor(customersApi);
 
 // Public Portal - Customer-facing Angular application for vehicle search and booking
 // Accessible at http://localhost:4200

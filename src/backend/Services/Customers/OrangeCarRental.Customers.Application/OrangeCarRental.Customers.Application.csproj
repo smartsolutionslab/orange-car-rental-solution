@@ -4,6 +4,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <RootNamespace>SmartSolutionsLab.OrangeCarRental.Customers.Application</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj" />
+  </ItemGroup>
 
 </Project>
