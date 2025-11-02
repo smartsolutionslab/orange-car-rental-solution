@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
@@ -13,18 +12,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 /// </summary>
 public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext) : IVehicleRepository
 {
-    private readonly FleetDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
-    private readonly ReservationsDbContext _reservationsContext = reservationsContext ?? throw new ArgumentNullException(nameof(reservationsContext));
-
     public async Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await _context.Vehicles
+        return await context.Vehicles
             .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
     }
 
     public async Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _context.Vehicles
+        return await context.Vehicles
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -34,7 +30,7 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         CancellationToken cancellationToken = default)
     {
         // Start with base query
-        var query = _context.Vehicles.AsNoTracking().AsQueryable();
+        var query = context.Vehicles.AsNoTracking().AsQueryable();
 
         // Apply filters using database-level WHERE clauses
         // Use EF.Property to access the stored column values directly since value objects
@@ -96,7 +92,7 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
             var returnDate = parameters.ReturnDate.Value.Date;
 
             // Get vehicle IDs that have confirmed or active reservations overlapping with the requested period
-            var bookedVehicleIds = await _reservationsContext.Reservations
+            var bookedVehicleIds = await reservationsContext.Reservations
                 .Where(r =>
                     (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
                     r.Period.PickupDate <= returnDate &&
@@ -143,11 +139,11 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         };
     }
 
-    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default) => await _context.Vehicles.AddAsync(vehicle, cancellationToken);
+    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default) => await context.Vehicles.AddAsync(vehicle, cancellationToken);
 
     public Task UpdateAsync(Vehicle vehicle, CancellationToken cancellationToken = default)
     {
-        _context.Vehicles.Update(vehicle);
+        context.Vehicles.Update(vehicle);
         return Task.CompletedTask;
     }
 
@@ -156,9 +152,9 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         var vehicle = await GetByIdAsync(id, cancellationToken);
         if (vehicle != null)
         {
-            _context.Vehicles.Remove(vehicle);
+            context.Vehicles.Remove(vehicle);
         }
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await _context.SaveChangesAsync(cancellationToken);
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await context.SaveChangesAsync(cancellationToken);
 }

@@ -6,7 +6,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.Search
 /// Handler for SearchCustomersQuery.
 /// Delegates filtering and pagination to the repository for database-level performance.
 /// </summary>
-public sealed class SearchCustomersQueryHandler(ICustomerRepository repository)
+public sealed class SearchCustomersQueryHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the search customers query.
@@ -25,7 +25,7 @@ public sealed class SearchCustomersQueryHandler(ICustomerRepository repository)
         searchParameters.Validate();
 
         // Execute search in repository
-        var pagedResult = await repository.SearchAsync(searchParameters, cancellationToken);
+        var pagedResult = await customers.SearchAsync(searchParameters, cancellationToken);
 
         // Map to DTOs and return result
         return pagedResult.ToDto();

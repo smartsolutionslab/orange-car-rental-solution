@@ -13,21 +13,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;
 /// Seeds the Fleet database with sample vehicles for development and testing.
 /// Creates a diverse fleet of German rental vehicles across all locations.
 /// </summary>
-public class FleetDataSeeder
+public class FleetDataSeeder(
+    FleetDbContext context,
+    ILogger<FleetDataSeeder> logger)
 {
-    private readonly FleetDbContext _context;
-    private readonly IVehicleRepository _repository;
-    private readonly ILogger<FleetDataSeeder> _logger;
-
-    public FleetDataSeeder(
-        FleetDbContext context,
-        IVehicleRepository repository,
-        ILogger<FleetDataSeeder> logger)
-    {
-        _context = context;
-        _repository = repository;
-        _logger = logger;
-    }
 
     /// <summary>
     /// Seeds the database with sample vehicles if no vehicles exist.
@@ -35,25 +24,20 @@ public class FleetDataSeeder
     public async Task SeedAsync()
     {
         // Check if data already exists
-        var existingCount = await _context.Vehicles.CountAsync();
+        var existingCount = await context.Vehicles.CountAsync();
         if (existingCount > 0)
         {
-            _logger.LogInformation("Fleet database already contains {Count} vehicles. Skipping seed.", existingCount);
+            logger.LogInformation("Fleet database already contains {Count} vehicles. Skipping seed.", existingCount);
             return;
         }
 
-        _logger.LogInformation("Seeding Fleet database with sample vehicles...");
+        logger.LogInformation("Seeding Fleet database with sample vehicles...");
 
         var vehicles = CreateSampleVehicles();
+        await context.Vehicles.AddRangeAsync(vehicles);
+        await context.SaveChangesAsync();
 
-        foreach (var vehicle in vehicles)
-        {
-            await _repository.AddAsync(vehicle);
-        }
-
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation("Successfully seeded {Count} vehicles to Fleet database.", vehicles.Count);
+        logger.LogInformation("Successfully seeded {Count} vehicles to Fleet database.", vehicles.Count);
     }
 
     private List<Vehicle> CreateSampleVehicles()

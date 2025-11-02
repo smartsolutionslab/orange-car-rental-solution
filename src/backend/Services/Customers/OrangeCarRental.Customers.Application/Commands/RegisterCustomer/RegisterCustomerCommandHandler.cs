@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 /// Handler for RegisterCustomerCommand.
 /// Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
 /// </summary>
-public sealed class RegisterCustomerCommandHandler(ICustomerRepository repository)
+public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the customer registration command.
@@ -37,7 +37,7 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository repositor
             command.LicenseExpiryDate);
 
         // Check email uniqueness
-        var emailExists = await repository.ExistsWithEmailAsync(email, cancellationToken);
+        var emailExists = await customers.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
             throw new InvalidOperationException(
@@ -55,8 +55,8 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository repositor
             driversLicense);
 
         // Persist to repository
-        await repository.AddAsync(customer, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await customers.AddAsync(customer, cancellationToken);
+        await customers.SaveChangesAsync(cancellationToken);
 
         // Return result
         return new RegisterCustomerResult

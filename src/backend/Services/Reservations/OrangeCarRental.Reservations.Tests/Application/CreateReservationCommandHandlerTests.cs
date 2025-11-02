@@ -10,14 +10,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 
 public class CreateReservationCommandHandlerTests
 {
-    private readonly Mock<IReservationRepository> _repositoryMock;
-    private readonly Mock<IPricingService> _pricingServiceMock;
+    private readonly Mock<IReservationRepository> _repositoryMock = new();
+    private readonly Mock<IPricingService> _pricingServiceMock = new();
     private readonly CreateReservationCommandHandler _handler;
 
     public CreateReservationCommandHandlerTests()
     {
-        _repositoryMock = new Mock<IReservationRepository>();
-        _pricingServiceMock = new Mock<IPricingService>();
         _handler = new CreateReservationCommandHandler(_repositoryMock.Object, _pricingServiceMock.Object);
     }
 
@@ -408,38 +406,6 @@ public class CreateReservationCommandHandlerTests
         capturedReservation.Should().NotBeNull();
         capturedReservation!.VehicleId.Should().Be(vehicleId);
         capturedReservation.CustomerId.Should().Be(customerId);
-    }
-
-    #endregion
-
-    #region Constructor Tests
-
-    [Fact]
-    public void Constructor_WithNullRepository_ThrowsArgumentNullException()
-    {
-        // Arrange
-        var pricingServiceMock = new Mock<IPricingService>();
-
-        // Act
-        var act = () => new CreateReservationCommandHandler(null!, pricingServiceMock.Object);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>()
-            .WithParameterName("repository");
-    }
-
-    [Fact]
-    public void Constructor_WithNullPricingService_ThrowsArgumentNullException()
-    {
-        // Arrange
-        var repositoryMock = new Mock<IReservationRepository>();
-
-        // Act
-        var act = () => new CreateReservationCommandHandler(repositoryMock.Object, null!);
-
-        // Assert
-        act.Should().Throw<ArgumentNullException>()
-            .WithParameterName("pricingService");
     }
 
     #endregion

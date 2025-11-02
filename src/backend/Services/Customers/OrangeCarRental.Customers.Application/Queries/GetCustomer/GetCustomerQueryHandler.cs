@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 /// Handler for GetCustomerQuery.
 /// Retrieves a customer by ID and maps to DTO.
 /// </summary>
-public sealed class GetCustomerQueryHandler(ICustomerRepository repository)
+public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the get customer query.
@@ -22,7 +22,7 @@ public sealed class GetCustomerQueryHandler(ICustomerRepository repository)
         CancellationToken cancellationToken = default)
     {
         var customerId = CustomerId.From(query.CustomerId);
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         return customer?.ToDto();
     }

@@ -29,9 +29,7 @@ public static class DataSeedingExtensions
         try
         {
             var context = services.GetRequiredService<FleetDbContext>();
-            var repository = services.GetRequiredService<IVehicleRepository>();
-
-            var seeder = new FleetDataSeeder(context, repository, logger);
+            var seeder = new FleetDataSeeder(context, logger);
             await seeder.SeedAsync();
         }
         catch (Exception ex)

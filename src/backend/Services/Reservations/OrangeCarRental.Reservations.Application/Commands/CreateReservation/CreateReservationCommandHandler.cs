@@ -10,19 +10,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 /// Handler for CreateReservationCommand.
 /// Creates a new pending reservation and returns the reservation details.
 /// </summary>
-public sealed class CreateReservationCommandHandler
+public sealed class CreateReservationCommandHandler(
+    IReservationRepository reservations,
+    IPricingService pricingService)
 {
-    private readonly IReservationRepository _repository;
-    private readonly IPricingService _pricingService;
-
-    public CreateReservationCommandHandler(
-        IReservationRepository repository,
-        IPricingService pricingService)
-    {
-        _repository = repository ?? throw new ArgumentNullException(nameof(repository));
-        _pricingService = pricingService ?? throw new ArgumentNullException(nameof(pricingService));
-    }
-
     public async Task<CreateReservationResult> HandleAsync(
         CreateReservationCommand command,
         CancellationToken cancellationToken = default)
@@ -44,7 +35,7 @@ public sealed class CreateReservationCommandHandler
         else
         {
             // Calculate price via Pricing API
-            var priceCalculation = await _pricingService.CalculatePriceAsync(
+            var priceCalculation = await pricingService.CalculatePriceAsync(
                 command.CategoryCode,
                 command.PickupDate,
                 command.ReturnDate,
@@ -65,8 +56,8 @@ public sealed class CreateReservationCommandHandler
         );
 
         // Save to repository
-        await _repository.AddAsync(reservation, cancellationToken);
-        await _repository.SaveChangesAsync(cancellationToken);
+        await reservations.AddAsync(reservation, cancellationToken);
+        await reservations.SaveChangesAsync(cancellationToken);
 
         // Map to result
         return new CreateReservationResult(

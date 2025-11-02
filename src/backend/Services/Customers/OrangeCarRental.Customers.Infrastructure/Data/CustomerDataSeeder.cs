@@ -11,47 +11,30 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
 /// Seeds the Customers database with sample German customers for development and testing.
 /// Creates realistic customer profiles with German names, addresses, and phone numbers.
 /// </summary>
-public class CustomerDataSeeder
+public class CustomerDataSeeder(
+    CustomersDbContext context,
+    ILogger<CustomerDataSeeder> logger)
 {
-    private readonly CustomersDbContext _context;
-    private readonly ICustomerRepository _repository;
-    private readonly ILogger<CustomerDataSeeder> _logger;
-
-    public CustomerDataSeeder(
-        CustomersDbContext context,
-        ICustomerRepository repository,
-        ILogger<CustomerDataSeeder> logger)
-    {
-        _context = context;
-        _repository = repository;
-        _logger = logger;
-    }
-
     /// <summary>
     /// Seeds the database with sample customers if no customers exist.
     /// </summary>
     public async Task SeedAsync()
     {
         // Check if data already exists
-        var existingCount = await _context.Customers.CountAsync();
+        var existingCount = await context.Customers.CountAsync();
         if (existingCount > 0)
         {
-            _logger.LogInformation("Customers database already contains {Count} customers. Skipping seed.", existingCount);
+            logger.LogInformation("Customers database already contains {Count} customers. Skipping seed.", existingCount);
             return;
         }
 
-        _logger.LogInformation("Seeding Customers database with sample German customers...");
+        logger.LogInformation("Seeding Customers database with sample German customers...");
 
         var customers = CreateSampleCustomers();
+        await context.Customers.AddRangeAsync(customers);
+        await context.SaveChangesAsync();
 
-        foreach (var customer in customers)
-        {
-            await _repository.AddAsync(customer);
-        }
-
-        await _repository.SaveChangesAsync();
-
-        _logger.LogInformation("Successfully seeded {Count} customers.", customers.Count);
+        logger.LogInformation("Successfully seeded {Count} customers.", customers.Count);
     }
 
     private static List<Customer> CreateSampleCustomers()

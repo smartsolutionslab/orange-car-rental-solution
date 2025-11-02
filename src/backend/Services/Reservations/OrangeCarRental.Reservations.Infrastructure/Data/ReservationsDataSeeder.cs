@@ -12,21 +12,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 /// Seeds the Reservations database with sample reservations for development and testing.
 /// Creates sample reservations with future booking periods.
 /// </summary>
-public class ReservationsDataSeeder
+public class ReservationsDataSeeder(
+    ReservationsDbContext context,
+    ILogger<ReservationsDataSeeder> logger)
 {
-    private readonly ReservationsDbContext _context;
-    private readonly IReservationRepository _repository;
-    private readonly ILogger<ReservationsDataSeeder> _logger;
-
-    public ReservationsDataSeeder(
-        ReservationsDbContext context,
-        IReservationRepository repository,
-        ILogger<ReservationsDataSeeder> logger)
-    {
-        _context = context;
-        _repository = repository;
-        _logger = logger;
-    }
 
     /// <summary>
     /// Seeds the database with sample reservations if no reservations exist.
@@ -35,25 +24,20 @@ public class ReservationsDataSeeder
     public async Task SeedAsync()
     {
         // Check if data already exists
-        var existingCount = await _context.Reservations.CountAsync();
+        var existingCount = await context.Reservations.CountAsync();
         if (existingCount > 0)
         {
-            _logger.LogInformation("Reservations database already contains {Count} reservations. Skipping seed.", existingCount);
+            logger.LogInformation("Reservations database already contains {Count} reservations. Skipping seed.", existingCount);
             return;
         }
 
-        _logger.LogInformation("Seeding Reservations database with sample reservations...");
+        logger.LogInformation("Seeding Reservations database with sample reservations...");
 
         var reservations = CreateSampleReservations();
+        await context.Reservations.AddRangeAsync(reservations);
+        await context.SaveChangesAsync();
 
-        foreach (var reservation in reservations)
-        {
-            await _repository.AddAsync(reservation);
-        }
-
-        await _context.SaveChangesAsync();
-
-        _logger.LogInformation("Successfully seeded {Count} reservations to Reservations database.", reservations.Count);
+        logger.LogInformation("Successfully seeded {Count} reservations to Reservations database.", reservations.Count);
     }
 
     private List<Reservation> CreateSampleReservations()

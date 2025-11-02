@@ -29,9 +29,8 @@ public static class DataSeedingExtensions
         try
         {
             var context = services.GetRequiredService<ReservationsDbContext>();
-            var repository = services.GetRequiredService<IReservationRepository>();
 
-            var seeder = new ReservationsDataSeeder(context, repository, logger);
+            var seeder = new ReservationsDataSeeder(context, logger);
             await seeder.SeedAsync();
         }
         catch (Exception ex)

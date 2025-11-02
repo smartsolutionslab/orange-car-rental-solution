@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.Calculat
 /// Handler for CalculatePriceQuery.
 /// Calculates the rental price for a vehicle category and period using the active pricing policy.
 /// </summary>
-public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository repository)
+public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingPolicies)
 {
     public async Task<PriceCalculationResult> HandleAsync(
         CalculatePriceQuery query,
@@ -18,14 +18,14 @@ public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository reposito
 
         // Try to get location-specific pricing first, then fall back to general pricing
         var pricingPolicy = query.LocationCode != null
-            ? await repository.GetActivePolicyByCategoryAndLocationAsync(
+            ? await pricingPolicies.GetActivePolicyByCategoryAndLocationAsync(
                 categoryCode,
                 LocationCode.Of(query.LocationCode),
                 cancellationToken)
             : null;
 
         // Fall back to general pricing if location-specific pricing not found
-        pricingPolicy ??= await repository.GetActivePolicyByCategoryAsync(categoryCode, cancellationToken);
+        pricingPolicy ??= await pricingPolicies.GetActivePolicyByCategoryAsync(categoryCode, cancellationToken);
 
         if (pricingPolicy is null)
         {

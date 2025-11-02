@@ -5,24 +5,19 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using Testcontainers.MsSql;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
 
 public class VehicleRepositoryTests : IAsyncLifetime
 {
-    private readonly MsSqlContainer _msSqlContainer;
+    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
+        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+        .Build();
     private FleetDbContext _context = null!;
-    private SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext _reservationsContext = null!;
+    private ReservationsDbContext _reservationsContext = null!;
     private VehicleRepository _repository = null!;
-
-    public VehicleRepositoryTests()
-    {
-        // Configure SQL Server container
-        _msSqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
-            .Build();
-    }
 
     public async Task InitializeAsync()
     {

@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 /// Handler for UpdateDriversLicenseCommand.
 /// Loads the customer, updates driver's license information, and persists changes.
 /// </summary>
-public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository repository)
+public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the update driver's license command.
@@ -23,7 +23,7 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository repos
     {
         // Load customer
         var customerId = CustomerId.From(command.CustomerId);
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         if (customer is null)
         {
@@ -42,8 +42,8 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository repos
         customer.UpdateDriversLicense(driversLicense);
 
         // Persist changes
-        await repository.UpdateAsync(customer, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await customers.UpdateAsync(customer, cancellationToken);
+        await customers.SaveChangesAsync(cancellationToken);
 
         // Return result
         return new UpdateDriversLicenseResult

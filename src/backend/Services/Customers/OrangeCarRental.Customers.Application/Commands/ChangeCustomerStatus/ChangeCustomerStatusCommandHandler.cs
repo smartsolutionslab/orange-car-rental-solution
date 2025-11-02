@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Chang
 /// Handler for ChangeCustomerStatusCommand.
 /// Loads the customer, changes account status, and persists changes.
 /// </summary>
-public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository repository)
+public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the change customer status command.
@@ -24,7 +24,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository repos
     {
         // Load customer
         var customerId = CustomerId.From(command.CustomerId);
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         if (customer is null)
         {
@@ -47,8 +47,8 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository repos
         customer.ChangeStatus(newStatus, command.Reason);
 
         // Persist changes
-        await repository.UpdateAsync(customer, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await customers.UpdateAsync(customer, cancellationToken);
+        await customers.SaveChangesAsync(cancellationToken);
 
         // Return result
         return new ChangeCustomerStatusResult

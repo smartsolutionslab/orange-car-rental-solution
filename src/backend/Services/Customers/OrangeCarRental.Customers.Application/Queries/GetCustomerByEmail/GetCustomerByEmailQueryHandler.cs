@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 /// Handler for GetCustomerByEmailQuery.
 /// Retrieves a customer by email address and maps to DTO.
 /// </summary>
-public sealed class GetCustomerByEmailQueryHandler(ICustomerRepository repository)
+public sealed class GetCustomerByEmailQueryHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the get customer by email query.
@@ -22,7 +22,7 @@ public sealed class GetCustomerByEmailQueryHandler(ICustomerRepository repositor
         CancellationToken cancellationToken = default)
     {
         var email = Email.Of(query.Email);
-        var customer = await repository.GetByEmailAsync(email, cancellationToken);
+        var customer = await customers.GetByEmailAsync(email, cancellationToken);
 
         return customer?.ToDto();
     }

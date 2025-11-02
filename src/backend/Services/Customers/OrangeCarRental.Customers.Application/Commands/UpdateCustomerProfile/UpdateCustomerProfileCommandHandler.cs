@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 /// Handler for UpdateCustomerProfileCommand.
 /// Loads the customer, updates profile information, and persists changes.
 /// </summary>
-public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository repository)
+public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
     /// Handles the update customer profile command.
@@ -23,7 +23,7 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository repo
     {
         // Load customer
         var customerId = CustomerId.From(command.CustomerId);
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         if (customer is null)
         {
@@ -47,8 +47,8 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository repo
             address);
 
         // Persist changes
-        await repository.UpdateAsync(customer, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await customers.UpdateAsync(customer, cancellationToken);
+        await customers.SaveChangesAsync(cancellationToken);
 
         // Return result
         return new UpdateCustomerProfileResult

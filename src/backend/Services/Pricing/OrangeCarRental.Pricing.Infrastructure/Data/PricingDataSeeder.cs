@@ -12,47 +12,30 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
 /// Seeds the Pricing database with sample pricing policies for development and testing.
 /// Creates pricing policies for all German vehicle categories with German VAT (19%).
 /// </summary>
-public class PricingDataSeeder
+public class PricingDataSeeder(
+    PricingDbContext context,
+    ILogger<PricingDataSeeder> logger)
 {
-    private readonly PricingDbContext _context;
-    private readonly IPricingPolicyRepository _repository;
-    private readonly ILogger<PricingDataSeeder> _logger;
-
-    public PricingDataSeeder(
-        PricingDbContext context,
-        IPricingPolicyRepository repository,
-        ILogger<PricingDataSeeder> logger)
-    {
-        _context = context;
-        _repository = repository;
-        _logger = logger;
-    }
-
     /// <summary>
     /// Seeds the database with sample pricing policies if no policies exist.
     /// </summary>
     public async Task SeedAsync()
     {
         // Check if data already exists
-        var existingCount = await _context.PricingPolicies.CountAsync();
+        var existingCount = await context.PricingPolicies.CountAsync();
         if (existingCount > 0)
         {
-            _logger.LogInformation("Pricing database already contains {Count} pricing policies. Skipping seed.", existingCount);
+            logger.LogInformation("Pricing database already contains {Count} pricing policies. Skipping seed.", existingCount);
             return;
         }
 
-        _logger.LogInformation("Seeding Pricing database with sample pricing policies...");
+        logger.LogInformation("Seeding Pricing database with sample pricing policies...");
 
         var policies = CreateSamplePricingPolicies();
+        await context.PricingPolicies.AddRangeAsync(policies);
+        await context.SaveChangesAsync();
 
-        foreach (var policy in policies)
-        {
-            await _repository.AddAsync(policy);
-        }
-
-        await _repository.SaveChangesAsync();
-
-        _logger.LogInformation("Successfully seeded {Count} pricing policies.", policies.Count);
+        logger.LogInformation("Successfully seeded {Count} pricing policies.", policies.Count);
     }
 
     private static List<PricingPolicy> CreateSamplePricingPolicies()
