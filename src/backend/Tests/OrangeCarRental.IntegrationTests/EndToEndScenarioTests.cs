@@ -45,15 +45,22 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
             {
                 vehicleId = selectedVehicle.Id,
                 customerId = Guid.NewGuid(),
+                categoryCode = selectedVehicle.CategoryCode,
                 pickupDate = DateTime.UtcNow.AddDays(1).ToString("O"),
                 returnDate = DateTime.UtcNow.AddDays(3).ToString("O"),
                 pickupLocationCode = "BER-HBF",
-                returnLocationCode = "BER-HBF",
-                dailyRateNet = selectedVehicle.DailyRateNet,
-                currency = "EUR"
+                dropoffLocationCode = "BER-HBF"
+                // Note: totalPriceNet is optional - will be calculated automatically by Pricing Service
             };
 
             var createResponse = await httpClient.PostAsJsonAsync("/api/reservations", reservationCommand);
+
+            // If the response is not Created, log the error details for debugging
+            if (createResponse.StatusCode != System.Net.HttpStatusCode.Created)
+            {
+                var errorContent = await createResponse.Content.ReadAsStringAsync();
+                throw new Exception($"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
+            }
 
             // Assert reservation was created
             Assert.Equal(System.Net.HttpStatusCode.Created, createResponse.StatusCode);
