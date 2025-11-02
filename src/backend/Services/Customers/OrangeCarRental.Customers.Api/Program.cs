@@ -29,10 +29,10 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Add services to the container
 builder.Services.AddOpenApi();
 
-// Add CORS for frontend development
+// CORS for frontend applications
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
               .AllowAnyHeader()
@@ -103,7 +103,8 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
-app.UseCors("AllowFrontend");
+app.UseCors();
+app.UseHttpsRedirection();
 
 // Map API endpoints
 app.MapCustomerEndpoints();

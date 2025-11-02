@@ -3,7 +3,6 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>SmartSolutionsLab.OrangeCarRental.Customers.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

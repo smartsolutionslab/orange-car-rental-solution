@@ -99,7 +99,7 @@ public class CustomerDataSeeder
             phoneNumber: PhoneNumber.Of("+49 69 77788899"),
             dateOfBirth: new DateOnly(1980, 4, 30),
             address: Address.Of("Zeil 80", "Frankfurt am Main", "60313", "Germany"),
-            driversLicense: DriversLicense.Of("B777888999DE", "Germany", new DateOnly(2000, 8, 20), new DateOnly(2025, 8, 20))
+            driversLicense: DriversLicense.Of("B777888999DE", "Germany", new DateOnly(2010, 8, 20), new DateOnly(2030, 8, 20))
         ));
 
         // Customer 5: Jonas Fischer - Young driver from Cologne
@@ -214,7 +214,7 @@ public class CustomerDataSeeder
             driversLicense: DriversLicense.Of("B123123123DE", "Germany", new DateOnly(1990, 3, 15), new DateOnly(2027, 3, 15))
         ));
 
-        // Customer 15: Tim Schwarz - Recent driver with expiring license
+        // Customer 15: Tim Schwarz - Recent driver
         customers.Add(Customer.Register(
             firstName: "Tim",
             lastName: "Schwarz",
@@ -222,7 +222,7 @@ public class CustomerDataSeeder
             phoneNumber: PhoneNumber.Of("+49 201 45645645"),
             dateOfBirth: new DateOnly(1998, 7, 7),
             address: Address.Of("Limbecker Platz 1", "Essen", "45127", "Germany"),
-            driversLicense: DriversLicense.Of("B456456456DE", "Germany", new DateOnly(2018, 10, 20), new DateOnly(2025, 10, 20))
+            driversLicense: DriversLicense.Of("B456456456DE", "Germany", new DateOnly(2018, 10, 20), new DateOnly(2033, 10, 20))
         ));
 
         return customers;
