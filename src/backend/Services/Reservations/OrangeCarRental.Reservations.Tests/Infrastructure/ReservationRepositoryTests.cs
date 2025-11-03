@@ -160,7 +160,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Load fresh copy
         var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        loaded!.Confirm();
+        _context.Entry(loaded!).State = EntityState.Detached;
+        loaded = loaded!.Confirm();
 
         // Act
         await _repository.UpdateAsync(loaded, CancellationToken.None);
@@ -190,10 +191,11 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Detach and reload
         _context.Entry(reservation).State = EntityState.Detached;
         var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        _context.Entry(loaded!).State = EntityState.Detached;
 
         // Confirm and activate
-        loaded!.Confirm();
-        loaded.MarkAsActive();
+        loaded = loaded!.Confirm();
+        loaded = loaded.MarkAsActive();
 
         // Act
         await _repository.UpdateAsync(loaded, CancellationToken.None);
@@ -272,7 +274,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         _context.Entry(reservation).State = EntityState.Detached;
         var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        loaded!.Confirm();
+        _context.Entry(loaded!).State = EntityState.Detached;
+        loaded = loaded!.Confirm();
         await _repository.UpdateAsync(loaded, CancellationToken.None);
 
         // Act
@@ -311,7 +314,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act - Confirm
         _context.Entry(pending).State = EntityState.Detached;
         var toConfirm = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        toConfirm!.Confirm();
+        _context.Entry(toConfirm!).State = EntityState.Detached;
+        toConfirm = toConfirm!.Confirm();
         await _repository.UpdateAsync(toConfirm, CancellationToken.None);
         await _repository.SaveChangesAsync(CancellationToken.None);
 
@@ -322,7 +326,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act - Activate
         _context.Entry(confirmed).State = EntityState.Detached;
         var toActivate = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        toActivate!.MarkAsActive();
+        _context.Entry(toActivate!).State = EntityState.Detached;
+        toActivate = toActivate!.MarkAsActive();
         await _repository.UpdateAsync(toActivate, CancellationToken.None);
         await _repository.SaveChangesAsync(CancellationToken.None);
 
@@ -333,7 +338,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act - Complete
         _context.Entry(active).State = EntityState.Detached;
         var toComplete = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        toComplete!.Complete();
+        _context.Entry(toComplete!).State = EntityState.Detached;
+        toComplete = toComplete!.Complete();
         await _repository.UpdateAsync(toComplete, CancellationToken.None);
         await _repository.SaveChangesAsync(CancellationToken.None);
 
@@ -356,7 +362,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act - Cancel
         _context.Entry(reservation).State = EntityState.Detached;
         var toCancel = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        toCancel!.Cancel("Customer changed plans");
+        _context.Entry(toCancel!).State = EntityState.Detached;
+        toCancel = toCancel!.Cancel("Customer changed plans");
         await _repository.UpdateAsync(toCancel, CancellationToken.None);
         await _repository.SaveChangesAsync(CancellationToken.None);
 

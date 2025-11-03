@@ -75,7 +75,7 @@ public class ReservationTests
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Confirmed);
@@ -88,7 +88,7 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
         var act = () => reservation.Confirm();
@@ -103,7 +103,7 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Cancel("Changed mind");
+        reservation = reservation.Cancel("Changed mind");
 
         // Act
         var act = () => reservation.Confirm();
@@ -124,7 +124,7 @@ public class ReservationTests
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
-        reservation.Cancel("Changed plans");
+        reservation = reservation.Cancel("Changed plans");
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Cancelled);
@@ -138,10 +138,10 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
-        reservation.Cancel("Emergency");
+        reservation = reservation.Cancel("Emergency");
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Cancelled);
@@ -155,7 +155,7 @@ public class ReservationTests
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
-        reservation.Cancel();
+        reservation = reservation.Cancel();
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Cancelled);
@@ -167,7 +167,7 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Cancel("First cancellation");
+        reservation = reservation.Cancel("First cancellation");
 
         // Act
         var act = () => reservation.Cancel("Second cancellation");
@@ -186,9 +186,9 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
-        reservation.MarkAsActive();
-        reservation.Complete();
+        reservation = reservation.Confirm();
+        reservation = reservation.MarkAsActive();
+        reservation = reservation.Complete();
 
         // Act
         var act = () => reservation.Cancel("Too late");
@@ -206,8 +206,8 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
-        reservation.MarkAsActive();
+        reservation = reservation.Confirm();
+        reservation = reservation.MarkAsActive();
 
         // Act
         var act = () => reservation.Cancel("Cancel during rental");
@@ -229,10 +229,10 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
-        reservation.MarkAsActive();
+        reservation = reservation.MarkAsActive();
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Active);
@@ -251,10 +251,10 @@ public class ReservationTests
         // For testing, we'll use today's date
         var todayPeriod = BookingPeriod.Of(DateTime.UtcNow.Date, DateTime.UtcNow.Date.AddDays(3));
         var reservation = Reservation.Create(_vehicleId, _customerId, todayPeriod, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
-        reservation.MarkAsActive();
+        reservation = reservation.MarkAsActive();
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Active);
@@ -268,7 +268,7 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
         var act = () => reservation.MarkAsActive();
@@ -303,8 +303,8 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
-        reservation.Cancel("Changed mind");
+        reservation = reservation.Confirm();
+        reservation = reservation.Cancel("Changed mind");
 
         // Act
         var act = () => reservation.MarkAsActive();
@@ -326,11 +326,11 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
-        reservation.MarkAsActive();
+        reservation = reservation.Confirm();
+        reservation = reservation.MarkAsActive();
 
         // Act
-        reservation.Complete();
+        reservation = reservation.Complete();
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Completed);
@@ -343,7 +343,7 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
         var act = () => reservation.Complete();
@@ -385,7 +385,7 @@ public class ReservationTests
         // Since we can't create a period in the past, let's test the validation instead
         var futurePeriod = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(4));
         var reservation = Reservation.Create(_vehicleId, _customerId, futurePeriod, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
         var act = () => reservation.MarkAsNoShow();
@@ -417,8 +417,8 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
-        reservation.MarkAsActive();
+        reservation = reservation.Confirm();
+        reservation = reservation.MarkAsActive();
 
         // Act
         var act = () => reservation.MarkAsNoShow();
@@ -436,7 +436,7 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
         var act = () => reservation.MarkAsNoShow();
@@ -539,13 +539,13 @@ public class ReservationTests
         // Act & Assert
         reservation.Status.Should().Be(ReservationStatus.Pending);
 
-        reservation.Confirm();
+        reservation = reservation.Confirm();
         reservation.Status.Should().Be(ReservationStatus.Confirmed);
 
-        reservation.MarkAsActive();
+        reservation = reservation.MarkAsActive();
         reservation.Status.Should().Be(ReservationStatus.Active);
 
-        reservation.Complete();
+        reservation = reservation.Complete();
         reservation.Status.Should().Be(ReservationStatus.Completed);
     }
 
@@ -556,7 +556,7 @@ public class ReservationTests
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
-        reservation.Cancel("Customer request");
+        reservation = reservation.Cancel("Customer request");
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Cancelled);
@@ -567,10 +567,10 @@ public class ReservationTests
     {
         // Arrange
         var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act
-        reservation.Cancel("Emergency");
+        reservation = reservation.Cancel("Emergency");
 
         // Assert
         reservation.Status.Should().Be(ReservationStatus.Cancelled);
@@ -585,7 +585,7 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
         var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
-        reservation.Confirm();
+        reservation = reservation.Confirm();
 
         // Act & Assert - Should throw because we're not past pickup date yet
         var act = () => reservation.MarkAsNoShow();
