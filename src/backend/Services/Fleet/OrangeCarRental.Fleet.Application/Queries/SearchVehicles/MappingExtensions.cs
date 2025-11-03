@@ -71,6 +71,20 @@ public static class MappingExtensions
             }
         }
 
+        // Create search period if both dates are provided
+        SearchPeriod? period = null;
+        if (query.PickupDate.HasValue && query.ReturnDate.HasValue)
+        {
+            try
+            {
+                period = SearchPeriod.Of(query.PickupDate.Value, query.ReturnDate.Value);
+            }
+            catch (ArgumentException)
+            {
+                // Invalid date range - leave as null to filter nothing
+            }
+        }
+
         return new VehicleSearchParameters
         {
             LocationCode = locationCode,
@@ -80,8 +94,7 @@ public static class MappingExtensions
             TransmissionType = query.TransmissionType.TryParseTransmissionType(),
             MaxDailyRateGross = query.MaxDailyRateGross,
             Status = VehicleStatus.Available, // Always filter to available vehicles
-            PickupDate = query.PickupDate,
-            ReturnDate = query.ReturnDate,
+            Period = period,
             PageNumber = query.PageNumber ?? 1,
             PageSize = query.PageSize ?? 20
         };

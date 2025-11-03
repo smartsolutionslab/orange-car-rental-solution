@@ -22,11 +22,8 @@ public readonly record struct LocationCode
 
         var trimmed = code.Trim().ToUpperInvariant();
 
-        if (trimmed.Length < 3)
-            throw new ArgumentException("Location code must be at least 3 characters long", nameof(code));
-
-        if (trimmed.Length > 20)
-            throw new ArgumentException("Location code cannot exceed 20 characters", nameof(code));
+        if (trimmed.Length < 3) throw new ArgumentException("Location code must be at least 3 characters long", nameof(code));
+        if (trimmed.Length > 20) throw new ArgumentException("Location code cannot exceed 20 characters", nameof(code));
 
         return new LocationCode(trimmed);
     }

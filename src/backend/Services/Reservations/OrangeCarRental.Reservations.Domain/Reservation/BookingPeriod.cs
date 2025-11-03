@@ -24,14 +24,11 @@ public readonly record struct BookingPeriod
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        if (pickupDate < today)
-            throw new ArgumentException("Pickup date cannot be in the past", nameof(pickupDate));
-        if (returnDate <= pickupDate)
-            throw new ArgumentException("Return date must be after pickup date", nameof(returnDate));
+        if (pickupDate < today) throw new ArgumentException("Pickup date cannot be in the past", nameof(pickupDate));
+        if (returnDate <= pickupDate) throw new ArgumentException("Return date must be after pickup date", nameof(returnDate));
 
         var days = returnDate.DayNumber - pickupDate.DayNumber + 1;
-        if (days > 90)
-            throw new ArgumentException("Rental period cannot exceed 90 days", nameof(returnDate));
+        if (days > 90) throw new ArgumentException("Rental period cannot exceed 90 days", nameof(returnDate));
 
         return new BookingPeriod(pickupDate, returnDate);
     }

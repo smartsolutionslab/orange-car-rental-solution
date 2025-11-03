@@ -44,12 +44,7 @@ public sealed class VehicleSearchParameters : SearchParameters
     public VehicleStatus? Status { get; init; }
 
     /// <summary>
-    /// Filter by pickup date for availability.
+    /// Filter by availability period (pickup and return dates).
     /// </summary>
-    public DateTime? PickupDate { get; init; }
-
-    /// <summary>
-    /// Filter by return date for availability.
-    /// </summary>
-    public DateTime? ReturnDate { get; init; }
+    public SearchPeriod? Period { get; init; }
 }

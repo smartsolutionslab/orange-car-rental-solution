@@ -80,18 +80,17 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
             query = query.Where(v => v.Status == parameters.Status.Value);
         }
 
-        // Filter by date availability if both dates provided
-        if (parameters.PickupDate.HasValue && parameters.ReturnDate.HasValue)
+        // Filter by date availability if period is provided
+        if (parameters.Period.HasValue)
         {
-            var pickupDate = DateOnly.FromDateTime(parameters.PickupDate.Value);
-            var returnDate = DateOnly.FromDateTime(parameters.ReturnDate.Value);
+            var searchPeriod = parameters.Period.Value;
 
-            // Get booked vehicle IDs
+            // Get booked vehicle IDs for the search period
             var bookedVehicleIds = await reservationsContext.Reservations
                 .Where(r =>
                     (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
-                    r.Period.PickupDate <= returnDate &&
-                    r.Period.ReturnDate >= pickupDate)
+                    r.Period.PickupDate <= searchPeriod.ReturnDate &&
+                    r.Period.ReturnDate >= searchPeriod.PickupDate)
                 .Select(r => r.VehicleId)
                 .ToListAsync(cancellationToken);
 

@@ -320,7 +320,7 @@ public class SearchVehiclesQueryHandlerTests
         decimal dailyRateGross)
     {
         var category = VehicleCategory.FromCode(categoryCode);
-        var location = Location.Of(locationCode, "Test City");
+        var location = Location.Of(locationCode,  "Test City");
         var currency = Currency.Of("EUR");
         var dailyRate = Money.FromGross(dailyRateGross, 0.19m, currency);
 

@@ -46,7 +46,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("LocationCode")
             .HasConversion(
                 location => location.Code.Value,
-                code => Location.FromCode(code))
+                code => Location.FromCode(LocationCode.Of(code)))
             .HasMaxLength(20)
             .IsRequired();
 
