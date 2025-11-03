@@ -11,13 +11,20 @@ public readonly record struct PricingPolicyId
 
     public static PricingPolicyId Of(Guid value)
     {
-        if (value == Guid.Empty)
-            throw new ArgumentException("Pricing policy ID cannot be empty", nameof(value));
-
+        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
         return new PricingPolicyId(value);
     }
 
-    public static PricingPolicyId New() => new(Guid.NewGuid());
+    public static PricingPolicyId From(string value)
+    {
+        if (!Guid.TryParse(value, out var guid))
+        {
+            throw new ArgumentException($"Invalid pricing policy ID format: {value}", nameof(value));
+        }
+        return Of(guid);
+    }
+
+    public static PricingPolicyId New() => new(Guid.CreateVersion7());
 
     public static implicit operator Guid(PricingPolicyId id) => id.Value;
 

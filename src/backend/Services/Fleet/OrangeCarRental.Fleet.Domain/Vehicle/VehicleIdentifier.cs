@@ -13,10 +13,7 @@ public readonly record struct VehicleIdentifier
 
     public static VehicleIdentifier From(Guid value)
     {
-        if (value == Guid.Empty)
-        {
-            throw new ArgumentException("Vehicle ID cannot be empty", nameof(value));
-        }
+        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
         return new VehicleIdentifier(value);
     }
 

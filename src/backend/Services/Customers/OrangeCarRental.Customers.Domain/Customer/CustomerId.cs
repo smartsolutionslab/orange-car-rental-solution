@@ -22,10 +22,7 @@ public readonly record struct CustomerId
     /// <exception cref="ArgumentException">Thrown when the GUID is empty.</exception>
     public static CustomerId From(Guid value)
     {
-        if (value == Guid.Empty)
-        {
-            throw new ArgumentException("Customer ID cannot be empty", nameof(value));
-        }
+        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
         return new CustomerId(value);
     }
 
