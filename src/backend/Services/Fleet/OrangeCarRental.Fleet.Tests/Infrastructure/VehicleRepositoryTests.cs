@@ -234,7 +234,9 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
         // Mark one vehicle as rented
         var vehicle = await _context.Vehicles.FirstAsync();
-        vehicle.ChangeStatus(VehicleStatus.Rented);
+        _context.Entry(vehicle).State = EntityState.Detached;
+        vehicle = vehicle.ChangeStatus(VehicleStatus.Rented);
+        _context.Vehicles.Update(vehicle);
         await _context.SaveChangesAsync();
 
         var parameters = new VehicleSearchParameters
