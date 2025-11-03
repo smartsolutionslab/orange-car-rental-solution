@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LocationService, Location } from '@ocr/data-access';
+import { LocationService } from '../../services/location.service';
+import { Location } from '../../services/location.model';
 
 /**
  * Locations management page for call center
