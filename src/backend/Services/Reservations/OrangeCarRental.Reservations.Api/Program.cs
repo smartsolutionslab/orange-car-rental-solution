@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -52,11 +53,22 @@ builder.Services.AddHttpClient<IPricingService, PricingService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
+// Register HTTP client for Customers API
+var customersApiUrl = builder.Configuration["CUSTOMERS_API_URL"] ?? "http://localhost:5001";
+Log.Information("Customers API URL: {CustomersApiUrl}", customersApiUrl);
+
+builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
+{
+    client.BaseAddress = new Uri(customersApiUrl);
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // Register repositories
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register application handlers
 builder.Services.AddScoped<CreateReservationCommandHandler>();
+builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
 builder.Services.AddScoped<GetReservationQueryHandler>();
 
 var app = builder.Build();
