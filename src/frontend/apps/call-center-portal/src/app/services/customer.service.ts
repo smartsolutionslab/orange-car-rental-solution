@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Customer, CustomerSearchQuery, CustomerSearchResult } from './customer.model';
+import { Customer, CustomerSearchQuery, CustomerSearchResult, UpdateCustomerRequest } from './customer.model';
 import { ConfigService } from './config.service';
 
 /**
@@ -45,5 +45,15 @@ export class CustomerService {
     }
 
     return this.http.get<CustomerSearchResult>(this.apiUrl, { params });
+  }
+
+  /**
+   * Update customer information
+   * @param id Customer ID
+   * @param request Update customer request
+   * @returns Observable of updated customer
+   */
+  updateCustomer(id: string, request: UpdateCustomerRequest): Observable<Customer> {
+    return this.http.put<Customer>(`${this.apiUrl}/${id}`, request);
   }
 }

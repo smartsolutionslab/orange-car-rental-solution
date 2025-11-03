@@ -43,3 +43,22 @@ export interface CustomerSearchResult {
   hasPreviousPage?: boolean;
   hasNextPage?: boolean;
 }
+
+/**
+ * Update customer request
+ */
+export interface UpdateCustomerRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  licenseNumber: string;
+  licenseIssueCountry: string;
+  licenseIssueDate: string;
+  licenseExpiryDate: string;
+}
