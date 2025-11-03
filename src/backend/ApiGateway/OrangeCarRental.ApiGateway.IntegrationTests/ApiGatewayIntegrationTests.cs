@@ -180,6 +180,93 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         reservationsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
     }
 
+    [Fact]
+    public async Task Gateway_CreateGuestReservation_ThroughGateway_Succeeds()
+    {
+        // Arrange - Create a realistic guest booking request with German market data
+        var createGuestRequest = new
+        {
+            vehicleId = Guid.NewGuid(),
+            categoryCode = "ECAR",
+            pickupDate = DateTime.UtcNow.Date.AddDays(7),
+            returnDate = DateTime.UtcNow.Date.AddDays(10),
+            pickupLocationCode = "MUC",
+            dropoffLocationCode = "MUC",
+            firstName = "Max",
+            lastName = "Mustermann",
+            email = $"max.mustermann.{Guid.NewGuid():N}@example.de",
+            phoneNumber = "+49 89 12345678",
+            dateOfBirth = new DateOnly(1990, 1, 15),
+            street = "Musterstraße 123",
+            city = "München",
+            postalCode = "80331",
+            country = "Germany",
+            licenseNumber = "B12345678",
+            licenseIssueCountry = "Germany",
+            licenseIssueDate = new DateOnly(2015, 6, 1),
+            licenseExpiryDate = new DateOnly(2035, 6, 1)
+        };
+
+        // Act - Send request through API Gateway to /api/reservations/guest endpoint
+        var response = await _gatewayClient!.PostAsJsonAsync("/api/reservations/guest", createGuestRequest);
+        var result = await response.Content.ReadFromJsonAsync<GuestReservationResponse>();
+
+        // Assert - Verify the request was successfully routed and processed
+        response.StatusCode.Should().Be(HttpStatusCode.Created);
+        result.Should().NotBeNull();
+
+        // Verify customer was created
+        result!.CustomerId.Should().NotBeEmpty("a new customer should be registered");
+
+        // Verify reservation was created
+        result.ReservationId.Should().NotBeEmpty("a reservation should be created");
+
+        // Verify pricing was calculated (German VAT: 19%)
+        result.TotalPriceNet.Should().BeGreaterThan(0, "price should be calculated");
+        result.TotalPriceVat.Should().BeGreaterThan(0, "VAT should be included");
+        result.TotalPriceGross.Should().Be(result.TotalPriceNet + result.TotalPriceVat);
+        result.Currency.Should().Be("EUR", "German market uses Euro currency");
+
+        // Verify response location header points to the new reservation
+        response.Headers.Location.Should().NotBeNull();
+        response.Headers.Location!.ToString().Should().Contain($"/api/reservations/{result.ReservationId}");
+    }
+
+    [Fact]
+    public async Task Gateway_CreateGuestReservation_WithInvalidData_ReturnsBadRequest()
+    {
+        // Arrange - Create a guest booking request with invalid pickup date (in the past)
+        var invalidGuestRequest = new
+        {
+            vehicleId = Guid.NewGuid(),
+            categoryCode = "ECAR",
+            pickupDate = DateTime.UtcNow.Date.AddDays(-1), // Invalid: past date
+            returnDate = DateTime.UtcNow.Date.AddDays(3),
+            pickupLocationCode = "MUC",
+            dropoffLocationCode = "MUC",
+            firstName = "Max",
+            lastName = "Mustermann",
+            email = "max.mustermann@example.de",
+            phoneNumber = "+49 89 12345678",
+            dateOfBirth = new DateOnly(1990, 1, 15),
+            street = "Musterstraße 123",
+            city = "München",
+            postalCode = "80331",
+            country = "Germany",
+            licenseNumber = "B12345678",
+            licenseIssueCountry = "Germany",
+            licenseIssueDate = new DateOnly(2015, 6, 1),
+            licenseExpiryDate = new DateOnly(2035, 6, 1)
+        };
+
+        // Act
+        var response = await _gatewayClient!.PostAsJsonAsync("/api/reservations/guest", invalidGuestRequest);
+
+        // Assert
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest,
+            "pickup date in the past should be rejected");
+    }
+
     // Response DTOs for deserialization
     private record HealthResponse(string Service, string Status, DateTime Timestamp);
 
@@ -217,4 +304,12 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         decimal TotalPriceNet,
         string Status,
         DateTime CreatedAt);
+
+    private record GuestReservationResponse(
+        Guid CustomerId,
+        Guid ReservationId,
+        decimal TotalPriceNet,
+        decimal TotalPriceVat,
+        decimal TotalPriceGross,
+        string Currency);
 }
