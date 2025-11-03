@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 /// Pricing policy aggregate root.
 /// Defines daily rates for vehicle categories with German market pricing (19% VAT).
 /// </summary>
-public sealed class PricingPolicy : AggregateRoot<PricingPolicyId>
+public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
 {
     public CategoryCode CategoryCode { get; private set; }
     public Money DailyRate { get; private set; }
@@ -26,7 +27,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyId>
     }
 
     private PricingPolicy(
-        PricingPolicyId id,
+        PricingPolicyIdentifier id,
         CategoryCode categoryCode,
         Money dailyRate,
         DateTime effectiveFrom,
@@ -55,7 +56,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyId>
         LocationCode? locationCode = null)
     {
         return new PricingPolicy(
-            PricingPolicyId.New(),
+            PricingPolicyIdentifier.New(),
             categoryCode,
             dailyRate,
             effectiveFrom ?? DateTime.UtcNow,

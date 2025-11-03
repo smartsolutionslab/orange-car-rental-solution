@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
@@ -42,10 +43,38 @@ public static class MappingExtensions
 
     public static VehicleSearchParameters ToVehicleSearchParameters(this SearchVehiclesQuery query)
     {
+        // Parse location code to value object if provided
+        LocationCode? locationCode = null;
+        if (!string.IsNullOrWhiteSpace(query.LocationCode))
+        {
+            try
+            {
+                locationCode = LocationCode.Of(query.LocationCode.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid location code format - leave as null to filter nothing
+            }
+        }
+
+        // Parse category code to value object if provided
+        VehicleCategory? category = null;
+        if (!string.IsNullOrWhiteSpace(query.CategoryCode))
+        {
+            try
+            {
+                category = VehicleCategory.FromCode(query.CategoryCode.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid category code - leave as null to filter nothing
+            }
+        }
+
         return new VehicleSearchParameters
         {
-            LocationCode = query.LocationCode,
-            CategoryCode = query.CategoryCode,
+            LocationCode = locationCode,
+            Category = category,
             MinSeats = query.MinSeats,
             FuelType = query.FuelType.TryParseFuelType(),
             TransmissionType = query.TransmissionType.TryParseTransmissionType(),

@@ -59,25 +59,21 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         // Name search - search in both FirstName and LastName using LIKE
         if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
         {
-            var searchTerm = parameters.SearchTerm.Trim();
             query = query.Where(c =>
-                EF.Functions.Like(c.FirstName, $"%{searchTerm}%") ||
-                EF.Functions.Like(c.LastName, $"%{searchTerm}%"));
+                EF.Functions.Like(c.FirstName, $"%{parameters.SearchTerm}%") ||
+                EF.Functions.Like(c.LastName, $"%{parameters.SearchTerm}%"));
         }
 
-        // Email filter - use EF.Functions for string operations on converted value objects
-        if (!string.IsNullOrWhiteSpace(parameters.Email))
+        // Email filter - use value object directly
+        if (parameters.Email is not null)
         {
-            var email = parameters.Email.Trim().ToLowerInvariant();
-            // EF Core will translate this using the value converter
-            query = query.Where(c => EF.Functions.Like(c.Email, $"%{email}%"));
+            query = query.Where(c => c.Email == parameters.Email);
         }
 
-        // Phone number filter
-        if (!string.IsNullOrWhiteSpace(parameters.PhoneNumber))
+        // Phone number filter - use value object directly
+        if (parameters.PhoneNumber is not null)
         {
-            var phoneNumber = parameters.PhoneNumber.Trim();
-            query = query.Where(c => EF.Functions.Like(c.PhoneNumber, $"%{phoneNumber}%"));
+            query = query.Where(c => c.PhoneNumber == parameters.PhoneNumber);
         }
 
         // Status filter
@@ -89,15 +85,13 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         // City filter
         if (!string.IsNullOrWhiteSpace(parameters.City))
         {
-            var city = parameters.City.Trim();
-            query = query.Where(c => EF.Functions.Like(c.Address.City, $"%{city}%"));
+            query = query.Where(c => EF.Functions.Like(c.Address.City, $"%{parameters.City}%"));
         }
 
         // Postal code filter
         if (!string.IsNullOrWhiteSpace(parameters.PostalCode))
         {
-            var postalCode = parameters.PostalCode.Trim();
-            query = query.Where(c => c.Address.PostalCode == postalCode);
+            query = query.Where(c => c.Address.PostalCode == parameters.PostalCode);
         }
 
         // Age range filtering - calculated from DateOfBirth
@@ -105,20 +99,17 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
 
         if (parameters.MinAge.HasValue)
         {
-            // Calculate the maximum date of birth for minimum age
             var maxDateOfBirth = today.AddYears(-parameters.MinAge.Value);
             query = query.Where(c => c.DateOfBirth <= maxDateOfBirth);
         }
 
         if (parameters.MaxAge.HasValue)
         {
-            // Calculate the minimum date of birth for maximum age
-            // Add 1 to MaxAge to include people who haven't had their birthday yet
             var minDateOfBirth = today.AddYears(-(parameters.MaxAge.Value + 1));
             query = query.Where(c => c.DateOfBirth >= minDateOfBirth);
         }
 
-        // License expiry filtering - find licenses expiring within N days
+        // License expiry filtering
         if (parameters.LicenseExpiringWithinDays.HasValue)
         {
             var expiryThreshold = today.AddDays(parameters.LicenseExpiringWithinDays.Value);
@@ -138,16 +129,14 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
             query = query.Where(c => c.RegisteredAtUtc <= parameters.RegisteredTo.Value);
         }
 
-        // Get total count before pagination
-        var totalCount = await query.CountAsync(cancellationToken);
-
         // Apply sorting
         query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
 
-        // Apply pagination
+        // Get total count and apply pagination
+        var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-            .Take(parameters.PageSize)
+            .Skip(parameters.Skip)
+            .Take(parameters.Take)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Customer>

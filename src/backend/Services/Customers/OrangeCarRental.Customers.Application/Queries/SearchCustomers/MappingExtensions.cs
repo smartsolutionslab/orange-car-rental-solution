@@ -70,6 +70,7 @@ public static class MappingExtensions
 
     /// <summary>
     /// Maps a SearchCustomersQuery to CustomerSearchParameters.
+    /// Handles parsing of primitive types to value objects.
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
@@ -83,14 +84,42 @@ public static class MappingExtensions
             }
         }
 
+        // Parse email to value object if provided
+        Email? email = null;
+        if (!string.IsNullOrWhiteSpace(query.Email))
+        {
+            try
+            {
+                email = Email.Of(query.Email.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid email format - leave as null to filter nothing
+            }
+        }
+
+        // Parse phone number to value object if provided
+        PhoneNumber? phoneNumber = null;
+        if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
+        {
+            try
+            {
+                phoneNumber = PhoneNumber.Of(query.PhoneNumber.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid phone number format - leave as null to filter nothing
+            }
+        }
+
         return new CustomerSearchParameters
         {
-            SearchTerm = query.SearchTerm,
-            Email = query.Email,
-            PhoneNumber = query.PhoneNumber,
+            SearchTerm = query.SearchTerm?.Trim(),
+            Email = email,
+            PhoneNumber = phoneNumber,
             Status = status,
-            City = query.City,
-            PostalCode = query.PostalCode,
+            City = query.City?.Trim(),
+            PostalCode = query.PostalCode?.Trim(),
             MinAge = query.MinAge,
             MaxAge = query.MaxAge,
             LicenseExpiringWithinDays = query.LicenseExpiringWithinDays,

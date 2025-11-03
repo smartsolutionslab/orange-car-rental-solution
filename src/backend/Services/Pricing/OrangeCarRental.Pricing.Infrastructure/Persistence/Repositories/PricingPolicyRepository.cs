@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.R
 /// </summary>
 public sealed class PricingPolicyRepository(PricingDbContext context) : IPricingPolicyRepository
 {
-    public async Task<PricingPolicy?> GetByIdAsync(PricingPolicyId id, CancellationToken cancellationToken = default)
+    public async Task<PricingPolicy?> GetByIdAsync(PricingPolicyIdentifier id, CancellationToken cancellationToken = default)
     {
         return await context.PricingPolicies
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);

@@ -9,7 +9,7 @@ public interface IPricingPolicyRepository
     /// <summary>
     /// Gets a pricing policy by ID.
     /// </summary>
-    Task<PricingPolicy?> GetByIdAsync(PricingPolicyId id, CancellationToken cancellationToken = default);
+    Task<PricingPolicy?> GetByIdAsync(PricingPolicyIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Gets the active pricing policy for a vehicle category.

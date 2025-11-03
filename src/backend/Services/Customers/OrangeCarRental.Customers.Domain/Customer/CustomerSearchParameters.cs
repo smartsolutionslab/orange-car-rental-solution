@@ -1,10 +1,11 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 /// Parameters for searching customers with filtering, sorting, and pagination.
 /// </summary>
-public sealed class CustomerSearchParameters
+public sealed class CustomerSearchParameters : SearchParameters
 {
     /// <summary>
     /// Search by customer name (first or last name).
@@ -12,14 +13,14 @@ public sealed class CustomerSearchParameters
     public string? SearchTerm { get; init; }
 
     /// <summary>
-    /// Filter by email address.
+    /// Filter by email address (value object).
     /// </summary>
-    public string? Email { get; init; }
+    public Email? Email { get; init; }
 
     /// <summary>
-    /// Filter by phone number.
+    /// Filter by phone number (value object).
     /// </summary>
-    public string? PhoneNumber { get; init; }
+    public PhoneNumber? PhoneNumber { get; init; }
 
     /// <summary>
     /// Filter by customer status.
@@ -62,41 +63,14 @@ public sealed class CustomerSearchParameters
     public DateTime? RegisteredTo { get; init; }
 
     /// <summary>
-    /// Sort field name.
-    /// </summary>
-    public string? SortBy { get; init; }
-
-    /// <summary>
-    /// Sort in descending order.
-    /// </summary>
-    public bool SortDescending { get; init; }
-
-    /// <summary>
-    /// Page number (1-based).
-    /// </summary>
-    public int PageNumber { get; init; } = 1;
-
-    /// <summary>
-    /// Number of items per page.
-    /// </summary>
-    public int PageSize { get; init; } = 20;
-
-    /// <summary>
     /// Validates the search parameters.
     /// </summary>
-    public void Validate()
+    public override void Validate()
     {
-        if (PageNumber < 1)
-            throw new ArgumentException("Page number must be at least 1", nameof(PageNumber));
+        base.Validate();
 
-        if (PageSize < 1 || PageSize > 100)
-            throw new ArgumentException("Page size must be between 1 and 100", nameof(PageSize));
-
-        if (MinAge.HasValue && MinAge < 0)
-            throw new ArgumentException("Minimum age cannot be negative", nameof(MinAge));
-
-        if (MaxAge.HasValue && MaxAge < 0)
-            throw new ArgumentException("Maximum age cannot be negative", nameof(MaxAge));
+        ArgumentOutOfRangeException.ThrowIfLessThan(MinAge ?? 0, 0, nameof(MinAge));
+        ArgumentOutOfRangeException.ThrowIfLessThan(MaxAge ?? 0, 0, nameof(MaxAge));
 
         if (MinAge.HasValue && MaxAge.HasValue && MinAge > MaxAge)
             throw new ArgumentException("Minimum age cannot be greater than maximum age");

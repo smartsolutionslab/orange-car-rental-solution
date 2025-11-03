@@ -1,10 +1,10 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
+namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 
 public sealed record PricingPolicyCreated(
-    PricingPolicyId PricingPolicyId,
+    PricingPolicyIdentifier PricingPolicyId,
     CategoryCode CategoryCode,
     Money DailyRate,
     DateTime EffectiveFrom

@@ -1,8 +1,8 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
-namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
+namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 
 public sealed record PricingPolicyDeactivated(
-    PricingPolicyId PricingPolicyId,
+    PricingPolicyIdentifier PricingPolicyId,
     CategoryCode CategoryCode
 ) : DomainEvent;

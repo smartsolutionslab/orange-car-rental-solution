@@ -29,69 +29,64 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         VehicleSearchParameters parameters,
         CancellationToken cancellationToken = default)
     {
+        parameters.Validate();
+
         // Start with base query
         var query = context.Vehicles.AsNoTracking().AsQueryable();
 
-        // Apply filters using database-level WHERE clauses
-        // Use EF.Property to access the stored column values directly since value objects
-        // with value converters cannot have their nested properties accessed in LINQ queries
-        if (!string.IsNullOrWhiteSpace(parameters.LocationCode))
+        // Apply filters using value objects directly - no parsing in repository
+
+        // Location filter - use value object directly
+        if (parameters.LocationCode.HasValue)
         {
-            // Compare the value object directly - EF Core will use the value converter
-            var location = Location.FromCode(parameters.LocationCode);
+            var location = Location.FromCode(parameters.LocationCode.Value);
             query = query.Where(v => v.CurrentLocation == location);
         }
 
-        if (!string.IsNullOrWhiteSpace(parameters.CategoryCode))
+        // Category filter - use value object directly
+        if (parameters.Category.HasValue)
         {
-            // Compare the value object directly - EF Core will use the value converter
-            var category = VehicleCategory.FromCode(parameters.CategoryCode);
-            query = query.Where(v => v.Category == category);
+            query = query.Where(v => v.Category == parameters.Category.Value);
         }
 
+        // Minimum seats filter
         if (parameters.MinSeats.HasValue)
         {
-            // Compare using the >= operator defined on SeatingCapacity
-            // Use the comparison directly in the query for EF Core to translate it properly
             query = query.Where(v => v.Seats >= SeatingCapacity.Of(parameters.MinSeats.Value));
         }
 
+        // Fuel type filter
         if (parameters.FuelType.HasValue)
         {
             query = query.Where(v => v.FuelType == parameters.FuelType.Value);
         }
 
+        // Transmission type filter
         if (parameters.TransmissionType.HasValue)
         {
             query = query.Where(v => v.TransmissionType == parameters.TransmissionType.Value);
         }
 
-        // Filter by MaxDailyRateGross using complex property members
+        // Max daily rate filter
         if (parameters.MaxDailyRateGross.HasValue)
         {
-            // Access complex property members directly - EF Core can translate this
             query = query.Where(v =>
                 v.DailyRate.NetAmount + v.DailyRate.VatAmount <= parameters.MaxDailyRateGross.Value);
         }
 
+        // Status filter
         if (parameters.Status.HasValue)
         {
             query = query.Where(v => v.Status == parameters.Status.Value);
         }
 
-        // Get total count before date filtering and pagination
-        var totalCountBeforeDateFilter = await query.CountAsync(cancellationToken);
-
-        // Filter by date availability - exclude vehicles with overlapping reservations
-        List<Vehicle> items;
-        int totalCount;
-
+        // Filter by date availability if both dates provided
         if (parameters.PickupDate.HasValue && parameters.ReturnDate.HasValue)
         {
             var pickupDate = parameters.PickupDate.Value.Date;
             var returnDate = parameters.ReturnDate.Value.Date;
 
-            // Get vehicle IDs that have confirmed or active reservations overlapping with the requested period
+            // Get booked vehicle IDs
             var bookedVehicleIds = await reservationsContext.Reservations
                 .Where(r =>
                     (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
@@ -100,35 +95,24 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
                 .Select(r => r.VehicleId)
                 .ToListAsync(cancellationToken);
 
-            // Convert to HashSet for efficient lookup
             var bookedIdsSet = bookedVehicleIds.ToHashSet();
 
             // Get all matching vehicles and filter in memory
             var allVehicles = await query.ToListAsync(cancellationToken);
-
-            // Filter out booked vehicles
             var availableVehicles = allVehicles
                 .Where(v => !bookedIdsSet.Contains(v.Id.Value))
                 .ToList();
 
-            totalCount = availableVehicles.Count;
-
-            // Apply pagination in memory
-            items = availableVehicles
-                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                .Take(parameters.PageSize)
-                .ToList();
+            // Apply pagination for in-memory collection
+            return availableVehicles.ToPagedResult(parameters);
         }
-        else
-        {
-            totalCount = totalCountBeforeDateFilter;
 
-            // Apply pagination
-            items = await query
-                .Skip((parameters.PageNumber - 1) * parameters.PageSize)
-                .Take(parameters.PageSize)
-                .ToListAsync(cancellationToken);
-        }
+        // Get total count and apply pagination for queryable
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .Skip(parameters.Skip)
+            .Take(parameters.Take)
+            .ToListAsync(cancellationToken);
 
         return new PagedResult<Vehicle>
         {
