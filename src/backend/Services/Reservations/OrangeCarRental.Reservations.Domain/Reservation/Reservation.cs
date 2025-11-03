@@ -66,7 +66,6 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         Money totalPrice)
     {
         if (vehicleId == Guid.Empty) throw new ArgumentException("Vehicle ID cannot be empty", nameof(vehicleId));
-
         if (customerId == Guid.Empty) throw new ArgumentException("Customer ID cannot be empty", nameof(customerId));
 
         return new Reservation(
@@ -99,9 +98,7 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     public void Cancel(string? reason = null)
     {
         if (Status == ReservationStatus.Cancelled) return; // Already cancelled
-
         if (Status == ReservationStatus.Completed) throw new InvalidOperationException("Cannot cancel a completed reservation");
-
         if (Status == ReservationStatus.Active) throw new InvalidOperationException("Cannot cancel an active rental. Please return the vehicle first.");
 
         Status = ReservationStatus.Cancelled;
@@ -120,7 +117,7 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
 
 
         // Check if pickup date is today or in the past
-        if (Period.PickupDate > DateTime.UtcNow.Date) throw new InvalidOperationException("Cannot activate reservation before pickup date");
+        if (Period.PickupDate > DateOnly.FromDateTime(DateTime.UtcNow)) throw new InvalidOperationException("Cannot activate reservation before pickup date");
 
         Status = ReservationStatus.Active;
     }
@@ -146,7 +143,7 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         if (Status != ReservationStatus.Confirmed) throw new InvalidOperationException($"Cannot mark as no-show in status: {Status}");
 
         // Check if we're past the pickup date
-        if (DateTime.UtcNow.Date <= Period.PickupDate) throw new InvalidOperationException("Cannot mark as no-show before pickup date has passed");
+        if (DateOnly.FromDateTime(DateTime.UtcNow) <= Period.PickupDate) throw new InvalidOperationException("Cannot mark as no-show before pickup date has passed");
 
         Status = ReservationStatus.NoShow;
         CancelledAt = DateTime.UtcNow;

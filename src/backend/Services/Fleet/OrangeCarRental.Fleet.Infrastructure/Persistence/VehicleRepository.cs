@@ -83,8 +83,8 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         // Filter by date availability if both dates provided
         if (parameters.PickupDate.HasValue && parameters.ReturnDate.HasValue)
         {
-            var pickupDate = parameters.PickupDate.Value.Date;
-            var returnDate = parameters.ReturnDate.Value.Date;
+            var pickupDate = DateOnly.FromDateTime(parameters.PickupDate.Value);
+            var returnDate = DateOnly.FromDateTime(parameters.ReturnDate.Value);
 
             // Get booked vehicle IDs
             var bookedVehicleIds = await reservationsContext.Reservations

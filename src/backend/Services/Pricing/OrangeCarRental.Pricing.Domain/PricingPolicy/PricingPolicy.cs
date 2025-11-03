@@ -114,7 +114,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     /// </summary>
     public Money CalculatePrice(RentalPeriod period)
     {
-        if (!IsValidFor(period.PickupDate))
+        if (!IsValidFor(period.PickupDate.ToDateTime(TimeOnly.MinValue)))
             throw new InvalidOperationException("Pricing policy is not valid for the requested pickup date");
 
         return DailyRate * period.TotalDays;

@@ -305,8 +305,8 @@ public class CreateReservationCommandHandlerTests
         // Assert
         capturedReservation.Should().NotBeNull();
         capturedReservation!.Period.Days.Should().Be(7);
-        capturedReservation.Period.PickupDate.Should().Be(pickupDate);
-        capturedReservation.Period.ReturnDate.Should().Be(returnDate);
+        capturedReservation.Period.PickupDate.Should().Be(DateOnly.FromDateTime(pickupDate));
+        capturedReservation.Period.ReturnDate.Should().Be(DateOnly.FromDateTime(returnDate));
     }
 
     [Fact]
