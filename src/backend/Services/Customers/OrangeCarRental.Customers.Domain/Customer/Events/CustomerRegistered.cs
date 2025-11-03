@@ -1,6 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 /// <summary>
 /// Domain event raised when a new customer registers in the system.

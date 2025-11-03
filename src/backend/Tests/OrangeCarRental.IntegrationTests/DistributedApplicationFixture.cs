@@ -1,7 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
 
-namespace OrangeCarRental.IntegrationTests;
+namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
 /// <summary>
 /// Fixture that starts the Aspire AppHost for integration testing

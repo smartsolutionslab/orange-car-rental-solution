@@ -1,25 +1,16 @@
-using Aspire.Hosting.Testing;
-
-namespace OrangeCarRental.IntegrationTests;
+namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
 /// <summary>
 /// Integration tests for the API Gateway
 /// Tests the entire Aspire setup including SQL Server, Fleet API, Reservations API and the Gateway
 /// </summary>
-public class ApiGatewayTests : IClassFixture<DistributedApplicationFixture>
+public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
 {
-    private readonly DistributedApplicationFixture _fixture;
-
-    public ApiGatewayTests(DistributedApplicationFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
     [Fact]
     public async Task ApiGateway_HealthCheck_ReturnsHealthy()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act
         var response = await httpClient.GetAsync("/health");
@@ -34,7 +25,7 @@ public class ApiGatewayTests : IClassFixture<DistributedApplicationFixture>
     public async Task ApiGateway_RoutesToFleetApi_SearchVehicles()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act
         var response = await httpClient.GetAsync("/api/vehicles");
@@ -52,7 +43,7 @@ public class ApiGatewayTests : IClassFixture<DistributedApplicationFixture>
     public async Task ApiGateway_RoutesToReservationsApi_HealthCheck()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act - The gateway should route /api/reservations to the Reservations API
         // For now, we'll test that the route exists by calling a non-existent reservation
@@ -68,7 +59,7 @@ public class ApiGatewayTests : IClassFixture<DistributedApplicationFixture>
     public async Task FleetApi_DirectAccess_SearchVehicles()
     {
         // Arrange - Access Fleet API directly (not through gateway)
-        var httpClient = _fixture.CreateHttpClient("fleet-api");
+        var httpClient = fixture.CreateHttpClient("fleet-api");
 
         // Act
         var response = await httpClient.GetAsync("/api/vehicles");
@@ -86,7 +77,7 @@ public class ApiGatewayTests : IClassFixture<DistributedApplicationFixture>
     public async Task ReservationsApi_DirectAccess_GetNonExistentReservation_Returns404()
     {
         // Arrange - Access Reservations API directly
-        var httpClient = _fixture.CreateHttpClient("reservations-api");
+        var httpClient = fixture.CreateHttpClient("reservations-api");
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/00000000-0000-0000-0000-000000000001");

@@ -1,4 +1,5 @@
 using Moq;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;

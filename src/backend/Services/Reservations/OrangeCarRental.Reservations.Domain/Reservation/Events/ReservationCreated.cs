@@ -1,7 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 
 /// <summary>
 /// Domain event raised when a new reservation is created.

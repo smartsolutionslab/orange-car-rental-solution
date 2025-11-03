@@ -15,10 +15,7 @@ public readonly record struct LocationName
 
     public static LocationName Of(string name)
     {
-        if (string.IsNullOrWhiteSpace(name))
-        {
-            throw new ArgumentException("Location name cannot be empty", nameof(name));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
 
         var trimmed = name.Trim();
         if (trimmed.Length > 100)

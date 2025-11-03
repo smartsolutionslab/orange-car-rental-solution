@@ -18,8 +18,7 @@ public readonly record struct EmailAddress
 
     public static EmailAddress Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Email address cannot be empty", nameof(value));
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
         if (!IsValidEmail(value))
             throw new ArgumentException($"Invalid email address format: {value}", nameof(value));

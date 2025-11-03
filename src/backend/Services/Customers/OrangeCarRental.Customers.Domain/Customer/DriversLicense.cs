@@ -33,11 +33,8 @@ public readonly record struct DriversLicense
         DateOnly issueDate,
         DateOnly expiryDate)
     {
-        if (string.IsNullOrWhiteSpace(licenseNumber))
-            throw new ArgumentException("License number cannot be empty", nameof(licenseNumber));
-
-        if (string.IsNullOrWhiteSpace(issueCountry))
-            throw new ArgumentException("Issue country cannot be empty", nameof(issueCountry));
+        ArgumentException.ThrowIfNullOrWhiteSpace(licenseNumber, nameof(licenseNumber));
+        ArgumentException.ThrowIfNullOrWhiteSpace(issueCountry, nameof(issueCountry));
 
         var normalizedLicenseNumber = licenseNumber.Trim().ToUpperInvariant();
         var normalizedIssueCountry = issueCountry.Trim();

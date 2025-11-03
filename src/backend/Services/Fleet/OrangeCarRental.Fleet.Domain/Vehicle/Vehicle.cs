@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -169,7 +170,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public void SetLicensePlate(string licensePlate)
     {
-        if (string.IsNullOrWhiteSpace(licensePlate)) throw new ArgumentException("License plate cannot be empty", nameof(licensePlate));
+        ArgumentException.ThrowIfNullOrWhiteSpace(licensePlate, nameof(licensePlate));
 
         LicensePlate = licensePlate.ToUpperInvariant().Trim();
     }

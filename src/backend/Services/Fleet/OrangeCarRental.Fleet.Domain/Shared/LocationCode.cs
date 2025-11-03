@@ -15,10 +15,7 @@ public readonly record struct LocationCode
 
     public static LocationCode Of(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-        {
-            throw new ArgumentException("Location code cannot be empty", nameof(code));
-        }
+        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
 
         // Validate format: XXX-XXX (3 letters, hyphen, 3 letters)
         var trimmed = code.Trim().ToUpperInvariant();

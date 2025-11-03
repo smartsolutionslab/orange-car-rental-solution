@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;

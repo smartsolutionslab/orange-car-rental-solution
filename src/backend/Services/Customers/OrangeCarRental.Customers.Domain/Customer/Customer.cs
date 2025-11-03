@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -95,11 +96,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
         DriversLicense driversLicense)
     {
         // Validate names
-        if (string.IsNullOrWhiteSpace(firstName))
-            throw new ArgumentException("First name cannot be empty", nameof(firstName));
-
-        if (string.IsNullOrWhiteSpace(lastName))
-            throw new ArgumentException("Last name cannot be empty", nameof(lastName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
 
         var normalizedFirstName = firstName.Trim();
         var normalizedLastName = lastName.Trim();
@@ -136,11 +134,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
         PhoneNumber phoneNumber,
         Address address)
     {
-        if (string.IsNullOrWhiteSpace(firstName))
-            throw new ArgumentException("First name cannot be empty", nameof(firstName));
-
-        if (string.IsNullOrWhiteSpace(lastName))
-            throw new ArgumentException("Last name cannot be empty", nameof(lastName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
+        ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
 
         var normalizedFirstName = firstName.Trim();
         var normalizedLastName = lastName.Trim();
@@ -200,8 +195,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     /// </summary>
     public void ChangeStatus(CustomerStatus newStatus, string reason)
     {
-        if (string.IsNullOrWhiteSpace(reason))
-            throw new ArgumentException("Reason for status change is required", nameof(reason));
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == newStatus)
             return;
@@ -253,8 +247,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     /// </summary>
     public void Suspend(string reason)
     {
-        if (string.IsNullOrWhiteSpace(reason))
-            throw new ArgumentException("Reason for suspension is required", nameof(reason));
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == CustomerStatus.Suspended)
             return;
@@ -267,8 +260,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     /// </summary>
     public void Block(string reason)
     {
-        if (string.IsNullOrWhiteSpace(reason))
-            throw new ArgumentException("Reason for blocking is required", nameof(reason));
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == CustomerStatus.Blocked)
             return;

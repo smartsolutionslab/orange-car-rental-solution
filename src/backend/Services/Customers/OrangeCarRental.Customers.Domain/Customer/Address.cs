@@ -29,14 +29,9 @@ public readonly record struct Address
     /// <exception cref="ArgumentException">Thrown when any required field is invalid.</exception>
     public static Address Of(string street, string city, string postalCode, string country = "Germany")
     {
-        if (string.IsNullOrWhiteSpace(street))
-            throw new ArgumentException("Street cannot be empty", nameof(street));
-
-        if (string.IsNullOrWhiteSpace(city))
-            throw new ArgumentException("City cannot be empty", nameof(city));
-
-        if (string.IsNullOrWhiteSpace(postalCode))
-            throw new ArgumentException("Postal code cannot be empty", nameof(postalCode));
+        ArgumentException.ThrowIfNullOrWhiteSpace(street, nameof(street));
+        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
+        ArgumentException.ThrowIfNullOrWhiteSpace(postalCode, nameof(postalCode));
 
         var normalizedStreet = street.Trim();
         var normalizedCity = city.Trim();

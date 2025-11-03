@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 

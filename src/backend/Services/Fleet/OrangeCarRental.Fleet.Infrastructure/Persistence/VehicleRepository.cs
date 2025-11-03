@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;

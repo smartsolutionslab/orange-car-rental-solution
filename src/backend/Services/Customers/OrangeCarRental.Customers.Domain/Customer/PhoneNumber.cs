@@ -25,8 +25,7 @@ public readonly record struct PhoneNumber
     /// <exception cref="ArgumentException">Thrown when the phone number is invalid.</exception>
     public static PhoneNumber Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Phone number cannot be empty", nameof(value));
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
         // Remove common formatting characters
         var normalized = value.Trim()

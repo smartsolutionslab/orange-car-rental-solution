@@ -24,8 +24,7 @@ public readonly record struct Email
     /// <exception cref="ArgumentException">Thrown when the email is invalid.</exception>
     public static Email Of(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Email address cannot be empty", nameof(value));
+        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
         var normalized = value.Trim().ToLowerInvariant();
 

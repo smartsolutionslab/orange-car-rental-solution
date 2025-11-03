@@ -1,26 +1,19 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace OrangeCarRental.IntegrationTests;
+namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
 /// <summary>
 /// End-to-end integration tests for complete user scenarios
 /// Tests the entire flow from searching vehicles to creating reservations
 /// </summary>
-public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture>
+public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
 {
-    private readonly DistributedApplicationFixture _fixture;
-
-    public EndToEndScenarioTests(DistributedApplicationFixture fixture)
-    {
-        _fixture = fixture;
-    }
-
     [Fact]
     public async Task CompleteRentalFlow_SearchVehicleAndCreateReservation()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Step 1: Search for available vehicles at Berlin Hauptbahnhof
         var searchResponse = await httpClient.GetAsync("/api/vehicles?locationCode=BER-HBF");
@@ -81,7 +74,7 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
     public async Task SearchVehicles_WithFilters_ReturnsFilteredResults()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act - Search with multiple filters
         // Using KOMPAKT (German for compact) which is the actual category code
@@ -112,7 +105,7 @@ public class EndToEndScenarioTests : IClassFixture<DistributedApplicationFixture
     public async Task VehicleSearch_IncludesGermanVAT_InPricing()
     {
         // Arrange
-        var httpClient = _fixture.CreateHttpClient("api-gateway");
+        var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act
         var response = await httpClient.GetAsync("/api/vehicles");

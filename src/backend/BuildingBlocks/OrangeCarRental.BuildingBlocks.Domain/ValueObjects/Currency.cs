@@ -14,7 +14,7 @@ public readonly record struct Currency
 
     public static Currency Of(string code)
     {
-        if (string.IsNullOrWhiteSpace(code)) throw new ArgumentException("Currency code cannot be empty", nameof(code));
+        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
 
         if (code.Length != 3) throw new ArgumentException("Currency code must be exactly 3 characters (ISO 4217)", nameof(code));
 
