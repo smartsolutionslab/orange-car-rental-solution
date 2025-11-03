@@ -82,7 +82,7 @@ public class SearchVehiclesQueryHandlerTests
         // Assert
         _repositoryMock.Verify(r => r.SearchAsync(
             It.Is<VehicleSearchParameters>(p =>
-                p.LocationCode == "BER-HBF" &&
+                p.LocationCode.HasValue && p.LocationCode.Value.Value == "BER-HBF" &&
                 p.Status == VehicleStatus.Available),
             It.IsAny<CancellationToken>()),
             Times.Once);
@@ -192,8 +192,8 @@ public class SearchVehiclesQueryHandlerTests
         // Assert
         _repositoryMock.Verify(r => r.SearchAsync(
             It.Is<VehicleSearchParameters>(p =>
-                p.LocationCode == "BER-HBF" &&
-                p.CategoryCode == "MITTEL" &&
+                p.LocationCode.HasValue && p.LocationCode.Value.Value == "BER-HBF" &&
+                p.Category.HasValue && p.Category.Value.Code == "MITTEL" &&
                 p.MinSeats == 5 &&
                 p.FuelType == FuelType.Petrol &&
                 p.TransmissionType == TransmissionType.Manual &&

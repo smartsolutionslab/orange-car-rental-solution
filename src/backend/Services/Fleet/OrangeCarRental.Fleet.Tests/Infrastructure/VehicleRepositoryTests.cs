@@ -78,7 +78,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
         var parameters = new VehicleSearchParameters
         {
-            LocationCode = "BER-HBF",
+            LocationCode = LocationCode.Of("BER-HBF"),
             PageNumber = 1,
             PageSize = 20
         };
@@ -100,7 +100,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
         var parameters = new VehicleSearchParameters
         {
-            CategoryCode = "KLEIN",
+            Category = VehicleCategory.FromCode("KLEIN"),
             PageNumber = 1,
             PageSize = 20
         };
@@ -184,7 +184,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
         var parameters = new VehicleSearchParameters
         {
-            LocationCode = "BER-HBF",
+            LocationCode = LocationCode.Of("BER-HBF"),
             FuelType = FuelType.Petrol,
             MinSeats = 4,
             PageNumber = 1,
