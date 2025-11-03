@@ -23,8 +23,20 @@
       </svg>
     </div>
     <div class="stat-content">
-      <h3>Aktiv</h3>
+      <h3>Aktive Standorte</h3>
       <p class="stat-value">{{ activeLocations }}</p>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon stat-icon--info">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+      </svg>
+    </div>
+    <div class="stat-content">
+      <h3>Fahrzeuge Gesamt</h3>
+      <p class="stat-value">{{ totalVehicles }}</p>
     </div>
   </div>
 </div>
@@ -36,35 +48,57 @@
 
   @if (loading()) {
     <div class="loading-state">
+      <div class="loading-spinner"></div>
       <p>Lade Standorte...</p>
     </div>
   }
 
   @if (error()) {
-    <div class="error-message">
+    <div class="error-state">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
       <p>{{ error() }}</p>
     </div>
   }
 
   @if (!loading() && !error() && locations().length > 0) {
-    <div class="locations-list">
+    <div class="locations-grid">
       @for (location of locations(); track location.code) {
         <div class="location-card">
           <div class="location-header">
-            <h3>{{ location.name }}</h3>
-            <span class="location-code">{{ location.code }}</span>
+            <div class="location-title">
+              <h3>{{ location.name }}</h3>
+              <span class="location-code">{{ location.code }}</span>
+            </div>
+            <button class="btn-icon" (click)="viewDetails(location)" title="Details anzeigen">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+              </svg>
+            </button>
           </div>
-          <div class="location-details">
+
+          <div class="location-body">
             <div class="detail-row">
               <svg class="detail-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
               </svg>
-              <span>{{ location.fullAddress }}</span>
+              <span>{{ location.street }}</span>
             </div>
-            <div class="location-meta">
-              <span class="meta-item">{{ location.city }}</span>
-              <span class="meta-divider">•</span>
-              <span class="meta-item">{{ location.postalCode }}</span>
+            <div class="detail-row">
+              <svg class="detail-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+              <span>{{ location.postalCode }} {{ location.city }}</span>
+            </div>
+
+            <div class="location-footer">
+              <div class="vehicle-count">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                </svg>
+                <span>{{ getVehicleCount(location.code) }} Fahrzeuge</span>
+              </div>
             </div>
           </div>
         </div>
@@ -82,3 +116,103 @@
     </div>
   }
 </div>
+
+<!-- Location Details Modal -->
+@if (showDetails() && selectedLocation()) {
+  <div class="modal-overlay" (click)="closeDetails()">
+    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Standortdetails</h2>
+        <button class="btn-close" (click)="closeDetails()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Location Information -->
+        <div class="info-section">
+          <h3>Standortinformationen</h3>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Standortcode</label>
+              <p><span class="location-code-badge">{{ selectedLocation()!.code }}</span></p>
+            </div>
+            <div class="detail-item">
+              <label>Name</label>
+              <p>{{ selectedLocation()!.name }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Straße</label>
+              <p>{{ selectedLocation()!.street }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Stadt</label>
+              <p>{{ selectedLocation()!.city }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Postleitzahl</label>
+              <p>{{ selectedLocation()!.postalCode }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Vollständige Adresse</label>
+              <p>{{ selectedLocation()!.fullAddress }}</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Vehicles at Location -->
+        <div class="info-section">
+          <h3>Fahrzeuge am Standort ({{ locationVehicles().length }})</h3>
+
+          @if (loadingVehicles()) {
+            <div class="loading-small">
+              <div class="loading-spinner-small"></div>
+              <p>Lade Fahrzeuge...</p>
+            </div>
+          }
+
+          @if (!loadingVehicles() && locationVehicles().length > 0) {
+            <div class="vehicles-table">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Kennzeichen</th>
+                    <th>Fahrzeug</th>
+                    <th>Kategorie</th>
+                    <th>Tagespreis</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (vehicle of locationVehicles(); track vehicle.id) {
+                    <tr>
+                      <td>
+                        @if (vehicle.licensePlate) {
+                          <span class="license-plate">{{ vehicle.licensePlate }}</span>
+                        } @else {
+                          <span class="text-muted">-</span>
+                        }
+                      </td>
+                      <td>{{ vehicle.manufacturer }} {{ vehicle.model }}</td>
+                      <td>{{ vehicle.categoryCode }}</td>
+                      <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
+                      <td><span class="status-badge" [ngClass]="getStatusClass(vehicle.status)">{{ getStatusText(vehicle.status) }}</span></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          @if (!loadingVehicles() && locationVehicles().length === 0) {
+            <p class="no-data">Keine Fahrzeuge an diesem Standort</p>
+          }
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+      </div>
+    </div>
+  </div>
+}
