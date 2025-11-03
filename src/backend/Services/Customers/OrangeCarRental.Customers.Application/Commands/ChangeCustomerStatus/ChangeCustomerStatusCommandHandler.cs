@@ -1,6 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 

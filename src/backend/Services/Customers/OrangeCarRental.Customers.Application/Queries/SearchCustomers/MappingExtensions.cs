@@ -1,7 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
@@ -35,7 +33,7 @@ public static class MappingExtensions
     /// <summary>
     /// Maps an Address value object to an AddressDto.
     /// </summary>
-    public static AddressDto ToDto(this Domain.ValueObjects.Address address) => new()
+    public static AddressDto ToDto(this Address address) => new()
     {
         Street = address.Street,
         City = address.City,
@@ -46,7 +44,7 @@ public static class MappingExtensions
     /// <summary>
     /// Maps a DriversLicense value object to a DriversLicenseDto.
     /// </summary>
-    public static DriversLicenseDto ToDto(this Domain.ValueObjects.DriversLicense license) => new()
+    public static DriversLicenseDto ToDto(this DriversLicense license) => new()
     {
         LicenseNumber = license.LicenseNumber,
         IssueCountry = license.IssueCountry,

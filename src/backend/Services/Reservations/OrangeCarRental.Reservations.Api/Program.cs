@@ -5,7 +5,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 

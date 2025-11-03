@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 

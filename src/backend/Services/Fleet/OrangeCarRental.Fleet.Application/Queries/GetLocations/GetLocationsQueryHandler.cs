@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 

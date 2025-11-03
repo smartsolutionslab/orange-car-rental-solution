@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 

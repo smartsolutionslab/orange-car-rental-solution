@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.Configurations;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;

@@ -1,7 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Repositories;
 

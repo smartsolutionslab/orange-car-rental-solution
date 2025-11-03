@@ -1,5 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 

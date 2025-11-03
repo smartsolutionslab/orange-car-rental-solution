@@ -9,7 +9,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCus
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;

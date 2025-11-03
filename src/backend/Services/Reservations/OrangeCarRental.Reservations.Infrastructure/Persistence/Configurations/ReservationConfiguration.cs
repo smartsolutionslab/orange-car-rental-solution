@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.Configurations;
 

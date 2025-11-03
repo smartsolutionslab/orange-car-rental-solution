@@ -1,7 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Domain;
 

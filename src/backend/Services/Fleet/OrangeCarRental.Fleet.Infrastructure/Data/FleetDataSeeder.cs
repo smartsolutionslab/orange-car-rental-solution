@@ -1,10 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;

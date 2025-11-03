@@ -1,10 +1,7 @@
 using Moq;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 

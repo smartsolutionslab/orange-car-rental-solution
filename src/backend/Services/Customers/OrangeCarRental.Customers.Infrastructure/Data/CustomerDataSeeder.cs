@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;

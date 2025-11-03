@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Enums;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence.Configurations;
 

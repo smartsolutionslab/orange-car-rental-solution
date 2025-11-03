@@ -1,0 +1,20 @@
+
+namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+
+/// <summary>
+/// Repository interface for Reservation aggregate.
+/// </summary>
+public interface IReservationRepository
+{
+    Task<Reservation?> GetByIdAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
+
+    Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default);
+
+    Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default);
+
+    Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
+
+    Task SaveChangesAsync(CancellationToken cancellationToken = default);
+}

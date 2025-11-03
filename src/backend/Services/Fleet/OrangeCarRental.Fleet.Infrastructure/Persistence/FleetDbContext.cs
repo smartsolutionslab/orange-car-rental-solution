@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Aggregates;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence.Configurations;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;

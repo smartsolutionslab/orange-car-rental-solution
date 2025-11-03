@@ -1,7 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Repositories;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 

@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Repositories;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
