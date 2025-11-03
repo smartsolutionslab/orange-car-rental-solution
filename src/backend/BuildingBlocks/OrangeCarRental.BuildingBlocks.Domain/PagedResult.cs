@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
 /// Represents a paged result set from a query.

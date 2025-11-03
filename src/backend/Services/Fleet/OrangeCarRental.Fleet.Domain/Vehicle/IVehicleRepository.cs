@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
