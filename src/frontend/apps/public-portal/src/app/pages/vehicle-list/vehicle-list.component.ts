@@ -1,5 +1,6 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { Router } from '@angular/router';
 import { VehicleService } from '../../services/vehicle.service';
 import { Vehicle } from '../../services/vehicle.model';
 import { VehicleSearchComponent, VehicleSearchQuery } from '../../components/vehicle-search/vehicle-search.component';
@@ -17,11 +18,13 @@ import { VehicleSearchComponent, VehicleSearchQuery } from '../../components/veh
 })
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
+  private readonly router = inject(Router);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly totalCount = signal(0);
+  protected readonly currentSearchQuery = signal<VehicleSearchQuery>({});
 
   ngOnInit() {
     // Load all vehicles on init with empty search
@@ -32,6 +35,7 @@ export class VehicleListComponent implements OnInit {
    * Handle search event from vehicle search component
    */
   protected onSearch(query: VehicleSearchQuery) {
+    this.currentSearchQuery.set(query);
     this.loading.set(true);
     this.error.set(null);
 
@@ -45,6 +49,23 @@ export class VehicleListComponent implements OnInit {
         console.error('Error loading vehicles:', err);
         this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
         this.loading.set(false);
+      }
+    });
+  }
+
+  /**
+   * Navigate to booking page with vehicle and search details
+   */
+  protected onBookVehicle(vehicle: Vehicle): void {
+    const query = this.currentSearchQuery();
+
+    this.router.navigate(['/booking'], {
+      queryParams: {
+        vehicleId: vehicle.id,
+        categoryCode: vehicle.categoryCode,
+        pickupDate: query.pickupDate || '',
+        returnDate: query.returnDate || '',
+        locationCode: query.locationCode || vehicle.locationCode
       }
     });
   }

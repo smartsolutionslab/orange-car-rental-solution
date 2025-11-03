@@ -1,0 +1,451 @@
+<div class="booking-container">
+  <!-- Header -->
+  <div class="booking-header">
+    <h1>Fahrzeug buchen</h1>
+    <p class="subtitle">Vervollständigen Sie Ihre Buchung in {{ totalSteps }} einfachen Schritten</p>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    <div class="progress-steps">
+      @for (step of [1, 2, 3, 4, 5]; track step) {
+        <div class="progress-step" [class.active]="currentStep() >= step" [class.current]="currentStep() === step">
+          <div class="step-circle">{{ step }}</div>
+          <div class="step-label">
+            @switch (step) {
+              @case (1) { Buchungsdetails }
+              @case (2) { Persönliche Daten }
+              @case (3) { Adresse }
+              @case (4) { Führerschein }
+              @case (5) { Überprüfung }
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Error Message -->
+  @if (error()) {
+    <div class="error-message">
+      <svg class="error-icon" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      {{ error() }}
+    </div>
+  }
+
+  <!-- Form -->
+  <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
+
+    <!-- Step 1: Vehicle and Booking Details -->
+    @if (currentStep() === 1) {
+      <div class="form-step">
+        <h2>Buchungsdetails</h2>
+        <p class="step-description">Geben Sie die Details Ihrer Fahrzeugbuchung ein</p>
+
+        <div class="form-grid">
+          <div class="form-field full-width">
+            <label for="pickupDate">Abholdatum *</label>
+            <input
+              type="date"
+              id="pickupDate"
+              formControlName="pickupDate"
+              [min]="today"
+              [class.invalid]="bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched"
+            />
+            @if (bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched) {
+              <span class="error-text">Bitte wählen Sie ein gültiges Abholdatum</span>
+            }
+          </div>
+
+          <div class="form-field full-width">
+            <label for="returnDate">Rückgabedatum *</label>
+            <input
+              type="date"
+              id="returnDate"
+              formControlName="returnDate"
+              [min]="minReturnDate()"
+              [class.invalid]="bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched"
+            />
+            @if (bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched) {
+              <span class="error-text">Bitte wählen Sie ein gültiges Rückgabedatum</span>
+            }
+          </div>
+
+          @if (getRentalDays() > 0) {
+            <div class="rental-info">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+              </svg>
+              <span>{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span>
+            </div>
+          }
+
+          <div class="form-field full-width">
+            <label for="pickupLocationCode">Abholstation *</label>
+            <select
+              id="pickupLocationCode"
+              formControlName="pickupLocationCode"
+              [class.invalid]="bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched"
+            >
+              <option value="">Bitte wählen...</option>
+              @for (location of locations(); track location.code) {
+                <option [value]="location.code">{{ location.city }} - {{ location.name }}</option>
+              }
+            </select>
+            @if (bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched) {
+              <span class="error-text">Bitte wählen Sie eine Abholstation</span>
+            }
+          </div>
+
+          <div class="form-field full-width">
+            <label for="dropoffLocationCode">Rückgabestation *</label>
+            <select
+              id="dropoffLocationCode"
+              formControlName="dropoffLocationCode"
+              [class.invalid]="bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched"
+            >
+              <option value="">Bitte wählen...</option>
+              @for (location of locations(); track location.code) {
+                <option [value]="location.code">{{ location.city }} - {{ location.name }}</option>
+              }
+            </select>
+            @if (bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched) {
+              <span class="error-text">Bitte wählen Sie eine Rückgabestation</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 2: Customer Information -->
+    @if (currentStep() === 2) {
+      <div class="form-step">
+        <h2>Persönliche Daten</h2>
+        <p class="step-description">Geben Sie Ihre persönlichen Informationen ein</p>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="firstName">Vorname *</label>
+            <input
+              type="text"
+              id="firstName"
+              formControlName="firstName"
+              placeholder="Max"
+              [class.invalid]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched"
+            />
+            @if (bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched) {
+              <span class="error-text">Mindestens 2 Zeichen erforderlich</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="lastName">Nachname *</label>
+            <input
+              type="text"
+              id="lastName"
+              formControlName="lastName"
+              placeholder="Mustermann"
+              [class.invalid]="bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched"
+            />
+            @if (bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched) {
+              <span class="error-text">Mindestens 2 Zeichen erforderlich</span>
+            }
+          </div>
+
+          <div class="form-field full-width">
+            <label for="email">E-Mail *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              placeholder="max.mustermann@beispiel.de"
+              [class.invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched"
+            />
+            @if (bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched) {
+              <span class="error-text">Bitte geben Sie eine gültige E-Mail-Adresse ein</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="phoneNumber">Telefonnummer *</label>
+            <input
+              type="tel"
+              id="phoneNumber"
+              formControlName="phoneNumber"
+              placeholder="+49 123 456789"
+              [class.invalid]="bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched"
+            />
+            @if (bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched) {
+              <span class="error-text">Bitte geben Sie eine gültige Telefonnummer ein</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="dateOfBirth">Geburtsdatum *</label>
+            <input
+              type="date"
+              id="dateOfBirth"
+              formControlName="dateOfBirth"
+              [max]="today"
+              [class.invalid]="bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched"
+            />
+            @if (bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched) {
+              <span class="error-text">Bitte geben Sie Ihr Geburtsdatum ein</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 3: Address -->
+    @if (currentStep() === 3) {
+      <div class="form-step">
+        <h2>Adresse</h2>
+        <p class="step-description">Geben Sie Ihre Wohnadresse ein</p>
+
+        <div class="form-grid">
+          <div class="form-field full-width">
+            <label for="street">Straße und Hausnummer *</label>
+            <input
+              type="text"
+              id="street"
+              formControlName="street"
+              placeholder="Musterstraße 123"
+              [class.invalid]="bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched"
+            />
+            @if (bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched) {
+              <span class="error-text">Mindestens 5 Zeichen erforderlich</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="postalCode">Postleitzahl *</label>
+            <input
+              type="text"
+              id="postalCode"
+              formControlName="postalCode"
+              placeholder="12345"
+              maxlength="5"
+              [class.invalid]="bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched"
+            />
+            @if (bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched) {
+              <span class="error-text">Bitte geben Sie eine 5-stellige Postleitzahl ein</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="city">Stadt *</label>
+            <input
+              type="text"
+              id="city"
+              formControlName="city"
+              placeholder="Berlin"
+              [class.invalid]="bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched"
+            />
+            @if (bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched) {
+              <span class="error-text">Mindestens 2 Zeichen erforderlich</span>
+            }
+          </div>
+
+          <div class="form-field full-width">
+            <label for="country">Land *</label>
+            <input
+              type="text"
+              id="country"
+              formControlName="country"
+              [class.invalid]="bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched"
+            />
+            @if (bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched) {
+              <span class="error-text">Bitte geben Sie Ihr Land ein</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 4: Driver's License -->
+    @if (currentStep() === 4) {
+      <div class="form-step">
+        <h2>Führerschein</h2>
+        <p class="step-description">Geben Sie Ihre Führerscheininformationen ein</p>
+
+        <div class="form-grid">
+          <div class="form-field full-width">
+            <label for="licenseNumber">Führerscheinnummer *</label>
+            <input
+              type="text"
+              id="licenseNumber"
+              formControlName="licenseNumber"
+              placeholder="B12345678"
+              [class.invalid]="bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched"
+            />
+            @if (bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched) {
+              <span class="error-text">Mindestens 5 Zeichen erforderlich</span>
+            }
+          </div>
+
+          <div class="form-field full-width">
+            <label for="licenseIssueCountry">Ausstellungsland *</label>
+            <input
+              type="text"
+              id="licenseIssueCountry"
+              formControlName="licenseIssueCountry"
+              [class.invalid]="bookingForm.get('licenseIssueCountry')?.invalid && bookingForm.get('licenseIssueCountry')?.touched"
+            />
+            @if (bookingForm.get('licenseIssueCountry')?.invalid && bookingForm.get('licenseIssueCountry')?.touched) {
+              <span class="error-text">Bitte geben Sie das Ausstellungsland ein</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="licenseIssueDate">Ausstellungsdatum *</label>
+            <input
+              type="date"
+              id="licenseIssueDate"
+              formControlName="licenseIssueDate"
+              [max]="maxLicenseIssueDate()"
+              [class.invalid]="bookingForm.get('licenseIssueDate')?.invalid && bookingForm.get('licenseIssueDate')?.touched"
+            />
+            @if (bookingForm.get('licenseIssueDate')?.invalid && bookingForm.get('licenseIssueDate')?.touched) {
+              <span class="error-text">Bitte geben Sie das Ausstellungsdatum ein</span>
+            }
+          </div>
+
+          <div class="form-field">
+            <label for="licenseExpiryDate">Ablaufdatum *</label>
+            <input
+              type="date"
+              id="licenseExpiryDate"
+              formControlName="licenseExpiryDate"
+              [min]="minLicenseExpiryDate()"
+              [class.invalid]="bookingForm.get('licenseExpiryDate')?.invalid && bookingForm.get('licenseExpiryDate')?.touched"
+            />
+            @if (bookingForm.get('licenseExpiryDate')?.invalid && bookingForm.get('licenseExpiryDate')?.touched) {
+              <span class="error-text">Bitte geben Sie das Ablaufdatum ein</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Step 5: Review and Submit -->
+    @if (currentStep() === 5) {
+      <div class="form-step">
+        <h2>Überprüfung</h2>
+        <p class="step-description">Bitte überprüfen Sie Ihre Angaben vor dem Absenden</p>
+
+        <div class="review-section">
+          <h3>Buchungsdetails</h3>
+          <div class="review-grid">
+            <div class="review-item">
+              <span class="review-label">Abholdatum:</span>
+              <span class="review-value">{{ bookingForm.get('pickupDate')?.value }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Rückgabedatum:</span>
+              <span class="review-value">{{ bookingForm.get('returnDate')?.value }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Mietdauer:</span>
+              <span class="review-value">{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h3>Persönliche Daten</h3>
+          <div class="review-grid">
+            <div class="review-item">
+              <span class="review-label">Name:</span>
+              <span class="review-value">{{ bookingForm.get('firstName')?.value }} {{ bookingForm.get('lastName')?.value }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">E-Mail:</span>
+              <span class="review-value">{{ bookingForm.get('email')?.value }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Telefon:</span>
+              <span class="review-value">{{ bookingForm.get('phoneNumber')?.value }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h3>Adresse</h3>
+          <div class="review-grid">
+            <div class="review-item full-width">
+              <span class="review-label">Adresse:</span>
+              <span class="review-value">
+                {{ bookingForm.get('street')?.value }},
+                {{ bookingForm.get('postalCode')?.value }} {{ bookingForm.get('city')?.value }},
+                {{ bookingForm.get('country')?.value }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="review-section">
+          <h3>Führerschein</h3>
+          <div class="review-grid">
+            <div class="review-item">
+              <span class="review-label">Führerscheinnummer:</span>
+              <span class="review-value">{{ bookingForm.get('licenseNumber')?.value }}</span>
+            </div>
+            <div class="review-item">
+              <span class="review-label">Gültig bis:</span>
+              <span class="review-value">{{ bookingForm.get('licenseExpiryDate')?.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Navigation Buttons -->
+    <div class="form-navigation">
+      @if (currentStep() > 1) {
+        <button type="button" class="btn btn-secondary" (click)="previousStep()" [disabled]="submitting()">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+          Zurück
+        </button>
+      }
+
+      <div class="flex-spacer"></div>
+
+      @if (currentStep() < totalSteps) {
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="nextStep()"
+          [disabled]="!isCurrentStepValid()"
+        >
+          Weiter
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+          </svg>
+        </button>
+      }
+
+      @if (currentStep() === totalSteps) {
+        <button
+          type="submit"
+          class="btn btn-success"
+          [disabled]="bookingForm.invalid || submitting()"
+        >
+          @if (submitting()) {
+            <span class="spinner"></span>
+            Wird gesendet...
+          } @else {
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+            Buchung abschließen
+          }
+        </button>
+      }
+    </div>
+  </form>
+</div>

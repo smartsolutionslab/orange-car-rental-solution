@@ -1,6 +1,7 @@
 import { Component, output, signal, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LocationService, Location } from '@ocr/data-access';
+import { LocationService } from '../../services/location.service';
+import { Location } from '../../services/location.model';
 import { CommonModule } from '@angular/common';
 
 /**

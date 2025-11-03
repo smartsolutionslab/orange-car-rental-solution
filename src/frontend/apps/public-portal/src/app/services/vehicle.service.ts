@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import { Vehicle, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
 import { ConfigService } from './config.service';
 
 /**
@@ -42,5 +42,14 @@ export class VehicleService {
     }
 
     return this.http.get<VehicleSearchResult>(this.apiUrl, { params });
+  }
+
+  /**
+   * Get a specific vehicle by ID
+   * @param id Vehicle ID
+   * @returns Observable of vehicle details
+   */
+  getVehicleById(id: string): Observable<Vehicle> {
+    return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
   }
 }
