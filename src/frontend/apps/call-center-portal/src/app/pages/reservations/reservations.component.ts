@@ -23,6 +23,10 @@ export class ReservationsComponent implements OnInit {
   protected readonly error = signal<string | null>(null);
   protected readonly selectedReservation = signal<Reservation | null>(null);
   protected readonly showDetails = signal(false);
+  protected readonly showCancelModal = signal(false);
+  protected readonly cancelReason = signal<string>('');
+  protected readonly actionInProgress = signal(false);
+  protected readonly successMessage = signal<string | null>(null);
 
   // Search filters
   protected readonly searchStatus = signal<string>('');
@@ -146,5 +150,109 @@ export class ReservationsComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  /**
+   * Check if reservation can be confirmed
+   */
+  protected canConfirm(reservation: Reservation): boolean {
+    return reservation.status === 'Pending';
+  }
+
+  /**
+   * Check if reservation can be cancelled
+   */
+  protected canCancel(reservation: Reservation): boolean {
+    return reservation.status === 'Pending' || reservation.status === 'Confirmed';
+  }
+
+  /**
+   * Confirm a reservation
+   */
+  protected confirmReservation(reservation: Reservation): void {
+    if (!this.canConfirm(reservation)) {
+      return;
+    }
+
+    if (!confirm(`Möchten Sie die Reservierung ${reservation.reservationId.substring(0, 8)} wirklich bestätigen?`)) {
+      return;
+    }
+
+    this.actionInProgress.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+
+    this.reservationService.confirmReservation(reservation.reservationId).subscribe({
+      next: () => {
+        this.actionInProgress.set(false);
+        this.successMessage.set('Reservierung erfolgreich bestätigt');
+        this.loadReservations();
+        this.closeDetails();
+
+        // Clear success message after 5 seconds
+        setTimeout(() => this.successMessage.set(null), 5000);
+      },
+      error: (err) => {
+        console.error('Error confirming reservation:', err);
+        this.actionInProgress.set(false);
+        this.error.set('Fehler beim Bestätigen der Reservierung');
+      }
+    });
+  }
+
+  /**
+   * Show cancel reservation modal
+   */
+  protected showCancelDialog(reservation: Reservation): void {
+    if (!this.canCancel(reservation)) {
+      return;
+    }
+
+    this.selectedReservation.set(reservation);
+    this.cancelReason.set('');
+    this.showCancelModal.set(true);
+  }
+
+  /**
+   * Close cancel modal
+   */
+  protected closeCancelModal(): void {
+    this.showCancelModal.set(false);
+    this.cancelReason.set('');
+  }
+
+  /**
+   * Cancel a reservation
+   */
+  protected cancelReservation(): void {
+    const reservation = this.selectedReservation();
+    const reason = this.cancelReason().trim();
+
+    if (!reservation || !reason) {
+      this.error.set('Bitte geben Sie einen Stornierungsgrund ein');
+      return;
+    }
+
+    this.actionInProgress.set(true);
+    this.error.set(null);
+    this.successMessage.set(null);
+
+    this.reservationService.cancelReservation(reservation.reservationId, reason).subscribe({
+      next: () => {
+        this.actionInProgress.set(false);
+        this.successMessage.set('Reservierung erfolgreich storniert');
+        this.closeCancelModal();
+        this.closeDetails();
+        this.loadReservations();
+
+        // Clear success message after 5 seconds
+        setTimeout(() => this.successMessage.set(null), 5000);
+      },
+      error: (err) => {
+        console.error('Error cancelling reservation:', err);
+        this.actionInProgress.set(false);
+        this.error.set('Fehler beim Stornieren der Reservierung');
+      }
+    });
   }
 }
