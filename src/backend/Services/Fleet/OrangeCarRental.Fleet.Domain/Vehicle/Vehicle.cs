@@ -11,19 +11,20 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// </summary>
 public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
 {
-    public VehicleName Name { get; private set; }
-    public VehicleCategory Category { get; private set; }
-    public Location CurrentLocation { get; private set; }
-    public Money DailyRate { get; private set; }
-    public SeatingCapacity Seats { get; private set; }
-    public FuelType FuelType { get; private set; }
-    public TransmissionType TransmissionType { get; private set; }
-    public VehicleStatus Status { get; private set; }
-    public string? LicensePlate { get; private set; }
-    public Manufacturer? Manufacturer { get; private set; }
-    public VehicleModel? Model { get; private set; }
-    public ManufacturingYear? Year { get; private set; }
-    public string? ImageUrl { get; private set; }
+    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+    public VehicleName Name { get; init; }
+    public VehicleCategory Category { get; init; }
+    public Location CurrentLocation { get; init; }
+    public Money DailyRate { get; init; }
+    public SeatingCapacity Seats { get; init; }
+    public FuelType FuelType { get; init; }
+    public TransmissionType TransmissionType { get; init; }
+    public VehicleStatus Status { get; init; }
+    public string? LicensePlate { get; init; }
+    public Manufacturer? Manufacturer { get; init; }
+    public VehicleModel? Model { get; init; }
+    public ManufacturingYear? Year { get; init; }
+    public string? ImageUrl { get; init; }
 
     // For EF Core - properties will be set by EF Core during materialization
     private Vehicle()
@@ -83,96 +84,149 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Update the daily rental rate.
+    /// Creates a copy of this instance with modified values (used internally for immutable updates).
+    /// Does not raise domain events - caller is responsible for that.
     /// </summary>
-    public void UpdateDailyRate(Money newDailyRate)
+    private Vehicle CreateMutatedCopy(
+        VehicleName? name = null,
+        VehicleCategory? category = null,
+        Location? currentLocation = null,
+        Money? dailyRate = null,
+        SeatingCapacity? seats = null,
+        FuelType? fuelType = null,
+        TransmissionType? transmissionType = null,
+        VehicleStatus? status = null,
+        string? licensePlate = null,
+        Manufacturer? manufacturer = null,
+        VehicleModel? model = null,
+        ManufacturingYear? year = null,
+        string? imageUrl = null)
     {
-        if (newDailyRate == DailyRate) return;
+        return new Vehicle
+        {
+            Id = this.Id,
+            Name = name ?? this.Name,
+            Category = category ?? this.Category,
+            CurrentLocation = currentLocation ?? this.CurrentLocation,
+            DailyRate = dailyRate ?? this.DailyRate,
+            Seats = seats ?? this.Seats,
+            FuelType = fuelType ?? this.FuelType,
+            TransmissionType = transmissionType ?? this.TransmissionType,
+            Status = status ?? this.Status,
+            LicensePlate = licensePlate ?? this.LicensePlate,
+            Manufacturer = manufacturer ?? this.Manufacturer,
+            Model = model ?? this.Model,
+            Year = year ?? this.Year,
+            ImageUrl = imageUrl ?? this.ImageUrl
+        };
+    }
+
+    /// <summary>
+    /// Update the daily rental rate.
+    /// Returns a new instance with the updated rate (immutable pattern).
+    /// </summary>
+    public Vehicle UpdateDailyRate(Money newDailyRate)
+    {
+        if (newDailyRate == DailyRate) return this;
 
         var oldRate = DailyRate;
-        DailyRate = newDailyRate;
+        var updated = CreateMutatedCopy(dailyRate: newDailyRate);
 
-        AddDomainEvent(new VehicleDailyRateChanged(Id, oldRate, newDailyRate));
+        updated.AddDomainEvent(new VehicleDailyRateChanged(Id, oldRate, newDailyRate));
+
+        return updated;
     }
 
     /// <summary>
     /// Move vehicle to a different location.
+    /// Returns a new instance with the updated location (immutable pattern).
     /// </summary>
-    public void MoveToLocation(Location newLocation)
+    public Vehicle MoveToLocation(Location newLocation)
     {
-        if (newLocation == CurrentLocation) return;
+        if (newLocation == CurrentLocation) return this;
 
         if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot move a rented vehicle");
 
         var oldLocation = CurrentLocation;
-        CurrentLocation = newLocation;
+        var updated = CreateMutatedCopy(currentLocation: newLocation);
 
-        AddDomainEvent(new VehicleLocationChanged(Id, oldLocation, newLocation));
+        updated.AddDomainEvent(new VehicleLocationChanged(Id, oldLocation, newLocation));
+
+        return updated;
     }
 
     /// <summary>
     /// Change vehicle status.
+    /// Returns a new instance with the updated status (immutable pattern).
     /// </summary>
-    public void ChangeStatus(VehicleStatus newStatus)
+    public Vehicle ChangeStatus(VehicleStatus newStatus)
     {
-        if (newStatus == Status) return;
+        if (newStatus == Status) return this;
 
-        Status = newStatus;
-        AddDomainEvent(new VehicleStatusChanged(Id, Status));
+        var updated = CreateMutatedCopy(status: newStatus);
+        updated.AddDomainEvent(new VehicleStatusChanged(Id, newStatus));
+
+        return updated;
     }
 
     /// <summary>
     /// Mark vehicle as available for rental.
+    /// Returns a new instance with available status (immutable pattern).
     /// </summary>
-    public void MarkAsAvailable()
+    public Vehicle MarkAsAvailable()
     {
-        if (Status == VehicleStatus.Available) return;
+        if (Status == VehicleStatus.Available) return this;
 
-        ChangeStatus(VehicleStatus.Available);
+        return ChangeStatus(VehicleStatus.Available);
     }
 
     /// <summary>
     /// Mark vehicle as rented.
+    /// Returns a new instance with rented status (immutable pattern).
     /// </summary>
-    public void MarkAsRented()
+    public Vehicle MarkAsRented()
     {
         if (Status != VehicleStatus.Available && Status != VehicleStatus.Reserved)
         {
             throw new InvalidOperationException($"Cannot rent vehicle in status: {Status}");
         }
 
-        ChangeStatus(VehicleStatus.Rented);
+        return ChangeStatus(VehicleStatus.Rented);
     }
 
     /// <summary>
     /// Mark vehicle as under maintenance.
+    /// Returns a new instance with maintenance status (immutable pattern).
     /// </summary>
-    public void MarkAsUnderMaintenance()
+    public Vehicle MarkAsUnderMaintenance()
     {
         if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
 
-        ChangeStatus(VehicleStatus.Maintenance);
+        return ChangeStatus(VehicleStatus.Maintenance);
     }
 
     /// <summary>
     /// Set additional details (manufacturer, model, year, image).
+    /// Returns a new instance with the updated details (immutable pattern).
     /// </summary>
-    public void SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year, string? imageUrl)
+    public Vehicle SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year, string? imageUrl)
     {
-        Manufacturer = manufacturer;
-        Model = model;
-        Year = year;
-        ImageUrl = imageUrl?.Trim();
+        return CreateMutatedCopy(
+            manufacturer: manufacturer,
+            model: model,
+            year: year,
+            imageUrl: imageUrl?.Trim());
     }
 
     /// <summary>
     /// Set license plate.
+    /// Returns a new instance with the updated license plate (immutable pattern).
     /// </summary>
-    public void SetLicensePlate(string licensePlate)
+    public Vehicle SetLicensePlate(string licensePlate)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(licensePlate, nameof(licensePlate));
 
-        LicensePlate = licensePlate.ToUpperInvariant().Trim();
+        return CreateMutatedCopy(licensePlate: licensePlate.ToUpperInvariant().Trim());
     }
 
     /// <summary>

@@ -21,7 +21,7 @@ public class VehicleTests
 
         // Act
         var vehicle = Vehicle.From(name, category, location, dailyRate, seats, fuelType, transmission);
-        vehicle.SetLicensePlate(licensePlate);
+        vehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
         vehicle.Should().NotBeNull();
@@ -45,7 +45,7 @@ public class VehicleTests
         var newRate = Money.FromGross(75.00m, 0.19m, Currency.Of("EUR"));
 
         // Act
-        vehicle.UpdateDailyRate(newRate);
+        vehicle = vehicle.UpdateDailyRate(newRate);
 
         // Assert
         vehicle.DailyRate.Should().Be(newRate);
@@ -60,10 +60,10 @@ public class VehicleTests
         var sameRate = vehicle.DailyRate;
 
         // Act
-        vehicle.UpdateDailyRate(sameRate);
+        var result = vehicle.UpdateDailyRate(sameRate);
 
         // Assert
-        vehicle.DomainEvents.Should().BeEmpty();
+        result.DomainEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class VehicleTests
         var newLocation = Location.Of("MUC-FLG", "Munich Airport");
 
         // Act
-        vehicle.MoveToLocation(newLocation);
+        vehicle = vehicle.MoveToLocation(newLocation);
 
         // Assert
         vehicle.CurrentLocation.Should().Be(newLocation);
@@ -86,7 +86,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.MarkAsRented();
+        vehicle = vehicle.MarkAsRented();
         var newLocation = Location.Of("MUC-FLG", "Munich Airport");
 
         // Act & Assert
@@ -102,7 +102,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.ChangeStatus(VehicleStatus.Maintenance);
+        vehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.Maintenance);
@@ -117,10 +117,10 @@ public class VehicleTests
         var currentStatus = vehicle.Status;
 
         // Act
-        vehicle.ChangeStatus(currentStatus);
+        var result = vehicle.ChangeStatus(currentStatus);
 
         // Assert
-        vehicle.DomainEvents.Should().BeEmpty();
+        result.DomainEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -128,10 +128,10 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.ChangeStatus(VehicleStatus.Maintenance);
+        vehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
 
         // Act
-        vehicle.MarkAsAvailable();
+        vehicle = vehicle.MarkAsAvailable();
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.Available);
@@ -145,11 +145,11 @@ public class VehicleTests
         vehicle.ClearDomainEvents();
 
         // Act
-        vehicle.MarkAsAvailable();
+        var result = vehicle.MarkAsAvailable();
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Available);
-        vehicle.DomainEvents.Should().BeEmpty();
+        result.Status.Should().Be(VehicleStatus.Available);
+        result.DomainEvents.Should().BeEmpty();
     }
 
     [Fact]
@@ -159,7 +159,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.MarkAsRented();
+        vehicle = vehicle.MarkAsRented();
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.Rented);
@@ -171,11 +171,11 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.MarkAsRented();
+        vehicle = vehicle.MarkAsRented();
         vehicle.ClearDomainEvents();
 
         // Act
-        vehicle.MarkAsAvailable();
+        vehicle = vehicle.MarkAsAvailable();
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.Available);
@@ -189,7 +189,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.MarkAsUnderMaintenance();
+        vehicle = vehicle.MarkAsUnderMaintenance();
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.Maintenance);
@@ -200,7 +200,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.MarkAsRented();
+        vehicle = vehicle.MarkAsRented();
 
         // Act & Assert
         var act = () => vehicle.MarkAsUnderMaintenance();
@@ -215,7 +215,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.ChangeStatus(VehicleStatus.OutOfService);
+        vehicle = vehicle.ChangeStatus(VehicleStatus.OutOfService);
 
         // Assert
         vehicle.Status.Should().Be(VehicleStatus.OutOfService);
@@ -229,7 +229,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.SetLicensePlate("B-AB-9999");
+        vehicle = vehicle.SetLicensePlate("B-AB-9999");
 
         // Assert
         vehicle.LicensePlate.Should().Be("B-AB-9999");
@@ -244,7 +244,7 @@ public class VehicleTests
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("  ");
         act.Should().Throw<ArgumentException>()
-            .WithMessage("License plate cannot be empty*");
+            .WithMessage("*cannot be an empty string*");
     }
 
     [Fact]
@@ -256,7 +256,7 @@ public class VehicleTests
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("");
         act.Should().Throw<ArgumentException>()
-            .WithMessage("License plate cannot be empty*");
+            .WithMessage("*cannot be an empty string*");
     }
 
     [Fact]
@@ -266,7 +266,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle.SetLicensePlate("b-xy-1234");
+        vehicle = vehicle.SetLicensePlate("b-xy-1234");
 
         // Assert
         vehicle.LicensePlate.Should().Be("B-XY-1234");
@@ -290,7 +290,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.MarkAsRented();
+        vehicle = vehicle.MarkAsRented();
 
         // Act
         var isAvailable = vehicle.IsAvailableForRental();
@@ -304,7 +304,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        vehicle.MarkAsUnderMaintenance();
+        vehicle = vehicle.MarkAsUnderMaintenance();
 
         // Act
         var isAvailable = vehicle.IsAvailableForRental();
@@ -324,7 +324,7 @@ public class VehicleTests
             FuelType.Petrol,
             TransmissionType.Manual
         );
-        vehicle.SetLicensePlate("B-XY-1234");
+        vehicle = vehicle.SetLicensePlate("B-XY-1234");
         vehicle.ClearDomainEvents();
         return vehicle;
     }

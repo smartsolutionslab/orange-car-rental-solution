@@ -38,14 +38,14 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
             command.PostalCode,
             command.Country);
 
-        // Update profile (domain method handles validation)
-        customer.UpdateProfile(
+        // Update profile (domain method handles validation and returns new instance)
+        customer = customer.UpdateProfile(
             command.FirstName,
             command.LastName,
             phoneNumber,
             address);
 
-        // Persist changes
+        // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 

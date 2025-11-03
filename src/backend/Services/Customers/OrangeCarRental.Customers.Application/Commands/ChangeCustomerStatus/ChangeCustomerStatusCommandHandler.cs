@@ -41,10 +41,10 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         // Store old status before change
         var oldStatus = customer.Status;
 
-        // Change status (domain method handles validation)
-        customer.ChangeStatus(newStatus, command.Reason);
+        // Change status (domain method handles validation and returns new instance)
+        customer = customer.ChangeStatus(newStatus, command.Reason);
 
-        // Persist changes
+        // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 

@@ -21,16 +21,17 @@ public sealed class Customer : AggregateRoot<CustomerId>
     /// </summary>
     public const int MinimumLicenseValidityDays = 30;
 
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public Email Email { get; private set; }
-    public PhoneNumber PhoneNumber { get; private set; }
-    public DateOnly DateOfBirth { get; private set; }
-    public Address Address { get; private set; }
-    public DriversLicense DriversLicense { get; private set; }
-    public CustomerStatus Status { get; private set; }
-    public DateTime RegisteredAtUtc { get; private set; }
-    public DateTime UpdatedAtUtc { get; private set; }
+    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public Email Email { get; init; }
+    public PhoneNumber PhoneNumber { get; init; }
+    public DateOnly DateOfBirth { get; init; }
+    public Address Address { get; init; }
+    public DriversLicense DriversLicense { get; init; }
+    public CustomerStatus Status { get; init; }
+    public DateTime RegisteredAtUtc { get; init; }
+    public DateTime UpdatedAtUtc { get; init; }
 
     // For EF Core - properties will be set by EF Core during materialization
     private Customer()
@@ -126,9 +127,42 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Updates the customer's profile information.
+    /// Creates a copy of this instance with modified values (used internally for immutable updates).
+    /// Does not raise domain events - caller is responsible for that.
     /// </summary>
-    public void UpdateProfile(
+    private Customer CreateMutatedCopy(
+        string? firstName = null,
+        string? lastName = null,
+        Email? email = null,
+        PhoneNumber? phoneNumber = null,
+        DateOnly? dateOfBirth = null,
+        Address? address = null,
+        DriversLicense? driversLicense = null,
+        CustomerStatus? status = null,
+        DateTime? registeredAtUtc = null,
+        DateTime? updatedAtUtc = null)
+    {
+        return new Customer
+        {
+            Id = this.Id,
+            FirstName = firstName ?? this.FirstName,
+            LastName = lastName ?? this.LastName,
+            Email = email ?? this.Email,
+            PhoneNumber = phoneNumber ?? this.PhoneNumber,
+            DateOfBirth = dateOfBirth ?? this.DateOfBirth,
+            Address = address ?? this.Address,
+            DriversLicense = driversLicense ?? this.DriversLicense,
+            Status = status ?? this.Status,
+            RegisteredAtUtc = registeredAtUtc ?? this.RegisteredAtUtc,
+            UpdatedAtUtc = updatedAtUtc ?? this.UpdatedAtUtc
+        };
+    }
+
+    /// <summary>
+    /// Updates the customer's profile information.
+    /// Returns a new instance with the updated profile (immutable pattern).
+    /// </summary>
+    public Customer UpdateProfile(
         string firstName,
         string lastName,
         PhoneNumber phoneNumber,
@@ -152,120 +186,142 @@ public sealed class Customer : AggregateRoot<CustomerId>
                         Address != address;
 
         if (!hasChanges)
-            return;
+            return this;
 
-        FirstName = normalizedFirstName;
-        LastName = normalizedLastName;
-        PhoneNumber = phoneNumber;
-        Address = address;
-        UpdatedAtUtc = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        var updated = CreateMutatedCopy(
+            firstName: normalizedFirstName,
+            lastName: normalizedLastName,
+            phoneNumber: phoneNumber,
+            address: address,
+            updatedAtUtc: now);
 
-        AddDomainEvent(new CustomerProfileUpdated(
+        updated.AddDomainEvent(new CustomerProfileUpdated(
             Id,
-            FirstName,
-            LastName,
-            PhoneNumber,
-            Address,
-            UpdatedAtUtc));
+            normalizedFirstName,
+            normalizedLastName,
+            phoneNumber,
+            address,
+            now));
+
+        return updated;
     }
 
     /// <summary>
     /// Updates the customer's driver's license.
+    /// Returns a new instance with the updated license (immutable pattern).
     /// </summary>
-    public void UpdateDriversLicense(DriversLicense newLicense)
+    public Customer UpdateDriversLicense(DriversLicense newLicense)
     {
         ValidateDriversLicense(newLicense, DateOfBirth);
 
         if (DriversLicense == newLicense)
-            return;
+            return this;
 
         var oldLicense = DriversLicense;
-        DriversLicense = newLicense;
-        UpdatedAtUtc = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        var updated = CreateMutatedCopy(
+            driversLicense: newLicense,
+            updatedAtUtc: now);
 
-        AddDomainEvent(new DriversLicenseUpdated(
+        updated.AddDomainEvent(new DriversLicenseUpdated(
             Id,
             oldLicense,
             newLicense,
-            UpdatedAtUtc));
+            now));
+
+        return updated;
     }
 
     /// <summary>
     /// Changes the customer's account status.
+    /// Returns a new instance with the updated status (immutable pattern).
     /// </summary>
-    public void ChangeStatus(CustomerStatus newStatus, string reason)
+    public Customer ChangeStatus(CustomerStatus newStatus, string reason)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == newStatus)
-            return;
+            return this;
 
         var oldStatus = Status;
-        Status = newStatus;
-        UpdatedAtUtc = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        var updated = CreateMutatedCopy(
+            status: newStatus,
+            updatedAtUtc: now);
 
-        AddDomainEvent(new CustomerStatusChanged(
+        updated.AddDomainEvent(new CustomerStatusChanged(
             Id,
             oldStatus,
             newStatus,
             reason,
-            UpdatedAtUtc));
+            now));
+
+        return updated;
     }
 
     /// <summary>
     /// Updates the customer's email address.
+    /// Returns a new instance with the updated email (immutable pattern).
     /// </summary>
-    public void UpdateEmail(Email newEmail)
+    public Customer UpdateEmail(Email newEmail)
     {
         if (Email == newEmail)
-            return;
+            return this;
 
         var oldEmail = Email;
-        Email = newEmail;
-        UpdatedAtUtc = DateTime.UtcNow;
+        var now = DateTime.UtcNow;
+        var updated = CreateMutatedCopy(
+            email: newEmail,
+            updatedAtUtc: now);
 
-        AddDomainEvent(new CustomerEmailChanged(
+        updated.AddDomainEvent(new CustomerEmailChanged(
             Id,
             oldEmail,
             newEmail,
-            UpdatedAtUtc));
+            now));
+
+        return updated;
     }
 
     /// <summary>
     /// Activates the customer account.
+    /// Returns a new instance with active status (immutable pattern).
     /// </summary>
-    public void Activate(string reason = "Account activated")
+    public Customer Activate(string reason = "Account activated")
     {
         if (Status == CustomerStatus.Active)
-            return;
+            return this;
 
-        ChangeStatus(CustomerStatus.Active, reason);
+        return ChangeStatus(CustomerStatus.Active, reason);
     }
 
     /// <summary>
     /// Suspends the customer account (temporary).
+    /// Returns a new instance with suspended status (immutable pattern).
     /// </summary>
-    public void Suspend(string reason)
+    public Customer Suspend(string reason)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == CustomerStatus.Suspended)
-            return;
+            return this;
 
-        ChangeStatus(CustomerStatus.Suspended, reason);
+        return ChangeStatus(CustomerStatus.Suspended, reason);
     }
 
     /// <summary>
     /// Blocks the customer account (more severe than suspension).
+    /// Returns a new instance with blocked status (immutable pattern).
     /// </summary>
-    public void Block(string reason)
+    public Customer Block(string reason)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
 
         if (Status == CustomerStatus.Blocked)
-            return;
+            return this;
 
-        ChangeStatus(CustomerStatus.Blocked, reason);
+        return ChangeStatus(CustomerStatus.Blocked, reason);
     }
 
     /// <summary>

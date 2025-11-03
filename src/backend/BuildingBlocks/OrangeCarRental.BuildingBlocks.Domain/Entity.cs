@@ -9,8 +9,9 @@ public abstract class Entity<TId> where TId : notnull
 {
     /// <summary>
     /// The unique identifier for this entity.
+    /// IMMUTABLE: Can only be set during construction.
     /// </summary>
-    public TId Id { get; protected set; } = default!;
+    public TId Id { get; protected init; } = default!;
 
     protected Entity()
     {

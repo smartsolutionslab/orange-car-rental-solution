@@ -37,10 +37,10 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
             command.IssueDate,
             command.ExpiryDate);
 
-        // Update driver's license (domain method handles validation)
-        customer.UpdateDriversLicense(driversLicense);
+        // Update driver's license (domain method handles validation and returns new instance)
+        customer = customer.UpdateDriversLicense(driversLicense);
 
-        // Persist changes
+        // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 
