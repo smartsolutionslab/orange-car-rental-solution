@@ -18,16 +18,11 @@ public sealed class SearchCustomersQueryHandler(ICustomerRepository customers)
         SearchCustomersQuery query,
         CancellationToken cancellationToken = default)
     {
-        // Convert query to domain search parameters
         var searchParameters = query.ToSearchParameters();
-
-        // Validate parameters
         searchParameters.Validate();
 
-        // Execute search in repository
         var pagedResult = await customers.SearchAsync(searchParameters, cancellationToken);
 
-        // Map to DTOs and return result
         return pagedResult.ToDto();
     }
 }

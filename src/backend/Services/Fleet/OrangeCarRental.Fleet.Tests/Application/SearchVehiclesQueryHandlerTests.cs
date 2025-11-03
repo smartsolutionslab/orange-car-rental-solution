@@ -9,12 +9,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application;
 
 public class SearchVehiclesQueryHandlerTests
 {
-    private readonly Mock<IVehicleRepository> _repositoryMock;
+    private readonly Mock<IVehicleRepository> _repositoryMock = new();
     private readonly SearchVehiclesQueryHandler _handler;
 
     public SearchVehiclesQueryHandlerTests()
     {
-        _repositoryMock = new Mock<IVehicleRepository>();
         _handler = new SearchVehiclesQueryHandler(_repositoryMock.Object);
     }
 
