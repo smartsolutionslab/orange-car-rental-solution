@@ -8,12 +8,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence
 ///     Database context for the Customers service.
 ///     Manages customer data and profile operations.
 /// </summary>
-public sealed class CustomersDbContext : DbContext
+public sealed class CustomersDbContext(DbContextOptions<CustomersDbContext> options) : DbContext(options)
 {
-    public CustomersDbContext(DbContextOptions<CustomersDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Customer> Customers => Set<Customer>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
