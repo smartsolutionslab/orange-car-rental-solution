@@ -31,7 +31,7 @@ public static class MappingExtensions
 
     public static SearchVehiclesResult ToDto(this PagedResult<Vehicle> pagedResult)
     {
-        return new()
+        return new SearchVehiclesResult
         {
             Vehicles = pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
             TotalCount = pagedResult.TotalCount,

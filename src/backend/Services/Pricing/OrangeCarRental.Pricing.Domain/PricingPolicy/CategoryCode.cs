@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Vehicle category code for pricing (e.g., KLEIN, KOMPAKT, MITTEL).
-/// Maps to VehicleCategory from Fleet service.
+///     Vehicle category code for pricing (e.g., KLEIN, KOMPAKT, MITTEL).
+///     Maps to VehicleCategory from Fleet service.
 /// </summary>
 /// <param name="Value">The category code value.</param>
 public readonly record struct CategoryCode(string Value)

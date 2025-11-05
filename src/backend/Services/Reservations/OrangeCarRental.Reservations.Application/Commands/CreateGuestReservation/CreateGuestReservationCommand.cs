@@ -1,8 +1,8 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 
 /// <summary>
-/// Command to create a reservation for a guest (user without prior registration).
-/// This command handles both customer registration and reservation creation in a single transaction.
+///     Command to create a reservation for a guest (user without prior registration).
+///     This command handles both customer registration and reservation creation in a single transaction.
 /// </summary>
 public sealed record CreateGuestReservationCommand
 {

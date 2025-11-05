@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle fuel type (Kraftstoffart).
+///     Vehicle fuel type (Kraftstoffart).
 /// </summary>
 public enum FuelType
 {

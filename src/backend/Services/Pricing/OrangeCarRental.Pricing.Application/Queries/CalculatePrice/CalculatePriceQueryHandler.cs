@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 
 /// <summary>
-/// Handler for CalculatePriceQuery.
-/// Calculates the rental price for a vehicle category and period using the active pricing policy.
+///     Handler for CalculatePriceQuery.
+///     Calculates the rental price for a vehicle category and period using the active pricing policy.
 /// </summary>
 public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingPolicies)
 {

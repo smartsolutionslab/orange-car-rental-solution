@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 /// <summary>
-/// Database context for the Reservations service.
-/// Manages reservation data and booking operations.
+///     Database context for the Reservations service.
+///     Manages reservation data and booking operations.
 /// </summary>
 public sealed class ReservationsDbContext : DbContext
 {

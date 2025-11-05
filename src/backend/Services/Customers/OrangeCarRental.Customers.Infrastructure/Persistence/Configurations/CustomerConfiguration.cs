@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Customer aggregate.
-/// Configures mappings for value objects, complex types, and soft delete.
+///     Entity configuration for Customer aggregate.
+///     Configures mappings for value objects, complex types, and soft delete.
 /// </summary>
 internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 {

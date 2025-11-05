@@ -3,13 +3,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
 /// <summary>
-/// Handler for UpdateCustomerProfileCommand.
-/// Loads the customer, updates profile information, and persists changes.
+///     Handler for UpdateCustomerProfileCommand.
+///     Loads the customer, updates profile information, and persists changes.
 /// </summary>
 public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the update customer profile command.
+    ///     Handles the update customer profile command.
     /// </summary>
     /// <param name="command">The update command with new profile data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>

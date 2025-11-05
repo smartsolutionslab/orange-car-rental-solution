@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
-/// Represents a paged result set from a query.
+///     Represents a paged result set from a query.
 /// </summary>
 /// <typeparam name="T">The type of items in the result set.</typeparam>
 public sealed class PagedResult<T>

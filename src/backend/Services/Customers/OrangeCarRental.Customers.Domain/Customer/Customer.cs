@@ -4,34 +4,22 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Customer aggregate root.
-/// Represents a customer in the Orange Car Rental system with German market-specific validation.
-/// Enforces business rules such as minimum age (18+), valid driver's license, and GDPR compliance.
+///     Customer aggregate root.
+///     Represents a customer in the Orange Car Rental system with German market-specific validation.
+///     Enforces business rules such as minimum age (18+), valid driver's license, and GDPR compliance.
 /// </summary>
 public sealed class Customer : AggregateRoot<CustomerId>
 {
     /// <summary>
-    /// Minimum age required to rent a vehicle in Germany.
+    ///     Minimum age required to rent a vehicle in Germany.
     /// </summary>
     public const int MinimumAgeYears = 18;
 
     /// <summary>
-    /// Minimum days before license expiry to allow rentals.
-    /// Prevents customers from renting with a license about to expire.
+    ///     Minimum days before license expiry to allow rentals.
+    ///     Prevents customers from renting with a license about to expire.
     /// </summary>
     public const int MinimumLicenseValidityDays = 30;
-
-    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
-    public Email Email { get; init; }
-    public PhoneNumber PhoneNumber { get; init; }
-    public DateOnly DateOfBirth { get; init; }
-    public Address Address { get; init; }
-    public DriversLicense DriversLicense { get; init; }
-    public CustomerStatus Status { get; init; }
-    public DateTime RegisteredAtUtc { get; init; }
-    public DateTime UpdatedAtUtc { get; init; }
 
     // For EF Core - properties will be set by EF Core during materialization
     private Customer()
@@ -75,8 +63,43 @@ public sealed class Customer : AggregateRoot<CustomerId>
             RegisteredAtUtc));
     }
 
+    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public Email Email { get; init; }
+    public PhoneNumber PhoneNumber { get; init; }
+    public DateOnly DateOfBirth { get; init; }
+    public Address Address { get; init; }
+    public DriversLicense DriversLicense { get; init; }
+    public CustomerStatus Status { get; init; }
+    public DateTime RegisteredAtUtc { get; init; }
+    public DateTime UpdatedAtUtc { get; init; }
+
     /// <summary>
-    /// Registers a new customer with German market validation.
+    ///     Gets the customer's full name.
+    /// </summary>
+    public string FullName => $"{FirstName} {LastName}";
+
+    /// <summary>
+    ///     Gets the customer's current age in years.
+    /// </summary>
+    public int Age
+    {
+        get
+        {
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var age = today.Year - DateOfBirth.Year;
+
+            // Adjust if birthday hasn't occurred this year
+            if (DateOfBirth.AddYears(age) > today)
+                age--;
+
+            return age;
+        }
+    }
+
+    /// <summary>
+    ///     Registers a new customer with German market validation.
     /// </summary>
     /// <param name="firstName">Customer's first name.</param>
     /// <param name="lastName">Customer's last name.</param>
@@ -127,8 +150,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Creates a copy of this instance with modified values (used internally for immutable updates).
-    /// Does not raise domain events - caller is responsible for that.
+    ///     Creates a copy of this instance with modified values (used internally for immutable updates).
+    ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Customer CreateMutatedCopy(
         string? firstName = null,
@@ -144,23 +167,23 @@ public sealed class Customer : AggregateRoot<CustomerId>
     {
         return new Customer
         {
-            Id = this.Id,
-            FirstName = firstName ?? this.FirstName,
-            LastName = lastName ?? this.LastName,
-            Email = email ?? this.Email,
-            PhoneNumber = phoneNumber ?? this.PhoneNumber,
-            DateOfBirth = dateOfBirth ?? this.DateOfBirth,
-            Address = address ?? this.Address,
-            DriversLicense = driversLicense ?? this.DriversLicense,
-            Status = status ?? this.Status,
-            RegisteredAtUtc = registeredAtUtc ?? this.RegisteredAtUtc,
-            UpdatedAtUtc = updatedAtUtc ?? this.UpdatedAtUtc
+            Id = Id,
+            FirstName = firstName ?? FirstName,
+            LastName = lastName ?? LastName,
+            Email = email ?? Email,
+            PhoneNumber = phoneNumber ?? PhoneNumber,
+            DateOfBirth = dateOfBirth ?? DateOfBirth,
+            Address = address ?? Address,
+            DriversLicense = driversLicense ?? DriversLicense,
+            Status = status ?? Status,
+            RegisteredAtUtc = registeredAtUtc ?? RegisteredAtUtc,
+            UpdatedAtUtc = updatedAtUtc ?? UpdatedAtUtc
         };
     }
 
     /// <summary>
-    /// Updates the customer's profile information.
-    /// Returns a new instance with the updated profile (immutable pattern).
+    ///     Updates the customer's profile information.
+    ///     Returns a new instance with the updated profile (immutable pattern).
     /// </summary>
     public Customer UpdateProfile(
         string firstName,
@@ -181,17 +204,17 @@ public sealed class Customer : AggregateRoot<CustomerId>
             throw new ArgumentException("Last name is too long (max 100 characters)", nameof(lastName));
 
         var hasChanges = FirstName != normalizedFirstName ||
-                        LastName != normalizedLastName ||
-                        PhoneNumber != phoneNumber ||
-                        Address != address;
+                         LastName != normalizedLastName ||
+                         PhoneNumber != phoneNumber ||
+                         Address != address;
 
         if (!hasChanges)
             return this;
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
-            firstName: normalizedFirstName,
-            lastName: normalizedLastName,
+            normalizedFirstName,
+            normalizedLastName,
             phoneNumber: phoneNumber,
             address: address,
             updatedAtUtc: now);
@@ -208,8 +231,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Updates the customer's driver's license.
-    /// Returns a new instance with the updated license (immutable pattern).
+    ///     Updates the customer's driver's license.
+    ///     Returns a new instance with the updated license (immutable pattern).
     /// </summary>
     public Customer UpdateDriversLicense(DriversLicense newLicense)
     {
@@ -234,8 +257,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Changes the customer's account status.
-    /// Returns a new instance with the updated status (immutable pattern).
+    ///     Changes the customer's account status.
+    ///     Returns a new instance with the updated status (immutable pattern).
     /// </summary>
     public Customer ChangeStatus(CustomerStatus newStatus, string reason)
     {
@@ -261,8 +284,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Updates the customer's email address.
-    /// Returns a new instance with the updated email (immutable pattern).
+    ///     Updates the customer's email address.
+    ///     Returns a new instance with the updated email (immutable pattern).
     /// </summary>
     public Customer UpdateEmail(Email newEmail)
     {
@@ -285,8 +308,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Activates the customer account.
-    /// Returns a new instance with active status (immutable pattern).
+    ///     Activates the customer account.
+    ///     Returns a new instance with active status (immutable pattern).
     /// </summary>
     public Customer Activate(string reason = "Account activated")
     {
@@ -297,8 +320,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Suspends the customer account (temporary).
-    /// Returns a new instance with suspended status (immutable pattern).
+    ///     Suspends the customer account (temporary).
+    ///     Returns a new instance with suspended status (immutable pattern).
     /// </summary>
     public Customer Suspend(string reason)
     {
@@ -311,8 +334,8 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Blocks the customer account (more severe than suspension).
-    /// Returns a new instance with blocked status (immutable pattern).
+    ///     Blocks the customer account (more severe than suspension).
+    ///     Returns a new instance with blocked status (immutable pattern).
     /// </summary>
     public Customer Block(string reason)
     {
@@ -325,7 +348,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Checks if the customer can make reservations.
+    ///     Checks if the customer can make reservations.
     /// </summary>
     public bool CanMakeReservation()
     {
@@ -345,7 +368,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Checks if the customer can make a reservation for a specific rental period.
+    ///     Checks if the customer can make a reservation for a specific rental period.
     /// </summary>
     public bool CanMakeReservationFor(DateOnly startDate, DateOnly endDate)
     {
@@ -360,30 +383,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Gets the customer's full name.
-    /// </summary>
-    public string FullName => $"{FirstName} {LastName}";
-
-    /// <summary>
-    /// Gets the customer's current age in years.
-    /// </summary>
-    public int Age
-    {
-        get
-        {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var age = today.Year - DateOfBirth.Year;
-
-            // Adjust if birthday hasn't occurred this year
-            if (DateOfBirth.AddYears(age) > today)
-                age--;
-
-            return age;
-        }
-    }
-
-    /// <summary>
-    /// Validates that the customer meets the minimum age requirement.
+    ///     Validates that the customer meets the minimum age requirement.
     /// </summary>
     private static void ValidateAge(DateOnly dateOfBirth)
     {
@@ -419,7 +419,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     /// <summary>
-    /// Validates the driver's license against business rules.
+    ///     Validates the driver's license against business rules.
     /// </summary>
     private static void ValidateDriversLicense(DriversLicense license, DateOnly dateOfBirth)
     {

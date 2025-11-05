@@ -1,12 +1,12 @@
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
-/// Extension methods for IEnumerable to support pagination and other common query operations.
+///     Extension methods for IEnumerable to support pagination and other common query operations.
 /// </summary>
 public static class EnumerableExtensions
 {
     /// <summary>
-    /// Applies pagination to an enumerable (in-memory collection) and returns a paged result.
+    ///     Applies pagination to an enumerable (in-memory collection) and returns a paged result.
     /// </summary>
     public static PagedResult<T> ToPagedResult<T>(
         this IEnumerable<T> source,

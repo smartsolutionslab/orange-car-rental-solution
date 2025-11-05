@@ -1,11 +1,12 @@
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
 /// <summary>
-/// End-to-end integration tests for complete user scenarios
-/// Tests the entire flow from searching vehicles to creating reservations
+///     End-to-end integration tests for complete user scenarios
+///     Tests the entire flow from searching vehicles to creating reservations
 /// </summary>
 public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
 {
@@ -20,10 +21,8 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
         searchResponse.EnsureSuccessStatusCode();
 
         var searchContent = await searchResponse.Content.ReadAsStringAsync();
-        var searchResult = JsonSerializer.Deserialize<VehicleSearchResult>(searchContent, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var searchResult = JsonSerializer.Deserialize<VehicleSearchResult>(searchContent,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.NotNull(searchResult);
         Assert.NotNull(searchResult.Vehicles);
@@ -49,14 +48,15 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
             var createResponse = await httpClient.PostAsJsonAsync("/api/reservations", reservationCommand);
 
             // If the response is not Created, log the error details for debugging
-            if (createResponse.StatusCode != System.Net.HttpStatusCode.Created)
+            if (createResponse.StatusCode != HttpStatusCode.Created)
             {
                 var errorContent = await createResponse.Content.ReadAsStringAsync();
-                throw new Exception($"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
+                throw new Exception(
+                    $"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
             }
 
             // Assert reservation was created
-            Assert.Equal(System.Net.HttpStatusCode.Created, createResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
 
             var location = createResponse.Headers.Location;
             Assert.NotNull(location);
@@ -84,10 +84,8 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<VehicleSearchResult>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var result = JsonSerializer.Deserialize<VehicleSearchResult>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.NotNull(result);
         Assert.NotNull(result.Vehicles);
@@ -112,10 +110,8 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<VehicleSearchResult>(content, new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
+        var result = JsonSerializer.Deserialize<VehicleSearchResult>(content,
+            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.NotNull(result);
         Assert.NotNull(result.Vehicles);
@@ -130,11 +126,11 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
             Assert.True(vehicle.DailyRateGross > 0);
 
             // Verify gross = net + vat
-            Assert.Equal(vehicle.DailyRateGross, vehicle.DailyRateNet + vehicle.DailyRateVat, precision: 2);
+            Assert.Equal(vehicle.DailyRateGross, vehicle.DailyRateNet + vehicle.DailyRateVat, 2);
 
             // Verify 19% German VAT
             var expectedVat = Math.Round(vehicle.DailyRateNet * 0.19m, 2);
-            Assert.Equal(expectedVat, vehicle.DailyRateVat, precision: 2);
+            Assert.Equal(expectedVat, vehicle.DailyRateVat, 2);
         }
     }
 
@@ -149,11 +145,11 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
 
     private class Vehicle
     {
-        public string Id { get; set; } = string.Empty;
+        public string Id { get; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string CategoryCode { get; set; } = string.Empty;
-        public string LocationCode { get; set; } = string.Empty;
-        public string FuelType { get; set; } = string.Empty;
+        public string CategoryCode { get; } = string.Empty;
+        public string LocationCode { get; } = string.Empty;
+        public string FuelType { get; } = string.Empty;
         public decimal DailyRateNet { get; set; }
         public decimal DailyRateVat { get; set; }
         public decimal DailyRateGross { get; set; }

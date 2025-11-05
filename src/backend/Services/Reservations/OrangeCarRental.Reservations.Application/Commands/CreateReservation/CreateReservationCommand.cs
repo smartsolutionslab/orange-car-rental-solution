@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 
 /// <summary>
-/// Command to create a new reservation.
+///     Command to create a new reservation.
 /// </summary>
 public sealed record CreateReservationCommand(
     Guid VehicleId,

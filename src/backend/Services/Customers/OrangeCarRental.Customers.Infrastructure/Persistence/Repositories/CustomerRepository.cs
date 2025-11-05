@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
 
 /// <summary>
-/// Entity Framework implementation of ICustomerRepository.
-/// Provides data access for Customer aggregates with complex filtering and search capabilities.
+///     Entity Framework implementation of ICustomerRepository.
+///     Provides data access for Customer aggregates with complex filtering and search capabilities.
 /// </summary>
 public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRepository
 {
@@ -65,34 +65,21 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         }
 
         // Email filter - use value object directly
-        if (parameters.Email is not null)
-        {
-            query = query.Where(c => c.Email == parameters.Email);
-        }
+        if (parameters.Email is not null) query = query.Where(c => c.Email == parameters.Email);
 
         // Phone number filter - use value object directly
-        if (parameters.PhoneNumber is not null)
-        {
-            query = query.Where(c => c.PhoneNumber == parameters.PhoneNumber);
-        }
+        if (parameters.PhoneNumber is not null) query = query.Where(c => c.PhoneNumber == parameters.PhoneNumber);
 
         // Status filter
-        if (parameters.Status.HasValue)
-        {
-            query = query.Where(c => c.Status == parameters.Status.Value);
-        }
+        if (parameters.Status.HasValue) query = query.Where(c => c.Status == parameters.Status.Value);
 
         // City filter
         if (!string.IsNullOrWhiteSpace(parameters.City))
-        {
             query = query.Where(c => EF.Functions.Like(c.Address.City, $"%{parameters.City}%"));
-        }
 
         // Postal code filter
         if (!string.IsNullOrWhiteSpace(parameters.PostalCode))
-        {
             query = query.Where(c => c.Address.PostalCode == parameters.PostalCode);
-        }
 
         // Age range filtering - calculated from DateOfBirth
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
@@ -120,14 +107,10 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
 
         // Registration date range filtering
         if (parameters.RegisteredFrom.HasValue)
-        {
             query = query.Where(c => c.RegisteredAtUtc >= parameters.RegisteredFrom.Value);
-        }
 
         if (parameters.RegisteredTo.HasValue)
-        {
             query = query.Where(c => c.RegisteredAtUtc <= parameters.RegisteredTo.Value);
-        }
 
         // Apply sorting
         query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
@@ -148,10 +131,8 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         };
     }
 
-    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
-    {
+    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
         await context.Customers.AddAsync(customer, cancellationToken);
-    }
 
     public Task UpdateAsync(Customer customer, CancellationToken cancellationToken = default)
     {
@@ -162,19 +143,14 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
     public async Task DeleteAsync(CustomerId id, CancellationToken cancellationToken = default)
     {
         var customer = await GetByIdAsync(id, cancellationToken);
-        if (customer != null)
-        {
-            context.Customers.Remove(customer);
-        }
+        if (customer != null) context.Customers.Remove(customer);
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await context.SaveChangesAsync(cancellationToken);
-    }
 
     /// <summary>
-    /// Applies sorting to the query based on the specified field and direction.
+    ///     Applies sorting to the query based on the specified field and direction.
     /// </summary>
     private static IQueryable<Customer> ApplySorting(
         IQueryable<Customer> query,
@@ -211,19 +187,25 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
                 sortDescending ? query.OrderByDescending(c => c.Address.City) : query.OrderBy(c => c.Address.City),
 
             "postalcode" or "postal_code" or "zip" =>
-                sortDescending ? query.OrderByDescending(c => c.Address.PostalCode) : query.OrderBy(c => c.Address.PostalCode),
+                sortDescending
+                    ? query.OrderByDescending(c => c.Address.PostalCode)
+                    : query.OrderBy(c => c.Address.PostalCode),
 
             "status" =>
                 sortDescending ? query.OrderByDescending(c => c.Status) : query.OrderBy(c => c.Status),
 
             "registeredat" or "registered_at" or "created" or "createdat" =>
-                sortDescending ? query.OrderByDescending(c => c.RegisteredAtUtc) : query.OrderBy(c => c.RegisteredAtUtc),
+                sortDescending
+                    ? query.OrderByDescending(c => c.RegisteredAtUtc)
+                    : query.OrderBy(c => c.RegisteredAtUtc),
 
             "updatedat" or "updated_at" or "modified" or "modifiedat" =>
                 sortDescending ? query.OrderByDescending(c => c.UpdatedAtUtc) : query.OrderBy(c => c.UpdatedAtUtc),
 
             "licenseexpiry" or "license_expiry" or "expirydate" =>
-                sortDescending ? query.OrderByDescending(c => c.DriversLicense.ExpiryDate) : query.OrderBy(c => c.DriversLicense.ExpiryDate),
+                sortDescending
+                    ? query.OrderByDescending(c => c.DriversLicense.ExpiryDate)
+                    : query.OrderBy(c => c.DriversLicense.ExpiryDate),
 
             // Default: sort by registration date
             _ => query.OrderByDescending(c => c.RegisteredAtUtc)

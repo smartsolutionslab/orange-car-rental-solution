@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
-/// Location code value object.
-/// Represents a unique identifier for a rental location (e.g., "BER-HBF", "MUC-FLG").
+///     Location code value object.
+///     Represents a unique identifier for a rental location (e.g., "BER-HBF", "MUC-FLG").
 /// </summary>
 /// <param name="Value">The location code value.</param>
 public readonly record struct LocationCode(string Value)

@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 
 /// <summary>
-/// Data transfer object for reservation details.
+///     Data transfer object for reservation details.
 /// </summary>
 public sealed record ReservationDto
 {

@@ -3,7 +3,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
 /// <summary>
-/// Paginated result for reservation search.
+///     Paginated result for reservation search.
 /// </summary>
 public sealed record SearchReservationsResult(
     List<ReservationDto> Reservations,

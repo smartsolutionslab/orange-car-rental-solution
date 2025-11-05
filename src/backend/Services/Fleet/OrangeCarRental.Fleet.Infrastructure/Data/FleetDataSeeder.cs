@@ -1,23 +1,22 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;
 
 /// <summary>
-/// Seeds the Fleet database with sample vehicles for development and testing.
-/// Creates a diverse fleet of German rental vehicles across all locations.
+///     Seeds the Fleet database with sample vehicles for development and testing.
+///     Creates a diverse fleet of German rental vehicles across all locations.
 /// </summary>
 public class FleetDataSeeder(
     FleetDbContext context,
     ILogger<FleetDataSeeder> logger)
 {
-
     /// <summary>
-    /// Seeds the database with sample vehicles if no vehicles exist.
+    ///     Seeds the database with sample vehicles if no vehicles exist.
     /// </summary>
     public async Task SeedAsync()
     {
@@ -59,7 +58,7 @@ public class FleetDataSeeder(
                 "Renault", "Twingo", 2023),
             CreateVehicle("Toyota Aygo", VehicleCategory.Kleinwagen, Location.KolnHauptbahnhof,
                 Money.Euro(30.99m), 4, FuelType.Hybrid, TransmissionType.Automatic,
-                "Toyota", "Aygo X", 2024),
+                "Toyota", "Aygo X", 2024)
         });
 
         // Kompaktklasse (Compact Cars) - 45-65 EUR/day
@@ -85,7 +84,7 @@ public class FleetDataSeeder(
                 "Opel", "Astra", 2023),
             CreateVehicle("Ford Focus", VehicleCategory.Kompaktklasse, Location.MunichFlughafen,
                 Money.Euro(46.99m), 5, FuelType.Petrol, TransmissionType.Manual,
-                "Ford", "Focus", 2023),
+                "Ford", "Focus", 2023)
         });
 
         // Mittelklasse (Mid-Size Cars) - 65-95 EUR/day
@@ -105,7 +104,7 @@ public class FleetDataSeeder(
                 "Audi", "A4 40 TDI", 2024),
             CreateVehicle("Tesla Model 3", VehicleCategory.Mittelklasse, Location.KolnHauptbahnhof,
                 Money.Euro(94.99m), 5, FuelType.Electric, TransmissionType.Automatic,
-                "Tesla", "Model 3", 2024),
+                "Tesla", "Model 3", 2024)
         });
 
         // Oberklasse (Upper Class) - 95-150 EUR/day
@@ -122,7 +121,7 @@ public class FleetDataSeeder(
                 "Audi", "A6 50 TDI", 2024),
             CreateVehicle("BMW i4", VehicleCategory.Oberklasse, Location.HamburgHauptbahnhof,
                 Money.Euro(139.99m), 5, FuelType.Electric, TransmissionType.Automatic,
-                "BMW", "i4 eDrive40", 2024),
+                "BMW", "i4 eDrive40", 2024)
         });
 
         // SUVs - 75-135 EUR/day
@@ -151,7 +150,7 @@ public class FleetDataSeeder(
                 "Mazda", "CX-5", 2023),
             CreateVehicle("Kia Sportage", VehicleCategory.SUV, Location.FrankfurtFlughafen,
                 Money.Euro(77.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
-                "Kia", "Sportage", 2024),
+                "Kia", "Sportage", 2024)
         });
 
         // Additional vehicles with varied statuses
@@ -168,7 +167,7 @@ public class FleetDataSeeder(
                 "Hyundai", "Ioniq 5", 2024),
             CreateVehicle("Polestar 2", VehicleCategory.Mittelklasse, Location.HamburgHauptbahnhof,
                 Money.Euro(99.99m), 5, FuelType.Electric, TransmissionType.Automatic,
-                "Polestar", "2", 2024),
+                "Polestar", "2", 2024)
         });
 
         // Set some vehicles to different statuses for realism
@@ -223,11 +222,11 @@ public class FleetDataSeeder(
         // German license plate format: B-XX 1234 (City code - letters - numbers)
         var cityCode = location.Code.Value switch
         {
-            "BER-HBF" => "B",      // Berlin
-            "MUC-FLG" => "M",      // München
-            "FRA-FLG" => "F",      // Frankfurt
-            "HAM-HBF" => "HH",     // Hamburg
-            "CGN-HBF" => "K",      // Köln
+            "BER-HBF" => "B", // Berlin
+            "MUC-FLG" => "M", // München
+            "FRA-FLG" => "F", // Frankfurt
+            "HAM-HBF" => "HH", // Hamburg
+            "CGN-HBF" => "K", // Köln
             _ => "B"
         };
 

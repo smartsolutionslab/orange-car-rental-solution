@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 
 /// <summary>
-/// Handler for GetLocationsQuery.
-/// Returns all available rental locations.
+///     Handler for GetLocationsQuery.
+///     Returns all available rental locations.
 /// </summary>
 public sealed class GetLocationsQueryHandler
 {

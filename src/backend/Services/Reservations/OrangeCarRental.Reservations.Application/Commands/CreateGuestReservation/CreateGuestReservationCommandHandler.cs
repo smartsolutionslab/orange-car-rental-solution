@@ -5,11 +5,11 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 
 /// <summary>
-/// Handler for CreateGuestReservationCommand.
-/// Handles guest booking by:
-/// 1. Registering the customer via the Customers API
-/// 2. Calculating the price via the Pricing API
-/// 3. Creating the reservation with the new customer ID
+///     Handler for CreateGuestReservationCommand.
+///     Handles guest booking by:
+///     1. Registering the customer via the Customers API
+///     2. Calculating the price via the Pricing API
+///     3. Creating the reservation with the new customer ID
 /// </summary>
 public sealed class CreateGuestReservationCommandHandler(
     ICustomersService customersService,
@@ -74,12 +74,12 @@ public sealed class CreateGuestReservationCommandHandler(
 
         // Step 6: Return result with both customer and reservation IDs
         return new CreateGuestReservationResult(
-            CustomerId: customerId,
-            ReservationId: reservation.Id.Value,
-            TotalPriceNet: reservation.TotalPrice.NetAmount,
-            TotalPriceVat: reservation.TotalPrice.VatAmount,
-            TotalPriceGross: reservation.TotalPrice.GrossAmount,
-            Currency: reservation.TotalPrice.Currency.Code
+            customerId,
+            reservation.Id.Value,
+            reservation.TotalPrice.NetAmount,
+            reservation.TotalPrice.VatAmount,
+            reservation.TotalPrice.GrossAmount,
+            reservation.TotalPrice.Currency.Code
         );
     }
 }

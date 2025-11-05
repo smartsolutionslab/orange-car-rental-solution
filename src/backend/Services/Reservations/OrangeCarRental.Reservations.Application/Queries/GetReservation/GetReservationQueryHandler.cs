@@ -4,8 +4,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 
 /// <summary>
-/// Handler for GetReservationQuery.
-/// Retrieves a reservation by ID and maps to DTO.
+///     Handler for GetReservationQuery.
+///     Retrieves a reservation by ID and maps to DTO.
 /// </summary>
 public sealed class GetReservationQueryHandler(IReservationRepository reservations)
 {

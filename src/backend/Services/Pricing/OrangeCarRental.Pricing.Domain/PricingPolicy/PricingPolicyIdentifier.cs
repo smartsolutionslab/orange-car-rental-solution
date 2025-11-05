@@ -1,13 +1,16 @@
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Unique identifier for a pricing policy.
+///     Unique identifier for a pricing policy.
 /// </summary>
 public readonly record struct PricingPolicyIdentifier
 {
-    public Guid Value { get; }
+    private PricingPolicyIdentifier(Guid value)
+    {
+        Value = value;
+    }
 
-    private PricingPolicyIdentifier(Guid value) => Value = value;
+    public Guid Value { get; }
 
     public static PricingPolicyIdentifier Of(Guid value)
     {
@@ -18,9 +21,7 @@ public readonly record struct PricingPolicyIdentifier
     public static PricingPolicyIdentifier From(string value)
     {
         if (!Guid.TryParse(value, out var guid))
-        {
             throw new ArgumentException($"Invalid pricing policy ID format: {value}", nameof(value));
-        }
         return Of(guid);
     }
 

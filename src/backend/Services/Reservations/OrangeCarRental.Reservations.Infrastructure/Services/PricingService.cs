@@ -5,7 +5,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 /// <summary>
-/// HTTP client implementation for calling the Pricing API.
+///     HTTP client implementation for calling the Pricing API.
 /// </summary>
 public sealed class PricingService : IPricingService
 {
@@ -15,10 +15,7 @@ public sealed class PricingService : IPricingService
     public PricingService(HttpClient httpClient)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
+        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
     public async Task<PriceCalculationDto> CalculatePriceAsync(
@@ -55,9 +52,7 @@ public sealed class PricingService : IPricingService
         var result = JsonSerializer.Deserialize<PriceCalculationDto>(responseJson, _jsonOptions);
 
         if (result is null)
-        {
             throw new InvalidOperationException("Failed to deserialize price calculation response from Pricing API");
-        }
 
         return result;
     }

@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 
 /// <summary>
-/// Handler for CreateReservationCommand.
-/// Creates a new pending reservation and returns the reservation details.
+///     Handler for CreateReservationCommand.
+///     Creates a new pending reservation and returns the reservation details.
 /// </summary>
 public sealed class CreateReservationCommandHandler(
     IReservationRepository reservations,

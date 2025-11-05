@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\OrangeCarRental.Fleet.Domain\OrangeCarRental.Fleet.Domain.csproj" />
-    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Fleet.Domain\OrangeCarRental.Fleet.Domain.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj"/>
   </ItemGroup>
 
 </Project>

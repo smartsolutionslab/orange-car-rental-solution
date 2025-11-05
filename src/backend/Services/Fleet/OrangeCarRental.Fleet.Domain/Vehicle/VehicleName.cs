@@ -3,7 +3,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle name value object.
+///     Vehicle name value object.
 /// </summary>
 /// <param name="Value">The vehicle name value.</param>
 public readonly record struct VehicleName(string Value)

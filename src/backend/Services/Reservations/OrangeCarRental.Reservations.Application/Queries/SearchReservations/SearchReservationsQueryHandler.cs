@@ -4,8 +4,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
 /// <summary>
-/// Handler for SearchReservationsQuery.
-/// Searches reservations with filters and returns paginated results.
+///     Handler for SearchReservationsQuery.
+///     Searches reservations with filters and returns paginated results.
 /// </summary>
 public sealed class SearchReservationsQueryHandler(IReservationRepository reservations)
 {

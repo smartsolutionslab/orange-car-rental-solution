@@ -1,14 +1,17 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Represents the manufacturing year of a vehicle.
-/// Typical rental vehicles are from recent years (e.g., 1990-current year).
+///     Represents the manufacturing year of a vehicle.
+///     Typical rental vehicles are from recent years (e.g., 1990-current year).
 /// </summary>
 public readonly record struct ManufacturingYear
 {
-    public int Value { get; }
+    private ManufacturingYear(int value)
+    {
+        Value = value;
+    }
 
-    private ManufacturingYear(int value) => Value = value;
+    public int Value { get; }
 
     public static ManufacturingYear Of(int value)
     {

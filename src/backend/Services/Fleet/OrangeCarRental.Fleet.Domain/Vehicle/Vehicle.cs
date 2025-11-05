@@ -6,26 +6,11 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle aggregate root.
-/// Represents a vehicle in the rental fleet with German market-specific pricing (19% VAT).
+///     Vehicle aggregate root.
+///     Represents a vehicle in the rental fleet with German market-specific pricing (19% VAT).
 /// </summary>
 public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
 {
-    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public VehicleName Name { get; init; }
-    public VehicleCategory Category { get; init; }
-    public Location CurrentLocation { get; init; }
-    public Money DailyRate { get; init; }
-    public SeatingCapacity Seats { get; init; }
-    public FuelType FuelType { get; init; }
-    public TransmissionType TransmissionType { get; init; }
-    public VehicleStatus Status { get; init; }
-    public string? LicensePlate { get; init; }
-    public Manufacturer? Manufacturer { get; init; }
-    public VehicleModel? Model { get; init; }
-    public ManufacturingYear? Year { get; init; }
-    public string? ImageUrl { get; init; }
-
     // For EF Core - properties will be set by EF Core during materialization
     private Vehicle()
     {
@@ -59,8 +44,23 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         AddDomainEvent(new VehicleAddedToFleet(Id, Name, Category, DailyRate));
     }
 
+    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+    public VehicleName Name { get; init; }
+    public VehicleCategory Category { get; init; }
+    public Location CurrentLocation { get; init; }
+    public Money DailyRate { get; init; }
+    public SeatingCapacity Seats { get; init; }
+    public FuelType FuelType { get; init; }
+    public TransmissionType TransmissionType { get; init; }
+    public VehicleStatus Status { get; init; }
+    public string? LicensePlate { get; init; }
+    public Manufacturer? Manufacturer { get; init; }
+    public VehicleModel? Model { get; init; }
+    public ManufacturingYear? Year { get; init; }
+    public string? ImageUrl { get; init; }
+
     /// <summary>
-    /// Create a new vehicle with German VAT-inclusive pricing.
+    ///     Create a new vehicle with German VAT-inclusive pricing.
     /// </summary>
     public static Vehicle From(
         VehicleName name,
@@ -84,8 +84,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Creates a copy of this instance with modified values (used internally for immutable updates).
-    /// Does not raise domain events - caller is responsible for that.
+    ///     Creates a copy of this instance with modified values (used internally for immutable updates).
+    ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Vehicle CreateMutatedCopy(
         VehicleName? name = null,
@@ -104,26 +104,26 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     {
         return new Vehicle
         {
-            Id = this.Id,
-            Name = name ?? this.Name,
-            Category = category ?? this.Category,
-            CurrentLocation = currentLocation ?? this.CurrentLocation,
-            DailyRate = dailyRate ?? this.DailyRate,
-            Seats = seats ?? this.Seats,
-            FuelType = fuelType ?? this.FuelType,
-            TransmissionType = transmissionType ?? this.TransmissionType,
-            Status = status ?? this.Status,
-            LicensePlate = licensePlate ?? this.LicensePlate,
-            Manufacturer = manufacturer ?? this.Manufacturer,
-            Model = model ?? this.Model,
-            Year = year ?? this.Year,
-            ImageUrl = imageUrl ?? this.ImageUrl
+            Id = Id,
+            Name = name ?? Name,
+            Category = category ?? Category,
+            CurrentLocation = currentLocation ?? CurrentLocation,
+            DailyRate = dailyRate ?? DailyRate,
+            Seats = seats ?? Seats,
+            FuelType = fuelType ?? FuelType,
+            TransmissionType = transmissionType ?? TransmissionType,
+            Status = status ?? Status,
+            LicensePlate = licensePlate ?? LicensePlate,
+            Manufacturer = manufacturer ?? Manufacturer,
+            Model = model ?? Model,
+            Year = year ?? Year,
+            ImageUrl = imageUrl ?? ImageUrl
         };
     }
 
     /// <summary>
-    /// Update the daily rental rate.
-    /// Returns a new instance with the updated rate (immutable pattern).
+    ///     Update the daily rental rate.
+    ///     Returns a new instance with the updated rate (immutable pattern).
     /// </summary>
     public Vehicle UpdateDailyRate(Money newDailyRate)
     {
@@ -138,8 +138,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Move vehicle to a different location.
-    /// Returns a new instance with the updated location (immutable pattern).
+    ///     Move vehicle to a different location.
+    ///     Returns a new instance with the updated location (immutable pattern).
     /// </summary>
     public Vehicle MoveToLocation(Location newLocation)
     {
@@ -156,8 +156,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Change vehicle status.
-    /// Returns a new instance with the updated status (immutable pattern).
+    ///     Change vehicle status.
+    ///     Returns a new instance with the updated status (immutable pattern).
     /// </summary>
     public Vehicle ChangeStatus(VehicleStatus newStatus)
     {
@@ -170,8 +170,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Mark vehicle as available for rental.
-    /// Returns a new instance with available status (immutable pattern).
+    ///     Mark vehicle as available for rental.
+    ///     Returns a new instance with available status (immutable pattern).
     /// </summary>
     public Vehicle MarkAsAvailable()
     {
@@ -181,35 +181,35 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Mark vehicle as rented.
-    /// Returns a new instance with rented status (immutable pattern).
+    ///     Mark vehicle as rented.
+    ///     Returns a new instance with rented status (immutable pattern).
     /// </summary>
     public Vehicle MarkAsRented()
     {
         if (Status != VehicleStatus.Available && Status != VehicleStatus.Reserved)
-        {
             throw new InvalidOperationException($"Cannot rent vehicle in status: {Status}");
-        }
 
         return ChangeStatus(VehicleStatus.Rented);
     }
 
     /// <summary>
-    /// Mark vehicle as under maintenance.
-    /// Returns a new instance with maintenance status (immutable pattern).
+    ///     Mark vehicle as under maintenance.
+    ///     Returns a new instance with maintenance status (immutable pattern).
     /// </summary>
     public Vehicle MarkAsUnderMaintenance()
     {
-        if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
+        if (Status == VehicleStatus.Rented)
+            throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
 
         return ChangeStatus(VehicleStatus.Maintenance);
     }
 
     /// <summary>
-    /// Set additional details (manufacturer, model, year, image).
-    /// Returns a new instance with the updated details (immutable pattern).
+    ///     Set additional details (manufacturer, model, year, image).
+    ///     Returns a new instance with the updated details (immutable pattern).
     /// </summary>
-    public Vehicle SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year, string? imageUrl)
+    public Vehicle SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year,
+        string? imageUrl)
     {
         return CreateMutatedCopy(
             manufacturer: manufacturer,
@@ -219,8 +219,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Set license plate.
-    /// Returns a new instance with the updated license plate (immutable pattern).
+    ///     Set license plate.
+    ///     Returns a new instance with the updated license plate (immutable pattern).
     /// </summary>
     public Vehicle SetLicensePlate(string licensePlate)
     {
@@ -230,7 +230,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     }
 
     /// <summary>
-    /// Check if vehicle is available for rental in the given period.
+    ///     Check if vehicle is available for rental in the given period.
     /// </summary>
     public bool IsAvailableForRental() => Status == VehicleStatus.Available;
 }

@@ -1,8 +1,7 @@
-
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
-/// Repository interface for Reservation aggregate.
+///     Repository interface for Reservation aggregate.
 /// </summary>
 public interface IReservationRepository
 {

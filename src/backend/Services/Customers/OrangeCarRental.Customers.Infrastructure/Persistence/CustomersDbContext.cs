@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Con
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 
 /// <summary>
-/// Database context for the Customers service.
-/// Manages customer data and profile operations.
+///     Database context for the Customers service.
+///     Manages customer data and profile operations.
 /// </summary>
 public sealed class CustomersDbContext : DbContext
 {

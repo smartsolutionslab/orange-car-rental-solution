@@ -2,9 +2,11 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +18,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
     .Enrich.WithProperty("Application", "FleetAPI")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -27,8 +30,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -40,7 +43,7 @@ builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions
 });
 
 // Add read-only access to Reservations database for availability checking
-builder.AddSqlServerDbContext<SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.ReservationsDbContext>("reservations", configureDbContextOptions: options =>
+builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
         sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
@@ -51,8 +54,8 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
 // Register application services
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();
-builder.Services.AddScoped<SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations.GetLocationsQueryHandler>();
-builder.Services.AddScoped<SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations.GetLocationByCodeQueryHandler>();
+builder.Services.AddScoped<GetLocationsQueryHandler>();
+builder.Services.AddScoped<GetLocationByCodeQueryHandler>();
 
 var app = builder.Build();
 

@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
-/// City name value object.
-/// Represents a city name (e.g., "Berlin", "München").
+///     City name value object.
+///     Represents a city name (e.g., "Berlin", "München").
 /// </summary>
 /// <param name="Value">The city name value.</param>
 public readonly record struct City(string Value)

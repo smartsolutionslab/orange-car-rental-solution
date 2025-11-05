@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle transmission type (Getriebeart).
+///     Vehicle transmission type (Getriebeart).
 /// </summary>
 public enum TransmissionType
 {

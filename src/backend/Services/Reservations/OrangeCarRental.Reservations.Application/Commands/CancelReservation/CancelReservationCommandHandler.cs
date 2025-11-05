@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 
 /// <summary>
-/// Handler for CancelReservationCommand.
-/// Cancels a reservation with an optional reason.
+///     Handler for CancelReservationCommand.
+///     Cancels a reservation with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
     IReservationRepository reservations)
@@ -17,10 +17,7 @@ public sealed class CancelReservationCommandHandler(
         var reservationId = ReservationIdentifier.From(command.ReservationId);
         var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken);
 
-        if (reservation == null)
-        {
-            throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
-        }
+        if (reservation == null) throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
 
         // Cancel the reservation (returns new instance due to immutability)
         var cancelledReservation = reservation.Cancel(command.CancellationReason);

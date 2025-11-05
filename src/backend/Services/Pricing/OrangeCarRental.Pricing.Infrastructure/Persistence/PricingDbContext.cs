@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Confi
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 
 /// <summary>
-/// Database context for the Pricing service.
-/// Manages pricing policies and rate calculations.
+///     Database context for the Pricing service.
+///     Manages pricing policies and rate calculations.
 /// </summary>
 public sealed class PricingDbContext : DbContext
 {

@@ -5,10 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Domain;
 
 public class ReservationTests
 {
-    private readonly Guid _vehicleId = Guid.NewGuid();
     private readonly Guid _customerId = Guid.NewGuid();
     private readonly BookingPeriod _period;
     private readonly Money _totalPrice;
+    private readonly Guid _vehicleId = Guid.NewGuid();
 
     public ReservationTests()
     {
@@ -26,7 +26,8 @@ public class ReservationTests
     public void Create_WithValidParameters_CreatesReservation()
     {
         // Act
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
         reservation.Should().NotBeNull();
@@ -46,7 +47,8 @@ public class ReservationTests
     public void Create_WithEmptyVehicleId_ThrowsArgumentException()
     {
         // Act
-        var act = () => Reservation.Create(Guid.Empty, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var act = () => Reservation.Create(Guid.Empty, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -57,7 +59,8 @@ public class ReservationTests
     public void Create_WithEmptyCustomerId_ThrowsArgumentException()
     {
         // Act
-        var act = () => Reservation.Create(_vehicleId, Guid.Empty, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var act = () => Reservation.Create(_vehicleId, Guid.Empty, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
         act.Should().Throw<ArgumentException>()
@@ -72,7 +75,8 @@ public class ReservationTests
     public void Confirm_WhenPending_ConfirmsReservation()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         reservation = reservation.Confirm();
@@ -87,7 +91,8 @@ public class ReservationTests
     public void Confirm_WhenAlreadyConfirmed_ThrowsInvalidOperationException()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -102,7 +107,8 @@ public class ReservationTests
     public void Confirm_WhenCancelled_ThrowsInvalidOperationException()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Cancel("Changed mind");
 
         // Act
@@ -121,7 +127,8 @@ public class ReservationTests
     public void Cancel_WhenPending_CancelsReservation()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         reservation = reservation.Cancel("Changed plans");
@@ -137,7 +144,8 @@ public class ReservationTests
     public void Cancel_WhenConfirmed_CancelsReservation()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -152,7 +160,8 @@ public class ReservationTests
     public void Cancel_WithoutReason_CancelsWithNullReason()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         reservation = reservation.Cancel();
@@ -166,7 +175,8 @@ public class ReservationTests
     public void Cancel_WhenAlreadyCancelled_DoesNotThrow()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Cancel("First cancellation");
 
         // Act
@@ -185,7 +195,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
         reservation = reservation.MarkAsActive();
         reservation = reservation.Complete();
@@ -205,7 +216,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
         reservation = reservation.MarkAsActive();
 
@@ -228,7 +240,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -250,7 +263,8 @@ public class ReservationTests
         // In a real scenario, this would be a reservation created yesterday
         // For testing, we'll use today's date
         var todayPeriod = BookingPeriod.Of(DateTime.UtcNow.Date, DateTime.UtcNow.Date.AddDays(3));
-        var reservation = Reservation.Create(_vehicleId, _customerId, todayPeriod, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, todayPeriod, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -267,7 +281,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date.AddDays(5);
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -285,7 +300,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         var act = () => reservation.MarkAsActive();
@@ -302,7 +318,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
         reservation = reservation.Cancel("Changed mind");
 
@@ -325,7 +342,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
         reservation = reservation.MarkAsActive();
 
@@ -342,7 +360,8 @@ public class ReservationTests
     public void Complete_WhenNotActive_ThrowsInvalidOperationException()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -357,7 +376,8 @@ public class ReservationTests
     public void Complete_WhenPending_ThrowsInvalidOperationException()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         var act = () => reservation.Complete();
@@ -384,7 +404,8 @@ public class ReservationTests
 
         // Since we can't create a period in the past, let's test the validation instead
         var futurePeriod = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(1), DateTime.UtcNow.Date.AddDays(4));
-        var reservation = Reservation.Create(_vehicleId, _customerId, futurePeriod, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, futurePeriod, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -399,7 +420,8 @@ public class ReservationTests
     public void MarkAsNoShow_WhenNotConfirmed_ThrowsInvalidOperationException()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         var act = () => reservation.MarkAsNoShow();
@@ -416,7 +438,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
         reservation = reservation.MarkAsActive();
 
@@ -435,7 +458,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date.AddDays(5);
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -457,7 +481,8 @@ public class ReservationTests
         var pickupDate1 = DateTime.UtcNow.Date.AddDays(7);
         var returnDate1 = pickupDate1.AddDays(5);
         var period1 = BookingPeriod.Of(pickupDate1, returnDate1);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         var pickupDate2 = DateTime.UtcNow.Date.AddDays(9); // Starts during period1
         var returnDate2 = pickupDate2.AddDays(3);
@@ -477,7 +502,8 @@ public class ReservationTests
         var pickupDate1 = DateTime.UtcNow.Date.AddDays(7);
         var returnDate1 = pickupDate1.AddDays(3);
         var period1 = BookingPeriod.Of(pickupDate1, returnDate1);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         var pickupDate2 = DateTime.UtcNow.Date.AddDays(15); // After period1 ends
         var returnDate2 = pickupDate2.AddDays(3);
@@ -494,7 +520,8 @@ public class ReservationTests
     public void OverlapsWith_WhenPeriodsAreIdentical_ReturnsTrue()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         var overlaps = reservation.OverlapsWith(_period);
@@ -510,7 +537,8 @@ public class ReservationTests
         var pickupDate1 = DateTime.UtcNow.Date.AddDays(7);
         var returnDate1 = pickupDate1.AddDays(3);
         var period1 = BookingPeriod.Of(pickupDate1, returnDate1);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period1, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         var pickupDate2 = returnDate1.AddDays(1); // Starts day after period1 ends
         var returnDate2 = pickupDate2.AddDays(3);
@@ -534,7 +562,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act & Assert
         reservation.Status.Should().Be(ReservationStatus.Pending);
@@ -553,7 +582,8 @@ public class ReservationTests
     public void StatusTransition_PendingToCancelled_IsValid()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act
         reservation = reservation.Cancel("Customer request");
@@ -566,7 +596,8 @@ public class ReservationTests
     public void StatusTransition_ConfirmedToCancelled_IsValid()
     {
         // Arrange
-        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, _period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act
@@ -584,7 +615,8 @@ public class ReservationTests
         var pickupDate = DateTime.UtcNow.Date.AddDays(1);
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), _totalPrice);
+        var reservation = Reservation.Create(_vehicleId, _customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), _totalPrice);
         reservation = reservation.Confirm();
 
         // Act & Assert - Should throw because we're not past pickup date yet

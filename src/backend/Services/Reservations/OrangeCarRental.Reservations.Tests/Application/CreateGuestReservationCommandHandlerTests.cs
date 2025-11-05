@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Moq;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
@@ -9,9 +8,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 public class CreateGuestReservationCommandHandlerTests
 {
     private readonly Mock<ICustomersService> _customersServiceMock = new();
-    private readonly Mock<IReservationRepository> _repositoryMock = new();
-    private readonly Mock<IPricingService> _pricingServiceMock = new();
     private readonly CreateGuestReservationCommandHandler _handler;
+    private readonly Mock<IPricingService> _pricingServiceMock = new();
+    private readonly Mock<IReservationRepository> _repositoryMock = new();
 
     public CreateGuestReservationCommandHandlerTests()
     {
@@ -460,10 +459,7 @@ public class CreateGuestReservationCommandHandlerTests
     public async Task HandleAsync_WithPickupDateInPast_ThrowsArgumentException()
     {
         // Arrange
-        var command = CreateValidCommand() with
-        {
-            PickupDate = DateTime.UtcNow.Date.AddDays(-1)
-        };
+        var command = CreateValidCommand() with { PickupDate = DateTime.UtcNow.Date.AddDays(-1) };
         SetupDefaultMocks();
 
         // Act
@@ -480,8 +476,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(10),
-            ReturnDate = DateTime.UtcNow.Date.AddDays(5)
+            PickupDate = DateTime.UtcNow.Date.AddDays(10), ReturnDate = DateTime.UtcNow.Date.AddDays(5)
         };
         SetupDefaultMocks();
 
@@ -498,11 +493,7 @@ public class CreateGuestReservationCommandHandlerTests
     {
         // Arrange
         var pickupDate = DateTime.UtcNow.Date.AddDays(5);
-        var command = CreateValidCommand() with
-        {
-            PickupDate = pickupDate,
-            ReturnDate = pickupDate
-        };
+        var command = CreateValidCommand() with { PickupDate = pickupDate, ReturnDate = pickupDate };
         SetupDefaultMocks();
 
         // Act
@@ -519,8 +510,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(5),
-            ReturnDate = DateTime.UtcNow.Date.AddDays(100) // 95 days
+            PickupDate = DateTime.UtcNow.Date.AddDays(5), ReturnDate = DateTime.UtcNow.Date.AddDays(100) // 95 days
         };
         SetupDefaultMocks();
 

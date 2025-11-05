@@ -3,13 +3,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
 /// <summary>
-/// Handler for ChangeCustomerStatusCommand.
-/// Loads the customer, changes account status, and persists changes.
+///     Handler for ChangeCustomerStatusCommand.
+///     Loads the customer, changes account status, and persists changes.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the change customer status command.
+    ///     Handles the change customer status command.
     /// </summary>
     /// <param name="command">The command with new status and reason.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -31,7 +31,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         }
 
         // Parse and validate new status
-        if (!Enum.TryParse<CustomerStatus>(command.NewStatus, ignoreCase: true, out var newStatus))
+        if (!Enum.TryParse<CustomerStatus>(command.NewStatus, true, out var newStatus))
         {
             throw new ArgumentException(
                 $"Invalid customer status: '{command.NewStatus}'. Valid values are: Active, Suspended, Blocked.",

@@ -5,15 +5,12 @@ public static class ParseExtensions
     public static TransmissionType ParseTransmissionType(this string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-        return Enum.Parse<TransmissionType>(value, ignoreCase: true);
+        return Enum.Parse<TransmissionType>(value, true);
     }
 
     public static TransmissionType? TryParseTransmissionType(this string? value)
     {
-        if(Enum.TryParse(value, true, out TransmissionType parsedTransmissionType))
-        {
-            return parsedTransmissionType;
-        }
+        if (Enum.TryParse(value, true, out TransmissionType parsedTransmissionType)) return parsedTransmissionType;
 
         return null;
     }
@@ -21,15 +18,12 @@ public static class ParseExtensions
     public static FuelType ParseFuelType(this string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-        return Enum.Parse<FuelType>(value, ignoreCase: true);
+        return Enum.Parse<FuelType>(value, true);
     }
 
     public static FuelType? TryParseFuelType(this string? value)
     {
-        if (Enum.TryParse(value, true, out FuelType parsedFuelType))
-        {
-            return parsedFuelType;
-        }
+        if (Enum.TryParse(value, true, out FuelType parsedFuelType)) return parsedFuelType;
 
         return null;
     }

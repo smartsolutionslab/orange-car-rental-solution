@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 
 /// <summary>
-/// Location data transfer object
+///     Location data transfer object
 /// </summary>
 public sealed record LocationDto
 {

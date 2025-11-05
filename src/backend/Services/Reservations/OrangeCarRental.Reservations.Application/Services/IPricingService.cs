@@ -1,12 +1,12 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 /// <summary>
-/// Service for calculating rental prices via the Pricing API.
+///     Service for calculating rental prices via the Pricing API.
 /// </summary>
 public interface IPricingService
 {
     /// <summary>
-    /// Calculate the price for a vehicle rental.
+    ///     Calculate the price for a vehicle rental.
     /// </summary>
     /// <param name="categoryCode">The vehicle category code (e.g., "KLEIN", "KOMPAKT")</param>
     /// <param name="pickupDate">The rental pickup date</param>

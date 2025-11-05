@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for PricingPolicy aggregate.
+///     Entity configuration for PricingPolicy aggregate.
 /// </summary>
 internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<PricingPolicy>
 {
@@ -57,7 +58,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.Of(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

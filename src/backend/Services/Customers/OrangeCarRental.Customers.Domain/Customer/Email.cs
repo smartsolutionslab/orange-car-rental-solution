@@ -3,14 +3,14 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Email value object with RFC 5322 format validation.
-/// Email addresses are stored in lowercase for consistency and case-insensitive comparison.
+///     Email value object with RFC 5322 format validation.
+///     Email addresses are stored in lowercase for consistency and case-insensitive comparison.
 /// </summary>
 /// <param name="Value">The email address value.</param>
 public readonly record struct Email(string Value)
 {
     /// <summary>
-    /// Creates an email value object from a string.
+    ///     Creates an email value object from a string.
     /// </summary>
     /// <param name="value">The email address.</param>
     /// <exception cref="ArgumentException">Thrown when the email is invalid.</exception>
@@ -27,13 +27,10 @@ public readonly record struct Email(string Value)
     }
 
     /// <summary>
-    /// Creates an anonymized email address for GDPR compliance.
-    /// Used when a customer requests data deletion.
+    ///     Creates an anonymized email address for GDPR compliance.
+    ///     Used when a customer requests data deletion.
     /// </summary>
-    public static Email Anonymized()
-    {
-        return new Email($"anonymized-{Guid.CreateVersion7()}@gdpr-deleted.local");
-    }
+    public static Email Anonymized() => new($"anonymized-{Guid.CreateVersion7()}@gdpr-deleted.local");
 
     public static implicit operator string(Email email) => email.Value;
 

@@ -3,13 +3,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
 /// <summary>
-/// Handler for SearchCustomersQuery.
-/// Delegates filtering and pagination to the repository for database-level performance.
+///     Handler for SearchCustomersQuery.
+///     Delegates filtering and pagination to the repository for database-level performance.
 /// </summary>
 public sealed class SearchCustomersQueryHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the search customers query.
+    ///     Handles the search customers query.
     /// </summary>
     /// <param name="query">The search query with filters and pagination.</param>
     /// <param name="cancellationToken">Cancellation token.</param>

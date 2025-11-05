@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence.Configu
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 /// <summary>
-/// Database context for the Fleet service.
-/// Manages vehicle data and fleet operations.
+///     Database context for the Fleet service.
+///     Manages vehicle data and fleet operations.
 /// </summary>
 public sealed class FleetDbContext : DbContext
 {

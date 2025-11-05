@@ -5,13 +5,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 
 /// <summary>
-/// Handler for GetCustomerQuery.
-/// Retrieves a customer by ID and maps to DTO.
+///     Handler for GetCustomerQuery.
+///     Retrieves a customer by ID and maps to DTO.
 /// </summary>
 public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the get customer query.
+    ///     Handles the get customer query.
     /// </summary>
     /// <param name="query">The query with customer ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>

@@ -5,25 +5,11 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
-/// Reservation aggregate root.
-/// Represents a customer's vehicle rental booking with German market-specific pricing (19% VAT).
+///     Reservation aggregate root.
+///     Represents a customer's vehicle rental booking with German market-specific pricing (19% VAT).
 /// </summary>
 public sealed class Reservation : AggregateRoot<ReservationIdentifier>
 {
-    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public Guid VehicleId { get; init; }
-    public Guid CustomerId { get; init; }
-    public BookingPeriod Period { get; init; }
-    public LocationCode PickupLocationCode { get; init; }
-    public LocationCode DropoffLocationCode { get; init; }
-    public Money TotalPrice { get; init; }
-    public ReservationStatus Status { get; init; }
-    public string? CancellationReason { get; init; }
-    public DateTime CreatedAt { get; init; }
-    public DateTime? ConfirmedAt { get; init; }
-    public DateTime? CancelledAt { get; init; }
-    public DateTime? CompletedAt { get; init; }
-
     // For EF Core
     private Reservation()
     {
@@ -55,8 +41,22 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         AddDomainEvent(new ReservationCreated(Id, VehicleId, CustomerId, Period, TotalPrice));
     }
 
+    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+    public Guid VehicleId { get; init; }
+    public Guid CustomerId { get; init; }
+    public BookingPeriod Period { get; init; }
+    public LocationCode PickupLocationCode { get; init; }
+    public LocationCode DropoffLocationCode { get; init; }
+    public Money TotalPrice { get; init; }
+    public ReservationStatus Status { get; init; }
+    public string? CancellationReason { get; init; }
+    public DateTime CreatedAt { get; init; }
+    public DateTime? ConfirmedAt { get; init; }
+    public DateTime? CancelledAt { get; init; }
+    public DateTime? CompletedAt { get; init; }
+
     /// <summary>
-    /// Create a new pending reservation.
+    ///     Create a new pending reservation.
     /// </summary>
     public static Reservation Create(
         Guid vehicleId,
@@ -81,8 +81,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     /// <summary>
-    /// Creates a copy of this instance with modified values (used internally for immutable updates).
-    /// Does not raise domain events - caller is responsible for that.
+    ///     Creates a copy of this instance with modified values (used internally for immutable updates).
+    ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Reservation CreateMutatedCopy(
         Guid? vehicleId = null,
@@ -100,29 +100,30 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     {
         return new Reservation
         {
-            Id = this.Id,
-            VehicleId = vehicleId ?? this.VehicleId,
-            CustomerId = customerId ?? this.CustomerId,
-            Period = period ?? this.Period,
-            PickupLocationCode = pickupLocationCode ?? this.PickupLocationCode,
-            DropoffLocationCode = dropoffLocationCode ?? this.DropoffLocationCode,
-            TotalPrice = totalPrice ?? this.TotalPrice,
-            Status = status ?? this.Status,
-            CancellationReason = cancellationReason ?? this.CancellationReason,
-            CreatedAt = createdAt ?? this.CreatedAt,
-            ConfirmedAt = confirmedAt ?? this.ConfirmedAt,
-            CancelledAt = cancelledAt ?? this.CancelledAt,
-            CompletedAt = completedAt ?? this.CompletedAt
+            Id = Id,
+            VehicleId = vehicleId ?? VehicleId,
+            CustomerId = customerId ?? CustomerId,
+            Period = period ?? Period,
+            PickupLocationCode = pickupLocationCode ?? PickupLocationCode,
+            DropoffLocationCode = dropoffLocationCode ?? DropoffLocationCode,
+            TotalPrice = totalPrice ?? TotalPrice,
+            Status = status ?? Status,
+            CancellationReason = cancellationReason ?? CancellationReason,
+            CreatedAt = createdAt ?? CreatedAt,
+            ConfirmedAt = confirmedAt ?? ConfirmedAt,
+            CancelledAt = cancelledAt ?? CancelledAt,
+            CompletedAt = completedAt ?? CompletedAt
         };
     }
 
     /// <summary>
-    /// Confirm the reservation (payment received).
-    /// Returns a new instance with confirmed status (immutable pattern).
+    ///     Confirm the reservation (payment received).
+    ///     Returns a new instance with confirmed status (immutable pattern).
     /// </summary>
     public Reservation Confirm()
     {
-        if (Status != ReservationStatus.Pending) throw new InvalidOperationException($"Cannot confirm reservation in status: {Status}");
+        if (Status != ReservationStatus.Pending)
+            throw new InvalidOperationException($"Cannot confirm reservation in status: {Status}");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -135,14 +136,16 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     /// <summary>
-    /// Cancel the reservation.
-    /// Returns a new instance with cancelled status (immutable pattern).
+    ///     Cancel the reservation.
+    ///     Returns a new instance with cancelled status (immutable pattern).
     /// </summary>
     public Reservation Cancel(string? reason = null)
     {
         if (Status == ReservationStatus.Cancelled) return this; // Already cancelled
-        if (Status == ReservationStatus.Completed) throw new InvalidOperationException("Cannot cancel a completed reservation");
-        if (Status == ReservationStatus.Active) throw new InvalidOperationException("Cannot cancel an active rental. Please return the vehicle first.");
+        if (Status == ReservationStatus.Completed)
+            throw new InvalidOperationException("Cannot cancel a completed reservation");
+        if (Status == ReservationStatus.Active)
+            throw new InvalidOperationException("Cannot cancel an active rental. Please return the vehicle first.");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -156,26 +159,29 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     /// <summary>
-    /// Mark reservation as active (vehicle picked up).
-    /// Returns a new instance with active status (immutable pattern).
+    ///     Mark reservation as active (vehicle picked up).
+    ///     Returns a new instance with active status (immutable pattern).
     /// </summary>
     public Reservation MarkAsActive()
     {
-        if (Status != ReservationStatus.Confirmed) throw new InvalidOperationException($"Cannot activate reservation in status: {Status}");
+        if (Status != ReservationStatus.Confirmed)
+            throw new InvalidOperationException($"Cannot activate reservation in status: {Status}");
 
         // Check if pickup date is today or in the past
-        if (Period.PickupDate > DateOnly.FromDateTime(DateTime.UtcNow)) throw new InvalidOperationException("Cannot activate reservation before pickup date");
+        if (Period.PickupDate > DateOnly.FromDateTime(DateTime.UtcNow))
+            throw new InvalidOperationException("Cannot activate reservation before pickup date");
 
         return CreateMutatedCopy(status: ReservationStatus.Active);
     }
 
     /// <summary>
-    /// Complete the reservation (vehicle returned).
-    /// Returns a new instance with completed status (immutable pattern).
+    ///     Complete the reservation (vehicle returned).
+    ///     Returns a new instance with completed status (immutable pattern).
     /// </summary>
     public Reservation Complete()
     {
-        if (Status != ReservationStatus.Active) throw new InvalidOperationException($"Cannot complete reservation in status: {Status}");
+        if (Status != ReservationStatus.Active)
+            throw new InvalidOperationException($"Cannot complete reservation in status: {Status}");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -188,15 +194,17 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     /// <summary>
-    /// Mark as no-show if customer didn't pick up vehicle.
-    /// Returns a new instance with no-show status (immutable pattern).
+    ///     Mark as no-show if customer didn't pick up vehicle.
+    ///     Returns a new instance with no-show status (immutable pattern).
     /// </summary>
     public Reservation MarkAsNoShow()
     {
-        if (Status != ReservationStatus.Confirmed) throw new InvalidOperationException($"Cannot mark as no-show in status: {Status}");
+        if (Status != ReservationStatus.Confirmed)
+            throw new InvalidOperationException($"Cannot mark as no-show in status: {Status}");
 
         // Check if we're past the pickup date
-        if (DateOnly.FromDateTime(DateTime.UtcNow) <= Period.PickupDate) throw new InvalidOperationException("Cannot mark as no-show before pickup date has passed");
+        if (DateOnly.FromDateTime(DateTime.UtcNow) <= Period.PickupDate)
+            throw new InvalidOperationException("Cannot mark as no-show before pickup date has passed");
 
         var now = DateTime.UtcNow;
         return CreateMutatedCopy(
@@ -206,7 +214,7 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     /// <summary>
-    /// Check if the reservation period overlaps with another period.
+    ///     Check if the reservation period overlaps with another period.
     /// </summary>
     public bool OverlapsWith(BookingPeriod otherPeriod) => Period.OverlapsWith(otherPeriod);
 }

@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
 /// <summary>
-/// Handler for SearchVehiclesQuery.
-/// Delegates filtering and pagination to the repository for database-level performance.
+///     Handler for SearchVehiclesQuery.
+///     Delegates filtering and pagination to the repository for database-level performance.
 /// </summary>
 public sealed class SearchVehiclesQueryHandler(IVehicleRepository vehicles)
 {

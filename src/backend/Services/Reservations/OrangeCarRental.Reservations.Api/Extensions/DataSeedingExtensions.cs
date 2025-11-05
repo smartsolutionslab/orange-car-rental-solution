@@ -1,16 +1,15 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 
 /// <summary>
-/// Extension methods for data seeding in the Reservations API.
+///     Extension methods for data seeding in the Reservations API.
 /// </summary>
 public static class DataSeedingExtensions
 {
     /// <summary>
-    /// Seeds the Reservations database with sample data if running in Development environment.
+    ///     Seeds the Reservations database with sample data if running in Development environment.
     /// </summary>
     public static async Task SeedReservationsDataAsync(this IApplicationBuilder app)
     {
@@ -19,10 +18,7 @@ public static class DataSeedingExtensions
         var environment = services.GetRequiredService<IHostEnvironment>();
 
         // Only seed in development
-        if (!environment.IsDevelopment())
-        {
-            return;
-        }
+        if (!environment.IsDevelopment()) return;
 
         var logger = services.GetRequiredService<ILogger<ReservationsDataSeeder>>();
 

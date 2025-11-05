@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 /// <summary>
-/// DTO for price calculation results from the Pricing API.
+///     DTO for price calculation results from the Pricing API.
 /// </summary>
 public sealed record PriceCalculationDto
 {

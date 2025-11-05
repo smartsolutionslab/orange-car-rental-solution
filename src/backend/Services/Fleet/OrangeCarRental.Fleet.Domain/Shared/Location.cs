@@ -1,37 +1,11 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
-/// Rental station location value object.
-/// Represents a German city/station where vehicles can be picked up or returned.
+///     Rental station location value object.
+///     Represents a German city/station where vehicles can be picked up or returned.
 /// </summary>
 public readonly record struct Location
 {
-    public LocationCode Code { get; }
-    public LocationName Name { get; }
-    public Address Address { get; }
-
-    private Location(LocationCode code, LocationName name, Address address)
-    {
-        Code = code;
-        Name = name;
-        Address = address;
-    }
-
-    public static Location Of(LocationCode code, LocationName name, Address address) => new(code, name, address);
-
-    /// <summary>
-    /// Convenience method for backward compatibility
-    /// </summary>
-    public static Location Of(string code, string city, string address = "", string postalCode = "")
-    {
-        // For backward compatibility, use city as both name and city in address
-        return new Location(
-            LocationCode.Of(code),
-            LocationName.Of(city),
-            Address.Of(address, city, postalCode)
-        );
-    }
-
     // Common German rental locations
     public static readonly Location BerlinHauptbahnhof = Of(
         LocationCode.Of("BER-HBF"),
@@ -72,18 +46,41 @@ public readonly record struct Location
         { LocationCode.Of("CGN-HBF"), KolnHauptbahnhof }
     };
 
+    private Location(LocationCode code, LocationName name, Address address)
+    {
+        Code = code;
+        Name = name;
+        Address = address;
+    }
+
+    public LocationCode Code { get; }
+    public LocationName Name { get; }
+    public Address Address { get; }
+
+    public static IReadOnlyCollection<Location> All => _locations.Values.ToList();
+
+    public static Location Of(LocationCode code, LocationName name, Address address) => new(code, name, address);
+
+    /// <summary>
+    ///     Convenience method for backward compatibility
+    /// </summary>
+    public static Location Of(string code, string city, string address = "", string postalCode = "")
+    {
+        // For backward compatibility, use city as both name and city in address
+        return new Location(
+            LocationCode.Of(code),
+            LocationName.Of(city),
+            Address.Of(address, city, postalCode)
+        );
+    }
+
     public static Location FromCode(LocationCode code)
     {
-
-        if (!_locations.TryGetValue(code, out Location location))
-        {
+        if (!_locations.TryGetValue(code, out var location))
             throw new ArgumentException($"Unknown location code: {code}", nameof(code));
-        }
 
         return location;
     }
-
-    public static IReadOnlyCollection<Location> All => _locations.Values.ToList();
 
     public override string ToString() => $"{Name.Value} ({Code.Value})";
 }

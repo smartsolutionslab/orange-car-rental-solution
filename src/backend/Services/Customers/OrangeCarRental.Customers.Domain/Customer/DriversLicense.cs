@@ -3,17 +3,21 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Driver's license value object.
-/// Represents a driver's license with validation for EU/German requirements.
+///     Driver's license value object.
+///     Represents a driver's license with validation for EU/German requirements.
 /// </summary>
 /// <param name="LicenseNumber">The license number.</param>
 /// <param name="IssueCountry">The country that issued the license.</param>
 /// <param name="IssueDate">The date the license was issued.</param>
 /// <param name="ExpiryDate">The date the license expires.</param>
-public readonly record struct DriversLicense(string LicenseNumber, string IssueCountry, DateOnly IssueDate, DateOnly ExpiryDate)
+public readonly record struct DriversLicense(
+    string LicenseNumber,
+    string IssueCountry,
+    DateOnly IssueDate,
+    DateOnly ExpiryDate)
 {
     /// <summary>
-    /// Creates a driver's license value object.
+    ///     Creates a driver's license value object.
     /// </summary>
     /// <param name="licenseNumber">The license number (alphanumeric).</param>
     /// <param name="issueCountry">The country that issued the license.</param>
@@ -58,7 +62,7 @@ public readonly record struct DriversLicense(string LicenseNumber, string IssueC
     }
 
     /// <summary>
-    /// Checks if the license is currently valid (not expired).
+    ///     Checks if the license is currently valid (not expired).
     /// </summary>
     public bool IsValid()
     {
@@ -67,35 +71,55 @@ public readonly record struct DriversLicense(string LicenseNumber, string IssueC
     }
 
     /// <summary>
-    /// Checks if the license will be valid on a specific date.
+    ///     Checks if the license will be valid on a specific date.
     /// </summary>
     /// <param name="date">The date to check.</param>
-    public bool IsValidOn(DateOnly date)
-    {
-        return date >= IssueDate && date <= ExpiryDate;
-    }
+    public bool IsValidOn(DateOnly date) => date >= IssueDate && date <= ExpiryDate;
 
     /// <summary>
-    /// Checks if the license is from an EU member state.
-    /// EU licenses are generally recognized across all member states.
+    ///     Checks if the license is from an EU member state.
+    ///     EU licenses are generally recognized across all member states.
     /// </summary>
     public bool IsEuLicense()
     {
         var euCountries = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "Germany", "Deutschland", "France", "Italy", "Spain", "Netherlands",
-            "Belgium", "Austria", "Poland", "Portugal", "Greece", "Sweden",
-            "Denmark", "Finland", "Ireland", "Czech Republic", "Romania",
-            "Hungary", "Slovakia", "Bulgaria", "Croatia", "Slovenia",
-            "Lithuania", "Latvia", "Estonia", "Luxembourg", "Malta", "Cyprus"
+            "Germany",
+            "Deutschland",
+            "France",
+            "Italy",
+            "Spain",
+            "Netherlands",
+            "Belgium",
+            "Austria",
+            "Poland",
+            "Portugal",
+            "Greece",
+            "Sweden",
+            "Denmark",
+            "Finland",
+            "Ireland",
+            "Czech Republic",
+            "Romania",
+            "Hungary",
+            "Slovakia",
+            "Bulgaria",
+            "Croatia",
+            "Slovenia",
+            "Lithuania",
+            "Latvia",
+            "Estonia",
+            "Luxembourg",
+            "Malta",
+            "Cyprus"
         };
 
         return euCountries.Contains(IssueCountry);
     }
 
     /// <summary>
-    /// Gets the number of days until the license expires.
-    /// Returns negative number if already expired.
+    ///     Gets the number of days until the license expires.
+    ///     Returns negative number if already expired.
     /// </summary>
     public int DaysUntilExpiry()
     {
@@ -104,7 +128,7 @@ public readonly record struct DriversLicense(string LicenseNumber, string IssueC
     }
 
     /// <summary>
-    /// Creates an anonymized driver's license for GDPR compliance.
+    ///     Creates an anonymized driver's license for GDPR compliance.
     /// </summary>
     public static DriversLicense Anonymized()
     {

@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Reservation aggregate.
+///     Entity configuration for Reservation aggregate.
 /// </summary>
 internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 {
@@ -79,7 +80,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.Of(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

@@ -7,17 +7,16 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 
 /// <summary>
-/// Seeds the Reservations database with sample reservations for development and testing.
-/// Creates sample reservations with future booking periods.
+///     Seeds the Reservations database with sample reservations for development and testing.
+///     Creates sample reservations with future booking periods.
 /// </summary>
 public class ReservationsDataSeeder(
     ReservationsDbContext context,
     ILogger<ReservationsDataSeeder> logger)
 {
-
     /// <summary>
-    /// Seeds the database with sample reservations if no reservations exist.
-    /// Note: Requires vehicles to exist in the Fleet database.
+    ///     Seeds the database with sample reservations if no reservations exist.
+    ///     Note: Requires vehicles to exist in the Fleet database.
     /// </summary>
     public async Task SeedAsync()
     {
@@ -25,7 +24,8 @@ public class ReservationsDataSeeder(
         var existingCount = await context.Reservations.CountAsync();
         if (existingCount > 0)
         {
-            logger.LogInformation("Reservations database already contains {Count} reservations. Skipping seed.", existingCount);
+            logger.LogInformation("Reservations database already contains {Count} reservations. Skipping seed.",
+                existingCount);
             return;
         }
 

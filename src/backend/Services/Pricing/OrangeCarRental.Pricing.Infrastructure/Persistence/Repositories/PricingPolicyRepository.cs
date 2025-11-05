@@ -4,11 +4,12 @@ using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Repositories;
 
 /// <summary>
-/// Entity Framework implementation of IPricingPolicyRepository.
+///     Entity Framework implementation of IPricingPolicyRepository.
 /// </summary>
 public sealed class PricingPolicyRepository(PricingDbContext context) : IPricingPolicyRepository
 {
-    public async Task<PricingPolicy?> GetByIdAsync(PricingPolicyIdentifier id, CancellationToken cancellationToken = default)
+    public async Task<PricingPolicy?> GetByIdAsync(PricingPolicyIdentifier id,
+        CancellationToken cancellationToken = default)
     {
         return await context.PricingPolicies
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
@@ -44,10 +45,8 @@ public sealed class PricingPolicyRepository(PricingDbContext context) : IPricing
             .ToListAsync(cancellationToken);
     }
 
-    public async Task AddAsync(PricingPolicy policy, CancellationToken cancellationToken = default)
-    {
+    public async Task AddAsync(PricingPolicy policy, CancellationToken cancellationToken = default) =>
         await context.PricingPolicies.AddAsync(policy, cancellationToken);
-    }
 
     public Task UpdateAsync(PricingPolicy policy, CancellationToken cancellationToken = default)
     {
@@ -55,8 +54,6 @@ public sealed class PricingPolicyRepository(PricingDbContext context) : IPricing
         return Task.CompletedTask;
     }
 
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await context.SaveChangesAsync(cancellationToken);
-    }
+    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        await context.SaveChangesAsync(cancellationToken);
 }

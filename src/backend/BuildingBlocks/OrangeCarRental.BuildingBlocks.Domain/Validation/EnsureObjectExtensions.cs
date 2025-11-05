@@ -3,12 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 
 /// <summary>
-/// Provides fluent validation extension methods for object values.
+///     Provides fluent validation extension methods for object values.
 /// </summary>
 public static class EnsureObjectExtensions
 {
     /// <summary>
-    /// Ensures the value is not null.
+    ///     Ensures the value is not null.
     /// </summary>
     public static Ensurer<T> IsNotNull<T>([NotNull] this Ensurer<T> ensurer) where T : class
     {
@@ -19,7 +19,7 @@ public static class EnsureObjectExtensions
     }
 
     /// <summary>
-    /// Ensures the nullable value is not null.
+    ///     Ensures the nullable value is not null.
     /// </summary>
     public static Ensurer<T?> IsNotNull<T>([NotNull] this Ensurer<T?> ensurer) where T : struct
     {
@@ -30,18 +30,18 @@ public static class EnsureObjectExtensions
     }
 
     /// <summary>
-    /// Ensures the value is null.
+    ///     Ensures the value is null.
     /// </summary>
     public static Ensurer<T> IsNull<T>(this Ensurer<T> ensurer) where T : class
     {
         if (ensurer.Value is not null)
-            throw new ArgumentException($"Value must be null.", ensurer.ParameterName);
+            throw new ArgumentException("Value must be null.", ensurer.ParameterName);
 
         return ensurer;
     }
 
     /// <summary>
-    /// Ensures the value equals the specified value.
+    ///     Ensures the value equals the specified value.
     /// </summary>
     public static Ensurer<T> AndEquals<T>(this Ensurer<T> ensurer, T expected) where T : IEquatable<T>
     {
@@ -52,7 +52,7 @@ public static class EnsureObjectExtensions
     }
 
     /// <summary>
-    /// Ensures the value does not equal the specified value.
+    ///     Ensures the value does not equal the specified value.
     /// </summary>
     public static Ensurer<T> AndNotEquals<T>(this Ensurer<T> ensurer, T notExpected) where T : IEquatable<T>
     {
@@ -63,7 +63,7 @@ public static class EnsureObjectExtensions
     }
 
     /// <summary>
-    /// Ensures the value is of the specified type.
+    ///     Ensures the value is of the specified type.
     /// </summary>
     public static Ensurer<T> AndIsOfType<T, TExpected>(this Ensurer<T> ensurer)
     {
@@ -74,9 +74,10 @@ public static class EnsureObjectExtensions
     }
 
     /// <summary>
-    /// Ensures the value satisfies the specified condition.
+    ///     Ensures the value satisfies the specified condition.
     /// </summary>
-    public static Ensurer<T> AndSatisfies<T>(this Ensurer<T> ensurer, Func<T, bool> predicate, string? errorMessage = null)
+    public static Ensurer<T> AndSatisfies<T>(this Ensurer<T> ensurer, Func<T, bool> predicate,
+        string? errorMessage = null)
     {
         if (!predicate(ensurer.Value))
         {

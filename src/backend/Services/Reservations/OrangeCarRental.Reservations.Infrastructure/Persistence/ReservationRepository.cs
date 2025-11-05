@@ -4,11 +4,12 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 /// <summary>
-/// Entity Framework implementation of IReservationRepository.
+///     Entity Framework implementation of IReservationRepository.
 /// </summary>
 public sealed class ReservationRepository(ReservationsDbContext context) : IReservationRepository
 {
-    public async Task<Reservation?> GetByIdAsync(ReservationIdentifier id, CancellationToken cancellationToken = default)
+    public async Task<Reservation?> GetByIdAsync(ReservationIdentifier id,
+        CancellationToken cancellationToken = default)
     {
         return await context.Reservations
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
@@ -34,30 +35,15 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         var query = context.Reservations.AsNoTracking();
 
         // Apply filters
-        if (status != null)
-        {
-            query = query.Where(r => r.Status == status);
-        }
+        if (status != null) query = query.Where(r => r.Status == status);
 
-        if (customerId.HasValue)
-        {
-            query = query.Where(r => r.CustomerId == customerId.Value);
-        }
+        if (customerId.HasValue) query = query.Where(r => r.CustomerId == customerId.Value);
 
-        if (vehicleId.HasValue)
-        {
-            query = query.Where(r => r.VehicleId == vehicleId.Value);
-        }
+        if (vehicleId.HasValue) query = query.Where(r => r.VehicleId == vehicleId.Value);
 
-        if (pickupDateFrom.HasValue)
-        {
-            query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
-        }
+        if (pickupDateFrom.HasValue) query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
 
-        if (pickupDateTo.HasValue)
-        {
-            query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
-        }
+        if (pickupDateTo.HasValue) query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
 
         // Get total count before pagination
         var totalCount = await query.CountAsync(cancellationToken);
@@ -72,10 +58,8 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         return (reservations, totalCount);
     }
 
-    public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default)
-    {
+    public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default) =>
         await context.Reservations.AddAsync(reservation, cancellationToken);
-    }
 
     public Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {
@@ -86,14 +70,9 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     public async Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default)
     {
         var reservation = await GetByIdAsync(id, cancellationToken);
-        if (reservation != null)
-        {
-            context.Reservations.Remove(reservation);
-        }
+        if (reservation != null) context.Reservations.Remove(reservation);
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await context.SaveChangesAsync(cancellationToken);
-    }
 }

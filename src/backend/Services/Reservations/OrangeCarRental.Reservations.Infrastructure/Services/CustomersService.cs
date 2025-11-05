@@ -5,7 +5,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 /// <summary>
-/// HTTP client implementation for calling the Customers API.
+///     HTTP client implementation for calling the Customers API.
 /// </summary>
 public sealed class CustomersService : ICustomersService
 {
@@ -15,10 +15,7 @@ public sealed class CustomersService : ICustomersService
     public CustomersService(HttpClient httpClient)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
+        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
     public async Task<Guid> RegisterCustomerAsync(
@@ -61,15 +58,14 @@ public sealed class CustomersService : ICustomersService
         var result = JsonSerializer.Deserialize<RegisterCustomerResponse>(responseJson, _jsonOptions);
 
         if (result is null)
-        {
-            throw new InvalidOperationException("Failed to deserialize customer registration response from Customers API");
-        }
+            throw new InvalidOperationException(
+                "Failed to deserialize customer registration response from Customers API");
 
         return result.CustomerId;
     }
 
     /// <summary>
-    /// Response model from Customers API register endpoint.
+    ///     Response model from Customers API register endpoint.
     /// </summary>
     private sealed record RegisterCustomerResponse(Guid CustomerId);
 }

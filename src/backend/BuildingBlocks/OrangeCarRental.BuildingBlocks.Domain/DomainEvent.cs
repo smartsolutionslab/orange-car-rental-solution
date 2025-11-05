@@ -1,8 +1,8 @@
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
-/// Base class for domain events.
-/// Use past tense for event names (e.g., CustomerRegistered, not RegisterCustomer).
+///     Base class for domain events.
+///     Use past tense for event names (e.g., CustomerRegistered, not RegisterCustomer).
 /// </summary>
 public abstract record DomainEvent : IDomainEvent
 {

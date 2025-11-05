@@ -2,10 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
@@ -24,7 +24,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
     .Enrich.WithProperty("Application", "CustomersAPI")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -35,8 +36,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 

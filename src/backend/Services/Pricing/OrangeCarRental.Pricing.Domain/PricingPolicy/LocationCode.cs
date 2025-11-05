@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Location code for pricing (e.g., MUC-HBF, BER-AIRPORT).
-/// Maps to Location from Fleet service.
+///     Location code for pricing (e.g., MUC-HBF, BER-AIRPORT).
+///     Maps to Location from Fleet service.
 /// </summary>
 /// <param name="Value">The location code value.</param>
 public readonly record struct LocationCode(string Value)

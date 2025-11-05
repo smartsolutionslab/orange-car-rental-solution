@@ -1,8 +1,10 @@
+using System.Net;
+
 namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
 /// <summary>
-/// Integration tests for the API Gateway
-/// Tests the entire Aspire setup including SQL Server, Fleet API, Reservations API and the Gateway
+///     Integration tests for the API Gateway
+///     Tests the entire Aspire setup including SQL Server, Fleet API, Reservations API and the Gateway
 /// </summary>
 public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
 {
@@ -50,7 +52,7 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixt
         var response = await httpClient.GetAsync("/api/reservations/00000000-0000-0000-0000-000000000001");
 
         // Assert - Should get 404 (not found) not 502 (bad gateway) or 404 with gateway error
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
         Assert.Contains("not found", content, StringComparison.OrdinalIgnoreCase);
     }
@@ -83,6 +85,6 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixt
         var response = await httpClient.GetAsync("/api/reservations/00000000-0000-0000-0000-000000000001");
 
         // Assert
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 /// <summary>
-/// Entity Framework implementation of IVehicleRepository.
+///     Entity Framework implementation of IVehicleRepository.
 /// </summary>
-public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext) : IVehicleRepository
+public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext)
+    : IVehicleRepository
 {
     public async Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
@@ -44,28 +45,18 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         }
 
         // Category filter - use value object directly
-        if (parameters.Category.HasValue)
-        {
-            query = query.Where(v => v.Category == parameters.Category.Value);
-        }
+        if (parameters.Category.HasValue) query = query.Where(v => v.Category == parameters.Category.Value);
 
         // Minimum seats filter
         if (parameters.MinSeats.HasValue)
-        {
             query = query.Where(v => v.Seats >= SeatingCapacity.Of(parameters.MinSeats.Value));
-        }
 
         // Fuel type filter
-        if (parameters.FuelType.HasValue)
-        {
-            query = query.Where(v => v.FuelType == parameters.FuelType.Value);
-        }
+        if (parameters.FuelType.HasValue) query = query.Where(v => v.FuelType == parameters.FuelType.Value);
 
         // Transmission type filter
         if (parameters.TransmissionType.HasValue)
-        {
             query = query.Where(v => v.TransmissionType == parameters.TransmissionType.Value);
-        }
 
         // Max daily rate filter
         if (parameters.MaxDailyRateGross.HasValue)
@@ -75,10 +66,7 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         }
 
         // Status filter
-        if (parameters.Status.HasValue)
-        {
-            query = query.Where(v => v.Status == parameters.Status.Value);
-        }
+        if (parameters.Status.HasValue) query = query.Where(v => v.Status == parameters.Status.Value);
 
         // Filter by date availability if period is provided
         if (parameters.Period.HasValue)
@@ -122,7 +110,8 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         };
     }
 
-    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default) => await context.Vehicles.AddAsync(vehicle, cancellationToken);
+    public async Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default) =>
+        await context.Vehicles.AddAsync(vehicle, cancellationToken);
 
     public Task UpdateAsync(Vehicle vehicle, CancellationToken cancellationToken = default)
     {
@@ -133,11 +122,9 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
     public async Task DeleteAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
         var vehicle = await GetByIdAsync(id, cancellationToken);
-        if (vehicle != null)
-        {
-            context.Vehicles.Remove(vehicle);
-        }
+        if (vehicle != null) context.Vehicles.Remove(vehicle);
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) => await context.SaveChangesAsync(cancellationToken);
+    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        await context.SaveChangesAsync(cancellationToken);
 }

@@ -3,7 +3,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
+///     Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
 /// </summary>
 /// <param name="Value">The vehicle model value.</param>
 public readonly record struct VehicleModel(string Value)

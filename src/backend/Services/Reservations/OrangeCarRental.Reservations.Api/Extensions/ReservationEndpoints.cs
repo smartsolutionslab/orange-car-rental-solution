@@ -1,7 +1,7 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
@@ -17,15 +17,15 @@ public static class ReservationEndpoints
 
         // POST /api/reservations - Create a new reservation
         reservations.MapPost("/", async (
-            CreateReservationCommand command,
-            CreateReservationCommandHandler handler) =>
-        {
-            var result = await handler.HandleAsync(command);
-            return Results.Created($"/api/reservations/{result.ReservationId}", result);
-        })
-        .WithName("CreateReservation")
-        .WithSummary("Create a new vehicle reservation")
-        .WithDescription(@"
+                CreateReservationCommand command,
+                CreateReservationCommandHandler handler) =>
+            {
+                var result = await handler.HandleAsync(command);
+                return Results.Created($"/api/reservations/{result.ReservationId}", result);
+            })
+            .WithName("CreateReservation")
+            .WithSummary("Create a new vehicle reservation")
+            .WithDescription(@"
 Creates a new reservation for a vehicle rental. The reservation will be created in 'Pending' status
 awaiting payment confirmation.
 
@@ -48,15 +48,15 @@ awaiting payment confirmation.
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
         reservations.MapPost("/guest", async (
-            CreateGuestReservationCommand command,
-            CreateGuestReservationCommandHandler handler) =>
-        {
-            var result = await handler.HandleAsync(command);
-            return Results.Created($"/api/reservations/{result.ReservationId}", result);
-        })
-        .WithName("CreateGuestReservation")
-        .WithSummary("Create a reservation for a guest user (without pre-registration)")
-        .WithDescription(@"
+                CreateGuestReservationCommand command,
+                CreateGuestReservationCommandHandler handler) =>
+            {
+                var result = await handler.HandleAsync(command);
+                return Results.Created($"/api/reservations/{result.ReservationId}", result);
+            })
+            .WithName("CreateGuestReservation")
+            .WithSummary("Create a reservation for a guest user (without pre-registration)")
+            .WithDescription(@"
 Creates a reservation for a guest user by handling both customer registration and reservation creation in a single request.
 This is the recommended endpoint for public portal bookings where users haven't registered yet.
 
@@ -82,46 +82,47 @@ Returns the newly created customer ID, reservation ID, and pricing breakdown.
 
         // GET /api/reservations/{id} - Get reservation by ID
         reservations.MapGet("/{id:guid}", async (
-            Guid id,
-            GetReservationQueryHandler handler) =>
-        {
-            var query = new GetReservationQuery(id);
-            var result = await handler.HandleAsync(query);
+                Guid id,
+                GetReservationQueryHandler handler) =>
+            {
+                var query = new GetReservationQuery(id);
+                var result = await handler.HandleAsync(query);
 
-            return result is not null
-                ? Results.Ok(result)
-                : Results.NotFound(new { Message = $"Reservation {id} not found" });
-        })
-        .WithName("GetReservation")
-        .WithSummary("Get reservation by ID")
-        .WithDescription("Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.");
+                return result is not null
+                    ? Results.Ok(result)
+                    : Results.NotFound(new { Message = $"Reservation {id} not found" });
+            })
+            .WithName("GetReservation")
+            .WithSummary("Get reservation by ID")
+            .WithDescription(
+                "Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.");
 
         // GET /api/reservations/search - Search reservations with filters
         reservations.MapGet("/search", async (
-            SearchReservationsQueryHandler handler,
-            string? status = null,
-            Guid? customerId = null,
-            Guid? vehicleId = null,
-            DateTime? pickupDateFrom = null,
-            DateTime? pickupDateTo = null,
-            int pageNumber = 1,
-            int pageSize = 50) =>
-        {
-            var query = new SearchReservationsQuery(
-                status,
-                customerId,
-                vehicleId,
-                pickupDateFrom,
-                pickupDateTo,
-                pageNumber,
-                pageSize);
+                SearchReservationsQueryHandler handler,
+                string? status = null,
+                Guid? customerId = null,
+                Guid? vehicleId = null,
+                DateTime? pickupDateFrom = null,
+                DateTime? pickupDateTo = null,
+                int pageNumber = 1,
+                int pageSize = 50) =>
+            {
+                var query = new SearchReservationsQuery(
+                    status,
+                    customerId,
+                    vehicleId,
+                    pickupDateFrom,
+                    pickupDateTo,
+                    pageNumber,
+                    pageSize);
 
-            var result = await handler.HandleAsync(query);
-            return Results.Ok(result);
-        })
-        .WithName("SearchReservations")
-        .WithSummary("Search reservations with filters and pagination")
-        .WithDescription(@"
+                var result = await handler.HandleAsync(query);
+                return Results.Ok(result);
+            })
+            .WithName("SearchReservations")
+            .WithSummary("Search reservations with filters and pagination")
+            .WithDescription(@"
 Search for reservations using various filters:
 - **status**: Filter by status (Pending, Confirmed, Active, Completed, Cancelled, NoShow)
 - **customerId**: Filter by customer GUID
@@ -135,23 +136,23 @@ Returns paginated results with total count and pagination metadata.");
 
         // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
         reservations.MapPut("/{id:guid}/confirm", async (
-            Guid id,
-            ConfirmReservationCommandHandler handler) =>
-        {
-            try
+                Guid id,
+                ConfirmReservationCommandHandler handler) =>
             {
-                var command = new ConfirmReservationCommand(id);
-                var result = await handler.HandleAsync(command);
-                return Results.Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.BadRequest(new { Message = ex.Message });
-            }
-        })
-        .WithName("ConfirmReservation")
-        .WithSummary("Confirm a pending reservation")
-        .WithDescription(@"
+                try
+                {
+                    var command = new ConfirmReservationCommand(id);
+                    var result = await handler.HandleAsync(command);
+                    return Results.Ok(result);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.BadRequest(new { ex.Message });
+                }
+            })
+            .WithName("ConfirmReservation")
+            .WithSummary("Confirm a pending reservation")
+            .WithDescription(@"
 Confirms a pending reservation after payment has been received.
 
 **Requirements:**
@@ -167,25 +168,25 @@ Confirms a pending reservation after payment has been received.
 
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
         reservations.MapPut("/{id:guid}/cancel", async (
-            Guid id,
-            CancelReservationCommand command,
-            CancelReservationCommandHandler handler) =>
-        {
-            try
+                Guid id,
+                CancelReservationCommand command,
+                CancelReservationCommandHandler handler) =>
             {
-                // Override the ID from the URL
-                var commandWithId = command with { ReservationId = id };
-                var result = await handler.HandleAsync(commandWithId);
-                return Results.Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.BadRequest(new { Message = ex.Message });
-            }
-        })
-        .WithName("CancelReservation")
-        .WithSummary("Cancel a reservation")
-        .WithDescription(@"
+                try
+                {
+                    // Override the ID from the URL
+                    var commandWithId = command with { ReservationId = id };
+                    var result = await handler.HandleAsync(commandWithId);
+                    return Results.Ok(result);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.BadRequest(new { ex.Message });
+                }
+            })
+            .WithName("CancelReservation")
+            .WithSummary("Cancel a reservation")
+            .WithDescription(@"
 Cancels a reservation with an optional reason.
 
 **Requirements:**

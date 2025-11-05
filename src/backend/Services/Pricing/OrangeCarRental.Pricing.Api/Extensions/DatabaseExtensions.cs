@@ -1,13 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
 
 public static class DatabaseExtensions
 {
     /// <summary>
-    /// Runs pending migrations and exits (for container init jobs).
+    ///     Runs pending migrations and exits (for container init jobs).
     /// </summary>
     public static async Task<int> RunMigrationsAndExitAsync<TContext>(this WebApplication app)
         where TContext : DbContext
@@ -33,7 +32,7 @@ public static class DatabaseExtensions
     }
 
     /// <summary>
-    /// Applies pending database migrations (auto-migration for development/Aspire).
+    ///     Applies pending database migrations (auto-migration for development/Aspire).
     /// </summary>
     public static async Task MigrateDatabaseAsync<TContext>(this WebApplication app)
         where TContext : DbContext
@@ -53,9 +52,7 @@ public static class DatabaseExtensions
                 logger.LogInformation("Database migrations applied successfully for {Context}.", typeof(TContext).Name);
             }
             else
-            {
                 logger.LogInformation("No pending migrations for {Context}.", typeof(TContext).Name);
-            }
         }
         catch (Exception ex)
         {
@@ -65,7 +62,7 @@ public static class DatabaseExtensions
     }
 
     /// <summary>
-    /// Seeds the pricing database with sample data (development only).
+    ///     Seeds the pricing database with sample data (development only).
     /// </summary>
     public static async Task SeedPricingDataAsync(this WebApplication app)
     {

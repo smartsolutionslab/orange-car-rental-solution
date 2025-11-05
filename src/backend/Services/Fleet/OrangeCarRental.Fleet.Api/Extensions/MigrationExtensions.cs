@@ -5,9 +5,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
 public static class MigrationExtensions
 {
     /// <summary>
-    /// Applies database migrations based on configuration.
-    /// In development/Aspire: runs automatically on startup
-    /// In production/Azure: should be run via separate migration job
+    ///     Applies database migrations based on configuration.
+    ///     In development/Aspire: runs automatically on startup
+    ///     In production/Azure: should be run via separate migration job
     /// </summary>
     public static async Task<WebApplication> MigrateDatabaseAsync<TContext>(
         this WebApplication app,
@@ -18,7 +18,7 @@ public static class MigrationExtensions
         // Check if auto-migration is enabled (default: true for Development, false for Production)
         var configuration = app.Configuration;
         var autoMigrate = configuration.GetValue<bool?>("Database:AutoMigrate")
-            ?? app.Environment.IsDevelopment();
+                          ?? app.Environment.IsDevelopment();
 
         if (!autoMigrate)
         {
@@ -66,10 +66,7 @@ public static class MigrationExtensions
                 typeof(TContext).Name);
 
             // In development, we want to fail fast
-            if (app.Environment.IsDevelopment())
-            {
-                throw;
-            }
+            if (app.Environment.IsDevelopment()) throw;
 
             // In production, log but don't crash (assuming migration job will handle it)
             logger.LogWarning(
@@ -81,7 +78,7 @@ public static class MigrationExtensions
     }
 
     /// <summary>
-    /// Runs database migrations and exits. Use this for migration-only jobs in Azure.
+    ///     Runs database migrations and exits. Use this for migration-only jobs in Azure.
     /// </summary>
     public static async Task<int> RunMigrationsAndExitAsync<TContext>(
         this WebApplication app) where TContext : DbContext
@@ -109,11 +106,9 @@ public static class MigrationExtensions
                 logger.LogInformation("Migrations applied successfully!");
                 return 0; // Success
             }
-            else
-            {
-                logger.LogInformation("Database is already up to date. No migrations to apply.");
-                return 0; // Success
-            }
+
+            logger.LogInformation("Database is already up to date. No migrations to apply.");
+            return 0; // Success
         }
         catch (Exception ex)
         {

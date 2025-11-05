@@ -1,12 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Vehicle aggregate.
+///     Entity configuration for Vehicle aggregate.
 /// </summary>
 internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 {
@@ -67,7 +68,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.Of(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

@@ -1,16 +1,15 @@
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
 
 /// <summary>
-/// Extension methods for data seeding in the Fleet API.
+///     Extension methods for data seeding in the Fleet API.
 /// </summary>
 public static class DataSeedingExtensions
 {
     /// <summary>
-    /// Seeds the Fleet database with sample data if running in Development environment.
+    ///     Seeds the Fleet database with sample data if running in Development environment.
     /// </summary>
     public static async Task SeedFleetDataAsync(this IApplicationBuilder app)
     {
@@ -19,10 +18,7 @@ public static class DataSeedingExtensions
         var environment = services.GetRequiredService<IHostEnvironment>();
 
         // Only seed in development
-        if (!environment.IsDevelopment())
-        {
-            return;
-        }
+        if (!environment.IsDevelopment()) return;
 
         var logger = services.GetRequiredService<ILogger<FleetDataSeeder>>();
 

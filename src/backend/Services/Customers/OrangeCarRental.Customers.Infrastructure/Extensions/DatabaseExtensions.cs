@@ -2,19 +2,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
-using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 
 /// <summary>
-/// Extension methods for database operations.
-/// Provides methods for migrations and data seeding.
+///     Extension methods for database operations.
+///     Provides methods for migrations and data seeding.
 /// </summary>
 public static class DatabaseExtensions
 {
     /// <summary>
-    /// Applies pending database migrations for the specified context.
-    /// Auto-migration for development/Aspire environments.
+    ///     Applies pending database migrations for the specified context.
+    ///     Auto-migration for development/Aspire environments.
     /// </summary>
     public static async Task MigrateDatabaseAsync<TContext>(this IServiceProvider services)
         where TContext : DbContext
@@ -34,9 +33,7 @@ public static class DatabaseExtensions
                 logger.LogInformation("Database migrations applied successfully for {Context}.", typeof(TContext).Name);
             }
             else
-            {
                 logger.LogInformation("No pending migrations for {Context}.", typeof(TContext).Name);
-            }
         }
         catch (Exception ex)
         {
@@ -46,7 +43,7 @@ public static class DatabaseExtensions
     }
 
     /// <summary>
-    /// Seeds the customers database with sample data (development only).
+    ///     Seeds the customers database with sample data (development only).
     /// </summary>
     public static async Task SeedCustomersDataAsync(this IServiceProvider services)
     {
@@ -66,7 +63,7 @@ public static class DatabaseExtensions
     }
 
     /// <summary>
-    /// Runs pending migrations and exits (for container init jobs).
+    ///     Runs pending migrations and exits (for container init jobs).
     /// </summary>
     public static async Task<int> RunMigrationsAndExitAsync<TContext>(this IServiceProvider services)
         where TContext : DbContext

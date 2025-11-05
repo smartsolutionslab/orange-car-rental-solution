@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Address value object for German addresses.
-/// Represents a physical address with street, city, postal code, and country.
+///     Address value object for German addresses.
+///     Represents a physical address with street, city, postal code, and country.
 /// </summary>
 /// <param name="Street">Street name and number.</param>
 /// <param name="City">City name.</param>
@@ -13,7 +13,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 public readonly record struct Address(string Street, string City, string PostalCode, string Country)
 {
     /// <summary>
-    /// Creates an address value object with all components.
+    ///     Gets the full formatted address.
+    ///     Example: "Hauptstraße 123, 10115 Berlin, Germany"
+    /// </summary>
+    public string FullAddress => $"{Street}, {PostalCode} {City}, {Country}";
+
+    /// <summary>
+    ///     Creates an address value object with all components.
     /// </summary>
     /// <param name="street">Street name and number (e.g., "Hauptstraße 123").</param>
     /// <param name="city">City name (e.g., "Berlin").</param>
@@ -56,13 +62,7 @@ public readonly record struct Address(string Street, string City, string PostalC
     }
 
     /// <summary>
-    /// Gets the full formatted address.
-    /// Example: "Hauptstraße 123, 10115 Berlin, Germany"
-    /// </summary>
-    public string FullAddress => $"{Street}, {PostalCode} {City}, {Country}";
-
-    /// <summary>
-    /// Creates an anonymized address for GDPR compliance.
+    ///     Creates an anonymized address for GDPR compliance.
     /// </summary>
     public static Address Anonymized()
     {

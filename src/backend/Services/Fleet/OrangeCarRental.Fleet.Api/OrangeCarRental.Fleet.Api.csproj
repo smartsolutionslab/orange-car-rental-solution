@@ -5,16 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-    <PackageReference Include="Scalar.AspNetCore" />
-    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" />
-    <PackageReference Include="Serilog.AspNetCore" />
-    <PackageReference Include="Serilog.Enrichers.Environment" />
-    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi"/>
+    <PackageReference Include="Scalar.AspNetCore"/>
+    <PackageReference Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer"/>
+    <PackageReference Include="Serilog.AspNetCore"/>
+    <PackageReference Include="Serilog.Enrichers.Environment"/>
+    <PackageReference Include="Serilog.Sinks.Console"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\OrangeCarRental.Fleet.Application\OrangeCarRental.Fleet.Application.csproj" />
-    <ProjectReference Include="..\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
+    <ProjectReference Include="..\OrangeCarRental.Fleet.Application\OrangeCarRental.Fleet.Application.csproj"/>
+    <ProjectReference Include="..\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj"/>
   </ItemGroup>
 </Project>

@@ -12,6 +12,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
     private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
+
     private ReservationsDbContext _context = null!;
     private ReservationRepository _repository = null!;
 
@@ -34,6 +35,22 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         await _context.DisposeAsync();
         await _msSqlContainer.DisposeAsync();
+    }
+
+    private Reservation CreateTestReservation()
+    {
+        var vehicleId = Guid.NewGuid();
+        var customerId = Guid.NewGuid();
+        var pickupDate = DateTime.UtcNow.Date.AddDays(7);
+        var returnDate = pickupDate.AddDays(3);
+        var period = BookingPeriod.Of(pickupDate, returnDate);
+        var currency = Currency.Of("EUR");
+        var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
+
+        var reservation = Reservation.Create(vehicleId, customerId, period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), totalPrice);
+        reservation.ClearDomainEvents();
+        return reservation;
     }
 
     #region GetByIdAsync Tests
@@ -88,12 +105,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
     public async Task GetAllAsync_WithMultipleReservations_ReturnsAll()
     {
         // Arrange
-        var reservations = new[]
-        {
-            CreateTestReservation(),
-            CreateTestReservation(),
-            CreateTestReservation()
-        };
+        var reservations = new[] { CreateTestReservation(), CreateTestReservation(), CreateTestReservation() };
 
         await _context.Reservations.AddRangeAsync(reservations);
         await _context.SaveChangesAsync();
@@ -184,7 +196,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
+        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), totalPrice);
         await _context.Reservations.AddAsync(reservation);
         await _context.SaveChangesAsync();
 
@@ -300,7 +313,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
+        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"), totalPrice);
 
         // Act - Add
         await _repository.AddAsync(reservation, CancellationToken.None);
@@ -375,19 +389,4 @@ public class ReservationRepositoryTests : IAsyncLifetime
     }
 
     #endregion
-
-    private Reservation CreateTestReservation()
-    {
-        var vehicleId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
-        var pickupDate = DateTime.UtcNow.Date.AddDays(7);
-        var returnDate = pickupDate.AddDays(3);
-        var period = BookingPeriod.Of(pickupDate, returnDate);
-        var currency = Currency.Of("EUR");
-        var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
-
-        var reservation = Reservation.Create(vehicleId, customerId, period, LocationCode.Of("BER-HBF"), LocationCode.Of("BER-HBF"), totalPrice);
-        reservation.ClearDomainEvents();
-        return reservation;
-    }
 }

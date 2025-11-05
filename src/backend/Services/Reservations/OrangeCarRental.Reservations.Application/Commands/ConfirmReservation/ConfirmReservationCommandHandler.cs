@@ -3,8 +3,8 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 
 /// <summary>
-/// Handler for ConfirmReservationCommand.
-/// Confirms a pending reservation after payment has been received.
+///     Handler for ConfirmReservationCommand.
+///     Confirms a pending reservation after payment has been received.
 /// </summary>
 public sealed class ConfirmReservationCommandHandler(
     IReservationRepository reservations)
@@ -17,10 +17,7 @@ public sealed class ConfirmReservationCommandHandler(
         var reservationId = ReservationIdentifier.From(command.ReservationId);
         var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken);
 
-        if (reservation == null)
-        {
-            throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
-        }
+        if (reservation == null) throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
 
         // Confirm the reservation (returns new instance due to immutability)
         var confirmedReservation = reservation.Confirm();

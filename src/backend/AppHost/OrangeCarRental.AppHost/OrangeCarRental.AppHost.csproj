@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.0.0"/>
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
@@ -9,15 +9,15 @@
     <UserSecretsId>963deb0a-d548-4e56-8c80-c1b56fdea553</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" />
-    <PackageReference Include="Aspire.Hosting.NodeJs" />
-    <PackageReference Include="Aspire.Hosting.SqlServer" />
+    <PackageReference Include="Aspire.Hosting.AppHost"/>
+    <PackageReference Include="Aspire.Hosting.NodeJs"/>
+    <PackageReference Include="Aspire.Hosting.SqlServer"/>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\ApiGateway\OrangeCarRental.ApiGateway\OrangeCarRental.ApiGateway.csproj" />
-    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Api\OrangeCarRental.Fleet.Api.csproj" />
-    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Api\OrangeCarRental.Reservations.Api.csproj" />
-    <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Api\OrangeCarRental.Pricing.Api.csproj" />
-    <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Api\OrangeCarRental.Customers.Api.csproj" />
+    <ProjectReference Include="..\..\ApiGateway\OrangeCarRental.ApiGateway\OrangeCarRental.ApiGateway.csproj"/>
+    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Api\OrangeCarRental.Fleet.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Api\OrangeCarRental.Reservations.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Api\OrangeCarRental.Pricing.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Api\OrangeCarRental.Customers.Api.csproj"/>
   </ItemGroup>
 </Project>

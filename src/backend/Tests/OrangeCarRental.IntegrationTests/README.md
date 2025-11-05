@@ -1,6 +1,7 @@
 # Orange Car Rental - Integration Tests
 
 This project contains integration tests that spin up the entire Aspire application including:
+
 - SQL Server database
 - Fleet API
 - Reservations API
@@ -51,7 +52,9 @@ dotnet test --filter Name=ApiGateway_RoutesToFleetApi_SearchVehicles
 ## Test Structure
 
 ### `ApiGatewayTests`
+
 Tests the API Gateway routing and integration with backend services:
+
 - Health check endpoints
 - Routing to Fleet API
 - Routing to Reservations API
@@ -59,14 +62,18 @@ Tests the API Gateway routing and integration with backend services:
 - SQL Server availability
 
 ### `EndToEndScenarioTests`
+
 Tests complete user workflows:
+
 - Complete rental flow (search vehicles + create reservation)
 - Vehicle search with filters
 - German VAT pricing validation
 - Cross-service communication
 
 ### `DistributedApplicationFixture`
+
 Shared fixture that manages the Aspire application lifecycle:
+
 - Starts the AppHost
 - Waits for all resources to be ready
 - Provides HTTP clients for each service
@@ -82,6 +89,7 @@ The integration tests use **Aspire.Hosting.Testing** which:
 4. Automatically handles cleanup
 
 This gives you **true integration tests** with:
+
 - Real SQL Server database (in Docker)
 - Real HTTP calls between services
 - Real API Gateway routing
@@ -90,6 +98,7 @@ This gives you **true integration tests** with:
 ## Test Data
 
 Tests use the database seed data from `DbInitializer`:
+
 - Vehicles at different locations (BER, MUC, FRA, HAM)
 - Different vehicle categories (ECONOMY, COMPACT, etc.)
 - German VAT pricing (19%)
@@ -97,17 +106,22 @@ Tests use the database seed data from `DbInitializer`:
 ## Troubleshooting
 
 ### Port conflicts
+
 If you see port binding errors, make sure no other instances are running:
+
 ```bash
 netstat -ano | findstr "5002"  # API Gateway
 netstat -ano | findstr "1433"  # SQL Server
 ```
 
 ### SQL Server not starting
+
 Ensure Docker Desktop is running and has enough resources allocated.
 
 ### Tests timeout
+
 The fixture waits up to 2 minutes for resources. If tests timeout:
+
 - Check Docker is running
 - Increase timeout in `DistributedApplicationFixture.cs`
 - Check for resource constraints

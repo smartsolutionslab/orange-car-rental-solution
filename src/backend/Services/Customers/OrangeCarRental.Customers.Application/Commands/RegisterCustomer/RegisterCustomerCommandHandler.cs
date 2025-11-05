@@ -3,13 +3,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
 /// <summary>
-/// Handler for RegisterCustomerCommand.
-/// Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
+///     Handler for RegisterCustomerCommand.
+///     Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
 /// </summary>
 public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the customer registration command.
+    ///     Handles the customer registration command.
     /// </summary>
     /// <param name="command">The registration command with customer data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>

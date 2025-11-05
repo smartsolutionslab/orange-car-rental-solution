@@ -1,20 +1,11 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
-/// German car rental standard categories.
+///     Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
+///     German car rental standard categories.
 /// </summary>
 public readonly record struct VehicleCategory
 {
-    public string Code { get; }
-    public string Name { get; }
-
-    private VehicleCategory(string code, string name)
-    {
-        Code = code;
-        Name = name;
-    }
-
     // Standard German car rental categories
     public static readonly VehicleCategory Kleinwagen = new("KLEIN", "Kleinwagen");
     public static readonly VehicleCategory Kompaktklasse = new("KOMPAKT", "Kompaktklasse");
@@ -37,20 +28,27 @@ public readonly record struct VehicleCategory
         { "LUXUS", Luxus }
     };
 
+    private VehicleCategory(string code, string name)
+    {
+        Code = code;
+        Name = name;
+    }
+
+    public string Code { get; }
+    public string Name { get; }
+
+    public static IReadOnlyCollection<VehicleCategory> All => _categories.Values.ToList();
+
     public static VehicleCategory FromCode(string code)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
 
-        string upperCode = code.ToUpperInvariant();
-        if (!_categories.TryGetValue(upperCode, out VehicleCategory category))
-        {
+        var upperCode = code.ToUpperInvariant();
+        if (!_categories.TryGetValue(upperCode, out var category))
             throw new ArgumentException($"Unknown vehicle category code: {code}", nameof(code));
-        }
 
         return category;
     }
-
-    public static IReadOnlyCollection<VehicleCategory> All => _categories.Values.ToList();
 
     public override string ToString() => $"{Name} ({Code})";
 }

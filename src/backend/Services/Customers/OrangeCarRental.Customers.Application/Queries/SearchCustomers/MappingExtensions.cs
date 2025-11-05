@@ -5,12 +5,12 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
 /// <summary>
-/// Extension methods for mapping between domain objects and DTOs.
+///     Extension methods for mapping between domain objects and DTOs.
 /// </summary>
 public static class MappingExtensions
 {
     /// <summary>
-    /// Maps a Customer aggregate to a CustomerDto.
+    ///     Maps a Customer aggregate to a CustomerDto.
     /// </summary>
     public static CustomerDto ToDto(this Customer customer) => new()
     {
@@ -32,18 +32,15 @@ public static class MappingExtensions
     };
 
     /// <summary>
-    /// Maps an Address value object to an AddressDto.
+    ///     Maps an Address value object to an AddressDto.
     /// </summary>
     public static AddressDto ToDto(this Address address) => new()
     {
-        Street = address.Street,
-        City = address.City,
-        PostalCode = address.PostalCode,
-        Country = address.Country
+        Street = address.Street, City = address.City, PostalCode = address.PostalCode, Country = address.Country
     };
 
     /// <summary>
-    /// Maps a DriversLicense value object to a DriversLicenseDto.
+    ///     Maps a DriversLicense value object to a DriversLicenseDto.
     /// </summary>
     public static DriversLicenseDto ToDto(this DriversLicense license) => new()
     {
@@ -57,7 +54,7 @@ public static class MappingExtensions
     };
 
     /// <summary>
-    /// Maps a PagedResult of Customer aggregates to a SearchCustomersResult.
+    ///     Maps a PagedResult of Customer aggregates to a SearchCustomersResult.
     /// </summary>
     public static SearchCustomersResult ToDto(this PagedResult<Customer> pagedResult) => new()
     {
@@ -69,20 +66,16 @@ public static class MappingExtensions
     };
 
     /// <summary>
-    /// Maps a SearchCustomersQuery to CustomerSearchParameters.
-    /// Handles parsing of primitive types to value objects.
+    ///     Maps a SearchCustomersQuery to CustomerSearchParameters.
+    ///     Handles parsing of primitive types to value objects.
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
         // Parse status if provided
         CustomerStatus? status = null;
         if (!string.IsNullOrWhiteSpace(query.Status))
-        {
-            if (Enum.TryParse<CustomerStatus>(query.Status, ignoreCase: true, out var parsedStatus))
-            {
+            if (Enum.TryParse<CustomerStatus>(query.Status, true, out var parsedStatus))
                 status = parsedStatus;
-            }
-        }
 
         // Parse email to value object if provided
         Email? email = null;

@@ -3,13 +3,13 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
 /// <summary>
-/// Handler for UpdateDriversLicenseCommand.
-/// Loads the customer, updates driver's license information, and persists changes.
+///     Handler for UpdateDriversLicenseCommand.
+///     Loads the customer, updates driver's license information, and persists changes.
 /// </summary>
 public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository customers)
 {
     /// <summary>
-    /// Handles the update driver's license command.
+    ///     Handles the update driver's license command.
     /// </summary>
     /// <param name="command">The update command with new license data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
