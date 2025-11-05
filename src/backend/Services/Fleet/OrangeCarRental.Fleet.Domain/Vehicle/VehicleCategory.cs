@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
@@ -41,7 +43,8 @@ public readonly record struct VehicleCategory
 
     public static VehicleCategory FromCode(string code)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace();
 
         var upperCode = code.ToUpperInvariant();
         if (!_categories.TryGetValue(upperCode, out var category))

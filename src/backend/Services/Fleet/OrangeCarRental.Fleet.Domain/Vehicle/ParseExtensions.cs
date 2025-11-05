@@ -1,10 +1,13 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 public static class ParseExtensions
 {
     public static TransmissionType ParseTransmissionType(this string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace();
         return Enum.Parse<TransmissionType>(value, true);
     }
 
@@ -17,7 +20,8 @@ public static class ParseExtensions
 
     public static FuelType ParseFuelType(this string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace();
         return Enum.Parse<FuelType>(value, true);
     }
 

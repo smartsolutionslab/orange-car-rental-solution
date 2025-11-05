@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
@@ -224,7 +225,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public Vehicle SetLicensePlate(string licensePlate)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(licensePlate, nameof(licensePlate));
+        Ensure.That(licensePlate, nameof(licensePlate))
+            .IsNotNullOrWhiteSpace();
 
         return CreateMutatedCopy(licensePlate: licensePlate.ToUpperInvariant().Trim());
     }

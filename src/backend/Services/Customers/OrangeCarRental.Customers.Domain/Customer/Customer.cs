@@ -1,4 +1,5 @@
 ﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -120,17 +121,16 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         DriversLicense driversLicense)
     {
         // Validate names
-        ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
+        Ensure.That(firstName, nameof(firstName))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
+
+        Ensure.That(lastName, nameof(lastName))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         var normalizedFirstName = firstName.Trim();
         var normalizedLastName = lastName.Trim();
-
-        if (normalizedFirstName.Length > 100)
-            throw new ArgumentException("First name is too long (max 100 characters)", nameof(firstName));
-
-        if (normalizedLastName.Length > 100)
-            throw new ArgumentException("Last name is too long (max 100 characters)", nameof(lastName));
 
         // Validate age - must be 18+ to rent in Germany
         ValidateAge(dateOfBirth);
@@ -191,17 +191,16 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         PhoneNumber phoneNumber,
         Address address)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(firstName, nameof(firstName));
-        ArgumentException.ThrowIfNullOrWhiteSpace(lastName, nameof(lastName));
+        Ensure.That(firstName, nameof(firstName))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
+
+        Ensure.That(lastName, nameof(lastName))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         var normalizedFirstName = firstName.Trim();
         var normalizedLastName = lastName.Trim();
-
-        if (normalizedFirstName.Length > 100)
-            throw new ArgumentException("First name is too long (max 100 characters)", nameof(firstName));
-
-        if (normalizedLastName.Length > 100)
-            throw new ArgumentException("Last name is too long (max 100 characters)", nameof(lastName));
 
         var hasChanges = FirstName != normalizedFirstName ||
                          LastName != normalizedLastName ||
@@ -262,7 +261,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// </summary>
     public Customer ChangeStatus(CustomerStatus newStatus, string reason)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
+        Ensure.That(reason, nameof(reason))
+            .IsNotNullOrWhiteSpace();
 
         if (Status == newStatus)
             return this;
@@ -325,7 +325,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// </summary>
     public Customer Suspend(string reason)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
+        Ensure.That(reason, nameof(reason))
+            .IsNotNullOrWhiteSpace();
 
         if (Status == CustomerStatus.Suspended)
             return this;
@@ -339,7 +340,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// </summary>
     public Customer Block(string reason)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(reason, nameof(reason));
+        Ensure.That(reason, nameof(reason))
+            .IsNotNullOrWhiteSpace();
 
         if (Status == CustomerStatus.Blocked)
             return this;
