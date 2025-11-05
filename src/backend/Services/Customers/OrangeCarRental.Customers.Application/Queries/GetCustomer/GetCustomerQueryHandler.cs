@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -20,8 +20,8 @@ public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
         GetCustomerQuery query,
         CancellationToken cancellationToken = default)
     {
-        var customerId = CustomerId.From(query.CustomerId);
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
+        var customerIdentifier = CustomerIdentifier.From(query.CustomerIdentifier);
+        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken);
 
         return customer?.ToDto();
     }

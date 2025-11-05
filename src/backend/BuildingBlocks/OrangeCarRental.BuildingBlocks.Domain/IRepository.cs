@@ -5,10 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 ///     Repositories provide access to aggregates.
 /// </summary>
 /// <typeparam name="TAggregate">The aggregate root type.</typeparam>
-/// <typeparam name="TId">The identifier type.</typeparam>
-public interface IRepository<TAggregate, TId>
-    where TAggregate : AggregateRoot<TId>
-    where TId : notnull
+/// <typeparam name="TIdentifier">The identifier type.</typeparam>
+public interface IRepository<TAggregate, in TIdentifier>
+    where TAggregate : AggregateRoot<TIdentifier>
+    where TIdentifier : notnull
 {
     /// <summary>
     ///     Gets an aggregate by its identifier.
@@ -16,7 +16,7 @@ public interface IRepository<TAggregate, TId>
     /// <param name="id">The aggregate identifier.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The aggregate if found; otherwise, null.</returns>
-    Task<TAggregate?> GetByIdAsync(TId id, CancellationToken cancellationToken = default);
+    Task<TAggregate?> GetByIdAsync(TIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Adds a new aggregate.

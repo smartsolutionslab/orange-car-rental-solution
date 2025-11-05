@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 ///     This event can trigger welcome emails, analytics tracking, etc.
 /// </summary>
 public sealed record CustomerRegistered(
-    CustomerId CustomerId,
+    CustomerIdentifier CustomerIdentifier,
     string FirstName,
     string LastName,
     Email Email,

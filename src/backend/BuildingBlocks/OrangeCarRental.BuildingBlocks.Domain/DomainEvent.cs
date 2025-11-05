@@ -6,15 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 /// </summary>
 public abstract record DomainEvent : IDomainEvent
 {
-    protected DomainEvent()
-    {
-        EventId = Guid.NewGuid();
-        OccurredOnUtc = DateTime.UtcNow;
-    }
+    /// <inheritdoc />
+    public Guid EventId { get; init; } = Guid.NewGuid();
 
     /// <inheritdoc />
-    public Guid EventId { get; init; }
-
-    /// <inheritdoc />
-    public DateTime OccurredOnUtc { get; init; }
+    public DateTime OccurredOnUtc { get; init; } = DateTime.UtcNow;
 }

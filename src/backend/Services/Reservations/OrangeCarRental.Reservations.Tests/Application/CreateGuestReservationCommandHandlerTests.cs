@@ -476,7 +476,8 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(10), ReturnDate = DateTime.UtcNow.Date.AddDays(5)
+            PickupDate = DateTime.UtcNow.Date.AddDays(10),
+            ReturnDate = DateTime.UtcNow.Date.AddDays(5)
         };
         SetupDefaultMocks();
 
@@ -510,7 +511,8 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(5), ReturnDate = DateTime.UtcNow.Date.AddDays(100) // 95 days
+            PickupDate = DateTime.UtcNow.Date.AddDays(5),
+            ReturnDate = DateTime.UtcNow.Date.AddDays(100) // 95 days
         };
         SetupDefaultMocks();
 

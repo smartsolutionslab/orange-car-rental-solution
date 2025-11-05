@@ -25,7 +25,14 @@
       "Bash(dotnet run:*)",
       "Bash(dotnet add:*)",
       "Bash(cat:*)",
-      "Bash(gh --version:*)"
+      "Bash(gh --version:*)",
+      "Bash(powershell -Command \"(Get-ChildItem -Recurse -Include *.cs -Exclude *obj*,*bin* | ForEach-Object { (Get-Content $_FullName) -replace ''CustomerId'', ''CustomerIdentifier'' | Set-Content $_FullName })\")",
+      "Bash(test:*)",
+      "Bash(powershell -Command:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File /tmp/replace2.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File /tmp/replace3.ps1)",
+      "Bash(powershell -ExecutionPolicy Bypass -File replace.ps1:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File fix-replace.ps1)"
     ],
     "deny": [],
     "ask": []

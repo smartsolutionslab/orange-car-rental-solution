@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
 /// <summary>
 ///     Command to change a customer's account status.
@@ -9,7 +9,7 @@ public sealed record ChangeCustomerStatusCommand
     /// <summary>
     ///     The unique identifier of the customer to update.
     /// </summary>
-    public required Guid CustomerId { get; init; }
+    public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     The new status for the customer account (Active, Suspended, Blocked).

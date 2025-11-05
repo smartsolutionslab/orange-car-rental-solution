@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 ///     This could trigger email verification workflows, notification updates, etc.
 /// </summary>
 public sealed record CustomerEmailChanged(
-    CustomerId CustomerId,
+    CustomerIdentifier CustomerIdentifier,
     Email OldEmail,
     Email NewEmail,
     DateTime ChangedAtUtc

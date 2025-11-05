@@ -36,7 +36,10 @@ public static class MappingExtensions
     /// </summary>
     public static AddressDto ToDto(this Address address) => new()
     {
-        Street = address.Street, City = address.City, PostalCode = address.PostalCode, Country = address.Country
+        Street = address.Street,
+        City = address.City,
+        PostalCode = address.PostalCode,
+        Country = address.Country
     };
 
     /// <summary>

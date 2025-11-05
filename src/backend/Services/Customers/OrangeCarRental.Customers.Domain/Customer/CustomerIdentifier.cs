@@ -1,12 +1,12 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 ///     Strongly-typed identifier for Customer aggregate.
 ///     Uses GUID v7 for time-ordered identifiers with better database performance.
 /// </summary>
-public readonly record struct CustomerId
+public readonly record struct CustomerIdentifier
 {
-    private CustomerId(Guid value)
+    private CustomerIdentifier(Guid value)
     {
         Value = value;
     }
@@ -16,17 +16,17 @@ public readonly record struct CustomerId
     /// <summary>
     ///     Creates a new unique customer identifier using GUID v7.
     /// </summary>
-    public static CustomerId New() => new(Guid.CreateVersion7());
+    public static CustomerIdentifier New() => new(Guid.CreateVersion7());
 
     /// <summary>
     ///     Creates a customer identifier from an existing GUID.
     /// </summary>
     /// <param name="value">The GUID value.</param>
     /// <exception cref="ArgumentException">Thrown when the GUID is empty.</exception>
-    public static CustomerId From(Guid value)
+    public static CustomerIdentifier From(Guid value)
     {
         ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
-        return new CustomerId(value);
+        return new CustomerIdentifier(value);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ public readonly record struct CustomerId
     /// </summary>
     /// <param name="value">The string representation of the GUID.</param>
     /// <exception cref="ArgumentException">Thrown when the string is not a valid GUID.</exception>
-    public static CustomerId From(string value)
+    public static CustomerIdentifier From(string value)
     {
         if (!Guid.TryParse(value, out var guid))
             throw new ArgumentException($"Invalid customer ID format: {value}", nameof(value));
@@ -42,7 +42,7 @@ public readonly record struct CustomerId
         return From(guid);
     }
 
-    public static implicit operator Guid(CustomerId customerId) => customerId.Value;
+    public static implicit operator Guid(CustomerIdentifier customerIdentifier) => customerIdentifier.Value;
 
     public override string ToString() => Value.ToString();
 }

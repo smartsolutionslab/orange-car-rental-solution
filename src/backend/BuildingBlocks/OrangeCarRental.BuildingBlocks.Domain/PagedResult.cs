@@ -3,10 +3,10 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 /// <summary>
 ///     Represents a paged result set from a query.
 /// </summary>
-/// <typeparam name="T">The type of items in the result set.</typeparam>
-public sealed class PagedResult<T>
+/// <typeparam name="TItem">The type of items in the result set.</typeparam>
+public sealed class PagedResult<TItem>
 {
-    public List<T> Items { get; init; } = [];
+    public List<TItem> Items { get; init; } = [];
     public int TotalCount { get; init; }
     public int PageNumber { get; init; }
     public int PageSize { get; init; }

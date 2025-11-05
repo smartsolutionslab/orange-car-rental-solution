@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 ///     Includes name, phone number, and address changes.
 /// </summary>
 public sealed record CustomerProfileUpdated(
-    CustomerId CustomerId,
+    CustomerIdentifier CustomerIdentifier,
     string FirstName,
     string LastName,
     PhoneNumber PhoneNumber,

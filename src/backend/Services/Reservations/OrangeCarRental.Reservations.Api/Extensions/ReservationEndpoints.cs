@@ -25,26 +25,28 @@ public static class ReservationEndpoints
             })
             .WithName("CreateReservation")
             .WithSummary("Create a new vehicle reservation")
-            .WithDescription(@"
-Creates a new reservation for a vehicle rental. The reservation will be created in 'Pending' status
-awaiting payment confirmation.
+            .WithDescription("""
 
-**Automatic Price Calculation:**
-- Price is automatically calculated based on vehicle category, rental period, and location
-- Pricing is retrieved from the Pricing Service API
-- No need to provide TotalPriceNet - it will be calculated for you
-- For backward compatibility, you can still provide TotalPriceNet to override automatic calculation
+                             Creates a new reservation for a vehicle rental. The reservation will be created in 'Pending' status
+                             awaiting payment confirmation.
 
-**German Market Pricing:**
-- All prices include 19% German VAT (Mehrwertsteuer)
-- Price breakdown shows net, VAT, and gross amounts
-- Currency is EUR
+                             **Automatic Price Calculation:**
+                             - Price is automatically calculated based on vehicle category, rental period, and location
+                             - Pricing is retrieved from the Pricing Service API
+                             - No need to provide TotalPriceNet - it will be calculated for you
+                             - For backward compatibility, you can still provide TotalPriceNet to override automatic calculation
 
-**Date Requirements:**
-- Pickup date must be today or in the future
-- Return date must be after pickup date
-- Maximum rental period is 90 days
-");
+                             **German Market Pricing:**
+                             - All prices include 19% German VAT (Mehrwertsteuer)
+                             - Price breakdown shows net, VAT, and gross amounts
+                             - Currency is EUR
+
+                             **Date Requirements:**
+                             - Pickup date must be today or in the future
+                             - Return date must be after pickup date
+                             - Maximum rental period is 90 days
+
+                             """);
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
         reservations.MapPost("/guest", async (
@@ -56,29 +58,31 @@ awaiting payment confirmation.
             })
             .WithName("CreateGuestReservation")
             .WithSummary("Create a reservation for a guest user (without pre-registration)")
-            .WithDescription(@"
-Creates a reservation for a guest user by handling both customer registration and reservation creation in a single request.
-This is the recommended endpoint for public portal bookings where users haven't registered yet.
+            .WithDescription("""
 
-**What This Endpoint Does:**
-1. Registers the customer automatically via Customers API
-2. Calculates the price automatically via Pricing API (19% German VAT included)
-3. Creates the reservation with the new customer ID
-4. Returns both customer ID and reservation ID
+                             Creates a reservation for a guest user by handling both customer registration and reservation creation in a single request.
+                             This is the recommended endpoint for public portal bookings where users haven't registered yet.
 
-**Customer Data Requirements:**
-- German market validation (postal code, phone number, driving license)
-- Minimum age: 18 years (21 years for rental)
-- Driver's license must be valid for at least 30 days
+                             **What This Endpoint Does:**
+                             1. Registers the customer automatically via Customers API
+                             2. Calculates the price automatically via Pricing API (19% German VAT included)
+                             3. Creates the reservation with the new customer ID
+                             4. Returns both customer ID and reservation ID
 
-**Benefits Over Separate Registration:**
-- Single API call instead of two
-- Better UX for guest users
-- Atomic operation - either both succeed or both fail
+                             **Customer Data Requirements:**
+                             - German market validation (postal code, phone number, driving license)
+                             - Minimum age: 18 years (21 years for rental)
+                             - Driver's license must be valid for at least 30 days
 
-**Response:**
-Returns the newly created customer ID, reservation ID, and pricing breakdown.
-");
+                             **Benefits Over Separate Registration:**
+                             - Single API call instead of two
+                             - Better UX for guest users
+                             - Atomic operation - either both succeed or both fail
+
+                             **Response:**
+                             Returns the newly created customer ID, reservation ID, and pricing breakdown.
+
+                             """);
 
         // GET /api/reservations/{id} - Get reservation by ID
         reservations.MapGet("/{id:guid}", async (
@@ -122,17 +126,19 @@ Returns the newly created customer ID, reservation ID, and pricing breakdown.
             })
             .WithName("SearchReservations")
             .WithSummary("Search reservations with filters and pagination")
-            .WithDescription(@"
-Search for reservations using various filters:
-- **status**: Filter by status (Pending, Confirmed, Active, Completed, Cancelled, NoShow)
-- **customerId**: Filter by customer GUID
-- **vehicleId**: Filter by vehicle GUID
-- **pickupDateFrom**: Filter by pickup date from (inclusive)
-- **pickupDateTo**: Filter by pickup date to (inclusive)
-- **pageNumber**: Page number (default: 1)
-- **pageSize**: Items per page (default: 50, max: 100)
+            .WithDescription("""
 
-Returns paginated results with total count and pagination metadata.");
+                             Search for reservations using various filters:
+                             - **status**: Filter by status (Pending, Confirmed, Active, Completed, Cancelled, NoShow)
+                             - **customerId**: Filter by customer GUID
+                             - **vehicleId**: Filter by vehicle GUID
+                             - **pickupDateFrom**: Filter by pickup date from (inclusive)
+                             - **pickupDateTo**: Filter by pickup date to (inclusive)
+                             - **pageNumber**: Page number (default: 1)
+                             - **pageSize**: Items per page (default: 50, max: 100)
+
+                             Returns paginated results with total count and pagination metadata.
+                             """);
 
         // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
         reservations.MapPut("/{id:guid}/confirm", async (
@@ -152,19 +158,21 @@ Returns paginated results with total count and pagination metadata.");
             })
             .WithName("ConfirmReservation")
             .WithSummary("Confirm a pending reservation")
-            .WithDescription(@"
-Confirms a pending reservation after payment has been received.
+            .WithDescription("""
 
-**Requirements:**
-- Reservation must be in 'Pending' status
-- Cannot confirm already confirmed, active, completed, or cancelled reservations
+                             Confirms a pending reservation after payment has been received.
 
-**What Happens:**
-- Status changes from 'Pending' to 'Confirmed'
-- ConfirmedAt timestamp is set
-- ReservationConfirmed domain event is raised
+                             **Requirements:**
+                             - Reservation must be in 'Pending' status
+                             - Cannot confirm already confirmed, active, completed, or cancelled reservations
 
-**Use Case:** Call this endpoint after payment gateway confirms successful payment.");
+                             **What Happens:**
+                             - Status changes from 'Pending' to 'Confirmed'
+                             - ConfirmedAt timestamp is set
+                             - ReservationConfirmed domain event is raised
+
+                             **Use Case:** Call this endpoint after payment gateway confirms successful payment.
+                             """);
 
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
         reservations.MapPut("/{id:guid}/cancel", async (
@@ -186,32 +194,34 @@ Confirms a pending reservation after payment has been received.
             })
             .WithName("CancelReservation")
             .WithSummary("Cancel a reservation")
-            .WithDescription(@"
-Cancels a reservation with an optional reason.
+            .WithDescription("""
 
-**Requirements:**
-- Cannot cancel a completed reservation
-- Cannot cancel an active rental (vehicle must be returned first)
-- Already cancelled reservations are idempotent (no error)
+                             Cancels a reservation with an optional reason.
 
-**Request Body:**
-```json
-{
-  ""cancellationReason"": ""Customer requested cancellation""
-}
-```
+                             **Requirements:**
+                             - Cannot cancel a completed reservation
+                             - Cannot cancel an active rental (vehicle must be returned first)
+                             - Already cancelled reservations are idempotent (no error)
 
-**What Happens:**
-- Status changes to 'Cancelled'
-- CancelledAt timestamp is set
-- CancellationReason is stored
-- ReservationCancelled domain event is raised
+                             **Request Body:**
+                             ```json
+                             {
+                               "cancellationReason": "Customer requested cancellation"
+                             }
+                             ```
 
-**Cancellation Policy (German Market):**
-- Free cancellation up to 48h before pickup
-- 50% refund for 24-48h before pickup
-- No refund for < 24h before pickup
-(Policy enforcement should be handled in payment service)");
+                             **What Happens:**
+                             - Status changes to 'Cancelled'
+                             - CancelledAt timestamp is set
+                             - CancellationReason is stored
+                             - ReservationCancelled domain event is raised
+
+                             **Cancellation Policy (German Market):**
+                             - Free cancellation up to 48h before pickup
+                             - 50% refund for 24-48h before pickup
+                             - No refund for < 24h before pickup
+                             (Policy enforcement should be handled in payment service)
+                             """);
 
         return app;
     }

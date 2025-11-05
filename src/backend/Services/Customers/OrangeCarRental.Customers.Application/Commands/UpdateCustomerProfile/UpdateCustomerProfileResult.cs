@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
 /// <summary>
 ///     Result of customer profile update operation.
@@ -8,7 +8,7 @@ public sealed record UpdateCustomerProfileResult
     /// <summary>
     ///     The unique identifier of the updated customer.
     /// </summary>
-    public required Guid CustomerId { get; init; }
+    public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     Indicates if the profile was successfully updated.

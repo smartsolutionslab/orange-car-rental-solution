@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Represents a customer in the Orange Car Rental system with German market-specific validation.
 ///     Enforces business rules such as minimum age (18+), valid driver's license, and GDPR compliance.
 /// </summary>
-public sealed class Customer : AggregateRoot<CustomerId>
+public sealed class Customer : AggregateRoot<CustomerIdentifier>
 {
     /// <summary>
     ///     Minimum age required to rent a vehicle in Germany.
@@ -33,7 +33,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
     }
 
     private Customer(
-        CustomerId id,
+        CustomerIdentifier id,
         string firstName,
         string lastName,
         Email email,
@@ -139,7 +139,7 @@ public sealed class Customer : AggregateRoot<CustomerId>
         ValidateDriversLicense(driversLicense, dateOfBirth);
 
         return new Customer(
-            CustomerId.New(),
+            CustomerIdentifier.New(),
             normalizedFirstName,
             normalizedLastName,
             email,

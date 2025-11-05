@@ -10,43 +10,43 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
 
 public class VehicleRepositoryTests : IAsyncLifetime
 {
-    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
+    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
-    private FleetDbContext _context = null!;
-    private VehicleRepository _repository = null!;
-    private ReservationsDbContext _reservationsContext = null!;
+    private FleetDbContext context = null!;
+    private VehicleRepository repository = null!;
+    private ReservationsDbContext reservationsContext = null!;
 
     public async Task InitializeAsync()
     {
         // Start the SQL Server container
-        await _msSqlContainer.StartAsync();
+        await msSqlContainer.StartAsync();
 
         // Create DbContext with SQL Server connection
         var options = new DbContextOptionsBuilder<FleetDbContext>()
-            .UseSqlServer(_msSqlContainer.GetConnectionString())
+            .UseSqlServer(msSqlContainer.GetConnectionString())
             .Options;
 
-        _context = new FleetDbContext(options);
-        await _context.Database.EnsureCreatedAsync();
+        context = new FleetDbContext(options);
+        await context.Database.EnsureCreatedAsync();
 
         // Create Reservations DbContext with same SQL Server connection
         var reservationsOptions = new DbContextOptionsBuilder<ReservationsDbContext>()
-            .UseSqlServer(_msSqlContainer.GetConnectionString())
+            .UseSqlServer(msSqlContainer.GetConnectionString())
             .Options;
 
-        _reservationsContext = new ReservationsDbContext(reservationsOptions);
-        await _reservationsContext.Database.EnsureCreatedAsync();
+        reservationsContext = new ReservationsDbContext(reservationsOptions);
+        await reservationsContext.Database.EnsureCreatedAsync();
 
-        _repository = new VehicleRepository(_context, _reservationsContext);
+        repository = new VehicleRepository(context, reservationsContext);
     }
 
     public async Task DisposeAsync()
     {
-        await _context.DisposeAsync();
-        await _reservationsContext.DisposeAsync();
-        await _msSqlContainer.DisposeAsync();
+        await context.DisposeAsync();
+        await reservationsContext.DisposeAsync();
+        await msSqlContainer.DisposeAsync();
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var parameters = new VehicleSearchParameters { PageNumber = 1, PageSize = 20 };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -75,11 +75,13 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
         var parameters = new VehicleSearchParameters
         {
-            LocationCode = LocationCode.Of("BER-HBF"), PageNumber = 1, PageSize = 20
+            LocationCode = LocationCode.Of("BER-HBF"),
+            PageNumber = 1,
+            PageSize = 20
         };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(3);
@@ -95,11 +97,13 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
         var parameters = new VehicleSearchParameters
         {
-            Category = VehicleCategory.FromCode("KLEIN"), PageNumber = 1, PageSize = 20
+            Category = VehicleCategory.FromCode("KLEIN"),
+            PageNumber = 1,
+            PageSize = 20
         };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(2);
@@ -115,7 +119,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var parameters = new VehicleSearchParameters { FuelType = FuelType.Electric, PageNumber = 1, PageSize = 20 };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(1);
@@ -130,7 +134,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var parameters = new VehicleSearchParameters { MinSeats = 5, PageNumber = 1, PageSize = 20 };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         // Test data has: VW Golf (5), Tesla (5), Ford Focus (5), BMW X5 (7) = 4 vehicles with >= 5 seats
@@ -147,7 +151,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var parameters = new VehicleSearchParameters { MaxDailyRateGross = 50.00m, PageNumber = 1, PageSize = 20 };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(2);
@@ -170,7 +174,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(2);
@@ -190,7 +194,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var parameters = new VehicleSearchParameters { PageNumber = 2, PageSize = 2 };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(2);
@@ -207,19 +211,21 @@ public class VehicleRepositoryTests : IAsyncLifetime
         await SeedTestDataAsync();
 
         // Mark one vehicle as rented
-        var vehicle = await _context.Vehicles.FirstAsync();
-        _context.Entry(vehicle).State = EntityState.Detached;
+        var vehicle = await context.Vehicles.FirstAsync();
+        context.Entry(vehicle).State = EntityState.Detached;
         vehicle = vehicle.ChangeStatus(VehicleStatus.Rented);
-        _context.Vehicles.Update(vehicle);
-        await _context.SaveChangesAsync();
+        context.Vehicles.Update(vehicle);
+        await context.SaveChangesAsync();
 
         var parameters = new VehicleSearchParameters
         {
-            Status = VehicleStatus.Available, PageNumber = 1, PageSize = 20
+            Status = VehicleStatus.Available,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         // Act
-        var result = await _repository.SearchAsync(parameters, CancellationToken.None);
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Should().HaveCount(4);
@@ -232,11 +238,11 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var vehicle = CreateTestVehicle("VW Polo", "KLEIN", "BER-HBF", FuelType.Petrol, 4, 35.00m);
-        await _context.Vehicles.AddAsync(vehicle);
-        await _context.SaveChangesAsync();
+        await context.Vehicles.AddAsync(vehicle);
+        await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByIdAsync(vehicle.Id, CancellationToken.None);
+        var result = await repository.GetByIdAsync(vehicle.Id, CancellationToken.None);
 
         // Assert
         result.Should().NotBeNull();
@@ -251,7 +257,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var nonExistingId = VehicleIdentifier.New();
 
         // Act
-        var result = await _repository.GetByIdAsync(nonExistingId, CancellationToken.None);
+        var result = await repository.GetByIdAsync(nonExistingId, CancellationToken.None);
 
         // Assert
         result.Should().BeNull();
@@ -268,8 +274,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
             CreateTestVehicle("BMW X5", "SUV", "MUC-FLG", FuelType.Diesel, 7, 120.00m)
         };
 
-        await _context.Vehicles.AddRangeAsync(vehicles);
-        await _context.SaveChangesAsync();
+        await context.Vehicles.AddRangeAsync(vehicles);
+        await context.SaveChangesAsync();
     }
 
     private Vehicle CreateTestVehicle(

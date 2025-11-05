@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
@@ -59,7 +59,7 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
         // Return result
         return new RegisterCustomerResult
         {
-            CustomerId = customer.Id.Value,
+            CustomerIdentifier = customer.Id.Value,
             Email = customer.Email.Value,
             Status = "Customer registered successfully",
             RegisteredAtUtc = customer.RegisteredAtUtc

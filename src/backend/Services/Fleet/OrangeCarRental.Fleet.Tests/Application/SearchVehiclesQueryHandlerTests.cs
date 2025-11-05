@@ -26,7 +26,10 @@ public class SearchVehiclesQueryHandlerTests
         var vehicles = CreateTestVehicles();
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = vehicles, TotalCount = vehicles.Count, PageNumber = 1, PageSize = 20
+            Items = vehicles,
+            TotalCount = vehicles.Count,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -53,7 +56,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 1, PageSize = 20
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -80,7 +86,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 1, PageSize = 20
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -107,7 +116,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 1, PageSize = 20
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -144,7 +156,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 2, PageSize = 10
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 2,
+            PageSize = 10
         };
 
         _repositoryMock
@@ -178,7 +193,10 @@ public class SearchVehiclesQueryHandlerTests
         var vehicles = CreateTestVehicles();
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = vehicles, TotalCount = vehicles.Count, PageNumber = 1, PageSize = 20
+            Items = vehicles,
+            TotalCount = vehicles.Count,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -211,7 +229,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 1, PageSize = 20
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -238,7 +259,10 @@ public class SearchVehiclesQueryHandlerTests
 
         var pagedResult = new PagedResult<Vehicle>
         {
-            Items = new List<Vehicle>(), TotalCount = 0, PageNumber = 1, PageSize = 20
+            Items = [],
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 20
         };
 
         _repositoryMock
@@ -257,12 +281,12 @@ public class SearchVehiclesQueryHandlerTests
 
     private List<Vehicle> CreateTestVehicles()
     {
-        return new List<Vehicle>
-        {
+        return
+        [
             CreateVehicle("VW Polo", "KLEIN", "BER-HBF", FuelType.Petrol, 4, 35.00m),
             CreateVehicle("VW Golf", "MITTEL", "BER-HBF", FuelType.Petrol, 5, 55.00m),
             CreateVehicle("Tesla Model 3", "LUXUS", "MUC-FLG", FuelType.Electric, 5, 95.00m)
-        };
+        ];
     }
 
     private Vehicle CreateVehicle(

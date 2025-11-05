@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
 /// <summary>
 ///     Result of customer status change operation.
@@ -8,7 +8,7 @@ public sealed record ChangeCustomerStatusResult
     /// <summary>
     ///     The unique identifier of the updated customer.
     /// </summary>
-    public required Guid CustomerId { get; init; }
+    public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     The previous status of the customer.

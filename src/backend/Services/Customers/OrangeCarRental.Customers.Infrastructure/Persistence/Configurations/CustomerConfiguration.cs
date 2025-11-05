@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -14,13 +14,13 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
         builder.ToTable("Customers");
 
-        // Primary key - CustomerId struct with Guid value
+        // Primary key - CustomerIdentifier struct with Guid value
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id)
-            .HasColumnName("CustomerId")
+            .HasColumnName("CustomerIdentifier")
             .HasConversion(
                 id => id.Value,
-                value => CustomerId.From(value))
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
         // Simple string properties

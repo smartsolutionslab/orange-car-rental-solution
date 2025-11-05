@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
@@ -26,7 +26,7 @@ public static class CustomerEndpoints
                 try
                 {
                     var result = await handler.HandleAsync(command, cancellationToken);
-                    return Results.Created($"/api/customers/{result.CustomerId}", result);
+                    return Results.Created($"/api/customers/{result.CustomerIdentifier}", result);
                 }
                 catch (ArgumentException ex)
                 {
@@ -61,7 +61,7 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    var result = await handler.HandleAsync(new GetCustomerQuery { CustomerId = id }, cancellationToken);
+                    var result = await handler.HandleAsync(new GetCustomerQuery { CustomerIdentifier = id }, cancellationToken);
                     return result is not null
                         ? Results.Ok(result)
                         : Results.NotFound(new { message = $"Customer with ID '{id}' not found" });
@@ -156,7 +156,7 @@ public static class CustomerEndpoints
                 try
                 {
                     // Ensure the ID in the route matches the command
-                    if (id != command.CustomerId)
+                    if (id != command.CustomerIdentifier)
                         return Results.BadRequest(new { message = "Customer ID in route does not match command" });
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -197,7 +197,7 @@ public static class CustomerEndpoints
                 try
                 {
                     // Ensure the ID in the route matches the command
-                    if (id != command.CustomerId)
+                    if (id != command.CustomerIdentifier)
                         return Results.BadRequest(new { message = "Customer ID in route does not match command" });
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -238,7 +238,7 @@ public static class CustomerEndpoints
                 try
                 {
                     // Ensure the ID in the route matches the command
-                    if (id != command.CustomerId)
+                    if (id != command.CustomerIdentifier)
                         return Results.BadRequest(new { message = "Customer ID in route does not match command" });
 
                     var result = await handler.HandleAsync(command, cancellationToken);

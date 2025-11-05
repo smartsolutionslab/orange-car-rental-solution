@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
@@ -21,14 +21,9 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         CancellationToken cancellationToken = default)
     {
         // Load customer
-        var customerId = CustomerId.From(command.CustomerId);
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-
-        if (customer is null)
-        {
-            throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerId}' not found.");
-        }
+        var customerIdentifier = CustomerIdentifier.From(command.CustomerIdentifier);
+        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
+                $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
         // Create driver's license value object from command data
         var driversLicense = DriversLicense.Of(
@@ -47,7 +42,7 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         // Return result
         return new UpdateDriversLicenseResult
         {
-            CustomerId = customer.Id.Value,
+            CustomerIdentifier = customer.Id.Value,
             Success = true,
             Message = "Driver's license updated successfully",
             UpdatedAtUtc = customer.UpdatedAtUtc

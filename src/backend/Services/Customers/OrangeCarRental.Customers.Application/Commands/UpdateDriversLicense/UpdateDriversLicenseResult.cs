@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
 /// <summary>
 ///     Result of driver's license update operation.
@@ -8,7 +8,7 @@ public sealed record UpdateDriversLicenseResult
     /// <summary>
     ///     The unique identifier of the updated customer.
     /// </summary>
-    public required Guid CustomerId { get; init; }
+    public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     Indicates if the license was successfully updated.

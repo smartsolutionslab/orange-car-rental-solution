@@ -31,8 +31,8 @@ public sealed class Ensurer<T>
 {
     internal Ensurer(T value, string parameterName)
     {
-        this.Value = value;
-        this.ParameterName = parameterName;
+        Value = value;
+        ParameterName = parameterName;
     }
 
     /// <summary>

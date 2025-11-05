@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence
 /// </summary>
 public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRepository
 {
-    public async Task<Customer?> GetByIdAsync(CustomerId id, CancellationToken cancellationToken = default)
+    public async Task<Customer?> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
     {
         return await context.Customers
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
@@ -31,11 +31,11 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
 
     public async Task<bool> ExistsWithEmailAsync(
         Email email,
-        CustomerId excludeCustomerId,
+        CustomerIdentifier excludeCustomerIdentifier,
         CancellationToken cancellationToken = default)
     {
         return await context.Customers
-            .AnyAsync(c => c.Email == email && c.Id != excludeCustomerId, cancellationToken);
+            .AnyAsync(c => c.Email == email && c.Id != excludeCustomerIdentifier, cancellationToken);
     }
 
     public async Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -140,7 +140,7 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         return Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(CustomerId id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
     {
         var customer = await GetByIdAsync(id, cancellationToken);
         if (customer != null) context.Customers.Remove(customer);

@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
@@ -21,14 +21,9 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         CancellationToken cancellationToken = default)
     {
         // Load customer
-        var customerId = CustomerId.From(command.CustomerId);
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-
-        if (customer is null)
-        {
-            throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerId}' not found.");
-        }
+        var customerIdentifier = CustomerIdentifier.From(command.CustomerIdentifier);
+        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
+                $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
         // Parse and validate new status
         if (!Enum.TryParse<CustomerStatus>(command.NewStatus, true, out var newStatus))
@@ -51,7 +46,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         // Return result
         return new ChangeCustomerStatusResult
         {
-            CustomerId = customer.Id.Value,
+            CustomerIdentifier = customer.Id.Value,
             OldStatus = oldStatus.ToString(),
             NewStatus = customer.Status.ToString(),
             Success = true,

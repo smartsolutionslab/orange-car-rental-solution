@@ -1,4 +1,4 @@
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
+﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
 /// <summary>
 ///     Result of customer registration operation.
@@ -9,7 +9,7 @@ public sealed record RegisterCustomerResult
     /// <summary>
     ///     The unique identifier of the newly registered customer.
     /// </summary>
-    public required Guid CustomerId { get; init; }
+    public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     The customer's email address (normalized).

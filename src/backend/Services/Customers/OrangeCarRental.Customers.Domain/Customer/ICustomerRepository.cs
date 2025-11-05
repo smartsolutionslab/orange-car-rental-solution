@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -14,7 +14,7 @@ public interface ICustomerRepository
     /// <param name="id">The customer ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The customer if found, otherwise null.</returns>
-    Task<Customer?> GetByIdAsync(CustomerId id, CancellationToken cancellationToken = default);
+    Task<Customer?> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets a customer by their email address.
@@ -38,12 +38,12 @@ public interface ICustomerRepository
     ///     Useful for validating email uniqueness when updating a customer's email.
     /// </summary>
     /// <param name="email">The email address to check.</param>
-    /// <param name="excludeCustomerId">The customer ID to exclude from the check.</param>
+    /// <param name="excludeCustomerIdentifier">The customer ID to exclude from the check.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>True if another customer exists with this email, otherwise false.</returns>
     Task<bool> ExistsWithEmailAsync(
         Email email,
-        CustomerId excludeCustomerId,
+        CustomerIdentifier excludeCustomerIdentifier,
         CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -83,7 +83,7 @@ public interface ICustomerRepository
     /// </summary>
     /// <param name="id">The customer ID to delete.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task DeleteAsync(CustomerId id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Saves all pending changes to the database.

@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 ///     This could trigger validation checks, expiry notifications, etc.
 /// </summary>
 public sealed record DriversLicenseUpdated(
-    CustomerId CustomerId,
+    CustomerIdentifier CustomerIdentifier,
     DriversLicense OldLicense,
     DriversLicense NewLicense,
     DateTime UpdatedAtUtc

@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 ///     This could trigger notifications, permission updates, or audit logs.
 /// </summary>
 public sealed record CustomerStatusChanged(
-    CustomerId CustomerId,
+    CustomerIdentifier CustomerIdentifier,
     CustomerStatus OldStatus,
     CustomerStatus NewStatus,
     string Reason,

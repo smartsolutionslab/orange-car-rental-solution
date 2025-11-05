@@ -1,4 +1,4 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
@@ -21,14 +21,9 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
         CancellationToken cancellationToken = default)
     {
         // Load customer
-        var customerId = CustomerId.From(command.CustomerId);
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-
-        if (customer is null)
-        {
-            throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerId}' not found.");
-        }
+        var customerIdentifier = CustomerIdentifier.From(command.CustomerIdentifier);
+        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
+                $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
         // Create value objects from command data
         var phoneNumber = PhoneNumber.Of(command.PhoneNumber);
@@ -52,7 +47,7 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
         // Return result
         return new UpdateCustomerProfileResult
         {
-            CustomerId = customer.Id.Value,
+            CustomerIdentifier = customer.Id.Value,
             Success = true,
             Message = "Customer profile updated successfully",
             UpdatedAtUtc = customer.UpdatedAtUtc

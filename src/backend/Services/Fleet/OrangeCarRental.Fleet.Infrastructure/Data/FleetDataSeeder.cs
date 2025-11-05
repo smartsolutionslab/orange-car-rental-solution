@@ -42,8 +42,7 @@ public class FleetDataSeeder(
         var vehicles = new List<Vehicle>();
 
         // Kleinwagen (Small Cars) - 29-45 EUR/day
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("VW Up!", VehicleCategory.Kleinwagen, Location.BerlinHauptbahnhof,
                 Money.Euro(29.99m), 4, FuelType.Petrol, TransmissionType.Manual,
                 "Volkswagen", "Up!", 2023),
@@ -59,11 +58,10 @@ public class FleetDataSeeder(
             CreateVehicle("Toyota Aygo", VehicleCategory.Kleinwagen, Location.KolnHauptbahnhof,
                 Money.Euro(30.99m), 4, FuelType.Hybrid, TransmissionType.Automatic,
                 "Toyota", "Aygo X", 2024)
-        });
+        ]);
 
         // Kompaktklasse (Compact Cars) - 45-65 EUR/day
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("VW Golf", VehicleCategory.Kompaktklasse, Location.BerlinHauptbahnhof,
                 Money.Euro(49.99m), 5, FuelType.Diesel, TransmissionType.Manual,
                 "Volkswagen", "Golf 8", 2024),
@@ -85,11 +83,10 @@ public class FleetDataSeeder(
             CreateVehicle("Ford Focus", VehicleCategory.Kompaktklasse, Location.MunichFlughafen,
                 Money.Euro(46.99m), 5, FuelType.Petrol, TransmissionType.Manual,
                 "Ford", "Focus", 2023)
-        });
+        ]);
 
         // Mittelklasse (Mid-Size Cars) - 65-95 EUR/day
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("VW Passat", VehicleCategory.Mittelklasse, Location.BerlinHauptbahnhof,
                 Money.Euro(69.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Volkswagen", "Passat", 2024),
@@ -105,11 +102,10 @@ public class FleetDataSeeder(
             CreateVehicle("Tesla Model 3", VehicleCategory.Mittelklasse, Location.KolnHauptbahnhof,
                 Money.Euro(94.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Tesla", "Model 3", 2024)
-        });
+        ]);
 
         // Oberklasse (Upper Class) - 95-150 EUR/day
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("BMW 5er", VehicleCategory.Oberklasse, Location.BerlinHauptbahnhof,
                 Money.Euro(119.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "BMW", "530d", 2024),
@@ -122,11 +118,10 @@ public class FleetDataSeeder(
             CreateVehicle("BMW i4", VehicleCategory.Oberklasse, Location.HamburgHauptbahnhof,
                 Money.Euro(139.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "BMW", "i4 eDrive40", 2024)
-        });
+        ]);
 
         // SUVs - 75-135 EUR/day
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("VW Tiguan", VehicleCategory.SUV, Location.BerlinHauptbahnhof,
                 Money.Euro(79.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Volkswagen", "Tiguan", 2024),
@@ -151,11 +146,10 @@ public class FleetDataSeeder(
             CreateVehicle("Kia Sportage", VehicleCategory.SUV, Location.FrankfurtFlughafen,
                 Money.Euro(77.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Kia", "Sportage", 2024)
-        });
+        ]);
 
         // Additional vehicles with varied statuses
-        vehicles.AddRange(new[]
-        {
+        vehicles.AddRange([
             CreateVehicle("VW ID.3", VehicleCategory.Kompaktklasse, Location.BerlinHauptbahnhof,
                 Money.Euro(54.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Volkswagen", "ID.3", 2024),
@@ -168,7 +162,7 @@ public class FleetDataSeeder(
             CreateVehicle("Polestar 2", VehicleCategory.Mittelklasse, Location.HamburgHauptbahnhof,
                 Money.Euro(99.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Polestar", "2", 2024)
-        });
+        ]);
 
         // Set some vehicles to different statuses for realism
         vehicles[5].MarkAsRented(); // One Kompakt is rented

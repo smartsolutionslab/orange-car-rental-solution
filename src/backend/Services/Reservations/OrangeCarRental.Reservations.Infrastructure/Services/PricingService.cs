@@ -49,11 +49,7 @@ public sealed class PricingService : IPricingService
 
         // Deserialize response
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var result = JsonSerializer.Deserialize<PriceCalculationDto>(responseJson, _jsonOptions);
-
-        if (result is null)
-            throw new InvalidOperationException("Failed to deserialize price calculation response from Pricing API");
-
+        var result = JsonSerializer.Deserialize<PriceCalculationDto>(responseJson, _jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize price calculation response from Pricing API");
         return result;
     }
 }

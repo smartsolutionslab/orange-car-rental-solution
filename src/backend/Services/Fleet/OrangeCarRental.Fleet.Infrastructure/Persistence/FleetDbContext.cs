@@ -8,12 +8,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 ///     Database context for the Fleet service.
 ///     Manages vehicle data and fleet operations.
 /// </summary>
-public sealed class FleetDbContext : DbContext
+public sealed class FleetDbContext(DbContextOptions<FleetDbContext> options) : DbContext(options)
 {
-    public FleetDbContext(DbContextOptions<FleetDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
