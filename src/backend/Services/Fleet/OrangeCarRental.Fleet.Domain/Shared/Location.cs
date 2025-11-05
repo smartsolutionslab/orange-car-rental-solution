@@ -37,7 +37,7 @@ public readonly record struct Location
         Address.Of(Street.Of("Trankgasse 11"), City.Of("Köln"), PostalCode.Of("50667"))
     );
 
-    private static readonly Dictionary<LocationCode, Location> _locations = new()
+    private static readonly Dictionary<LocationCode, Location> locations = new()
     {
         { LocationCode.Of("BER-HBF"), BerlinHauptbahnhof },
         { LocationCode.Of("MUC-FLG"), MunichFlughafen },
@@ -57,7 +57,7 @@ public readonly record struct Location
     public LocationName Name { get; }
     public Address Address { get; }
 
-    public static IReadOnlyCollection<Location> All => _locations.Values.ToList();
+    public static IReadOnlyCollection<Location> All => locations.Values.ToList();
 
     public static Location Of(LocationCode code, LocationName name, Address address) => new(code, name, address);
 
@@ -76,7 +76,7 @@ public readonly record struct Location
 
     public static Location FromCode(LocationCode code)
     {
-        if (!_locations.TryGetValue(code, out var location))
+        if (!locations.TryGetValue(code, out var location))
             throw new ArgumentException($"Unknown location code: {code}", nameof(code));
 
         return location;

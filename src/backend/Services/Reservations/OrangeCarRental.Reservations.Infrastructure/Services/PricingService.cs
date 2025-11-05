@@ -9,13 +9,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services
 /// </summary>
 public sealed class PricingService : IPricingService
 {
-    private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly HttpClient httpClient;
+    private readonly JsonSerializerOptions jsonOptions;
 
     public PricingService(HttpClient httpClient)
     {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
     public async Task<PriceCalculationDto> CalculatePriceAsync(
@@ -34,11 +34,11 @@ public sealed class PricingService : IPricingService
             LocationCode = locationCode
         };
 
-        var json = JsonSerializer.Serialize(request, _jsonOptions);
+        var json = JsonSerializer.Serialize(request, jsonOptions);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Call Pricing API
-        var response = await _httpClient.PostAsync("/api/pricing/calculate", content, cancellationToken);
+        var response = await httpClient.PostAsync("/api/pricing/calculate", content, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -49,7 +49,7 @@ public sealed class PricingService : IPricingService
 
         // Deserialize response
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var result = JsonSerializer.Deserialize<PriceCalculationDto>(responseJson, _jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize price calculation response from Pricing API");
+        var result = JsonSerializer.Deserialize<PriceCalculationDto>(responseJson, jsonOptions) ?? throw new InvalidOperationException("Failed to deserialize price calculation response from Pricing API");
         return result;
     }
 }

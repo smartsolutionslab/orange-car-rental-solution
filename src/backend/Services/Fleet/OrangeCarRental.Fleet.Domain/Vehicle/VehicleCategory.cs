@@ -18,7 +18,7 @@ public readonly record struct VehicleCategory
     public static readonly VehicleCategory Transporter = new("TRANS", "Transporter");
     public static readonly VehicleCategory Luxus = new("LUXUS", "Luxusklasse");
 
-    private static readonly Dictionary<string, VehicleCategory> _categories = new()
+    private static readonly Dictionary<string, VehicleCategory> categories = new()
     {
         { "KLEIN", Kleinwagen },
         { "KOMPAKT", Kompaktklasse },
@@ -39,7 +39,7 @@ public readonly record struct VehicleCategory
     public string Code { get; }
     public string Name { get; }
 
-    public static IReadOnlyCollection<VehicleCategory> All => _categories.Values.ToList();
+    public static IReadOnlyCollection<VehicleCategory> All => categories.Values.ToList();
 
     public static VehicleCategory FromCode(string code)
     {
@@ -47,7 +47,7 @@ public readonly record struct VehicleCategory
             .IsNotNullOrWhiteSpace();
 
         var upperCode = code.ToUpperInvariant();
-        if (!_categories.TryGetValue(upperCode, out var category))
+        if (!categories.TryGetValue(upperCode, out var category))
             throw new ArgumentException($"Unknown vehicle category code: {code}", nameof(code));
 
         return category;
