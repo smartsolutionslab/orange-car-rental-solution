@@ -28,7 +28,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
-                        .HasColumnName("CustomerIdentifier");
+                        .HasColumnName("CustomerId");
 
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date")

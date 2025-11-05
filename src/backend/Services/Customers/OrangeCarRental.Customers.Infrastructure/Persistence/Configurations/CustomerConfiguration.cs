@@ -17,7 +17,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         // Primary key - CustomerIdentifier struct with Guid value
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id)
-            .HasColumnName("CustomerIdentifier")
+            .HasColumnName("CustomerId")
             .HasConversion(
                 id => id.Value,
                 value => CustomerIdentifier.From(value))

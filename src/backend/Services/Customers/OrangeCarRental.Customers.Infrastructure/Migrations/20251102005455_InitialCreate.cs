@@ -19,7 +19,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                 schema: "customers",
                 columns: table => new
                 {
-                    CustomerIdentifier = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(254)", maxLength: 254, nullable: false),
@@ -39,7 +39,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Customers", x => x.CustomerIdentifier);
+                    table.PrimaryKey("PK_Customers", x => x.CustomerId);
                 });
 
             migrationBuilder.CreateIndex(
