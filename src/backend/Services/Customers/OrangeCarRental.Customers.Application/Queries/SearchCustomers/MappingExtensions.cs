@@ -37,8 +37,8 @@ public static class MappingExtensions
     public static AddressDto ToDto(this Address address) => new()
     {
         Street = address.Street,
-        City = address.City,
-        PostalCode = address.PostalCode,
+        City = address.City.Value,
+        PostalCode = address.PostalCode.Value,
         Country = address.Country
     };
 
@@ -108,14 +108,42 @@ public static class MappingExtensions
             }
         }
 
+        // Parse city to value object if provided
+        City? city = null;
+        if (!string.IsNullOrWhiteSpace(query.City))
+        {
+            try
+            {
+                city = City.Of(query.City.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid city format - leave as null to filter nothing
+            }
+        }
+
+        // Parse postal code to value object if provided
+        PostalCode? postalCode = null;
+        if (!string.IsNullOrWhiteSpace(query.PostalCode))
+        {
+            try
+            {
+                postalCode = PostalCode.Of(query.PostalCode.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid postal code format - leave as null to filter nothing
+            }
+        }
+
         return new CustomerSearchParameters
         {
             SearchTerm = query.SearchTerm?.Trim(),
             Email = email,
             PhoneNumber = phoneNumber,
             Status = status,
-            City = query.City?.Trim(),
-            PostalCode = query.PostalCode?.Trim(),
+            City = city,
+            PostalCode = postalCode,
             MinAge = query.MinAge,
             MaxAge = query.MaxAge,
             LicenseExpiringWithinDays = query.LicenseExpiringWithinDays,

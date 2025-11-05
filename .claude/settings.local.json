@@ -32,7 +32,8 @@
       "Bash(powershell -ExecutionPolicy Bypass -File /tmp/replace2.ps1)",
       "Bash(powershell -ExecutionPolicy Bypass -File /tmp/replace3.ps1)",
       "Bash(powershell -ExecutionPolicy Bypass -File replace.ps1:*)",
-      "Bash(powershell -ExecutionPolicy Bypass -File fix-replace.ps1)"
+      "Bash(powershell -ExecutionPolicy Bypass -File fix-replace.ps1)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

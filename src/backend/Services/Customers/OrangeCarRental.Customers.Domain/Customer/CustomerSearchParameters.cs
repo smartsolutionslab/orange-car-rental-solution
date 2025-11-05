@@ -28,14 +28,14 @@ public sealed class CustomerSearchParameters : SearchParameters
     public CustomerStatus? Status { get; init; }
 
     /// <summary>
-    ///     Filter by city.
+    ///     Filter by city (value object).
     /// </summary>
-    public string? City { get; init; }
+    public City? City { get; init; }
 
     /// <summary>
-    ///     Filter by postal code.
+    ///     Filter by postal code (value object).
     /// </summary>
-    public string? PostalCode { get; init; }
+    public PostalCode? PostalCode { get; init; }
 
     /// <summary>
     ///     Filter by minimum age.
