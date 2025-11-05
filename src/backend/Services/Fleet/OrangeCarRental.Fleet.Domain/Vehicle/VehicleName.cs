@@ -5,12 +5,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <summary>
 /// Vehicle name value object.
 /// </summary>
-public readonly record struct VehicleName
+/// <param name="Value">The vehicle name value.</param>
+public readonly record struct VehicleName(string Value)
 {
-    public string Value { get; }
-
-    private VehicleName(string value) => Value = value;
-
     public static VehicleName Of(string value)
     {
         var trimmed = value?.Trim() ?? string.Empty;

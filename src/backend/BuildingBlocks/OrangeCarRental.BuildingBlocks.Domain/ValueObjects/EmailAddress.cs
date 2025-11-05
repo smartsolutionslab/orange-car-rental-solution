@@ -6,12 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// Represents an email address with validation.
 /// Email addresses are stored in lowercase for consistency.
 /// </summary>
-public readonly record struct EmailAddress
+/// <param name="Value">The email address value.</param>
+public readonly record struct EmailAddress(string Value)
 {
-    public string Value { get; }
-
-    private EmailAddress(string value) => Value = value;
-
     public static EmailAddress Of(string value)
     {
         Ensure.That(value, nameof(value))

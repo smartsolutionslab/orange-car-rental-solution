@@ -5,12 +5,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <summary>
 /// Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
 /// </summary>
-public readonly record struct VehicleModel
+/// <param name="Value">The vehicle model value.</param>
+public readonly record struct VehicleModel(string Value)
 {
-    public string Value { get; }
-
-    private VehicleModel(string value) => Value = value;
-
     public static VehicleModel Of(string value)
     {
         var trimmed = value?.Trim() ?? string.Empty;

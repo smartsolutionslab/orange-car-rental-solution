@@ -7,12 +7,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// Supports formats: +49 XXX XXXXXXX, +49XXXXXXXXXX, 0XXX XXXXXXX
 /// Stored in normalized format: +49XXXXXXXXXX
 /// </summary>
-public readonly record struct PhoneNumber
+/// <param name="Value">The phone number value.</param>
+public readonly record struct PhoneNumber(string Value)
 {
-    public string Value { get; }
-
-    private PhoneNumber(string value) => Value = value;
-
     /// <summary>
     /// Creates a phone number value object from a string.
     /// </summary>

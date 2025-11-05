@@ -4,23 +4,11 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// Represents monetary value with VAT support for German market compliance.
 /// Always stores amounts in the smallest currency unit (e.g., cents for EUR).
 /// </summary>
-public readonly record struct Money
+/// <param name="NetAmount">Net amount (before VAT).</param>
+/// <param name="VatAmount">VAT amount.</param>
+/// <param name="Currency">Currency code (ISO 4217).</param>
+public readonly record struct Money(decimal NetAmount, decimal VatAmount, Currency Currency)
 {
-    /// <summary>
-    /// Net amount (before VAT).
-    /// </summary>
-    public decimal NetAmount { get; }
-
-    /// <summary>
-    /// VAT amount.
-    /// </summary>
-    public decimal VatAmount { get; }
-
-    /// <summary>
-    /// Currency code (ISO 4217).
-    /// </summary>
-    public Currency Currency { get; }
-
     /// <summary>
     /// Gross amount (net + VAT).
     /// </summary>
@@ -30,13 +18,6 @@ public readonly record struct Money
     /// VAT rate (calculated from net and VAT amounts).
     /// </summary>
     public decimal VatRate => NetAmount > 0 ? VatAmount / NetAmount : 0;
-
-    private Money(decimal netAmount, decimal vatAmount, Currency currency)
-    {
-        NetAmount = netAmount;
-        VatAmount = vatAmount;
-        Currency = currency;
-    }
 
     /// <summary>
     /// Creates money with VAT applied from net amount.

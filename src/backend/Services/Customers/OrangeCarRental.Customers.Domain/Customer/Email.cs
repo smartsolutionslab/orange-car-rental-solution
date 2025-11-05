@@ -6,12 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// Email value object with RFC 5322 format validation.
 /// Email addresses are stored in lowercase for consistency and case-insensitive comparison.
 /// </summary>
-public readonly record struct Email
+/// <param name="Value">The email address value.</param>
+public readonly record struct Email(string Value)
 {
-    public string Value { get; }
-
-    private Email(string value) => Value = value;
-
     /// <summary>
     /// Creates an email value object from a string.
     /// </summary>

@@ -6,15 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 /// City name value object.
 /// Represents a city name (e.g., "Berlin", "München").
 /// </summary>
-public readonly record struct City
+/// <param name="Value">The city name value.</param>
+public readonly record struct City(string Value)
 {
-    public string Value { get; }
-
-    private City(string value)
-    {
-        Value = value;
-    }
-
     public static City Of(string city)
     {
         var trimmed = city?.Trim() ?? string.Empty;

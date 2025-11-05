@@ -6,21 +6,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// Driver's license value object.
 /// Represents a driver's license with validation for EU/German requirements.
 /// </summary>
-public readonly record struct DriversLicense
+/// <param name="LicenseNumber">The license number.</param>
+/// <param name="IssueCountry">The country that issued the license.</param>
+/// <param name="IssueDate">The date the license was issued.</param>
+/// <param name="ExpiryDate">The date the license expires.</param>
+public readonly record struct DriversLicense(string LicenseNumber, string IssueCountry, DateOnly IssueDate, DateOnly ExpiryDate)
 {
-    public string LicenseNumber { get; }
-    public string IssueCountry { get; }
-    public DateOnly IssueDate { get; }
-    public DateOnly ExpiryDate { get; }
-
-    private DriversLicense(string licenseNumber, string issueCountry, DateOnly issueDate, DateOnly expiryDate)
-    {
-        LicenseNumber = licenseNumber;
-        IssueCountry = issueCountry;
-        IssueDate = issueDate;
-        ExpiryDate = expiryDate;
-    }
-
     /// <summary>
     /// Creates a driver's license value object.
     /// </summary>

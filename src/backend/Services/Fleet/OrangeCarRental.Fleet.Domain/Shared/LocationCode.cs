@@ -6,15 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 /// Location code value object.
 /// Represents a unique identifier for a rental location (e.g., "BER-HBF", "MUC-FLG").
 /// </summary>
-public readonly record struct LocationCode
+/// <param name="Value">The location code value.</param>
+public readonly record struct LocationCode(string Value)
 {
-    public string Value { get; }
-
-    private LocationCode(string value)
-    {
-        Value = value;
-    }
-
     public static LocationCode Of(string code)
     {
         var trimmed = code?.Trim().ToUpperInvariant() ?? string.Empty;

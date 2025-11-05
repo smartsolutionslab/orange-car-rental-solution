@@ -5,15 +5,9 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// <summary>
 /// Represents a currency using ISO 4217 codes.
 /// </summary>
-public readonly record struct Currency
+/// <param name="Code">Three-letter currency code (ISO 4217).</param>
+public readonly record struct Currency(string Code)
 {
-    /// <summary>
-    /// Three-letter currency code (ISO 4217).
-    /// </summary>
-    public string Code { get; }
-
-    private Currency(string code) => Code = code;
-
     public static Currency Of(string code)
     {
         Ensure.That(code, nameof(code))

@@ -6,21 +6,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// Address value object for German addresses.
 /// Represents a physical address with street, city, postal code, and country.
 /// </summary>
-public readonly record struct Address
+/// <param name="Street">Street name and number.</param>
+/// <param name="City">City name.</param>
+/// <param name="PostalCode">Postal code.</param>
+/// <param name="Country">Country name.</param>
+public readonly record struct Address(string Street, string City, string PostalCode, string Country)
 {
-    public string Street { get; }
-    public string City { get; }
-    public string PostalCode { get; }
-    public string Country { get; }
-
-    private Address(string street, string city, string postalCode, string country)
-    {
-        Street = street;
-        City = city;
-        PostalCode = postalCode;
-        Country = country;
-    }
-
     /// <summary>
     /// Creates an address value object with all components.
     /// </summary>

@@ -6,12 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 /// Location code for pricing (e.g., MUC-HBF, BER-AIRPORT).
 /// Maps to Location from Fleet service.
 /// </summary>
-public readonly record struct LocationCode
+/// <param name="Value">The location code value.</param>
+public readonly record struct LocationCode(string Value)
 {
-    public string Value { get; }
-
-    private LocationCode(string value) => Value = value;
-
     public static LocationCode Of(string value)
     {
         var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;

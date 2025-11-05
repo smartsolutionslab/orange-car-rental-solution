@@ -5,12 +5,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <summary>
 /// Represents the manufacturer/brand of a vehicle (e.g., BMW, Volkswagen, Mercedes-Benz).
 /// </summary>
-public readonly record struct Manufacturer
+/// <param name="Value">The manufacturer name value.</param>
+public readonly record struct Manufacturer(string Value)
 {
-    public string Value { get; }
-
-    private Manufacturer(string value) => Value = value;
-
     public static Manufacturer Of(string value)
     {
         var trimmed = value?.Trim() ?? string.Empty;

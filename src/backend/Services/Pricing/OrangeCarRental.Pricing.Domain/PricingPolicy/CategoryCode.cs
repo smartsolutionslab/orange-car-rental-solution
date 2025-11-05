@@ -6,12 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 /// Vehicle category code for pricing (e.g., KLEIN, KOMPAKT, MITTEL).
 /// Maps to VehicleCategory from Fleet service.
 /// </summary>
-public readonly record struct CategoryCode
+/// <param name="Value">The category code value.</param>
+public readonly record struct CategoryCode(string Value)
 {
-    public string Value { get; }
-
-    private CategoryCode(string value) => Value = value;
-
     public static CategoryCode Of(string value)
     {
         var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;

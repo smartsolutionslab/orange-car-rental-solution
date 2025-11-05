@@ -6,12 +6,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 /// Represents a location code identifier (e.g., "BER-HBF", "MUC-APT").
 /// References a location in the Fleet service where vehicles can be picked up or dropped off.
 /// </summary>
-public readonly record struct LocationCode
+/// <param name="Value">The location code value.</param>
+public readonly record struct LocationCode(string Value)
 {
-    public string Value { get; }
-
-    private LocationCode(string value) => Value = value;
-
     /// <summary>
     /// Creates a new location code.
     /// </summary>
