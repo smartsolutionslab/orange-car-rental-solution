@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -8,9 +9,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 public sealed class CustomerSearchParameters : SearchParameters
 {
     /// <summary>
-    ///     Search by customer name (first or last name).
+    ///     Search by customer name (first or last name) using value object.
     /// </summary>
-    public string? SearchTerm { get; init; }
+    public SearchTerm? SearchTerm { get; init; }
 
     /// <summary>
     ///     Filter by email address (value object).

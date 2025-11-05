@@ -57,11 +57,12 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         // Apply filters using database-level WHERE clauses
 
         // Name search - search in both FirstName and LastName using LIKE
-        if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
+        if (parameters.SearchTerm is not null)
         {
+            var searchTermValue = parameters.SearchTerm.Value.Value;
             query = query.Where(c =>
-                EF.Functions.Like(c.FirstName, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(c.LastName, $"%{parameters.SearchTerm}%"));
+                EF.Functions.Like(c.FirstName, $"%{searchTermValue}%") ||
+                EF.Functions.Like(c.LastName, $"%{searchTermValue}%"));
         }
 
         // Email filter - use value object directly
@@ -73,13 +74,13 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         // Status filter
         if (parameters.Status.HasValue) query = query.Where(c => c.Status == parameters.Status.Value);
 
-        // City filter
-        if (!string.IsNullOrWhiteSpace(parameters.City))
-            query = query.Where(c => EF.Functions.Like(c.Address.City, $"%{parameters.City}%"));
+        // City filter - use value object directly
+        if (parameters.City is not null)
+            query = query.Where(c => c.Address.City == parameters.City.Value);
 
-        // Postal code filter
-        if (!string.IsNullOrWhiteSpace(parameters.PostalCode))
-            query = query.Where(c => c.Address.PostalCode == parameters.PostalCode);
+        // Postal code filter - use value object directly
+        if (parameters.PostalCode is not null)
+            query = query.Where(c => c.Address.PostalCode == parameters.PostalCode.Value);
 
         // Age range filtering - calculated from DateOfBirth
         var today = DateOnly.FromDateTime(DateTime.UtcNow);

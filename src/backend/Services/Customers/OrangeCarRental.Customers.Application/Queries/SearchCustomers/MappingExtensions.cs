@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -74,6 +75,20 @@ public static class MappingExtensions
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
+        // Parse search term to value object if provided
+        SearchTerm? searchTerm = null;
+        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            try
+            {
+                searchTerm = SearchTerm.Of(query.SearchTerm.Trim());
+            }
+            catch (ArgumentException)
+            {
+                // Invalid search term format (too short/long) - leave as null to filter nothing
+            }
+        }
+
         // Parse status if provided
         CustomerStatus? status = null;
         if (!string.IsNullOrWhiteSpace(query.Status))
@@ -138,7 +153,7 @@ public static class MappingExtensions
 
         return new CustomerSearchParameters
         {
-            SearchTerm = query.SearchTerm?.Trim(),
+            SearchTerm = searchTerm,
             Email = email,
             PhoneNumber = phoneNumber,
             Status = status,
