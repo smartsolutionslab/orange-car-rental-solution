@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
@@ -33,60 +35,29 @@ public readonly record struct DriversLicense
         DateOnly issueDate,
         DateOnly expiryDate)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(licenseNumber, nameof(licenseNumber));
-        ArgumentException.ThrowIfNullOrWhiteSpace(issueCountry, nameof(issueCountry));
+        var normalizedLicenseNumber = licenseNumber?.Trim().ToUpperInvariant() ?? string.Empty;
+        var normalizedIssueCountry = issueCountry?.Trim() ?? string.Empty;
 
-        var normalizedLicenseNumber = licenseNumber.Trim().ToUpperInvariant();
-        var normalizedIssueCountry = issueCountry.Trim();
+        Ensure.That(normalizedLicenseNumber, nameof(licenseNumber))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(5, 20)
+            .AndSatisfies(
+                num => num.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)),
+                "License number must contain only letters, digits, and spaces");
 
-        // Validate license number format (alphanumeric, spaces allowed)
-        if (!normalizedLicenseNumber.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)))
-        {
-            throw new ArgumentException(
-                "License number must contain only letters, digits, and spaces",
-                nameof(licenseNumber));
-        }
+        Ensure.That(normalizedIssueCountry, nameof(issueCountry))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
-        // Validate length
-        if (normalizedLicenseNumber.Length < 5 || normalizedLicenseNumber.Length > 20)
-        {
-            throw new ArgumentException(
-                "License number must be between 5 and 20 characters",
-                nameof(licenseNumber));
-        }
-
-        // Validate dates
-        if (issueDate > DateOnly.FromDateTime(DateTime.UtcNow))
-        {
-            throw new ArgumentException(
-                "License issue date cannot be in the future",
-                nameof(issueDate));
-        }
-
-        if (expiryDate <= issueDate)
-        {
-            throw new ArgumentException(
-                "License expiry date must be after issue date",
-                nameof(expiryDate));
-        }
-
-        // Validate that license was issued at least 18 years after a reasonable birth year
-        // (This is a sanity check - actual age validation is done in the Customer aggregate)
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var minimumIssueDate = new DateOnly(1950, 1, 1);
-        if (issueDate < minimumIssueDate)
-        {
-            throw new ArgumentException(
-                $"License issue date cannot be before {minimumIssueDate}",
-                nameof(issueDate));
-        }
 
-        // Validate country
-        if (normalizedIssueCountry.Length > 100)
-        {
-            throw new ArgumentException(
-                "Issue country name is too long (max 100 characters)",
-                nameof(issueCountry));
-        }
+        Ensure.That(issueDate, nameof(issueDate))
+            .IsGreaterThanOrEqual(minimumIssueDate)
+            .IsLessThanOrEqual(today);
+
+        Ensure.That(expiryDate, nameof(expiryDate))
+            .IsGreaterThan(issueDate);
 
         return new DriversLicense(
             normalizedLicenseNumber,

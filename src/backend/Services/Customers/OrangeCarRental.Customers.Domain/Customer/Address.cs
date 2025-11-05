@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
@@ -29,36 +31,35 @@ public readonly record struct Address
     /// <exception cref="ArgumentException">Thrown when any required field is invalid.</exception>
     public static Address Of(string street, string city, string postalCode, string country = "Germany")
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(street, nameof(street));
-        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
-        ArgumentException.ThrowIfNullOrWhiteSpace(postalCode, nameof(postalCode));
+        Ensure.That(street, nameof(street))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(200);
+
+        Ensure.That(city, nameof(city))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
+
+        Ensure.That(postalCode, nameof(postalCode))
+            .IsNotNullOrWhiteSpace();
 
         var normalizedStreet = street.Trim();
         var normalizedCity = city.Trim();
         var normalizedPostalCode = postalCode.Trim();
         var normalizedCountry = (country ?? "Germany").Trim();
 
+        Ensure.That(normalizedCountry, nameof(country))
+            .AndHasMaxLength(100);
+
         // Validate German postal code format (5 digits)
         if (normalizedCountry.Equals("Germany", StringComparison.OrdinalIgnoreCase) ||
             normalizedCountry.Equals("Deutschland", StringComparison.OrdinalIgnoreCase))
         {
-            if (normalizedPostalCode.Length != 5 || !normalizedPostalCode.All(char.IsDigit))
-            {
-                throw new ArgumentException(
-                    "German postal code must be exactly 5 digits",
-                    nameof(postalCode));
-            }
+            Ensure.That(normalizedPostalCode, nameof(postalCode))
+                .AndHasLengthBetween(5, 5)
+                .AndSatisfies(
+                    code => code.All(char.IsDigit),
+                    "German postal code must be exactly 5 digits");
         }
-
-        // Validate lengths
-        if (normalizedStreet.Length > 200)
-            throw new ArgumentException("Street name is too long (max 200 characters)", nameof(street));
-
-        if (normalizedCity.Length > 100)
-            throw new ArgumentException("City name is too long (max 100 characters)", nameof(city));
-
-        if (normalizedCountry.Length > 100)
-            throw new ArgumentException("Country name is too long (max 100 characters)", nameof(country));
 
         return new Address(normalizedStreet, normalizedCity, normalizedPostalCode, normalizedCountry);
     }

@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
@@ -12,11 +14,11 @@ public readonly record struct CategoryCode
 
     public static CategoryCode Of(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;
 
-        var trimmed = value.Trim().ToUpperInvariant();
-        if (trimmed.Length > 20)
-            throw new ArgumentException("Category code cannot exceed 20 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(20);
 
         return new CategoryCode(trimmed);
     }

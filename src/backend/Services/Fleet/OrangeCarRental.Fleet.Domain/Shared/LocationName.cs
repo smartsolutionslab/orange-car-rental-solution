@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
@@ -15,13 +17,11 @@ public readonly record struct LocationName
 
     public static LocationName Of(string name)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(name, nameof(name));
+        var trimmed = name?.Trim() ?? string.Empty;
 
-        var trimmed = name.Trim();
-        if (trimmed.Length > 100)
-        {
-            throw new ArgumentException("Location name cannot exceed 100 characters", nameof(name));
-        }
+        Ensure.That(trimmed, nameof(name))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         return new LocationName(trimmed);
     }

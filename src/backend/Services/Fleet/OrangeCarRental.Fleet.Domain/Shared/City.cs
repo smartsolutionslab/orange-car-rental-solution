@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
@@ -15,10 +17,11 @@ public readonly record struct City
 
     public static City Of(string city)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
+        var trimmed = city?.Trim() ?? string.Empty;
 
-        var trimmed = city.Trim();
-        if (trimmed.Length > 100) throw new ArgumentException("City name cannot exceed 100 characters", nameof(city));
+        Ensure.That(trimmed, nameof(city))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         return new City(trimmed);
     }

@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
@@ -14,9 +16,9 @@ public readonly record struct Currency
 
     public static Currency Of(string code)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
-
-        if (code.Length != 3) throw new ArgumentException("Currency code must be exactly 3 characters (ISO 4217)", nameof(code));
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(3, 3);
 
         return new Currency(code.ToUpperInvariant());
     }

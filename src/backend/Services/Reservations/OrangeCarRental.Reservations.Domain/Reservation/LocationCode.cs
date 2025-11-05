@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
@@ -18,12 +20,11 @@ public readonly record struct LocationCode
     /// <exception cref="ArgumentException">Thrown when code is invalid</exception>
     public static LocationCode Of(string code)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
+        var trimmed = code?.Trim().ToUpperInvariant() ?? string.Empty;
 
-        var trimmed = code.Trim().ToUpperInvariant();
-
-        if (trimmed.Length < 3) throw new ArgumentException("Location code must be at least 3 characters long", nameof(code));
-        if (trimmed.Length > 20) throw new ArgumentException("Location code cannot exceed 20 characters", nameof(code));
+        Ensure.That(trimmed, nameof(code))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(3, 20);
 
         return new LocationCode(trimmed);
     }
