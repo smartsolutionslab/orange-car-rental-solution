@@ -1,6 +1,9 @@
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 
@@ -92,6 +95,122 @@ Returns the newly created customer ID, reservation ID, and pricing breakdown.
         .WithName("GetReservation")
         .WithSummary("Get reservation by ID")
         .WithDescription("Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.");
+
+        // GET /api/reservations/search - Search reservations with filters
+        reservations.MapGet("/search", async (
+            SearchReservationsQueryHandler handler,
+            string? status = null,
+            Guid? customerId = null,
+            Guid? vehicleId = null,
+            DateTime? pickupDateFrom = null,
+            DateTime? pickupDateTo = null,
+            int pageNumber = 1,
+            int pageSize = 50) =>
+        {
+            var query = new SearchReservationsQuery(
+                status,
+                customerId,
+                vehicleId,
+                pickupDateFrom,
+                pickupDateTo,
+                pageNumber,
+                pageSize);
+
+            var result = await handler.HandleAsync(query);
+            return Results.Ok(result);
+        })
+        .WithName("SearchReservations")
+        .WithSummary("Search reservations with filters and pagination")
+        .WithDescription(@"
+Search for reservations using various filters:
+- **status**: Filter by status (Pending, Confirmed, Active, Completed, Cancelled, NoShow)
+- **customerId**: Filter by customer GUID
+- **vehicleId**: Filter by vehicle GUID
+- **pickupDateFrom**: Filter by pickup date from (inclusive)
+- **pickupDateTo**: Filter by pickup date to (inclusive)
+- **pageNumber**: Page number (default: 1)
+- **pageSize**: Items per page (default: 50, max: 100)
+
+Returns paginated results with total count and pagination metadata.");
+
+        // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
+        reservations.MapPut("/{id:guid}/confirm", async (
+            Guid id,
+            ConfirmReservationCommandHandler handler) =>
+        {
+            try
+            {
+                var command = new ConfirmReservationCommand(id);
+                var result = await handler.HandleAsync(command);
+                return Results.Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.BadRequest(new { Message = ex.Message });
+            }
+        })
+        .WithName("ConfirmReservation")
+        .WithSummary("Confirm a pending reservation")
+        .WithDescription(@"
+Confirms a pending reservation after payment has been received.
+
+**Requirements:**
+- Reservation must be in 'Pending' status
+- Cannot confirm already confirmed, active, completed, or cancelled reservations
+
+**What Happens:**
+- Status changes from 'Pending' to 'Confirmed'
+- ConfirmedAt timestamp is set
+- ReservationConfirmed domain event is raised
+
+**Use Case:** Call this endpoint after payment gateway confirms successful payment.");
+
+        // PUT /api/reservations/{id}/cancel - Cancel a reservation
+        reservations.MapPut("/{id:guid}/cancel", async (
+            Guid id,
+            CancelReservationCommand command,
+            CancelReservationCommandHandler handler) =>
+        {
+            try
+            {
+                // Override the ID from the URL
+                var commandWithId = command with { ReservationId = id };
+                var result = await handler.HandleAsync(commandWithId);
+                return Results.Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Results.BadRequest(new { Message = ex.Message });
+            }
+        })
+        .WithName("CancelReservation")
+        .WithSummary("Cancel a reservation")
+        .WithDescription(@"
+Cancels a reservation with an optional reason.
+
+**Requirements:**
+- Cannot cancel a completed reservation
+- Cannot cancel an active rental (vehicle must be returned first)
+- Already cancelled reservations are idempotent (no error)
+
+**Request Body:**
+```json
+{
+  ""cancellationReason"": ""Customer requested cancellation""
+}
+```
+
+**What Happens:**
+- Status changes to 'Cancelled'
+- CancelledAt timestamp is set
+- CancellationReason is stored
+- ReservationCancelled domain event is raised
+
+**Cancellation Policy (German Market):**
+- Free cancellation up to 48h before pickup
+- 50% refund for 24-48h before pickup
+- No refund for < 24h before pickup
+(Policy enforcement should be handled in payment service)");
 
         return app;
     }

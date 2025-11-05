@@ -21,6 +21,57 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
+        ReservationStatus? status = null,
+        Guid? customerId = null,
+        Guid? vehicleId = null,
+        DateOnly? pickupDateFrom = null,
+        DateOnly? pickupDateTo = null,
+        int pageNumber = 1,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default)
+    {
+        var query = context.Reservations.AsNoTracking();
+
+        // Apply filters
+        if (status != null)
+        {
+            query = query.Where(r => r.Status == status);
+        }
+
+        if (customerId.HasValue)
+        {
+            query = query.Where(r => r.CustomerId == customerId.Value);
+        }
+
+        if (vehicleId.HasValue)
+        {
+            query = query.Where(r => r.VehicleId == vehicleId.Value);
+        }
+
+        if (pickupDateFrom.HasValue)
+        {
+            query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
+        }
+
+        if (pickupDateTo.HasValue)
+        {
+            query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
+        }
+
+        // Get total count before pagination
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        // Apply pagination and ordering
+        var reservations = await query
+            .OrderByDescending(r => r.CreatedAt)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (reservations, totalCount);
+    }
+
     public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {
         await context.Reservations.AddAsync(reservation, cancellationToken);

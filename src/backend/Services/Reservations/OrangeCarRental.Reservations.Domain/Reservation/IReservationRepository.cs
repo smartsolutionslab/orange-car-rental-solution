@@ -10,6 +10,16 @@ public interface IReservationRepository
 
     Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
 
+    Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
+        ReservationStatus? status = null,
+        Guid? customerId = null,
+        Guid? vehicleId = null,
+        DateOnly? pickupDateFrom = null,
+        DateOnly? pickupDateTo = null,
+        int pageNumber = 1,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default);
+
     Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default);
 
     Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default);
