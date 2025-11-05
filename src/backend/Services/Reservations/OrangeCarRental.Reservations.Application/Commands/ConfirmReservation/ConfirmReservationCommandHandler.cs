@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Co
 /// Confirms a pending reservation after payment has been received.
 /// </summary>
 public sealed class ConfirmReservationCommandHandler(
-    IReservationRepository repository)
+    IReservationRepository reservations)
 {
     public async Task<ConfirmReservationResult> HandleAsync(
         ConfirmReservationCommand command,
@@ -15,7 +15,7 @@ public sealed class ConfirmReservationCommandHandler(
     {
         // Get existing reservation
         var reservationId = ReservationIdentifier.From(command.ReservationId);
-        var reservation = await repository.GetByIdAsync(reservationId, cancellationToken);
+        var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken);
 
         if (reservation == null)
         {
@@ -26,8 +26,8 @@ public sealed class ConfirmReservationCommandHandler(
         var confirmedReservation = reservation.Confirm();
 
         // Update in repository
-        await repository.UpdateAsync(confirmedReservation, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await reservations.UpdateAsync(confirmedReservation, cancellationToken);
+        await reservations.SaveChangesAsync(cancellationToken);
 
         return new ConfirmReservationResult(
             confirmedReservation.Id.Value,

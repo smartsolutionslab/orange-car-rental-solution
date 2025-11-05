@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Sea
 /// Handler for SearchReservationsQuery.
 /// Searches reservations with filters and returns paginated results.
 /// </summary>
-public sealed class SearchReservationsQueryHandler(IReservationRepository repository)
+public sealed class SearchReservationsQueryHandler(IReservationRepository reservations)
 {
     public async Task<SearchReservationsResult> HandleAsync(
         SearchReservationsQuery query,
@@ -39,7 +39,7 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reposi
             : null;
 
         // Search reservations
-        var (reservations, totalCount) = await repository.SearchAsync(
+        var (reservationsList, totalCount) = await reservations.SearchAsync(
             status,
             query.CustomerId,
             query.VehicleId,
@@ -50,7 +50,7 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reposi
             cancellationToken);
 
         // Map to DTOs
-        var reservationDtos = reservations.Select(MapToDto).ToList();
+        var reservationDtos = reservationsList.Select(MapToDto).ToList();
 
         return new SearchReservationsResult(
             reservationDtos,

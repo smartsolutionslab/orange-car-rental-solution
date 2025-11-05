@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Ca
 /// Cancels a reservation with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IReservationRepository repository)
+    IReservationRepository reservations)
 {
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
@@ -15,7 +15,7 @@ public sealed class CancelReservationCommandHandler(
     {
         // Get existing reservation
         var reservationId = ReservationIdentifier.From(command.ReservationId);
-        var reservation = await repository.GetByIdAsync(reservationId, cancellationToken);
+        var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken);
 
         if (reservation == null)
         {
@@ -26,8 +26,8 @@ public sealed class CancelReservationCommandHandler(
         var cancelledReservation = reservation.Cancel(command.CancellationReason);
 
         // Update in repository
-        await repository.UpdateAsync(cancelledReservation, cancellationToken);
-        await repository.SaveChangesAsync(cancellationToken);
+        await reservations.UpdateAsync(cancelledReservation, cancellationToken);
+        await reservations.SaveChangesAsync(cancellationToken);
 
         return new CancelReservationResult(
             cancelledReservation.Id.Value,
