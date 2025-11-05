@@ -23,7 +23,9 @@
       "Bash(dotnet clean:*)",
       "Bash(del:*)",
       "Bash(dotnet run:*)",
-      "Bash(dotnet add:*)"
+      "Bash(dotnet add:*)",
+      "Bash(cat:*)",
+      "Bash(gh --version:*)"
     ],
     "deny": [],
     "ask": []
