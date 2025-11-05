@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
@@ -8,27 +8,18 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// </summary>
 public readonly record struct EmailAddress
 {
-    private static readonly Regex EmailRegex = new(
-        @"^[^@\s]+@[^@\s]+\.[^@\s]+$",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase);
-
     public string Value { get; }
 
     private EmailAddress(string value) => Value = value;
 
     public static EmailAddress Of(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-
-        if (!IsValidEmail(value))
-            throw new ArgumentException($"Invalid email address format: {value}", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(256)
+            .AndIsValidEmail();
 
         return new EmailAddress(value.Trim().ToLowerInvariant());
-    }
-
-    private static bool IsValidEmail(string email)
-    {
-        return EmailRegex.IsMatch(email);
     }
 
     /// <summary>
