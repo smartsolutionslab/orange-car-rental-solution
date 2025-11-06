@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
@@ -11,8 +12,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 public sealed record CreateGuestReservationCommand
 {
     // Vehicle and Reservation Details
-    public required Guid VehicleId { get; init; }
-    public required string CategoryCode { get; init; }
+    public required VehicleIdentifier VehicleId { get; init; }
+    public required VehicleCategory CategoryCode { get; init; }
     public required BookingPeriod Period { get; init; }
     public required LocationCode PickupLocationCode { get; init; }
     public required LocationCode DropoffLocationCode { get; init; }

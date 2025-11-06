@@ -45,7 +45,7 @@ public sealed class CreateGuestReservationCommandHandler(
         // Step 2: Calculate price via Pricing API
         // Note: Pricing service still uses primitives, so we extract from value objects
         var priceCalculation = await pricingService.CalculatePriceAsync(
-            command.CategoryCode,
+            command.CategoryCode.Code,
             command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
             command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
             command.PickupLocationCode.Value,
@@ -55,7 +55,7 @@ public sealed class CreateGuestReservationCommandHandler(
 
         // Step 3: Create the reservation aggregate with the new customer ID
         var reservation = Reservation.Create(
-            command.VehicleId,
+            command.VehicleId.Value,
             customerId,
             command.Period,
             command.PickupLocationCode,

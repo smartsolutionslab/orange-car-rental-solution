@@ -1,4 +1,5 @@
 using Moq;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -118,7 +119,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Assert
         _pricingServiceMock.Verify(
             s => s.CalculatePriceAsync(
-                command.CategoryCode,
+                command.CategoryCode.Code,
                 command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
                 command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
                 command.PickupLocationCode.Value,
@@ -275,7 +276,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.Should().NotBeNull();
-        capturedReservation!.VehicleId.Should().Be(command.VehicleId);
+        capturedReservation!.VehicleId.Should().Be(command.VehicleId.Value);
     }
 
     [Fact]
@@ -441,18 +442,14 @@ public class CreateGuestReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithEmptyVehicleId_ThrowsArgumentException()
+    public void HandleAsync_WithEmptyVehicleId_ThrowsArgumentException()
     {
-        // Arrange
-        var command = CreateValidCommand() with { VehicleId = Guid.Empty };
-        SetupDefaultMocks();
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        // Arrange & Act - Exception now thrown during value object construction
+        var act = () => CreateValidCommand() with { VehicleId = VehicleIdentifier.From(Guid.Empty) };
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
-            .WithMessage("*GUID cannot be empty*");
+        act.Should().Throw<ArgumentException>()
+            .WithMessage("*must not be equal to*00000000-0000-0000-0000-000000000000*");
     }
 
     [Fact]
@@ -517,8 +514,8 @@ public class CreateGuestReservationCommandHandlerTests
         return new CreateGuestReservationCommand
         {
             // Vehicle details
-            VehicleId = Guid.NewGuid(),
-            CategoryCode = "KOMPAKT",
+            VehicleId = VehicleIdentifier.From(Guid.NewGuid()),
+            CategoryCode = VehicleCategory.FromCode("KOMPAKT"),
             Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
             PickupLocationCode = LocationCode.Of("BER-HBF"),
             DropoffLocationCode = LocationCode.Of("BER-HBF"),

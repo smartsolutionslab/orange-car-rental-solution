@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
@@ -26,9 +27,9 @@ public static class ReservationEndpoints
             {
                 // Map request DTO to command with value objects
                 var command = new CreateReservationCommand(
-                    request.VehicleId,
+                    VehicleIdentifier.From(request.VehicleId),
                     request.CustomerId,
-                    request.CategoryCode,
+                    VehicleCategory.FromCode(request.CategoryCode),
                     BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     LocationCode.Of(request.PickupLocationCode),
                     LocationCode.Of(request.DropoffLocationCode),
@@ -71,8 +72,8 @@ public static class ReservationEndpoints
                 // Map request DTO to command with value objects
                 var command = new CreateGuestReservationCommand
                 {
-                    VehicleId = request.VehicleId,
-                    CategoryCode = request.CategoryCode,
+                    VehicleId = VehicleIdentifier.From(request.VehicleId),
+                    CategoryCode = VehicleCategory.FromCode(request.CategoryCode),
                     Period = BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     PickupLocationCode = LocationCode.Of(request.PickupLocationCode),
                     DropoffLocationCode = LocationCode.Of(request.DropoffLocationCode),
