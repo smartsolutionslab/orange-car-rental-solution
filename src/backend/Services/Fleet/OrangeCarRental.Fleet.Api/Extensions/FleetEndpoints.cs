@@ -1,6 +1,9 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -78,6 +81,121 @@ public static class FleetEndpoints
                 "Adds a new vehicle to the rental fleet. Daily rate is net amount in EUR, 19% German VAT will be calculated automatically. Vehicle will be available for rental immediately.")
             .Produces<AddVehicleToFleetResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        // PUT /api/vehicles/{id}/status - Update vehicle status
+        fleet.MapPut("/{id:guid}/status", async (
+                Guid id,
+                string status,
+                UpdateVehicleStatusCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    if (!Enum.TryParse<VehicleStatus>(status, true, out var vehicleStatus))
+                        return Results.BadRequest(new { message = $"Invalid status: {status}" });
+
+                    var command = new UpdateVehicleStatusCommand(id, vehicleStatus);
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "An error occurred while updating the vehicle status");
+                }
+            })
+            .WithName("UpdateVehicleStatus")
+            .WithSummary("Update vehicle status")
+            .WithDescription(
+                "Updates a vehicle's operational status. Valid statuses: Available, Rented, Maintenance, OutOfService, Reserved. Cannot move a rented vehicle.")
+            .Produces<UpdateVehicleStatusResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        // PUT /api/vehicles/{id}/location - Update vehicle location
+        fleet.MapPut("/{id:guid}/location", async (
+                Guid id,
+                string locationCode,
+                UpdateVehicleLocationCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    var location = Location.FromCode(LocationCode.Of(locationCode));
+                    var command = new UpdateVehicleLocationCommand(id, location);
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "An error occurred while updating the vehicle location");
+                }
+            })
+            .WithName("UpdateVehicleLocation")
+            .WithSummary("Move vehicle to a different location")
+            .WithDescription(
+                "Moves a vehicle to a different rental location. Vehicle must not be rented. Valid location codes: BER-HBF, MUC-FLG, FRA-FLG, HAM-HBF, CGN-HBF.")
+            .Produces<UpdateVehicleLocationResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError);
+
+        // PUT /api/vehicles/{id}/daily-rate - Update vehicle daily rate
+        fleet.MapPut("/{id:guid}/daily-rate", async (
+                Guid id,
+                decimal dailyRateNet,
+                UpdateVehicleDailyRateCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    var newRate = Money.Euro(dailyRateNet);
+                    var command = new UpdateVehicleDailyRateCommand(id, newRate);
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "An error occurred while updating the daily rate");
+                }
+            })
+            .WithName("UpdateVehicleDailyRate")
+            .WithSummary("Update vehicle daily rental rate")
+            .WithDescription(
+                "Updates a vehicle's daily rental rate. Provide the net amount in EUR, 19% German VAT will be calculated automatically.")
+            .Produces<UpdateVehicleDailyRateResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         // Location endpoints

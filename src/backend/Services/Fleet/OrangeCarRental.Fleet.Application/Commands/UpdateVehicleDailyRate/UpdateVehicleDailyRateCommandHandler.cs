@@ -1,0 +1,46 @@
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
+
+/// <summary>
+///     Handler for UpdateVehicleDailyRateCommand.
+///     Updates a vehicle's daily rental rate with German VAT.
+/// </summary>
+public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehicles)
+{
+    /// <summary>
+    ///     Handles the update vehicle daily rate command.
+    /// </summary>
+    /// <param name="command">The command with vehicle ID and new daily rate.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Result with old and new rate details.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when vehicle is not found.</exception>
+    public async Task<UpdateVehicleDailyRateResult> HandleAsync(
+        UpdateVehicleDailyRateCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        // Load vehicle
+        var vehicleId = VehicleIdentifier.From(command.VehicleId);
+        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken)
+            ?? throw new InvalidOperationException($"Vehicle with ID '{command.VehicleId}' not found.");
+
+        var oldRate = vehicle.DailyRate;
+
+        // Update daily rate (domain method returns new instance)
+        vehicle = vehicle.UpdateDailyRate(command.NewDailyRate);
+
+        // Persist changes
+        await vehicles.UpdateAsync(vehicle, cancellationToken);
+        await vehicles.SaveChangesAsync(cancellationToken);
+
+        // Return result
+        return new UpdateVehicleDailyRateResult(
+            vehicle.Id.Value,
+            oldRate.NetAmount,
+            oldRate.GrossAmount,
+            vehicle.DailyRate.NetAmount,
+            vehicle.DailyRate.GrossAmount,
+            $"Daily rate updated from {oldRate.GrossAmount:C2} to {vehicle.DailyRate.GrossAmount:C2} (incl. 19% VAT)"
+        );
+    }
+}
