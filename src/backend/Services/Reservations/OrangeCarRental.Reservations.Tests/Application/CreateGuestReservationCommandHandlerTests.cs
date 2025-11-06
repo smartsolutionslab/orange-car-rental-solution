@@ -93,14 +93,14 @@ public class CreateGuestReservationCommandHandlerTests
                     dto.Email == command.Email.Value &&
                     dto.PhoneNumber == command.PhoneNumber.Value &&
                     dto.DateOfBirth == command.DateOfBirth &&
-                    dto.Street == command.Street &&
-                    dto.City == command.City &&
-                    dto.PostalCode == command.PostalCode &&
-                    dto.Country == command.Country &&
-                    dto.LicenseNumber == command.LicenseNumber &&
-                    dto.LicenseIssueCountry == command.LicenseIssueCountry &&
-                    dto.LicenseIssueDate == command.LicenseIssueDate &&
-                    dto.LicenseExpiryDate == command.LicenseExpiryDate),
+                    dto.Street == command.Address.Street &&
+                    dto.City == command.Address.City.Value &&
+                    dto.PostalCode == command.Address.PostalCode.Value &&
+                    dto.Country == command.Address.Country &&
+                    dto.LicenseNumber == command.DriversLicense.LicenseNumber &&
+                    dto.LicenseIssueCountry == command.DriversLicense.IssueCountry &&
+                    dto.LicenseIssueDate == command.DriversLicense.IssueDate &&
+                    dto.LicenseExpiryDate == command.DriversLicense.ExpiryDate),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -530,17 +530,17 @@ public class CreateGuestReservationCommandHandlerTests
             PhoneNumber = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.PhoneNumber.Of("+49 30 12345678"),
             DateOfBirth = new DateOnly(1990, 1, 15),
 
-            // Address details
-            Street = "Musterstraße 123",
-            City = "Berlin",
-            PostalCode = "10115",
-            Country = "Germany",
-
-            // License details
-            LicenseNumber = "B123456789",
-            LicenseIssueCountry = "Germany",
-            LicenseIssueDate = new DateOnly(2010, 6, 1),
-            LicenseExpiryDate = new DateOnly(2030, 6, 1)
+            // Address and License (value objects)
+            Address = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Address.Of(
+                "Musterstraße 123",
+                "Berlin",
+                "10115",
+                "Germany"),
+            DriversLicense = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.DriversLicense.Of(
+                "B123456789",
+                "Germany",
+                new DateOnly(2010, 6, 1),
+                new DateOnly(2030, 6, 1))
         };
     }
 

@@ -28,14 +28,14 @@ public sealed class CreateGuestReservationCommandHandler(
             command.Email.Value,
             command.PhoneNumber.Value,
             command.DateOfBirth,
-            command.Street,
-            command.City,
-            command.PostalCode,
-            command.Country,
-            command.LicenseNumber,
-            command.LicenseIssueCountry,
-            command.LicenseIssueDate,
-            command.LicenseExpiryDate
+            command.Address.Street,
+            command.Address.City.Value,
+            command.Address.PostalCode.Value,
+            command.Address.Country,
+            command.DriversLicense.LicenseNumber,
+            command.DriversLicense.IssueCountry,
+            command.DriversLicense.IssueDate,
+            command.DriversLicense.ExpiryDate
         );
 
         var customerId = await customersService.RegisterCustomerAsync(

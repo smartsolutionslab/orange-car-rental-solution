@@ -25,15 +25,7 @@ public sealed record CreateGuestReservationCommand
     public required PhoneNumber PhoneNumber { get; init; }
     public required DateOnly DateOfBirth { get; init; }
 
-    // Address Details
-    public required string Street { get; init; }
-    public required string City { get; init; }
-    public required string PostalCode { get; init; }
-    public string Country { get; init; } = "Germany";
-
-    // Driver's License Details
-    public required string LicenseNumber { get; init; }
-    public required string LicenseIssueCountry { get; init; }
-    public required DateOnly LicenseIssueDate { get; init; }
-    public required DateOnly LicenseExpiryDate { get; init; }
+    // Address and License (value objects)
+    public required Address Address { get; init; }
+    public required DriversLicense DriversLicense { get; init; }
 }

@@ -81,14 +81,12 @@ public static class ReservationEndpoints
                     Email = Email.Of(request.Email),
                     PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
                     DateOfBirth = request.DateOfBirth,
-                    Street = request.Street,
-                    City = request.City,
-                    PostalCode = request.PostalCode,
-                    Country = request.Country,
-                    LicenseNumber = request.LicenseNumber,
-                    LicenseIssueCountry = request.LicenseIssueCountry,
-                    LicenseIssueDate = request.LicenseIssueDate,
-                    LicenseExpiryDate = request.LicenseExpiryDate
+                    Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
+                    DriversLicense = DriversLicense.Of(
+                        request.LicenseNumber,
+                        request.LicenseIssueCountry,
+                        request.LicenseIssueDate,
+                        request.LicenseExpiryDate)
                 };
 
                 var result = await handler.HandleAsync(command);
