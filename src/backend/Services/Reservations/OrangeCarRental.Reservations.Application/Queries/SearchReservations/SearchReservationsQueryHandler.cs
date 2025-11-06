@@ -15,18 +15,10 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
     {
         // Parse status if provided
         ReservationStatus? status = null;
-        if (!string.IsNullOrWhiteSpace(query.Status))
+        if (!string.IsNullOrWhiteSpace(query.Status) &&
+            Enum.TryParse<ReservationStatus>(query.Status, ignoreCase: true, out var parsedStatus))
         {
-            status = query.Status.ToLowerInvariant() switch
-            {
-                "pending" => ReservationStatus.Pending,
-                "confirmed" => ReservationStatus.Confirmed,
-                "active" => ReservationStatus.Active,
-                "completed" => ReservationStatus.Completed,
-                "cancelled" => ReservationStatus.Cancelled,
-                "noshow" => ReservationStatus.NoShow,
-                _ => null
-            };
+            status = parsedStatus;
         }
 
         // Convert DateTime to DateOnly for pickup date filters

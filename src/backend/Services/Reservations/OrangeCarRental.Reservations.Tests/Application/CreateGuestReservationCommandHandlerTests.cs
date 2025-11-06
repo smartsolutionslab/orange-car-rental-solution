@@ -452,7 +452,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()
-            .WithMessage("*Vehicle ID cannot be empty*");
+            .WithMessage("*GUID cannot be empty*");
     }
 
     [Fact]

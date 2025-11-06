@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 
@@ -66,8 +67,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         LocationCode dropoffLocationCode,
         Money totalPrice)
     {
-        if (vehicleId == Guid.Empty) throw new ArgumentException("Vehicle ID cannot be empty", nameof(vehicleId));
-        if (customerId == Guid.Empty) throw new ArgumentException("Customer ID cannot be empty", nameof(customerId));
+        Ensure.That(vehicleId, nameof(vehicleId)).IsNotEmpty();
+        Ensure.That(customerId, nameof(customerId)).IsNotEmpty();
 
         return new Reservation(
             ReservationIdentifier.New(),

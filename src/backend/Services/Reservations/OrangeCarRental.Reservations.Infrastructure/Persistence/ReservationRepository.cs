@@ -61,6 +61,10 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default) =>
         await context.Reservations.AddAsync(reservation, cancellationToken);
 
+    /// <summary>
+    ///     Marks the reservation for update in the DbContext.
+    ///     Note: EF Core's Update() is synchronous. Changes are persisted when SaveChangesAsync() is called.
+    /// </summary>
     public Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default)
     {
         context.Reservations.Update(reservation);

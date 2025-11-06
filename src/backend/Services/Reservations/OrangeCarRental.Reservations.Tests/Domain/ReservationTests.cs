@@ -52,7 +52,7 @@ public class ReservationTests
 
         // Assert
         act.Should().Throw<ArgumentException>()
-            .WithMessage("*Vehicle ID cannot be empty*");
+            .WithMessage("*GUID cannot be empty*");
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ReservationTests
 
         // Assert
         act.Should().Throw<ArgumentException>()
-            .WithMessage("*Customer ID cannot be empty*");
+            .WithMessage("*GUID cannot be empty*");
     }
 
     #endregion

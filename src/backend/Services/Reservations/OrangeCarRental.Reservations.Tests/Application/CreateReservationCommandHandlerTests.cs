@@ -157,7 +157,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()
-            .WithMessage("*Vehicle ID cannot be empty*");
+            .WithMessage("*GUID cannot be empty*");
     }
 
     [Fact]
@@ -180,7 +180,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         await act.Should().ThrowAsync<ArgumentException>()
-            .WithMessage("*Customer ID cannot be empty*");
+            .WithMessage("*GUID cannot be empty*");
     }
 
     [Fact]

@@ -15,10 +15,7 @@ public readonly record struct PostalCode(string Value)
 
         Ensure.That(trimmed, nameof(postalCode))
             .IsNotNullOrWhiteSpace()
-            .AndHasLengthBetween(5, 5)
-            .AndSatisfies(
-                code => code.All(char.IsDigit),
-                "German postal code must be exactly 5 digits");
+            .AndIsGermanPostalCode();
 
         return new PostalCode(trimmed);
     }
