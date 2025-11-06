@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Api.Contracts;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
@@ -6,6 +7,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
 
@@ -19,12 +21,28 @@ public static class CustomerEndpoints
 
         // POST /api/customers - Register new customer
         customers.MapPost("/", async (
-                RegisterCustomerCommand command,
+                RegisterCustomerRequest request,
                 RegisterCustomerCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Map request DTO to command with value objects
+                    var command = new RegisterCustomerCommand
+                    {
+                        FirstName = request.FirstName,
+                        LastName = request.LastName,
+                        Email = Email.Of(request.Email),
+                        PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
+                        DateOfBirth = request.DateOfBirth,
+                        Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
+                        DriversLicense = DriversLicense.Of(
+                            request.LicenseNumber,
+                            request.LicenseIssueCountry,
+                            request.LicenseIssueDate,
+                            request.LicenseExpiryDate)
+                    };
+
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Created($"/api/customers/{result.CustomerIdentifier}", result);
                 }
@@ -149,15 +167,21 @@ public static class CustomerEndpoints
         // PUT /api/customers/{id}/profile - Update customer profile
         customers.MapPut("/{id:guid}/profile", async (
                 Guid id,
-                UpdateCustomerProfileCommand command,
+                UpdateCustomerProfileRequest request,
                 UpdateCustomerProfileCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
-                    // Ensure the ID in the route matches the command
-                    if (id != command.CustomerIdentifier)
-                        return Results.BadRequest(new { message = "Customer ID in route does not match command" });
+                    // Map request DTO to command with value objects
+                    var command = new UpdateCustomerProfileCommand
+                    {
+                        CustomerIdentifier = id,
+                        FirstName = request.FirstName,
+                        LastName = request.LastName,
+                        PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
+                        Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country)
+                    };
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
@@ -190,15 +214,22 @@ public static class CustomerEndpoints
         // PUT /api/customers/{id}/license - Update driver's license
         customers.MapPut("/{id:guid}/license", async (
                 Guid id,
-                UpdateDriversLicenseCommand command,
+                UpdateDriversLicenseRequest request,
                 UpdateDriversLicenseCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
-                    // Ensure the ID in the route matches the command
-                    if (id != command.CustomerIdentifier)
-                        return Results.BadRequest(new { message = "Customer ID in route does not match command" });
+                    // Map request DTO to command with value objects
+                    var command = new UpdateDriversLicenseCommand
+                    {
+                        CustomerIdentifier = id,
+                        DriversLicense = DriversLicense.Of(
+                            request.LicenseNumber,
+                            request.IssueCountry,
+                            request.IssueDate,
+                            request.ExpiryDate)
+                    };
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);

@@ -119,9 +119,9 @@ public class CreateGuestReservationCommandHandlerTests
         _pricingServiceMock.Verify(
             s => s.CalculatePriceAsync(
                 command.CategoryCode,
-                command.PickupDate,
-                command.ReturnDate,
-                command.PickupLocationCode,
+                command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
+                command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
+                command.PickupLocationCode.Value,
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -317,8 +317,8 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.Should().NotBeNull();
-        capturedReservation!.Period.PickupDate.Should().Be(DateOnly.FromDateTime(command.PickupDate));
-        capturedReservation.Period.ReturnDate.Should().Be(DateOnly.FromDateTime(command.ReturnDate));
+        capturedReservation!.Period.PickupDate.Should().Be(command.Period.PickupDate);
+        capturedReservation.Period.ReturnDate.Should().Be(command.Period.ReturnDate);
     }
 
     #endregion
@@ -456,71 +456,55 @@ public class CreateGuestReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithPickupDateInPast_ThrowsArgumentException()
+    public void HandleAsync_WithPickupDateInPast_ThrowsArgumentException()
     {
-        // Arrange
-        var command = CreateValidCommand() with { PickupDate = DateTime.UtcNow.Date.AddDays(-1) };
-        SetupDefaultMocks();
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        // Arrange & Act
+        var act = () => CreateValidCommand() with { Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(-1), DateTime.UtcNow.Date.AddDays(3)) };
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Pickup date cannot be in the past*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithReturnDateBeforePickupDate_ThrowsArgumentException()
+    public void HandleAsync_WithReturnDateBeforePickupDate_ThrowsArgumentException()
     {
-        // Arrange
-        var command = CreateValidCommand() with
+        // Arrange & Act
+        var act = () => CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(10),
-            ReturnDate = DateTime.UtcNow.Date.AddDays(5)
+            Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(10), DateTime.UtcNow.Date.AddDays(5))
         };
-        SetupDefaultMocks();
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Return date must be after pickup date*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithReturnDateSameAsPickupDate_ThrowsArgumentException()
+    public void HandleAsync_WithReturnDateSameAsPickupDate_ThrowsArgumentException()
     {
         // Arrange
         var pickupDate = DateTime.UtcNow.Date.AddDays(5);
-        var command = CreateValidCommand() with { PickupDate = pickupDate, ReturnDate = pickupDate };
-        SetupDefaultMocks();
 
         // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
+        var act = () => CreateValidCommand() with { Period = BookingPeriod.Of(pickupDate, pickupDate) };
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Return date must be after pickup date*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithRentalPeriodOver90Days_ThrowsArgumentException()
+    public void HandleAsync_WithRentalPeriodOver90Days_ThrowsArgumentException()
     {
-        // Arrange
-        var command = CreateValidCommand() with
+        // Arrange & Act
+        var act = () => CreateValidCommand() with
         {
-            PickupDate = DateTime.UtcNow.Date.AddDays(5),
-            ReturnDate = DateTime.UtcNow.Date.AddDays(100) // 95 days
+            Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(100)) // 95 days
         };
-        SetupDefaultMocks();
-
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Rental period cannot exceed 90 days*");
     }
 
@@ -535,10 +519,9 @@ public class CreateGuestReservationCommandHandlerTests
             // Vehicle details
             VehicleId = Guid.NewGuid(),
             CategoryCode = "KOMPAKT",
-            PickupDate = DateTime.UtcNow.Date.AddDays(7),
-            ReturnDate = DateTime.UtcNow.Date.AddDays(10),
-            PickupLocationCode = "BER-HBF",
-            DropoffLocationCode = "BER-HBF",
+            Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
+            PickupLocationCode = LocationCode.Of("BER-HBF"),
+            DropoffLocationCode = LocationCode.Of("BER-HBF"),
 
             // Customer details
             FirstName = "Max",

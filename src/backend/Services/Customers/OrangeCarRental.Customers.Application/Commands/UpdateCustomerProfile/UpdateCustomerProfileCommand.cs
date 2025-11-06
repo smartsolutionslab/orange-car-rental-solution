@@ -1,7 +1,10 @@
-﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
 /// <summary>
 ///     Command to update a customer's profile information.
+///     Uses value objects for type safety and early validation.
 ///     Does not include email or driver's license (use separate commands for those).
 /// </summary>
 public sealed record UpdateCustomerProfileCommand
@@ -22,27 +25,12 @@ public sealed record UpdateCustomerProfileCommand
     public required string LastName { get; init; }
 
     /// <summary>
-    ///     Customer's updated phone number (German format: +49 XXX XXXXXXX or 0XXX XXXXXXX).
+    ///     Customer's updated phone number (value object with German format validation).
     /// </summary>
-    public required string PhoneNumber { get; init; }
+    public required PhoneNumber PhoneNumber { get; init; }
 
     /// <summary>
-    ///     Updated street address (e.g., "Hauptstraße 123").
+    ///     Customer's updated address (value object containing street, city, postal code, and country).
     /// </summary>
-    public required string Street { get; init; }
-
-    /// <summary>
-    ///     Updated city name (e.g., "Berlin").
-    /// </summary>
-    public required string City { get; init; }
-
-    /// <summary>
-    ///     Updated German postal code (5 digits, e.g., "10115").
-    /// </summary>
-    public required string PostalCode { get; init; }
-
-    /// <summary>
-    ///     Updated country name (defaults to "Germany" if not provided).
-    /// </summary>
-    public string Country { get; init; } = "Germany";
+    public required Address Address { get; init; }
 }

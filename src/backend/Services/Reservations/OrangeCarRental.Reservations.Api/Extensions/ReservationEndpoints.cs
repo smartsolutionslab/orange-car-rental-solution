@@ -1,9 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 
@@ -17,9 +20,20 @@ public static class ReservationEndpoints
 
         // POST /api/reservations - Create a new reservation
         reservations.MapPost("/", async (
-                CreateReservationCommand command,
+                CreateReservationRequest request,
                 CreateReservationCommandHandler handler) =>
             {
+                // Map request DTO to command with value objects
+                var command = new CreateReservationCommand(
+                    request.VehicleId,
+                    request.CustomerId,
+                    request.CategoryCode,
+                    BookingPeriod.Of(request.PickupDate, request.ReturnDate),
+                    LocationCode.Of(request.PickupLocationCode),
+                    LocationCode.Of(request.DropoffLocationCode),
+                    request.TotalPriceNet.HasValue ? Money.Euro(request.TotalPriceNet.Value) : null
+                );
+
                 var result = await handler.HandleAsync(command);
                 return Results.Created($"/api/reservations/{result.ReservationId}", result);
             })
@@ -50,9 +64,32 @@ public static class ReservationEndpoints
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
         reservations.MapPost("/guest", async (
-                CreateGuestReservationCommand command,
+                CreateGuestReservationRequest request,
                 CreateGuestReservationCommandHandler handler) =>
             {
+                // Map request DTO to command with value objects
+                var command = new CreateGuestReservationCommand
+                {
+                    VehicleId = request.VehicleId,
+                    CategoryCode = request.CategoryCode,
+                    Period = BookingPeriod.Of(request.PickupDate, request.ReturnDate),
+                    PickupLocationCode = LocationCode.Of(request.PickupLocationCode),
+                    DropoffLocationCode = LocationCode.Of(request.DropoffLocationCode),
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Email = request.Email,
+                    PhoneNumber = request.PhoneNumber,
+                    DateOfBirth = request.DateOfBirth,
+                    Street = request.Street,
+                    City = request.City,
+                    PostalCode = request.PostalCode,
+                    Country = request.Country,
+                    LicenseNumber = request.LicenseNumber,
+                    LicenseIssueCountry = request.LicenseIssueCountry,
+                    LicenseIssueDate = request.LicenseIssueDate,
+                    LicenseExpiryDate = request.LicenseExpiryDate
+                };
+
                 var result = await handler.HandleAsync(command);
                 return Results.Created($"/api/reservations/{result.ReservationId}", result);
             })

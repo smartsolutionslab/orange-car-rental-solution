@@ -25,20 +25,12 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
         var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
                 $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
-        // Create value objects from command data
-        var phoneNumber = PhoneNumber.Of(command.PhoneNumber);
-        var address = Address.Of(
-            command.Street,
-            command.City,
-            command.PostalCode,
-            command.Country);
-
         // Update profile (domain method handles validation and returns new instance)
         customer = customer.UpdateProfile(
             command.FirstName,
             command.LastName,
-            phoneNumber,
-            address);
+            command.PhoneNumber,
+            command.Address);
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);

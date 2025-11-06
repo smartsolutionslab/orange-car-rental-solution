@@ -16,28 +16,22 @@ public sealed class CreateReservationCommandHandler(
         CreateReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Validate and create booking period
-        var period = BookingPeriod.Of(command.PickupDate, command.ReturnDate);
-
-        // Parse location codes
-        var pickupLocationCode = LocationCode.Of(command.PickupLocationCode);
-        var dropoffLocationCode = LocationCode.Of(command.DropoffLocationCode);
-
         // Determine the total price: either use provided value or calculate via Pricing API
         Money totalPrice;
-        if (command.TotalPriceNet.HasValue)
+        if (command.TotalPrice.HasValue)
         {
             // Use provided price (backward compatibility)
-            totalPrice = Money.Euro(command.TotalPriceNet.Value);
+            totalPrice = command.TotalPrice.Value;
         }
         else
         {
             // Calculate price via Pricing API
+            // Note: Pricing service still uses primitives, so we extract from value objects
             var priceCalculation = await pricingService.CalculatePriceAsync(
                 command.CategoryCode,
-                command.PickupDate,
-                command.ReturnDate,
-                command.PickupLocationCode,
+                command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
+                command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
+                command.PickupLocationCode.Value,
                 cancellationToken);
 
             totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
@@ -47,9 +41,9 @@ public sealed class CreateReservationCommandHandler(
         var reservation = Reservation.Create(
             command.VehicleId,
             command.CustomerId,
-            period,
-            pickupLocationCode,
-            dropoffLocationCode,
+            command.Period,
+            command.PickupLocationCode,
+            command.DropoffLocationCode,
             totalPrice
         );
 

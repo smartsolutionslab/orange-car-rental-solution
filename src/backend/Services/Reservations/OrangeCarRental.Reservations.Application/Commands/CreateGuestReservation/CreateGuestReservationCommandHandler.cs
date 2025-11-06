@@ -42,29 +42,23 @@ public sealed class CreateGuestReservationCommandHandler(
             cancellationToken);
 
         // Step 2: Calculate price via Pricing API
+        // Note: Pricing service still uses primitives, so we extract from value objects
         var priceCalculation = await pricingService.CalculatePriceAsync(
             command.CategoryCode,
-            command.PickupDate,
-            command.ReturnDate,
-            command.PickupLocationCode,
+            command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
+            command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
+            command.PickupLocationCode.Value,
             cancellationToken);
 
         var totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
 
-        // Step 3: Validate and create booking period
-        var period = BookingPeriod.Of(command.PickupDate, command.ReturnDate);
-
-        // Parse location codes
-        var pickupLocationCode = LocationCode.Of(command.PickupLocationCode);
-        var dropoffLocationCode = LocationCode.Of(command.DropoffLocationCode);
-
-        // Step 4: Create the reservation aggregate with the new customer ID
+        // Step 3: Create the reservation aggregate with the new customer ID
         var reservation = Reservation.Create(
             command.VehicleId,
             customerId,
-            period,
-            pickupLocationCode,
-            dropoffLocationCode,
+            command.Period,
+            command.PickupLocationCode,
+            command.DropoffLocationCode,
             totalPrice
         );
 

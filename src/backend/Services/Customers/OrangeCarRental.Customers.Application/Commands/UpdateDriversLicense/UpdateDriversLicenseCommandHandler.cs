@@ -25,15 +25,8 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
                 $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
-        // Create driver's license value object from command data
-        var driversLicense = DriversLicense.Of(
-            command.LicenseNumber,
-            command.IssueCountry,
-            command.IssueDate,
-            command.ExpiryDate);
-
         // Update driver's license (domain method handles validation and returns new instance)
-        customer = customer.UpdateDriversLicense(driversLicense);
+        customer = customer.UpdateDriversLicense(command.DriversLicense);
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);

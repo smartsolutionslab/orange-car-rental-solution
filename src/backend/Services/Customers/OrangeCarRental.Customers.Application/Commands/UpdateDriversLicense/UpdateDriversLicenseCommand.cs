@@ -1,7 +1,10 @@
-﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
+﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
 /// <summary>
 ///     Command to update a customer's driver's license information.
+///     Uses value object for type safety and early validation.
 ///     Used when a customer renews their license or provides updated license details.
 /// </summary>
 public sealed record UpdateDriversLicenseCommand
@@ -12,23 +15,7 @@ public sealed record UpdateDriversLicenseCommand
     public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
-    ///     Updated driver's license number (alphanumeric).
+    ///     Updated driver's license (value object with validation).
     /// </summary>
-    public required string LicenseNumber { get; init; }
-
-    /// <summary>
-    ///     Updated country that issued the driver's license (e.g., "Germany").
-    /// </summary>
-    public required string IssueCountry { get; init; }
-
-    /// <summary>
-    ///     Updated date the driver's license was issued.
-    /// </summary>
-    public required DateOnly IssueDate { get; init; }
-
-    /// <summary>
-    ///     Updated date the driver's license expires.
-    ///     Must be valid for at least 30 days.
-    /// </summary>
-    public required DateOnly ExpiryDate { get; init; }
+    public required DriversLicense DriversLicense { get; init; }
 }

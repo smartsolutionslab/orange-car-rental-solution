@@ -1,4 +1,5 @@
 using Moq;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -26,11 +27,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(7),
-            DateTime.UtcNow.Date.AddDays(10),
-            "BER-HBF",
-            "BER-HBF",
-            168.07m // Net amount (200 gross with 19% VAT)
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(168.07m) // Net amount (200 gross with 19% VAT)
         );
 
         _repositoryMock
@@ -61,11 +61,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         // Act
@@ -85,11 +84,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         // Act
@@ -109,11 +107,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         var callOrder = new List<string>();
@@ -145,11 +142,10 @@ public class CreateReservationCommandHandlerTests
             Guid.Empty,
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         // Act
@@ -168,11 +164,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.Empty,
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         // Act
@@ -184,95 +179,81 @@ public class CreateReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithPickupDateInPast_ThrowsArgumentException()
+    public void HandleAsync_WithPickupDateInPast_ThrowsArgumentException()
     {
-        // Arrange
-        var command = new CreateReservationCommand(
+        // Arrange & Act
+        var act = () => new CreateReservationCommand(
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(-1), // Yesterday
-            DateTime.UtcNow.Date.AddDays(3),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(-1), DateTime.UtcNow.Date.AddDays(3)), // Yesterday
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Pickup date cannot be in the past*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithReturnDateBeforePickupDate_ThrowsArgumentException()
+    public void HandleAsync_WithReturnDateBeforePickupDate_ThrowsArgumentException()
     {
-        // Arrange
-        var command = new CreateReservationCommand(
+        // Arrange & Act
+        var act = () => new CreateReservationCommand(
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(10),
-            DateTime.UtcNow.Date.AddDays(5), // Before pickup
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(10), DateTime.UtcNow.Date.AddDays(5)), // Before pickup
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Return date must be after pickup date*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithReturnDateSameAsPickupDate_ThrowsArgumentException()
+    public void HandleAsync_WithReturnDateSameAsPickupDate_ThrowsArgumentException()
     {
         // Arrange
         var pickupDate = DateTime.UtcNow.Date.AddDays(5);
-        var command = new CreateReservationCommand(
+
+        // Act
+        var act = () => new CreateReservationCommand(
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            pickupDate,
-            pickupDate, // Same as pickup
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(pickupDate, pickupDate), // Same as pickup
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Return date must be after pickup date*");
     }
 
     [Fact]
-    public async Task HandleAsync_WithRentalPeriodOver90Days_ThrowsArgumentException()
+    public void HandleAsync_WithRentalPeriodOver90Days_ThrowsArgumentException()
     {
-        // Arrange
-        var command = new CreateReservationCommand(
+        // Arrange & Act
+        var act = () => new CreateReservationCommand(
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(100), // 95 days
-            "BER-HBF",
-            "BER-HBF",
-            5000.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(100)), // 95 days
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(5000.00m)
         );
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
         // Assert
-        await act.Should().ThrowAsync<ArgumentException>()
+        act.Should().Throw<ArgumentException>()
             .WithMessage("*Rental period cannot exceed 90 days*");
     }
 
@@ -286,11 +267,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            pickupDate,
-            returnDate,
-            "BER-HBF",
-            "BER-HBF",
-            400.00m
+            BookingPeriod.Of(pickupDate, returnDate),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(400.00m)
         );
 
         Reservation? capturedReservation = null;
@@ -319,11 +299,10 @@ public class CreateReservationCommandHandlerTests
             vehicleId,
             customerId,
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            250.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(250.00m)
         );
 
         Reservation? capturedReservation = null;
@@ -352,11 +331,10 @@ public class CreateReservationCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         Reservation? capturedReservation = null;
@@ -383,11 +361,10 @@ public class CreateReservationCommandHandlerTests
             vehicleId,
             customerId,
             "KOMPAKT",
-            DateTime.UtcNow.Date.AddDays(5),
-            DateTime.UtcNow.Date.AddDays(8),
-            "BER-HBF",
-            "BER-HBF",
-            150.00m
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            Money.Euro(150.00m)
         );
 
         Reservation? capturedReservation = null;

@@ -1,24 +1,20 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
-
-namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
+namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
 
 /// <summary>
-///     Command to create a reservation for a guest (user without prior registration).
-///     This command handles both customer registration and reservation creation in a single transaction.
-///     Uses value objects for type safety and early validation.
+///     Request DTO for creating a guest reservation.
+///     Accepts primitives from HTTP requests and maps to CreateGuestReservationCommand with value objects.
 /// </summary>
-public sealed record CreateGuestReservationCommand
+public sealed record CreateGuestReservationRequest
 {
     // Vehicle and Reservation Details
     public required Guid VehicleId { get; init; }
     public required string CategoryCode { get; init; }
-    public required BookingPeriod Period { get; init; }
-    public required LocationCode PickupLocationCode { get; init; }
-    public required LocationCode DropoffLocationCode { get; init; }
+    public required DateTime PickupDate { get; init; }
+    public required DateTime ReturnDate { get; init; }
+    public required string PickupLocationCode { get; init; }
+    public required string DropoffLocationCode { get; init; }
 
     // Customer Details (for inline registration)
-    // Note: Customer fields remain as primitives to avoid cross-domain dependencies.
-    // They will be validated when converted to Customer domain value objects in the handler.
     public required string FirstName { get; init; }
     public required string LastName { get; init; }
     public required string Email { get; init; }
