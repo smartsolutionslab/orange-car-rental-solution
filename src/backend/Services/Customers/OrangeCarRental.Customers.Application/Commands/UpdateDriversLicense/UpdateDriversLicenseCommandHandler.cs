@@ -21,8 +21,7 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         CancellationToken cancellationToken = default)
     {
         // Load customer
-        var customerIdentifier = CustomerIdentifier.From(command.CustomerIdentifier);
-        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
+        var customer = await customers.GetByIdAsync(command.CustomerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
                 $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
         // Update driver's license (domain method handles validation and returns new instance)

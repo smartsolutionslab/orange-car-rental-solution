@@ -14,8 +14,7 @@ public sealed class CancelReservationCommandHandler(
         CancellationToken cancellationToken = default)
     {
         // Get existing reservation
-        var reservationId = ReservationIdentifier.From(command.ReservationId);
-        var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken) ?? throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
+        var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken) ?? throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
 
         // Cancel the reservation (returns new instance due to immutability)
         var cancelledReservation = reservation.Cancel(command.CancellationReason);

@@ -12,7 +12,7 @@ public sealed record UpdateDriversLicenseCommand
     /// <summary>
     ///     The unique identifier of the customer to update.
     /// </summary>
-    public required Guid CustomerIdentifier { get; init; }
+    public required CustomerIdentifier CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     Updated driver's license (value object with validation).

@@ -184,7 +184,7 @@ public static class ReservationEndpoints
             {
                 try
                 {
-                    var command = new ConfirmReservationCommand(id);
+                    var command = new ConfirmReservationCommand(ReservationIdentifier.From(id));
                     var result = await handler.HandleAsync(command);
                     return Results.Ok(result);
                 }
@@ -220,7 +220,7 @@ public static class ReservationEndpoints
                 try
                 {
                     // Override the ID from the URL
-                    var commandWithId = command with { ReservationId = id };
+                    var commandWithId = command with { ReservationId = ReservationIdentifier.From(id) };
                     var result = await handler.HandleAsync(commandWithId);
                     return Results.Ok(result);
                 }

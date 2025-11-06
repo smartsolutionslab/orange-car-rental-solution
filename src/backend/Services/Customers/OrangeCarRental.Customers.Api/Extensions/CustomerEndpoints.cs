@@ -223,7 +223,7 @@ public static class CustomerEndpoints
                     // Map request DTO to command with value objects
                     var command = new UpdateDriversLicenseCommand
                     {
-                        CustomerIdentifier = id,
+                        CustomerIdentifier = CustomerIdentifier.From(id),
                         DriversLicense = DriversLicense.Of(
                             request.LicenseNumber,
                             request.IssueCountry,
@@ -269,10 +269,10 @@ public static class CustomerEndpoints
                 try
                 {
                     // Ensure the ID in the route matches the command
-                    if (id != command.CustomerIdentifier)
-                        return Results.BadRequest(new { message = "Customer ID in route does not match command" });
+                    // Override the command's customer ID with the route ID to ensure consistency
+                    var commandWithId = command with { CustomerIdentifier = CustomerIdentifier.From(id) };
 
-                    var result = await handler.HandleAsync(command, cancellationToken);
+                    var result = await handler.HandleAsync(commandWithId, cancellationToken);
                     return Results.Ok(result);
                 }
                 catch (ArgumentException ex)

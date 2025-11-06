@@ -21,8 +21,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         CancellationToken cancellationToken = default)
     {
         // Load customer
-        var customerIdentifier = CustomerIdentifier.From(command.CustomerIdentifier);
-        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
+        var customer = await customers.GetByIdAsync(command.CustomerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
                 $"Customer with ID '{command.CustomerIdentifier}' not found.");
 
         // Parse and validate new status
