@@ -15,14 +15,14 @@ public sealed record UpdateCustomerProfileCommand
     public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
-    ///     Customer's updated first name.
+    ///     Customer's updated first name (value object with validation).
     /// </summary>
-    public required string FirstName { get; init; }
+    public required FirstName FirstName { get; init; }
 
     /// <summary>
-    ///     Customer's updated last name.
+    ///     Customer's updated last name (value object with validation).
     /// </summary>
-    public required string LastName { get; init; }
+    public required LastName LastName { get; init; }
 
     /// <summary>
     ///     Customer's updated phone number (value object with German format validation).

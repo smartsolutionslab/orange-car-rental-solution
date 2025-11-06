@@ -9,14 +9,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 public sealed record RegisterCustomerCommand
 {
     /// <summary>
-    ///     Customer's first name.
+    ///     Customer's first name (value object with validation).
     /// </summary>
-    public required string FirstName { get; init; }
+    public required FirstName FirstName { get; init; }
 
     /// <summary>
-    ///     Customer's last name.
+    ///     Customer's last name (value object with validation).
     /// </summary>
-    public required string LastName { get; init; }
+    public required LastName LastName { get; init; }
 
     /// <summary>
     ///     Customer's email address (value object with validation).

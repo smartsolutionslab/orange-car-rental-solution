@@ -30,10 +30,10 @@ public static class CustomerEndpoints
                     // Map request DTO to command with value objects
                     var command = new RegisterCustomerCommand
                     {
-                        FirstName = request.FirstName,
-                        LastName = request.LastName,
+                        FirstName = Domain.Customer.FirstName.Of(request.FirstName),
+                        LastName = Domain.Customer.LastName.Of(request.LastName),
                         Email = Email.Of(request.Email),
-                        PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
+                        PhoneNumber = Domain.Customer.PhoneNumber.Of(request.PhoneNumber),
                         DateOfBirth = request.DateOfBirth,
                         Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
                         DriversLicense = DriversLicense.Of(
@@ -177,9 +177,9 @@ public static class CustomerEndpoints
                     var command = new UpdateCustomerProfileCommand
                     {
                         CustomerIdentifier = id,
-                        FirstName = request.FirstName,
-                        LastName = request.LastName,
-                        PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
+                        FirstName = Domain.Customer.FirstName.Of(request.FirstName),
+                        LastName = Domain.Customer.LastName.Of(request.LastName),
+                        PhoneNumber = Domain.Customer.PhoneNumber.Of(request.PhoneNumber),
                         Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country)
                     };
 

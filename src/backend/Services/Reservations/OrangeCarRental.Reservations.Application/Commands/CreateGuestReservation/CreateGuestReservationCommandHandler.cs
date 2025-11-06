@@ -21,11 +21,12 @@ public sealed class CreateGuestReservationCommandHandler(
         CancellationToken cancellationToken = default)
     {
         // Step 1: Register the customer via Customers API
+        // Extract primitive values from value objects for the DTO
         var registerCustomerDto = new RegisterCustomerDto(
-            command.FirstName,
-            command.LastName,
-            command.Email,
-            command.PhoneNumber,
+            command.FirstName.Value,
+            command.LastName.Value,
+            command.Email.Value,
+            command.PhoneNumber.Value,
             command.DateOfBirth,
             command.Street,
             command.City,

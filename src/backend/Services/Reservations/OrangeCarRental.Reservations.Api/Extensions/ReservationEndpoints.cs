@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
@@ -75,10 +76,10 @@ public static class ReservationEndpoints
                     Period = BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     PickupLocationCode = LocationCode.Of(request.PickupLocationCode),
                     DropoffLocationCode = LocationCode.Of(request.DropoffLocationCode),
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Email = request.Email,
-                    PhoneNumber = request.PhoneNumber,
+                    FirstName = FirstName.Of(request.FirstName),
+                    LastName = LastName.Of(request.LastName),
+                    Email = Email.Of(request.Email),
+                    PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
                     DateOfBirth = request.DateOfBirth,
                     Street = request.Street,
                     City = request.City,

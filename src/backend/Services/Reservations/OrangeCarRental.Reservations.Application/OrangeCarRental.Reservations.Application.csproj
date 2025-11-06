@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj"/>
+    <ProjectReference Include="..\..\Customers\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
   </ItemGroup>
 
 </Project>

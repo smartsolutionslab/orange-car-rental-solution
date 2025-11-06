@@ -8,8 +8,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 /// </summary>
 public sealed record CustomerRegistered(
     CustomerIdentifier CustomerIdentifier,
-    string FirstName,
-    string LastName,
+    FirstName FirstName,
+    LastName LastName,
     Email Email,
     DateOnly DateOfBirth,
     DateTime RegisteredAtUtc

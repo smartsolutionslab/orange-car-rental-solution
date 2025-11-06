@@ -35,8 +35,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
     private Customer(
         CustomerIdentifier id,
-        string firstName,
-        string lastName,
+        FirstName firstName,
+        LastName lastName,
         Email email,
         PhoneNumber phoneNumber,
         DateOnly dateOfBirth,
@@ -65,8 +65,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     }
 
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public FirstName FirstName { get; init; }
+    public LastName LastName { get; init; }
     public Email Email { get; init; }
     public PhoneNumber PhoneNumber { get; init; }
     public DateOnly DateOfBirth { get; init; }
@@ -112,26 +112,14 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// <returns>A new Customer instance.</returns>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public static Customer Register(
-        string firstName,
-        string lastName,
+        FirstName firstName,
+        LastName lastName,
         Email email,
         PhoneNumber phoneNumber,
         DateOnly dateOfBirth,
         Address address,
         DriversLicense driversLicense)
     {
-        // Validate names
-        Ensure.That(firstName, nameof(firstName))
-            .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(100);
-
-        Ensure.That(lastName, nameof(lastName))
-            .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(100);
-
-        var normalizedFirstName = firstName.Trim();
-        var normalizedLastName = lastName.Trim();
-
         // Validate age - must be 18+ to rent in Germany
         ValidateAge(dateOfBirth);
 
@@ -140,8 +128,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
         return new Customer(
             CustomerIdentifier.New(),
-            normalizedFirstName,
-            normalizedLastName,
+            firstName,
+            lastName,
             email,
             phoneNumber,
             dateOfBirth,
@@ -154,8 +142,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Customer CreateMutatedCopy(
-        string? firstName = null,
-        string? lastName = null,
+        FirstName? firstName = null,
+        LastName? lastName = null,
         Email? email = null,
         PhoneNumber? phoneNumber = null,
         DateOnly? dateOfBirth = null,
@@ -186,24 +174,13 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     ///     Returns a new instance with the updated profile (immutable pattern).
     /// </summary>
     public Customer UpdateProfile(
-        string firstName,
-        string lastName,
+        FirstName firstName,
+        LastName lastName,
         PhoneNumber phoneNumber,
         Address address)
     {
-        Ensure.That(firstName, nameof(firstName))
-            .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(100);
-
-        Ensure.That(lastName, nameof(lastName))
-            .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(100);
-
-        var normalizedFirstName = firstName.Trim();
-        var normalizedLastName = lastName.Trim();
-
-        var hasChanges = FirstName != normalizedFirstName ||
-                         LastName != normalizedLastName ||
+        var hasChanges = FirstName.Value != firstName.Value ||
+                         LastName.Value != lastName.Value ||
                          PhoneNumber != phoneNumber ||
                          Address != address;
 
@@ -212,16 +189,16 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
-            normalizedFirstName,
-            normalizedLastName,
+            firstName,
+            lastName,
             phoneNumber: phoneNumber,
             address: address,
             updatedAtUtc: now);
 
         updated.AddDomainEvent(new CustomerProfileUpdated(
             Id,
-            normalizedFirstName,
-            normalizedLastName,
+            firstName,
+            lastName,
             phoneNumber,
             address,
             now));

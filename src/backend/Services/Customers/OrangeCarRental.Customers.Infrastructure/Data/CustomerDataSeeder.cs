@@ -42,8 +42,8 @@ public class CustomerDataSeeder(
 
         // Customer 1: Maximilian Schmidt - Young professional from Berlin
         customers.Add(Customer.Register(
-            "Maximilian",
-            "Schmidt",
+            FirstName.Of("Maximilian"),
+            LastName.Of("Schmidt"),
             Email.Of("max.schmidt@email.de"),
             PhoneNumber.Of("+49 30 12345678"),
             new DateOnly(1995, 3, 15),
@@ -53,8 +53,8 @@ public class CustomerDataSeeder(
 
         // Customer 2: Anna Müller - Mid-career from Munich
         customers.Add(Customer.Register(
-            "Anna",
-            "Müller",
+            FirstName.Of("Anna"),
+            LastName.Of("Müller"),
             Email.Of("anna.mueller@mail.de"),
             PhoneNumber.Of("+49 89 98765432"),
             new DateOnly(1988, 7, 22),
@@ -64,8 +64,8 @@ public class CustomerDataSeeder(
 
         // Customer 3: Lukas Weber - Recent graduate from Hamburg
         customers.Add(Customer.Register(
-            "Lukas",
-            "Weber",
+            FirstName.Of("Lukas"),
+            LastName.Of("Weber"),
             Email.Of("l.weber@webmail.de"),
             PhoneNumber.Of("+49 40 55512345"),
             new DateOnly(1999, 11, 8),
@@ -75,8 +75,8 @@ public class CustomerDataSeeder(
 
         // Customer 4: Sophie Wagner - Senior professional from Frankfurt
         customers.Add(Customer.Register(
-            "Sophie",
-            "Wagner",
+            FirstName.Of("Sophie"),
+            LastName.Of("Wagner"),
             Email.Of("sophie.wagner@gmx.de"),
             PhoneNumber.Of("+49 69 77788899"),
             new DateOnly(1980, 4, 30),
@@ -86,8 +86,8 @@ public class CustomerDataSeeder(
 
         // Customer 5: Jonas Fischer - Young driver from Cologne
         customers.Add(Customer.Register(
-            "Jonas",
-            "Fischer",
+            FirstName.Of("Jonas"),
+            LastName.Of("Fischer"),
             Email.Of("jonas.fischer@outlook.de"),
             PhoneNumber.Of("+49 221 33344455"),
             new DateOnly(2001, 9, 12),
@@ -97,8 +97,8 @@ public class CustomerDataSeeder(
 
         // Customer 6: Emma Becker - Experienced driver from Stuttgart
         customers.Add(Customer.Register(
-            "Emma",
-            "Becker",
+            FirstName.Of("Emma"),
+            LastName.Of("Becker"),
             Email.Of("emma.becker@t-online.de"),
             PhoneNumber.Of("+49 711 22211100"),
             new DateOnly(1985, 1, 18),
@@ -108,8 +108,8 @@ public class CustomerDataSeeder(
 
         // Customer 7: Felix Hoffmann - Mid-age from Düsseldorf
         customers.Add(Customer.Register(
-            "Felix",
-            "Hoffmann",
+            FirstName.Of("Felix"),
+            LastName.Of("Hoffmann"),
             Email.Of("f.hoffmann@web.de"),
             PhoneNumber.Of("+49 211 66677788"),
             new DateOnly(1990, 12, 5),
@@ -119,8 +119,8 @@ public class CustomerDataSeeder(
 
         // Customer 8: Mia Schäfer - Young professional from Leipzig
         customers.Add(Customer.Register(
-            "Mia",
-            "Schäfer",
+            FirstName.Of("Mia"),
+            LastName.Of("Schäfer"),
             Email.Of("mia.schaefer@email.de"),
             PhoneNumber.Of("+49 341 44455566"),
             new DateOnly(1996, 6, 27),
@@ -130,8 +130,8 @@ public class CustomerDataSeeder(
 
         // Customer 9: Leon Meyer - Senior citizen from Bremen
         customers.Add(Customer.Register(
-            "Leon",
-            "Meyer",
+            FirstName.Of("Leon"),
+            LastName.Of("Meyer"),
             Email.Of("leon.meyer@posteo.de"),
             PhoneNumber.Of("+49 421 11122233"),
             new DateOnly(1955, 2, 14),
@@ -141,8 +141,8 @@ public class CustomerDataSeeder(
 
         // Customer 10: Lena Koch - Mid-career from Hannover
         customers.Add(Customer.Register(
-            "Lena",
-            "Koch",
+            FirstName.Of("Lena"),
+            LastName.Of("Koch"),
             Email.Of("lena.koch@yahoo.de"),
             PhoneNumber.Of("+49 511 88899900"),
             new DateOnly(1987, 10, 3),
@@ -152,8 +152,8 @@ public class CustomerDataSeeder(
 
         // Customer 11: Paul Richter - Young entrepreneur from Dresden
         customers.Add(Customer.Register(
-            "Paul",
-            "Richter",
+            FirstName.Of("Paul"),
+            LastName.Of("Richter"),
             Email.Of("paul.richter@gmail.com"),
             PhoneNumber.Of("+49 351 55566677"),
             new DateOnly(1992, 8, 19),
@@ -163,8 +163,8 @@ public class CustomerDataSeeder(
 
         // Customer 12: Laura Zimmermann - Student from Freiburg
         customers.Add(Customer.Register(
-            "Laura",
-            "Zimmermann",
+            FirstName.Of("Laura"),
+            LastName.Of("Zimmermann"),
             Email.Of("laura.zimmer@student.de"),
             PhoneNumber.Of("+49 761 33322211"),
             new DateOnly(2002, 5, 25),
@@ -174,8 +174,8 @@ public class CustomerDataSeeder(
 
         // Customer 13: David Klein - Suspended customer (late payment issue)
         var suspendedCustomer = Customer.Register(
-            "David",
-            "Klein",
+            FirstName.Of("David"),
+            LastName.Of("Klein"),
             Email.Of("david.klein@example.de"),
             PhoneNumber.Of("+49 228 99988877"),
             new DateOnly(1983, 3, 8),
@@ -187,8 +187,8 @@ public class CustomerDataSeeder(
 
         // Customer 14: Sarah Lang - Older driver from Nuremberg
         customers.Add(Customer.Register(
-            "Sarah",
-            "Lang",
+            FirstName.Of("Sarah"),
+            LastName.Of("Lang"),
             Email.Of("sarah.lang@freenet.de"),
             PhoneNumber.Of("+49 911 12312312"),
             new DateOnly(1970, 11, 20),
@@ -198,8 +198,8 @@ public class CustomerDataSeeder(
 
         // Customer 15: Tim Schwarz - Recent driver
         customers.Add(Customer.Register(
-            "Tim",
-            "Schwarz",
+            FirstName.Of("Tim"),
+            LastName.Of("Schwarz"),
             Email.Of("tim.schwarz@mailbox.org"),
             PhoneNumber.Of("+49 201 45645645"),
             new DateOnly(1998, 7, 7),

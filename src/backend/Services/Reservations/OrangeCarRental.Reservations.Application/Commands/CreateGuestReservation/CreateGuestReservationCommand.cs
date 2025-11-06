@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
@@ -17,12 +18,11 @@ public sealed record CreateGuestReservationCommand
     public required LocationCode DropoffLocationCode { get; init; }
 
     // Customer Details (for inline registration)
-    // Note: Customer fields remain as primitives to avoid cross-domain dependencies.
-    // They will be validated when converted to Customer domain value objects in the handler.
-    public required string FirstName { get; init; }
-    public required string LastName { get; init; }
-    public required string Email { get; init; }
-    public required string PhoneNumber { get; init; }
+    // Using value objects from Customers.Domain for validation and type safety
+    public required FirstName FirstName { get; init; }
+    public required LastName LastName { get; init; }
+    public required Email Email { get; init; }
+    public required PhoneNumber PhoneNumber { get; init; }
     public required DateOnly DateOfBirth { get; init; }
 
     // Address Details
