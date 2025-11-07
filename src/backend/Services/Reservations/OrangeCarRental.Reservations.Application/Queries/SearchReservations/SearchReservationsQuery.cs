@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -14,4 +15,4 @@ public sealed record SearchReservationsQuery(
     DateTime? PickupDateTo = null,
     int PageNumber = 1,
     int PageSize = 50
-);
+) : IQuery<SearchReservationsResult>;

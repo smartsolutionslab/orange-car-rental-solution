@@ -270,7 +270,7 @@ public static class CustomerEndpoints
                 {
                     // Ensure the ID in the route matches the command
                     // Override the command's customer ID with the route ID to ensure consistency
-                    var commandWithId = command with { CustomerIdentifier = CustomerIdentifier.From(id) };
+                    var commandWithId = command with { CustomerId = CustomerIdentifier.From(id) };
 
                     var result = await handler.HandleAsync(commandWithId, cancellationToken);
                     return Results.Ok(result);

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
@@ -5,7 +6,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.Calculat
 /// <summary>
 ///     Query to calculate the rental price for a vehicle category and period.
 /// </summary>
-public sealed record CalculatePriceQuery
+public sealed record CalculatePriceQuery : IQuery<PriceCalculationResult>
 {
     /// <summary>
     ///     Vehicle category code (e.g., "KLEIN", "MITTEL", "SUV").

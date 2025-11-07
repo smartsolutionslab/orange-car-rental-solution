@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -16,4 +17,4 @@ public sealed record CreateReservationCommand(
     LocationCode PickupLocationCode,
     LocationCode DropoffLocationCode,
     Money? TotalPrice = null
-);
+) : ICommand<CreateReservationResult>;

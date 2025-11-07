@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
 /// <summary>
 ///     Query to search available vehicles based on filters.
 ///     Supports filtering by date range, location, category, and other criteria.
 /// </summary>
-public sealed record SearchVehiclesQuery
+public sealed record SearchVehiclesQuery : IQuery<SearchVehiclesResult>
 {
     /// <summary>
     ///     Pickup date (optional). If provided, only available vehicles on this date are returned.

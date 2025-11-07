@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
@@ -8,4 +9,4 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 public sealed record UpdateVehicleStatusCommand(
     VehicleIdentifier VehicleId,
     VehicleStatus NewStatus
-);
+) : ICommand<UpdateVehicleStatusResult>;

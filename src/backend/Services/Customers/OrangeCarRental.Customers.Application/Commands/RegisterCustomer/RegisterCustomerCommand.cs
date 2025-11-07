@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
@@ -6,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 ///     Command to register a new customer.
 ///     Uses value objects for type safety and early validation.
 /// </summary>
-public sealed record RegisterCustomerCommand
+public sealed record RegisterCustomerCommand : ICommand<RegisterCustomerResult>
 {
     /// <summary>
     ///     Customer's first name (value object with validation).

@@ -11,7 +11,7 @@ public sealed record ChangeCustomerStatusCommand
     /// <summary>
     ///     The unique identifier of the customer to update.
     /// </summary>
-    public required CustomerIdentifier CustomerIdentifier { get; init; }
+    public required CustomerIdentifier CustomerId { get; init; }
 
     /// <summary>
     ///     The new status for the customer account (Active, Suspended, Blocked).
