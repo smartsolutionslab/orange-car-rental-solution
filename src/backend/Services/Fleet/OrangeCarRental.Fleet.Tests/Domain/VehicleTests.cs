@@ -244,7 +244,7 @@ public class VehicleTests
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("  ");
         act.Should().Throw<ArgumentException>()
-            .WithMessage("*cannot be an empty string*");
+            .WithMessage("*String cannot be null, empty, or whitespace*");
     }
 
     [Fact]
@@ -256,7 +256,7 @@ public class VehicleTests
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("");
         act.Should().Throw<ArgumentException>()
-            .WithMessage("*cannot be an empty string*");
+            .WithMessage("*String cannot be null, empty, or whitespace*");
     }
 
     [Fact]
