@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Chang
 ///     Loads the customer, changes account status, and persists changes.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository customers)
+    : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
     ///     Handles the change customer status command.

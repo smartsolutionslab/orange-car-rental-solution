@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Uses value object for type safety and early validation.
 ///     Used when a customer renews their license or provides updated license details.
 /// </summary>
-public sealed record UpdateDriversLicenseCommand
+public sealed record UpdateDriversLicenseCommand : ICommand<UpdateDriversLicenseResult>
 {
     /// <summary>
     ///     The unique identifier of the customer to update.

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -8,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicl
 ///     Command to add a new vehicle to the fleet.
 ///     Uses value objects for type safety and early validation.
 /// </summary>
-public sealed record AddVehicleToFleetCommand
+public sealed record AddVehicleToFleetCommand : ICommand<AddVehicleToFleetResult>
 {
     public required VehicleName Name { get; init; }
     public required VehicleCategory Category { get; init; }

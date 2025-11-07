@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Loads the customer, updates profile information, and persists changes.
 /// </summary>
 public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository customers)
+    : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
     ///     Handles the update customer profile command.

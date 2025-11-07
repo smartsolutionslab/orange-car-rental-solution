@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocatio
 ///     Returns all available rental locations.
 /// </summary>
 public sealed class GetLocationsQueryHandler
+    : IQueryHandler<GetLocationsQuery, IReadOnlyList<LocationDto>>
 {
     public Task<IReadOnlyList<LocationDto>> HandleAsync(
         GetLocationsQuery query,

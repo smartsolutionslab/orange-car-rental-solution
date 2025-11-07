@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
 /// <summary>
 ///     Query to search customers with filtering, sorting, and pagination.
 ///     Wraps CustomerSearchParameters from the domain layer.
 /// </summary>
-public sealed record SearchCustomersQuery
+public sealed record SearchCustomersQuery : IQuery<SearchCustomersResult>
 {
     /// <summary>
     ///     Search by customer name (first or last name).

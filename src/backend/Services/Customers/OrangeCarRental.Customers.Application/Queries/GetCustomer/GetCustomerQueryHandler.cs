@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -9,6 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 ///     Retrieves a customer by ID and maps to DTO.
 /// </summary>
 public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
+    : IQueryHandler<GetCustomerQuery, CustomerDto?>
 {
     /// <summary>
     ///     Handles the get customer query.

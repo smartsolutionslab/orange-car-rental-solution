@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.Search
 ///     Delegates filtering and pagination to the repository for database-level performance.
 /// </summary>
 public sealed class SearchCustomersQueryHandler(ICustomerRepository customers)
+    : IQueryHandler<SearchCustomersQuery, SearchCustomersResult>
 {
     /// <summary>
     ///     Handles the search customers query.

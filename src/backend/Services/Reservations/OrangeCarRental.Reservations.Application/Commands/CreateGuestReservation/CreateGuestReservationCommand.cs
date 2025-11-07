@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -9,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     This command handles both customer registration and reservation creation in a single transaction.
 ///     Uses value objects for type safety and early validation.
 /// </summary>
-public sealed record CreateGuestReservationCommand
+public sealed record CreateGuestReservationCommand : ICommand<CreateGuestReservationResult>
 {
     // Vehicle and Reservation Details
     public required VehicleIdentifier VehicleId { get; init; }

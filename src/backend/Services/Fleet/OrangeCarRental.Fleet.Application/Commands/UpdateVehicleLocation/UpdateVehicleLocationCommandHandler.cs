@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Moves a vehicle to a different rental location.
 /// </summary>
 public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehicles)
+    : ICommandHandler<UpdateVehicleLocationCommand, UpdateVehicleLocationResult>
 {
     /// <summary>
     ///     Handles the update vehicle location command.

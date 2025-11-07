@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicl
 ///     Creates a new vehicle and adds it to the fleet.
 /// </summary>
 public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
+    : ICommandHandler<AddVehicleToFleetCommand, AddVehicleToFleetResult>
 {
     /// <summary>
     ///     Handles the add vehicle to fleet command.

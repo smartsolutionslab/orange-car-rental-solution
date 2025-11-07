@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -15,6 +16,7 @@ public sealed class CreateGuestReservationCommandHandler(
     ICustomersService customersService,
     IReservationRepository reservations,
     IPricingService pricingService)
+    : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
 {
     public async Task<CreateGuestReservationResult> HandleAsync(
         CreateGuestReservationCommand command,

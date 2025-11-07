@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Loads the customer, updates driver's license information, and persists changes.
 /// </summary>
 public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository customers)
+    : ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>
 {
     /// <summary>
     ///     Handles the update driver's license command.

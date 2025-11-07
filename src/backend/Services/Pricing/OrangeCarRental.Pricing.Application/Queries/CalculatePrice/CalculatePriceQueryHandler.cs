@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.Calculat
 ///     Calculates the rental price for a vehicle category and period using the active pricing policy.
 /// </summary>
 public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingPolicies)
+    : IQueryHandler<CalculatePriceQuery, PriceCalculationResult>
 {
     public async Task<PriceCalculationResult> HandleAsync(
         CalculatePriceQuery query,

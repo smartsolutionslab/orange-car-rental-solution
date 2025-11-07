@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Updates a vehicle's operational status.
 /// </summary>
 public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicles)
+    : ICommandHandler<UpdateVehicleStatusCommand, UpdateVehicleStatusResult>
 {
     /// <summary>
     ///     Handles the update vehicle status command.

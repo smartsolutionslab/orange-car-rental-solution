@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Updates a vehicle's daily rental rate with German VAT.
 /// </summary>
 public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehicles)
+    : ICommandHandler<UpdateVehicleDailyRateCommand, UpdateVehicleDailyRateResult>
 {
     /// <summary>
     ///     Handles the update vehicle daily rate command.

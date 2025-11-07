@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Uses value objects for type safety and early validation.
 ///     Does not include email or driver's license (use separate commands for those).
 /// </summary>
-public sealed record UpdateCustomerProfileCommand
+public sealed record UpdateCustomerProfileCommand : ICommand<UpdateCustomerProfileResult>
 {
     /// <summary>
     ///     The unique identifier of the customer to update.

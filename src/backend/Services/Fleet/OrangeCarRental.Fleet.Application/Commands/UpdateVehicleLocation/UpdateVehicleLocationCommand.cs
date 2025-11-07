@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -9,4 +10,4 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 public sealed record UpdateVehicleLocationCommand(
     VehicleIdentifier VehicleId,
     Location NewLocation
-);
+) : ICommand<UpdateVehicleLocationResult>;
