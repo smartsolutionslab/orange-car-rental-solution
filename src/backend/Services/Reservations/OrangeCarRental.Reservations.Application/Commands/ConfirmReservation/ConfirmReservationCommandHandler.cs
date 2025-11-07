@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
@@ -8,6 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Co
 /// </summary>
 public sealed class ConfirmReservationCommandHandler(
     IReservationRepository reservations)
+    : ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult>
 {
     public async Task<ConfirmReservationResult> HandleAsync(
         ConfirmReservationCommand command,

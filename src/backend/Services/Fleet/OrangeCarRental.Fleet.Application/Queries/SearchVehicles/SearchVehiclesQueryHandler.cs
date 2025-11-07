@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehi
 ///     Delegates filtering and pagination to the repository for database-level performance.
 /// </summary>
 public sealed class SearchVehiclesQueryHandler(IVehicleRepository vehicles)
+    : IQueryHandler<SearchVehiclesQuery, SearchVehiclesResult>
 {
     public async Task<SearchVehiclesResult> HandleAsync(
         SearchVehiclesQuery queryCommand,

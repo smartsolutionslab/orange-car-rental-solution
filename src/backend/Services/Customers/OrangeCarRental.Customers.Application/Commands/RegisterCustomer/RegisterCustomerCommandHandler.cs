@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
@@ -7,6 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 ///     Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
 /// </summary>
 public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers)
+    : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
     ///     Handles the customer registration command.
