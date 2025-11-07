@@ -30,11 +30,15 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
             ? DateOnly.FromDateTime(query.PickupDateTo.Value)
             : null;
 
+        // Extract Guid values from value objects for repository query
+        Guid? customerId = query.CustomerId?.Value;
+        Guid? vehicleId = query.VehicleId?.Value;
+
         // Search reservations
         var (reservationsList, totalCount) = await reservations.SearchAsync(
             status,
-            query.CustomerId,
-            query.VehicleId,
+            customerId,
+            vehicleId,
             pickupDateFrom,
             pickupDateTo,
             query.PageNumber,

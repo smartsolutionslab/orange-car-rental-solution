@@ -1,3 +1,6 @@
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
 /// <summary>
@@ -5,8 +8,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Sea
 /// </summary>
 public sealed record SearchReservationsQuery(
     string? Status = null,
-    Guid? CustomerId = null,
-    Guid? VehicleId = null,
+    CustomerIdentifier? CustomerId = null,
+    VehicleIdentifier? VehicleId = null,
     DateTime? PickupDateFrom = null,
     DateTime? PickupDateTo = null,
     int PageNumber = 1,

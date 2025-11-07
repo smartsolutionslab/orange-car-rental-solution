@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 
 /// <summary>
@@ -8,5 +10,5 @@ public sealed record GetCustomerByEmailQuery
     /// <summary>
     ///     The email address of the customer to retrieve.
     /// </summary>
-    public required string Email { get; init; }
+    public required Email Email { get; init; }
 }

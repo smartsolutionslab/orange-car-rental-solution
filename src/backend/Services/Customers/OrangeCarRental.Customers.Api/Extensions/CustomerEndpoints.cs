@@ -79,7 +79,7 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    var result = await handler.HandleAsync(new GetCustomerQuery { CustomerIdentifier = id }, cancellationToken);
+                    var result = await handler.HandleAsync(new GetCustomerQuery { CustomerIdentifier = CustomerIdentifier.From(id) }, cancellationToken);
                     return result is not null
                         ? Results.Ok(result)
                         : Results.NotFound(new { message = $"Customer with ID '{id}' not found" });
@@ -107,7 +107,7 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    var result = await handler.HandleAsync(new GetCustomerByEmailQuery { Email = email },
+                    var result = await handler.HandleAsync(new GetCustomerByEmailQuery { Email = Email.Of(email) },
                         cancellationToken);
                     return result is not null
                         ? Results.Ok(result)

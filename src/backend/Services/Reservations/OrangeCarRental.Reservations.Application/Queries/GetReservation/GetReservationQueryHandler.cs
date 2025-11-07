@@ -13,8 +13,7 @@ public sealed class GetReservationQueryHandler(IReservationRepository reservatio
         GetReservationQuery query,
         CancellationToken cancellationToken = default)
     {
-        var reservationId = ReservationIdentifier.From(query.ReservationId);
-        var reservation = await reservations.GetByIdAsync(reservationId, cancellationToken);
+        var reservation = await reservations.GetByIdAsync(query.ReservationId, cancellationToken);
 
         return reservation == null ? null : MapToDto(reservation);
     }

@@ -20,8 +20,7 @@ public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
         GetCustomerQuery query,
         CancellationToken cancellationToken = default)
     {
-        var customerIdentifier = CustomerIdentifier.From(query.CustomerIdentifier);
-        var customer = await customers.GetByIdAsync(customerIdentifier, cancellationToken);
+        var customer = await customers.GetByIdAsync(query.CustomerIdentifier, cancellationToken);
 
         return customer?.ToDto();
     }

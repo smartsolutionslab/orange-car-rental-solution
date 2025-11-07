@@ -20,8 +20,7 @@ public sealed class GetCustomerByEmailQueryHandler(ICustomerRepository customers
         GetCustomerByEmailQuery query,
         CancellationToken cancellationToken = default)
     {
-        var email = Email.Of(query.Email);
-        var customer = await customers.GetByEmailAsync(email, cancellationToken);
+        var customer = await customers.GetByEmailAsync(query.Email, cancellationToken);
 
         return customer?.ToDto();
     }

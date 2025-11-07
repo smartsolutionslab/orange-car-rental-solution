@@ -126,7 +126,7 @@ public static class ReservationEndpoints
                 Guid id,
                 GetReservationQueryHandler handler) =>
             {
-                var query = new GetReservationQuery(id);
+                var query = new GetReservationQuery(ReservationIdentifier.From(id));
                 var result = await handler.HandleAsync(query);
 
                 return result is not null
@@ -151,8 +151,8 @@ public static class ReservationEndpoints
             {
                 var query = new SearchReservationsQuery(
                     status,
-                    customerId,
-                    vehicleId,
+                    customerId.HasValue ? CustomerIdentifier.From(customerId.Value) : null,
+                    vehicleId.HasValue ? VehicleIdentifier.From(vehicleId.Value) : null,
                     pickupDateFrom,
                     pickupDateTo,
                     pageNumber,
