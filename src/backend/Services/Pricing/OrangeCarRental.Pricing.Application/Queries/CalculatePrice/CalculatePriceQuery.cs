@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 
 /// <summary>
@@ -8,7 +10,7 @@ public sealed record CalculatePriceQuery
     /// <summary>
     ///     Vehicle category code (e.g., "KLEIN", "MITTEL", "SUV").
     /// </summary>
-    public required string CategoryCode { get; init; }
+    public required CategoryCode CategoryCode { get; init; }
 
     /// <summary>
     ///     Pickup date.
@@ -23,5 +25,5 @@ public sealed record CalculatePriceQuery
     /// <summary>
     ///     Optional location code for location-specific pricing.
     /// </summary>
-    public string? LocationCode { get; init; }
+    public LocationCode? LocationCode { get; init; }
 }

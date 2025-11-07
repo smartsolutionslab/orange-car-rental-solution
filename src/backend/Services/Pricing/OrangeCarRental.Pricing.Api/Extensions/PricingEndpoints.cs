@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
 
@@ -12,12 +13,23 @@ public static class PricingEndpoints
 
         // POST /api/pricing/calculate - Calculate rental price
         pricing.MapPost("/calculate", async (
-                CalculatePriceQuery query,
+                CalculatePriceRequest request,
                 CalculatePriceQueryHandler handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Map request DTO to query with value objects
+                    var query = new CalculatePriceQuery
+                    {
+                        CategoryCode = CategoryCode.Of(request.CategoryCode),
+                        PickupDate = request.PickupDate,
+                        ReturnDate = request.ReturnDate,
+                        LocationCode = !string.IsNullOrWhiteSpace(request.LocationCode)
+                            ? LocationCode.Of(request.LocationCode)
+                            : null
+                    };
+
                     var result = await handler.HandleAsync(query, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -39,4 +51,30 @@ public static class PricingEndpoints
 
         return app;
     }
+}
+
+/// <summary>
+///     Request DTO for calculating rental price.
+/// </summary>
+public sealed record CalculatePriceRequest
+{
+    /// <summary>
+    ///     Vehicle category code (e.g., "KLEIN", "MITTEL", "SUV").
+    /// </summary>
+    public required string CategoryCode { get; init; }
+
+    /// <summary>
+    ///     Pickup date.
+    /// </summary>
+    public required DateTime PickupDate { get; init; }
+
+    /// <summary>
+    ///     Return date.
+    /// </summary>
+    public required DateTime ReturnDate { get; init; }
+
+    /// <summary>
+    ///     Optional location code for location-specific pricing.
+    /// </summary>
+    public string? LocationCode { get; init; }
 }

@@ -12,31 +12,30 @@ public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingP
         CalculatePriceQuery query,
         CancellationToken cancellationToken = default)
     {
-        var categoryCode = CategoryCode.Of(query.CategoryCode);
         var rentalPeriod = RentalPeriod.Of(query.PickupDate, query.ReturnDate);
 
         // Try to get location-specific pricing first, then fall back to general pricing
-        var pricingPolicy = query.LocationCode != null
+        var pricingPolicy = query.LocationCode.HasValue
             ? await pricingPolicies.GetActivePolicyByCategoryAndLocationAsync(
-                categoryCode,
-                LocationCode.Of(query.LocationCode),
+                query.CategoryCode,
+                query.LocationCode.Value,
                 cancellationToken)
             : null;
 
         // Fall back to general pricing if location-specific pricing not found
-        pricingPolicy ??= await pricingPolicies.GetActivePolicyByCategoryAsync(categoryCode, cancellationToken);
+        pricingPolicy ??= await pricingPolicies.GetActivePolicyByCategoryAsync(query.CategoryCode, cancellationToken);
 
         if (pricingPolicy is null)
         {
             throw new InvalidOperationException(
-                $"No active pricing policy found for category '{query.CategoryCode}'");
+                $"No active pricing policy found for category '{query.CategoryCode.Value}'");
         }
 
         var totalPrice = pricingPolicy.CalculatePrice(rentalPeriod);
 
         return new PriceCalculationResult
         {
-            CategoryCode = query.CategoryCode,
+            CategoryCode = query.CategoryCode.Value,
             TotalDays = rentalPeriod.TotalDays,
             DailyRateNet = pricingPolicy.DailyRate.NetAmount,
             DailyRateGross = pricingPolicy.DailyRate.GrossAmount,
