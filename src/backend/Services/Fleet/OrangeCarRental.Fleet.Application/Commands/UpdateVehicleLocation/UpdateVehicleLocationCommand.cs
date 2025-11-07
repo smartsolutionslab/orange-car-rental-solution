@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
 
@@ -6,6 +7,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Command to move a vehicle to a different location.
 /// </summary>
 public sealed record UpdateVehicleLocationCommand(
-    Guid VehicleId,
+    VehicleIdentifier VehicleId,
     Location NewLocation
 );

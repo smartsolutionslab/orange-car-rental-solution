@@ -20,8 +20,7 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
         CancellationToken cancellationToken = default)
     {
         // Load vehicle
-        var vehicleId = VehicleIdentifier.From(command.VehicleId);
-        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken)
+        var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken)
             ?? throw new InvalidOperationException($"Vehicle with ID '{command.VehicleId}' not found.");
 
         var oldStatus = vehicle.Status;

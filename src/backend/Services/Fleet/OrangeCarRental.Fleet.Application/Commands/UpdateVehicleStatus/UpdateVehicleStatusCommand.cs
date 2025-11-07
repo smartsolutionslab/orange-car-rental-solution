@@ -6,6 +6,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Command to update a vehicle's status.
 /// </summary>
 public sealed record UpdateVehicleStatusCommand(
-    Guid VehicleId,
+    VehicleIdentifier VehicleId,
     VehicleStatus NewStatus
 );

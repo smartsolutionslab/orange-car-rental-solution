@@ -95,7 +95,7 @@ public static class FleetEndpoints
                     if (!Enum.TryParse<VehicleStatus>(status, true, out var vehicleStatus))
                         return Results.BadRequest(new { message = $"Invalid status: {status}" });
 
-                    var command = new UpdateVehicleStatusCommand(id, vehicleStatus);
+                    var command = new UpdateVehicleStatusCommand(VehicleIdentifier.From(id), vehicleStatus);
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -130,7 +130,7 @@ public static class FleetEndpoints
                 try
                 {
                     var location = Location.FromCode(LocationCode.Of(locationCode));
-                    var command = new UpdateVehicleLocationCommand(id, location);
+                    var command = new UpdateVehicleLocationCommand(VehicleIdentifier.From(id), location);
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -169,7 +169,7 @@ public static class FleetEndpoints
                 try
                 {
                     var newRate = Money.Euro(dailyRateNet);
-                    var command = new UpdateVehicleDailyRateCommand(id, newRate);
+                    var command = new UpdateVehicleDailyRateCommand(VehicleIdentifier.From(id), newRate);
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -222,10 +222,18 @@ public static class FleetEndpoints
                 GetLocationByCodeQueryHandler handler,
                 CancellationToken cancellationToken) =>
             {
-                var result = await handler.HandleAsync(new GetLocationByCodeQuery(code), cancellationToken);
-                return result is not null
-                    ? Results.Ok(result)
-                    : Results.NotFound(new { message = $"Location with code '{code}' not found" });
+                try
+                {
+                    var locationCode = LocationCode.Of(code);
+                    var result = await handler.HandleAsync(new GetLocationByCodeQuery(locationCode), cancellationToken);
+                    return result is not null
+                        ? Results.Ok(result)
+                        : Results.NotFound(new { message = $"Location with code '{code}' not found" });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
             })
             .WithName("GetLocationByCode")
             .WithSummary("Get location by code")

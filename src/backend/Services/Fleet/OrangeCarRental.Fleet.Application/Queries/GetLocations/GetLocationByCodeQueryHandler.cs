@@ -14,8 +14,7 @@ public sealed class GetLocationByCodeQueryHandler
     {
         try
         {
-            var locationCode = LocationCode.Of(query.Code);
-            var location = Location.FromCode(locationCode);
+            var location = Location.FromCode(query.Code);
 
             var dto = new LocationDto
             {
