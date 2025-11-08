@@ -10,6 +10,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.Calculat
 public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingPolicies)
     : IQueryHandler<CalculatePriceQuery, PriceCalculationResult>
 {
+    /// <summary>
+    ///     Handles the price calculation query for a vehicle rental.
+    /// </summary>
+    /// <param name="query">The query containing category, dates, and optional location.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Price calculation result with net, VAT, and gross amounts.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when no active pricing policy is found for the category.</exception>
     public async Task<PriceCalculationResult> HandleAsync(
         CalculatePriceQuery query,
         CancellationToken cancellationToken = default)

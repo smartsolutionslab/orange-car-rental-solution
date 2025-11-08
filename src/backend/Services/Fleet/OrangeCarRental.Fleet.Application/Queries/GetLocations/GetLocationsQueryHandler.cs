@@ -10,6 +10,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocatio
 public sealed class GetLocationsQueryHandler
     : IQueryHandler<GetLocationsQuery, IReadOnlyList<LocationDto>>
 {
+    /// <summary>
+    ///     Handles the query to retrieve all rental locations.
+    /// </summary>
+    /// <param name="query">The query requesting all locations.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A read-only list of all available rental locations.</returns>
     public Task<IReadOnlyList<LocationDto>> HandleAsync(
         GetLocationsQuery query,
         CancellationToken cancellationToken = default)
