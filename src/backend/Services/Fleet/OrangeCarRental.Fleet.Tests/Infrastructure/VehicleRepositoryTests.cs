@@ -60,12 +60,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Items.Should().HaveCount(5); // All 5 test vehicles
-        result.TotalCount.Should().Be(5);
-        result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(20);
-        result.TotalPages.Should().Be(1);
+        result.ShouldNotBeNull();
+        result.Items.Count.ShouldBe(5); // All 5 test vehicles
+        result.TotalCount.ShouldBe(5);
+        result.PageNumber.ShouldBe(1);
+        result.PageSize.ShouldBe(20);
+        result.TotalPages.ShouldBe(1);
     }
 
     [Fact]
@@ -84,10 +84,9 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(3);
-        result.Items.Should().AllSatisfy(v =>
-            v.CurrentLocation.Code.Value.Should().Be("BER-HBF"));
-        result.TotalCount.Should().Be(3);
+        result.Items.Count.ShouldBe(3);
+        result.Items.ShouldAllBe(v => v.CurrentLocation.Code.Value == "BER-HBF");
+        result.TotalCount.ShouldBe(3);
     }
 
     [Fact]
@@ -106,9 +105,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(2);
-        result.Items.Should().AllSatisfy(v =>
-            v.Category.Code.Should().Be("KLEIN"));
+        result.Items.Count.ShouldBe(2);
+        result.Items.ShouldAllBe(v => v.Category.Code == "KLEIN");
     }
 
     [Fact]
@@ -122,8 +120,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(1);
-        result.Items.First().FuelType.Should().Be(FuelType.Electric);
+        result.Items.Count.ShouldBe(1);
+        result.Items.First().FuelType.ShouldBe(FuelType.Electric);
     }
 
     [Fact]
@@ -138,9 +136,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
         // Assert
         // Test data has: VW Golf (5), Tesla (5), Ford Focus (5), BMW X5 (7) = 4 vehicles with >= 5 seats
-        result.Items.Should().HaveCount(4);
-        result.Items.Should().AllSatisfy(v =>
-            v.Seats.Value.Should().BeGreaterThanOrEqualTo(5));
+        result.Items.Count.ShouldBe(4);
+        result.Items.ShouldAllBe(v => v.Seats.Value >= 5);
     }
 
     [Fact]
@@ -154,9 +151,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(2);
-        result.Items.Should().AllSatisfy(v =>
-            v.DailyRate.GrossAmount.Should().BeLessThanOrEqualTo(50.00m));
+        result.Items.Count.ShouldBe(2);
+        result.Items.ShouldAllBe(v => v.DailyRate.GrossAmount <= 50.00m);
     }
 
     [Fact]
@@ -177,13 +173,13 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(2);
-        result.Items.Should().AllSatisfy(v =>
+        result.Items.Count.ShouldBe(2);
+        foreach (var v in result.Items)
         {
-            v.CurrentLocation.Code.Value.Should().Be("BER-HBF");
-            v.FuelType.Should().Be(FuelType.Petrol);
-            v.Seats.Value.Should().BeGreaterThanOrEqualTo(4);
-        });
+            v.CurrentLocation.Code.Value.ShouldBe("BER-HBF");
+            v.FuelType.ShouldBe(FuelType.Petrol);
+            v.Seats.Value.ShouldBeGreaterThanOrEqualTo(4);
+        }
     }
 
     [Fact]
@@ -197,11 +193,11 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(2);
-        result.PageNumber.Should().Be(2);
-        result.PageSize.Should().Be(2);
-        result.TotalCount.Should().Be(5);
-        result.TotalPages.Should().Be(3);
+        result.Items.Count.ShouldBe(2);
+        result.PageNumber.ShouldBe(2);
+        result.PageSize.ShouldBe(2);
+        result.TotalCount.ShouldBe(5);
+        result.TotalPages.ShouldBe(3);
     }
 
     [Fact]
@@ -228,9 +224,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
-        result.Items.Should().HaveCount(4);
-        result.Items.Should().AllSatisfy(v =>
-            v.Status.Should().Be(VehicleStatus.Available));
+        result.Items.Count.ShouldBe(4);
+        result.Items.ShouldAllBe(v => v.Status == VehicleStatus.Available);
     }
 
     [Fact]
@@ -245,9 +240,9 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.GetByIdAsync(vehicle.Id, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(vehicle.Id);
-        result.Name.Value.Should().Be("VW Polo");
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(vehicle.Id);
+        result.Name.Value.ShouldBe("VW Polo");
     }
 
     [Fact]
@@ -260,7 +255,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         var result = await repository.GetByIdAsync(nonExistingId, CancellationToken.None);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     private async Task SeedTestDataAsync()

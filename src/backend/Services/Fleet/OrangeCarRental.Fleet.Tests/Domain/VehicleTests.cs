@@ -24,16 +24,16 @@ public class VehicleTests
         vehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
-        vehicle.Should().NotBeNull();
-        vehicle.Name.Should().Be(name);
-        vehicle.Category.Should().Be(category);
-        vehicle.CurrentLocation.Should().Be(location);
-        vehicle.Seats.Should().Be(seats);
-        vehicle.FuelType.Should().Be(fuelType);
-        vehicle.TransmissionType.Should().Be(transmission);
-        vehicle.DailyRate.Should().Be(dailyRate);
-        vehicle.LicensePlate.Should().Be("B-XY-1234");
-        vehicle.Status.Should().Be(VehicleStatus.Available);
+        vehicle.ShouldNotBeNull();
+        vehicle.Name.ShouldBe(name);
+        vehicle.Category.ShouldBe(category);
+        vehicle.CurrentLocation.ShouldBe(location);
+        vehicle.Seats.ShouldBe(seats);
+        vehicle.FuelType.ShouldBe(fuelType);
+        vehicle.TransmissionType.ShouldBe(transmission);
+        vehicle.DailyRate.ShouldBe(dailyRate);
+        vehicle.LicensePlate.ShouldBe("B-XY-1234");
+        vehicle.Status.ShouldBe(VehicleStatus.Available);
     }
 
     [Fact]
@@ -48,8 +48,8 @@ public class VehicleTests
         vehicle = vehicle.UpdateDailyRate(newRate);
 
         // Assert
-        vehicle.DailyRate.Should().Be(newRate);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.DailyRate.ShouldBe(newRate);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class VehicleTests
         var result = vehicle.UpdateDailyRate(sameRate);
 
         // Assert
-        result.DomainEvents.Should().BeEmpty();
+        result.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -77,8 +77,8 @@ public class VehicleTests
         vehicle = vehicle.MoveToLocation(newLocation);
 
         // Assert
-        vehicle.CurrentLocation.Should().Be(newLocation);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.CurrentLocation.ShouldBe(newLocation);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -91,8 +91,8 @@ public class VehicleTests
 
         // Act & Assert
         var act = () => vehicle.MoveToLocation(newLocation);
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Cannot move a rented vehicle");
+        Should.Throw<InvalidOperationException>(act)
+            .Message.ShouldBe("Cannot move a rented vehicle");
     }
 
     [Fact]
@@ -105,8 +105,8 @@ public class VehicleTests
         vehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Maintenance);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.Status.ShouldBe(VehicleStatus.Maintenance);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class VehicleTests
         var result = vehicle.ChangeStatus(currentStatus);
 
         // Assert
-        result.DomainEvents.Should().BeEmpty();
+        result.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public class VehicleTests
         vehicle = vehicle.MarkAsAvailable();
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Available);
+        vehicle.Status.ShouldBe(VehicleStatus.Available);
     }
 
     [Fact]
@@ -148,8 +148,8 @@ public class VehicleTests
         var result = vehicle.MarkAsAvailable();
 
         // Assert
-        result.Status.Should().Be(VehicleStatus.Available);
-        result.DomainEvents.Should().BeEmpty();
+        result.Status.ShouldBe(VehicleStatus.Available);
+        result.DomainEvents.ShouldBeEmpty();
     }
 
     [Fact]
@@ -162,8 +162,8 @@ public class VehicleTests
         vehicle = vehicle.MarkAsRented();
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Rented);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.Status.ShouldBe(VehicleStatus.Rented);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -178,8 +178,8 @@ public class VehicleTests
         vehicle = vehicle.MarkAsAvailable();
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Available);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.Status.ShouldBe(VehicleStatus.Available);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -192,7 +192,7 @@ public class VehicleTests
         vehicle = vehicle.MarkAsUnderMaintenance();
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.Maintenance);
+        vehicle.Status.ShouldBe(VehicleStatus.Maintenance);
     }
 
     [Fact]
@@ -204,8 +204,8 @@ public class VehicleTests
 
         // Act & Assert
         var act = () => vehicle.MarkAsUnderMaintenance();
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("Cannot put rented vehicle under maintenance");
+        Should.Throw<InvalidOperationException>(act)
+            .Message.ShouldBe("Cannot put rented vehicle under maintenance");
     }
 
     [Fact]
@@ -218,8 +218,8 @@ public class VehicleTests
         vehicle = vehicle.ChangeStatus(VehicleStatus.OutOfService);
 
         // Assert
-        vehicle.Status.Should().Be(VehicleStatus.OutOfService);
-        vehicle.DomainEvents.Should().HaveCount(1);
+        vehicle.Status.ShouldBe(VehicleStatus.OutOfService);
+        vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
     [Fact]
@@ -232,7 +232,7 @@ public class VehicleTests
         vehicle = vehicle.SetLicensePlate("B-AB-9999");
 
         // Assert
-        vehicle.LicensePlate.Should().Be("B-AB-9999");
+        vehicle.LicensePlate.ShouldBe("B-AB-9999");
     }
 
     [Fact]
@@ -243,8 +243,8 @@ public class VehicleTests
 
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("  ");
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*String cannot be null, empty, or whitespace*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("String cannot be null, empty, or whitespace");
     }
 
     [Fact]
@@ -255,8 +255,8 @@ public class VehicleTests
 
         // Act & Assert
         var act = () => vehicle.SetLicensePlate("");
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*String cannot be null, empty, or whitespace*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("String cannot be null, empty, or whitespace");
     }
 
     [Fact]
@@ -269,7 +269,7 @@ public class VehicleTests
         vehicle = vehicle.SetLicensePlate("b-xy-1234");
 
         // Assert
-        vehicle.LicensePlate.Should().Be("B-XY-1234");
+        vehicle.LicensePlate.ShouldBe("B-XY-1234");
     }
 
     [Fact]
@@ -282,7 +282,7 @@ public class VehicleTests
         var isAvailable = vehicle.IsAvailableForRental();
 
         // Assert
-        isAvailable.Should().BeTrue();
+        isAvailable.ShouldBeTrue();
     }
 
     [Fact]
@@ -296,7 +296,7 @@ public class VehicleTests
         var isAvailable = vehicle.IsAvailableForRental();
 
         // Assert
-        isAvailable.Should().BeFalse();
+        isAvailable.ShouldBeFalse();
     }
 
     [Fact]
@@ -310,7 +310,7 @@ public class VehicleTests
         var isAvailable = vehicle.IsAvailableForRental();
 
         // Assert
-        isAvailable.Should().BeFalse();
+        isAvailable.ShouldBeFalse();
     }
 
     private Vehicle CreateTestVehicle()

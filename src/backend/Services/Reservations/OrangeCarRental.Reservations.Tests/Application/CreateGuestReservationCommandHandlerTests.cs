@@ -1,4 +1,5 @@
 using Moq;
+using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
@@ -66,13 +67,13 @@ public class CreateGuestReservationCommandHandlerTests
         var result = await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result.CustomerId.Should().Be(customerId);
-        result.ReservationId.Should().NotBeEmpty();
-        result.TotalPriceNet.Should().Be(168.07m);
-        result.TotalPriceVat.Should().BeApproximately(31.93m, 0.01m);
-        result.TotalPriceGross.Should().BeApproximately(200.00m, 0.01m);
-        result.Currency.Should().Be("EUR");
+        result.ShouldNotBeNull();
+        result.CustomerId.ShouldBe(customerId);
+        result.ReservationId.ShouldNotBe(Guid.Empty);
+        result.TotalPriceNet.ShouldBe(168.07m);
+        result.TotalPriceVat.ShouldBe(31.93m, 0.01m);
+        result.TotalPriceGross.ShouldBe(200.00m, 0.01m);
+        result.Currency.ShouldBe("EUR");
     }
 
     [Fact]
@@ -206,11 +207,11 @@ public class CreateGuestReservationCommandHandlerTests
         await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        callOrder.Should().HaveCount(4);
-        callOrder[0].Should().Be("RegisterCustomer");
-        callOrder[1].Should().Be("CalculatePrice");
-        callOrder[2].Should().Be("Add");
-        callOrder[3].Should().Be("Save");
+        callOrder.Count.ShouldBe(4);
+        callOrder[0].ShouldBe("RegisterCustomer");
+        callOrder[1].ShouldBe("CalculatePrice");
+        callOrder[2].ShouldBe("Add");
+        callOrder[3].ShouldBe("Save");
     }
 
     [Fact]
@@ -254,8 +255,8 @@ public class CreateGuestReservationCommandHandlerTests
         await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        capturedReservation.Should().NotBeNull();
-        capturedReservation!.CustomerId.Should().Be(customerId);
+        capturedReservation.ShouldNotBeNull();
+        capturedReservation!.CustomerId.ShouldBe(customerId);
     }
 
     [Fact]
@@ -275,8 +276,8 @@ public class CreateGuestReservationCommandHandlerTests
         await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        capturedReservation.Should().NotBeNull();
-        capturedReservation!.VehicleId.Should().Be(command.VehicleId.Value);
+        capturedReservation.ShouldNotBeNull();
+        capturedReservation!.VehicleId.ShouldBe(command.VehicleId.Value);
     }
 
     [Fact]
@@ -296,8 +297,8 @@ public class CreateGuestReservationCommandHandlerTests
         await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        capturedReservation.Should().NotBeNull();
-        capturedReservation!.Status.Should().Be(ReservationStatus.Pending);
+        capturedReservation.ShouldNotBeNull();
+        capturedReservation!.Status.ShouldBe(ReservationStatus.Pending);
     }
 
     [Fact]
@@ -317,9 +318,9 @@ public class CreateGuestReservationCommandHandlerTests
         await _handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        capturedReservation.Should().NotBeNull();
-        capturedReservation!.Period.PickupDate.Should().Be(command.Period.PickupDate);
-        capturedReservation.Period.ReturnDate.Should().Be(command.Period.ReturnDate);
+        capturedReservation.ShouldNotBeNull();
+        capturedReservation!.Period.PickupDate.ShouldBe(command.Period.PickupDate);
+        capturedReservation.Period.ReturnDate.ShouldBe(command.Period.ReturnDate);
     }
 
     #endregion
@@ -336,12 +337,9 @@ public class CreateGuestReservationCommandHandlerTests
             .Setup(s => s.RegisterCustomerAsync(It.IsAny<RegisterCustomerDto>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Failed to register customer via Customers API"));
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("*Failed to register customer*");
+        // Act & Assert
+        var ex = await Should.ThrowAsync<InvalidOperationException>(async () => await _handler.HandleAsync(command, CancellationToken.None));
+        ex.Message.ShouldContain("Failed to register customer");
     }
 
     [Fact]
@@ -363,12 +361,9 @@ public class CreateGuestReservationCommandHandlerTests
                 It.IsAny<CancellationToken>()))
             .ThrowsAsync(new InvalidOperationException("Failed to calculate price via Pricing API"));
 
-        // Act
-        var act = async () => await _handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>()
-            .WithMessage("*Failed to calculate price*");
+        // Act & Assert
+        var ex = await Should.ThrowAsync<InvalidOperationException>(async () => await _handler.HandleAsync(command, CancellationToken.None));
+        ex.Message.ShouldContain("Failed to calculate price");
     }
 
     [Fact]
@@ -448,8 +443,9 @@ public class CreateGuestReservationCommandHandlerTests
         var act = () => CreateValidCommand() with { VehicleId = VehicleIdentifier.From(Guid.Empty) };
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*must not be equal to*00000000-0000-0000-0000-000000000000*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("must not be equal to");
+        ex.Message.ShouldContain("00000000-0000-0000-0000-000000000000");
     }
 
     [Fact]
@@ -459,8 +455,8 @@ public class CreateGuestReservationCommandHandlerTests
         var act = () => CreateValidCommand() with { Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(-1), DateTime.UtcNow.Date.AddDays(3)) };
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Pickup date cannot be in the past*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("Pickup date cannot be in the past");
     }
 
     [Fact]
@@ -473,8 +469,8 @@ public class CreateGuestReservationCommandHandlerTests
         };
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Return date must be after pickup date*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("Return date must be after pickup date");
     }
 
     [Fact]
@@ -487,8 +483,8 @@ public class CreateGuestReservationCommandHandlerTests
         var act = () => CreateValidCommand() with { Period = BookingPeriod.Of(pickupDate, pickupDate) };
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Return date must be after pickup date*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("Return date must be after pickup date");
     }
 
     [Fact]
@@ -501,8 +497,8 @@ public class CreateGuestReservationCommandHandlerTests
         };
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*Rental period cannot exceed 90 days*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("Rental period cannot exceed 90 days");
     }
 
     #endregion

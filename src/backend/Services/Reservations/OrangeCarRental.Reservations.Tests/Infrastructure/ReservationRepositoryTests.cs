@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
@@ -67,10 +68,10 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var result = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result!.Id.Should().Be(reservation.Id);
-        result.VehicleId.Should().Be(reservation.VehicleId);
-        result.CustomerId.Should().Be(reservation.CustomerId);
+        result.ShouldNotBeNull();
+        result!.Id.ShouldBe(reservation.Id);
+        result.VehicleId.ShouldBe(reservation.VehicleId);
+        result.CustomerId.ShouldBe(reservation.CustomerId);
     }
 
     [Fact]
@@ -83,7 +84,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var result = await _repository.GetByIdAsync(nonExistingId, CancellationToken.None);
 
         // Assert
-        result.Should().BeNull();
+        result.ShouldBeNull();
     }
 
     #endregion
@@ -97,8 +98,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var result = await _repository.GetAllAsync(CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeEmpty();
+        result.ShouldNotBeNull();
+        result.ShouldBeEmpty();
     }
 
     [Fact]
@@ -114,8 +115,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var result = await _repository.GetAllAsync(CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().HaveCount(3);
+        result.ShouldNotBeNull();
+        result.Count.ShouldBe(3);
     }
 
     #endregion
@@ -134,8 +135,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var saved = await _context.Reservations.FindAsync(reservation.Id);
-        saved.Should().NotBeNull();
-        saved!.Id.Should().Be(reservation.Id);
+        saved.ShouldNotBeNull();
+        saved!.Id.ShouldBe(reservation.Id);
     }
 
     [Fact]
@@ -152,7 +153,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var all = await _context.Reservations.ToListAsync();
-        all.Should().HaveCount(2);
+        all.Count.ShouldBe(2);
     }
 
     #endregion
@@ -181,9 +182,9 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var updated = await _context.Reservations.FindAsync(loaded.Id);
-        updated.Should().NotBeNull();
-        updated!.Status.Should().Be(ReservationStatus.Confirmed);
-        updated.ConfirmedAt.Should().NotBeNull();
+        updated.ShouldNotBeNull();
+        updated!.Status.ShouldBe(ReservationStatus.Confirmed);
+        updated.ConfirmedAt.ShouldNotBeNull();
     }
 
     [Fact]
@@ -216,8 +217,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var updated = await _context.Reservations.FindAsync(loaded.Id);
-        updated.Should().NotBeNull();
-        updated!.Status.Should().Be(ReservationStatus.Active);
+        updated.ShouldNotBeNull();
+        updated!.Status.ShouldBe(ReservationStatus.Active);
     }
 
     #endregion
@@ -238,7 +239,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var deleted = await _context.Reservations.FindAsync(reservation.Id);
-        deleted.Should().BeNull();
+        deleted.ShouldBeNull();
     }
 
     [Fact]
@@ -247,15 +248,12 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Arrange
         var nonExistingId = ReservationIdentifier.New();
 
-        // Act
-        var act = async () =>
+        // Act & Assert
+        await Should.NotThrowAsync(async () =>
         {
             await _repository.DeleteAsync(nonExistingId, CancellationToken.None);
             await _repository.SaveChangesAsync(CancellationToken.None);
-        };
-
-        // Assert
-        await act.Should().NotThrowAsync();
+        });
     }
 
     #endregion
@@ -274,7 +272,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var saved = await _context.Reservations.FindAsync(reservation.Id);
-        saved.Should().NotBeNull();
+        saved.ShouldNotBeNull();
     }
 
     [Fact]
@@ -296,7 +294,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var updated = await _context.Reservations.FindAsync(loaded.Id);
-        updated!.Status.Should().Be(ReservationStatus.Confirmed);
+        updated!.Status.ShouldBe(ReservationStatus.Confirmed);
     }
 
     #endregion
@@ -322,8 +320,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert - Pending state
         var pending = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        pending.Should().NotBeNull();
-        pending!.Status.Should().Be(ReservationStatus.Pending);
+        pending.ShouldNotBeNull();
+        pending!.Status.ShouldBe(ReservationStatus.Pending);
 
         // Act - Confirm
         _context.Entry(pending).State = EntityState.Detached;
@@ -335,7 +333,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert - Confirmed state
         var confirmed = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        confirmed!.Status.Should().Be(ReservationStatus.Confirmed);
+        confirmed!.Status.ShouldBe(ReservationStatus.Confirmed);
 
         // Act - Activate
         _context.Entry(confirmed).State = EntityState.Detached;
@@ -347,7 +345,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert - Active state
         var active = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        active!.Status.Should().Be(ReservationStatus.Active);
+        active!.Status.ShouldBe(ReservationStatus.Active);
 
         // Act - Complete
         _context.Entry(active).State = EntityState.Detached;
@@ -359,8 +357,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert - Completed state
         var completed = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        completed!.Status.Should().Be(ReservationStatus.Completed);
-        completed.CompletedAt.Should().NotBeNull();
+        completed!.Status.ShouldBe(ReservationStatus.Completed);
+        completed.CompletedAt.ShouldNotBeNull();
     }
 
     [Fact]
@@ -383,9 +381,9 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Assert
         var cancelled = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        cancelled!.Status.Should().Be(ReservationStatus.Cancelled);
-        cancelled.CancellationReason.Should().Be("Customer changed plans");
-        cancelled.CancelledAt.Should().NotBeNull();
+        cancelled!.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelled.CancellationReason.ShouldBe("Customer changed plans");
+        cancelled.CancelledAt.ShouldNotBeNull();
     }
 
     #endregion

@@ -30,17 +30,17 @@ public class ReservationTests
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
-        reservation.Should().NotBeNull();
-        reservation.VehicleId.Should().Be(_vehicleId);
-        reservation.CustomerId.Should().Be(_customerId);
-        reservation.Period.Should().Be(_period);
-        reservation.TotalPrice.Should().Be(_totalPrice);
-        reservation.Status.Should().Be(ReservationStatus.Pending);
-        reservation.CreatedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        reservation.ConfirmedAt.Should().BeNull();
-        reservation.CancelledAt.Should().BeNull();
-        reservation.CompletedAt.Should().BeNull();
-        reservation.CancellationReason.Should().BeNull();
+        reservation.ShouldNotBeNull();
+        reservation.VehicleId.ShouldBe(_vehicleId);
+        reservation.CustomerId.ShouldBe(_customerId);
+        reservation.Period.ShouldBe(_period);
+        reservation.TotalPrice.ShouldBe(_totalPrice);
+        reservation.Status.ShouldBe(ReservationStatus.Pending);
+        reservation.CreatedAt.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        reservation.ConfirmedAt.ShouldBeNull();
+        reservation.CancelledAt.ShouldBeNull();
+        reservation.CompletedAt.ShouldBeNull();
+        reservation.CancellationReason.ShouldBeNull();
     }
 
     [Fact]
@@ -51,8 +51,8 @@ public class ReservationTests
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*GUID cannot be empty*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("GUID cannot be empty");
     }
 
     [Fact]
@@ -63,8 +63,8 @@ public class ReservationTests
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
-        act.Should().Throw<ArgumentException>()
-            .WithMessage("*GUID cannot be empty*");
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("GUID cannot be empty");
     }
 
     #endregion
@@ -82,9 +82,9 @@ public class ReservationTests
         reservation = reservation.Confirm();
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Confirmed);
-        reservation.ConfirmedAt.Should().NotBeNull();
-        reservation.ConfirmedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        reservation.Status.ShouldBe(ReservationStatus.Confirmed);
+        reservation.ConfirmedAt.ShouldNotBeNull();
+        reservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -99,8 +99,8 @@ public class ReservationTests
         var act = () => reservation.Confirm();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot confirm reservation in status: Confirmed*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot confirm reservation in status: Confirmed");
     }
 
     [Fact]
@@ -115,8 +115,8 @@ public class ReservationTests
         var act = () => reservation.Confirm();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot confirm reservation in status: Cancelled*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot confirm reservation in status: Cancelled");
     }
 
     #endregion
@@ -134,10 +134,10 @@ public class ReservationTests
         reservation = reservation.Cancel("Changed plans");
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
-        reservation.CancelledAt.Should().NotBeNull();
-        reservation.CancelledAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
-        reservation.CancellationReason.Should().Be("Changed plans");
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        reservation.CancelledAt.ShouldNotBeNull();
+        reservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        reservation.CancellationReason.ShouldBe("Changed plans");
     }
 
     [Fact]
@@ -152,8 +152,8 @@ public class ReservationTests
         reservation = reservation.Cancel("Emergency");
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
-        reservation.CancellationReason.Should().Be("Emergency");
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        reservation.CancellationReason.ShouldBe("Emergency");
     }
 
     [Fact]
@@ -167,8 +167,8 @@ public class ReservationTests
         reservation = reservation.Cancel();
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
-        reservation.CancellationReason.Should().BeNull();
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        reservation.CancellationReason.ShouldBeNull();
     }
 
     [Fact]
@@ -183,9 +183,9 @@ public class ReservationTests
         var act = () => reservation.Cancel("Second cancellation");
 
         // Assert
-        act.Should().NotThrow();
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
-        reservation.CancellationReason.Should().Be("First cancellation"); // Reason doesn't change
+        Should.NotThrow(act);
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        reservation.CancellationReason.ShouldBe("First cancellation"); // Reason doesn't change
     }
 
     [Fact]
@@ -205,8 +205,8 @@ public class ReservationTests
         var act = () => reservation.Cancel("Too late");
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot cancel a completed reservation*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot cancel a completed reservation");
     }
 
     [Fact]
@@ -225,8 +225,8 @@ public class ReservationTests
         var act = () => reservation.Cancel("Cancel during rental");
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot cancel an active rental*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot cancel an active rental");
     }
 
     #endregion
@@ -248,7 +248,7 @@ public class ReservationTests
         reservation = reservation.MarkAsActive();
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Active);
+        reservation.Status.ShouldBe(ReservationStatus.Active);
     }
 
     [Fact]
@@ -271,7 +271,7 @@ public class ReservationTests
         reservation = reservation.MarkAsActive();
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Active);
+        reservation.Status.ShouldBe(ReservationStatus.Active);
     }
 
     [Fact]
@@ -289,8 +289,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsActive();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot activate reservation before pickup date*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot activate reservation before pickup date");
     }
 
     [Fact]
@@ -307,8 +307,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsActive();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot activate reservation in status: Pending*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot activate reservation in status: Pending");
     }
 
     [Fact]
@@ -327,8 +327,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsActive();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot activate reservation in status: Cancelled*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot activate reservation in status: Cancelled");
     }
 
     #endregion
@@ -351,9 +351,9 @@ public class ReservationTests
         reservation = reservation.Complete();
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Completed);
-        reservation.CompletedAt.Should().NotBeNull();
-        reservation.CompletedAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(1));
+        reservation.Status.ShouldBe(ReservationStatus.Completed);
+        reservation.CompletedAt.ShouldNotBeNull();
+        reservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -368,8 +368,8 @@ public class ReservationTests
         var act = () => reservation.Complete();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot complete reservation in status: Confirmed*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot complete reservation in status: Confirmed");
     }
 
     [Fact]
@@ -383,8 +383,8 @@ public class ReservationTests
         var act = () => reservation.Complete();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot complete reservation in status: Pending*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot complete reservation in status: Pending");
     }
 
     #endregion
@@ -412,8 +412,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsNoShow();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot mark as no-show before pickup date has passed*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot mark as no-show before pickup date has passed");
     }
 
     [Fact]
@@ -427,8 +427,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsNoShow();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot mark as no-show in status: Pending*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot mark as no-show in status: Pending");
     }
 
     [Fact]
@@ -447,8 +447,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsNoShow();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot mark as no-show in status: Active*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot mark as no-show in status: Active");
     }
 
     [Fact]
@@ -466,8 +466,8 @@ public class ReservationTests
         var act = () => reservation.MarkAsNoShow();
 
         // Assert
-        act.Should().Throw<InvalidOperationException>()
-            .WithMessage("*Cannot mark as no-show before pickup date has passed*");
+        var ex = Should.Throw<InvalidOperationException>(act);
+        ex.Message.ShouldContain("Cannot mark as no-show before pickup date has passed");
     }
 
     #endregion
@@ -492,7 +492,7 @@ public class ReservationTests
         var overlaps = reservation.OverlapsWith(period2);
 
         // Assert
-        overlaps.Should().BeTrue();
+        overlaps.ShouldBeTrue();
     }
 
     [Fact]
@@ -513,7 +513,7 @@ public class ReservationTests
         var overlaps = reservation.OverlapsWith(period2);
 
         // Assert
-        overlaps.Should().BeFalse();
+        overlaps.ShouldBeFalse();
     }
 
     [Fact]
@@ -527,7 +527,7 @@ public class ReservationTests
         var overlaps = reservation.OverlapsWith(_period);
 
         // Assert
-        overlaps.Should().BeTrue();
+        overlaps.ShouldBeTrue();
     }
 
     [Fact]
@@ -548,7 +548,7 @@ public class ReservationTests
         var overlaps = reservation.OverlapsWith(period2);
 
         // Assert
-        overlaps.Should().BeFalse();
+        overlaps.ShouldBeFalse();
     }
 
     #endregion
@@ -566,16 +566,16 @@ public class ReservationTests
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Act & Assert
-        reservation.Status.Should().Be(ReservationStatus.Pending);
+        reservation.Status.ShouldBe(ReservationStatus.Pending);
 
         reservation = reservation.Confirm();
-        reservation.Status.Should().Be(ReservationStatus.Confirmed);
+        reservation.Status.ShouldBe(ReservationStatus.Confirmed);
 
         reservation = reservation.MarkAsActive();
-        reservation.Status.Should().Be(ReservationStatus.Active);
+        reservation.Status.ShouldBe(ReservationStatus.Active);
 
         reservation = reservation.Complete();
-        reservation.Status.Should().Be(ReservationStatus.Completed);
+        reservation.Status.ShouldBe(ReservationStatus.Completed);
     }
 
     [Fact]
@@ -589,7 +589,7 @@ public class ReservationTests
         reservation = reservation.Cancel("Customer request");
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
     }
 
     [Fact]
@@ -604,7 +604,7 @@ public class ReservationTests
         reservation = reservation.Cancel("Emergency");
 
         // Assert
-        reservation.Status.Should().Be(ReservationStatus.Cancelled);
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
     }
 
     [Fact]
@@ -621,7 +621,7 @@ public class ReservationTests
 
         // Act & Assert - Should throw because we're not past pickup date yet
         var act = () => reservation.MarkAsNoShow();
-        act.Should().Throw<InvalidOperationException>();
+        Should.Throw<InvalidOperationException>(act);
     }
 
     #endregion

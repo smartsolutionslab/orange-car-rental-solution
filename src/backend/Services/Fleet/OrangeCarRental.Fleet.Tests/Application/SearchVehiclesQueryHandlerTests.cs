@@ -40,12 +40,12 @@ public class SearchVehiclesQueryHandlerTests
         var result = await _handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Vehicles.Should().HaveCount(3);
-        result.TotalCount.Should().Be(3);
-        result.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(20);
-        result.TotalPages.Should().Be(1);
+        result.ShouldNotBeNull();
+        result.Vehicles.Count.ShouldBe(3);
+        result.TotalCount.ShouldBe(3);
+        result.PageNumber.ShouldBe(1);
+        result.PageSize.ShouldBe(20);
+        result.TotalPages.ShouldBe(1);
     }
 
     [Fact]
@@ -207,18 +207,18 @@ public class SearchVehiclesQueryHandlerTests
         var result = await _handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
-        result.Vehicles.Should().HaveCount(3);
+        result.Vehicles.Count.ShouldBe(3);
         var firstDto = result.Vehicles.First();
         var firstVehicle = vehicles.First();
 
-        firstDto.Id.Should().Be(firstVehicle.Id.Value);
-        firstDto.Name.Should().Be(firstVehicle.Name.Value);
-        firstDto.CategoryCode.Should().Be(firstVehicle.Category.Code);
-        firstDto.LocationCode.Should().Be(firstVehicle.CurrentLocation.Code.Value);
-        firstDto.Seats.Should().Be(firstVehicle.Seats.Value);
-        firstDto.FuelType.Should().Be(firstVehicle.FuelType.ToString());
-        firstDto.TransmissionType.Should().Be(firstVehicle.TransmissionType.ToString());
-        firstDto.DailyRateGross.Should().Be(firstVehicle.DailyRate.GrossAmount);
+        firstDto.Id.ShouldBe(firstVehicle.Id.Value);
+        firstDto.Name.ShouldBe(firstVehicle.Name.Value);
+        firstDto.CategoryCode.ShouldBe(firstVehicle.Category.Code);
+        firstDto.LocationCode.ShouldBe(firstVehicle.CurrentLocation.Code.Value);
+        firstDto.Seats.ShouldBe(firstVehicle.Seats.Value);
+        firstDto.FuelType.ShouldBe(firstVehicle.FuelType.ToString());
+        firstDto.TransmissionType.ShouldBe(firstVehicle.TransmissionType.ToString());
+        firstDto.DailyRateGross.ShouldBe(firstVehicle.DailyRate.GrossAmount);
     }
 
     [Fact]

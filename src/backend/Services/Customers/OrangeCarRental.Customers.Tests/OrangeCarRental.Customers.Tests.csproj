@@ -7,11 +7,18 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector"/>
+    <PackageReference Include="Shouldly"/>
+    <PackageReference Include="Moq"/>
     <PackageReference Include="Microsoft.NET.Test.Sdk"/>
     <PackageReference Include="xunit"/>
     <PackageReference Include="xunit.runner.visualstudio"/>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
+    <ProjectReference Include="..\OrangeCarRental.Customers.Application\OrangeCarRental.Customers.Application.csproj"/>
+  </ItemGroup>
+  <ItemGroup>
     <Using Include="Xunit"/>
+    <Using Include="Shouldly"/>
   </ItemGroup>
 </Project>
