@@ -25,9 +25,16 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     public async Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
         ReservationStatus? status = null,
         Guid? customerId = null,
+        string? customerName = null,
         Guid? vehicleId = null,
+        string? categoryCode = null,
+        string? pickupLocationCode = null,
         DateOnly? pickupDateFrom = null,
         DateOnly? pickupDateTo = null,
+        decimal? priceMin = null,
+        decimal? priceMax = null,
+        string? sortBy = null,
+        string? sortDirection = "asc",
         int pageNumber = 1,
         int pageSize = 50,
         CancellationToken cancellationToken = default)
@@ -39,23 +46,69 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
         if (customerId.HasValue) query = query.Where(r => r.CustomerId == customerId.Value);
 
+        // Note: customerName filter requires denormalized customer data (not yet implemented)
+
         if (vehicleId.HasValue) query = query.Where(r => r.VehicleId == vehicleId.Value);
+
+        // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
+
+        if (!string.IsNullOrWhiteSpace(pickupLocationCode))
+            query = query.Where(r => r.PickupLocationCode.Value == pickupLocationCode);
 
         if (pickupDateFrom.HasValue) query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
 
         if (pickupDateTo.HasValue) query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
 
+        // Price range filters - access GrossAmount from Money complex property
+        if (priceMin.HasValue)
+            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= priceMin.Value);
+
+        if (priceMax.HasValue)
+            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= priceMax.Value);
+
         // Get total count before pagination
         var totalCount = await query.CountAsync(cancellationToken);
 
-        // Apply pagination and ordering
+        // Apply sorting
+        query = ApplySorting(query, sortBy, sortDirection);
+
+        // Apply pagination
         var reservations = await query
-            .OrderByDescending(r => r.CreatedAt)
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync(cancellationToken);
 
         return (reservations, totalCount);
+    }
+
+    private static IQueryable<Reservation> ApplySorting(
+        IQueryable<Reservation> query,
+        string? sortBy,
+        string? sortDirection)
+    {
+        var isDescending = sortDirection?.ToLowerInvariant() == "desc";
+
+        return sortBy?.ToLowerInvariant() switch
+        {
+            "pickupdate" => isDescending
+                ? query.OrderByDescending(r => r.Period.PickupDate)
+                : query.OrderBy(r => r.Period.PickupDate),
+
+            "price" => isDescending
+                ? query.OrderByDescending(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount)
+                : query.OrderBy(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount),
+
+            "status" => isDescending
+                ? query.OrderByDescending(r => r.Status)
+                : query.OrderBy(r => r.Status),
+
+            "createddate" => isDescending
+                ? query.OrderByDescending(r => r.CreatedAt)
+                : query.OrderBy(r => r.CreatedAt),
+
+            // Default sorting by CreatedAt descending
+            _ => query.OrderByDescending(r => r.CreatedAt)
+        };
     }
 
     public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default) =>

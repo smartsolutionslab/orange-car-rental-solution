@@ -40,9 +40,16 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
         var (reservationsList, totalCount) = await reservations.SearchAsync(
             status,
             customerId,
+            query.CustomerName,
             vehicleId,
+            query.CategoryCode,
+            query.PickupLocationCode,
             pickupDateFrom,
             pickupDateTo,
+            query.PriceMin,
+            query.PriceMax,
+            query.SortBy,
+            query.SortDirection,
             query.PageNumber,
             query.PageSize,
             cancellationToken);

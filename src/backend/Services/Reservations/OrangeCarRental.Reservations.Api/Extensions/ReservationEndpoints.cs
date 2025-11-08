@@ -143,18 +143,32 @@ public static class ReservationEndpoints
                 SearchReservationsQueryHandler handler,
                 string? status = null,
                 Guid? customerId = null,
+                string? customerName = null,
                 Guid? vehicleId = null,
+                string? categoryCode = null,
+                string? pickupLocationCode = null,
                 DateTime? pickupDateFrom = null,
                 DateTime? pickupDateTo = null,
+                decimal? priceMin = null,
+                decimal? priceMax = null,
+                string? sortBy = null,
+                string? sortDirection = "asc",
                 int pageNumber = 1,
                 int pageSize = 50) =>
             {
                 var query = new SearchReservationsQuery(
                     status,
                     customerId.HasValue ? CustomerIdentifier.From(customerId.Value) : null,
+                    customerName,
                     vehicleId.HasValue ? VehicleIdentifier.From(vehicleId.Value) : null,
+                    categoryCode,
+                    pickupLocationCode,
                     pickupDateFrom,
                     pickupDateTo,
+                    priceMin,
+                    priceMax,
+                    sortBy,
+                    sortDirection,
                     pageNumber,
                     pageSize);
 
@@ -162,15 +176,34 @@ public static class ReservationEndpoints
                 return Results.Ok(result);
             })
             .WithName("SearchReservations")
-            .WithSummary("Search reservations with filters and pagination")
+            .WithSummary("Search reservations with enhanced filters, sorting and pagination")
             .WithDescription("""
 
                              Search for reservations using various filters:
+
+                             **Status & Customer Filters:**
                              - **status**: Filter by status (Pending, Confirmed, Active, Completed, Cancelled, NoShow)
                              - **customerId**: Filter by customer GUID
+                             - **customerName**: Filter by customer name (requires denormalized data - not yet implemented)
+
+                             **Vehicle Filters:**
                              - **vehicleId**: Filter by vehicle GUID
+                             - **categoryCode**: Filter by vehicle category code (requires denormalized data - not yet implemented)
+
+                             **Location & Date Filters:**
+                             - **pickupLocationCode**: Filter by pickup location code (e.g., "BER-HBF")
                              - **pickupDateFrom**: Filter by pickup date from (inclusive)
                              - **pickupDateTo**: Filter by pickup date to (inclusive)
+
+                             **Price Range Filters:**
+                             - **priceMin**: Minimum total price (gross amount in EUR)
+                             - **priceMax**: Maximum total price (gross amount in EUR)
+
+                             **Sorting:**
+                             - **sortBy**: Sort field (PickupDate, Price, Status, CreatedDate) - default: CreatedDate
+                             - **sortDirection**: Sort direction (asc, desc) - default: asc
+
+                             **Pagination:**
                              - **pageNumber**: Page number (default: 1)
                              - **pageSize**: Items per page (default: 50, max: 100)
 
