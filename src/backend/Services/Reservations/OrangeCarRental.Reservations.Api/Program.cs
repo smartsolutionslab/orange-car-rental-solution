@@ -2,9 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
@@ -71,6 +74,9 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 builder.Services.AddScoped<CreateReservationCommandHandler>();
 builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
 builder.Services.AddScoped<GetReservationQueryHandler>();
+builder.Services.AddScoped<SearchReservationsQueryHandler>();
+builder.Services.AddScoped<ConfirmReservationCommandHandler>();
+builder.Services.AddScoped<CancelReservationCommandHandler>();
 
 var app = builder.Build();
 
