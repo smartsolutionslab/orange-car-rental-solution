@@ -152,7 +152,7 @@ public static class ReservationEndpoints
                 decimal? priceMin = null,
                 decimal? priceMax = null,
                 string? sortBy = null,
-                string? sortDirection = "asc",
+                bool sortDescending = false,
                 int pageNumber = 1,
                 int pageSize = 50) =>
             {
@@ -168,7 +168,7 @@ public static class ReservationEndpoints
                     priceMin,
                     priceMax,
                     sortBy,
-                    sortDirection,
+                    sortDescending,
                     pageNumber,
                     pageSize);
 
@@ -201,7 +201,7 @@ public static class ReservationEndpoints
 
                              **Sorting:**
                              - **sortBy**: Sort field (PickupDate, Price, Status, CreatedDate) - default: CreatedDate
-                             - **sortDirection**: Sort direction (asc, desc) - default: asc
+                             - **sortDescending**: Sort in descending order (default: false)
 
                              **Pagination:**
                              - **pageNumber**: Page number (default: 1)

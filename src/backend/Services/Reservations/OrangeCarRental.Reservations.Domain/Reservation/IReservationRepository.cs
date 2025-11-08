@@ -21,7 +21,7 @@ public interface IReservationRepository
         decimal? priceMin = null,
         decimal? priceMax = null,
         string? sortBy = null,
-        string? sortDirection = "asc",
+        bool sortDescending = false,
         int pageNumber = 1,
         int pageSize = 50,
         CancellationToken cancellationToken = default);

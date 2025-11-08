@@ -34,7 +34,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         decimal? priceMin = null,
         decimal? priceMax = null,
         string? sortBy = null,
-        string? sortDirection = "asc",
+        bool sortDescending = false,
         int pageNumber = 1,
         int pageSize = 50,
         CancellationToken cancellationToken = default)
@@ -70,7 +70,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         var totalCount = await query.CountAsync(cancellationToken);
 
         // Apply sorting
-        query = ApplySorting(query, sortBy, sortDirection);
+        query = ApplySorting(query, sortBy, sortDescending);
 
         // Apply pagination
         var reservations = await query
@@ -84,25 +84,23 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     private static IQueryable<Reservation> ApplySorting(
         IQueryable<Reservation> query,
         string? sortBy,
-        string? sortDirection)
+        bool sortDescending)
     {
-        var isDescending = sortDirection?.ToLowerInvariant() == "desc";
-
         return sortBy?.ToLowerInvariant() switch
         {
-            "pickupdate" => isDescending
+            "pickupdate" => sortDescending
                 ? query.OrderByDescending(r => r.Period.PickupDate)
                 : query.OrderBy(r => r.Period.PickupDate),
 
-            "price" => isDescending
+            "price" => sortDescending
                 ? query.OrderByDescending(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount)
                 : query.OrderBy(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount),
 
-            "status" => isDescending
+            "status" => sortDescending
                 ? query.OrderByDescending(r => r.Status)
                 : query.OrderBy(r => r.Status),
 
-            "createddate" => isDescending
+            "createddate" => sortDescending
                 ? query.OrderByDescending(r => r.CreatedAt)
                 : query.OrderBy(r => r.CreatedAt),
 

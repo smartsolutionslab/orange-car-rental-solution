@@ -49,7 +49,7 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
             query.PriceMin,
             query.PriceMax,
             query.SortBy,
-            query.SortDirection,
+            query.SortDescending,
             query.PageNumber,
             query.PageSize,
             cancellationToken);

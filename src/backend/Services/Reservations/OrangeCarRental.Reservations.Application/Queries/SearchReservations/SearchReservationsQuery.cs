@@ -33,7 +33,7 @@ public sealed record SearchReservationsQuery(
 
     // Sorting
     string? SortBy = null, // Options: "PickupDate", "Price", "Status", "CreatedDate"
-    string? SortDirection = "asc", // Options: "asc", "desc"
+    bool SortDescending = false,
 
     // Pagination
     int PageNumber = 1,
