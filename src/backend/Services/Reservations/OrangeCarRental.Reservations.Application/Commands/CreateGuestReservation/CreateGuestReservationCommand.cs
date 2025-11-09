@@ -21,11 +21,10 @@ public sealed record CreateGuestReservationCommand : ICommand<CreateGuestReserva
 
     // Customer Details (for inline registration)
     // Using value objects from Customers.Domain for validation and type safety
-    public required FirstName FirstName { get; init; }
-    public required LastName LastName { get; init; }
+    public required CustomerName Name { get; init; }
     public required Email Email { get; init; }
     public required PhoneNumber PhoneNumber { get; init; }
-    public required DateOnly DateOfBirth { get; init; }
+    public required BirthDate DateOfBirth { get; init; }
 
     // Address and License (value objects)
     public required Address Address { get; init; }

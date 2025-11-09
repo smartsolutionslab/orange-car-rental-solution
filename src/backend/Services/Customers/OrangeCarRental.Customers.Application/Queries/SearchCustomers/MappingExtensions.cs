@@ -16,8 +16,8 @@ public static class MappingExtensions
     public static CustomerDto ToDto(this Customer customer) => new()
     {
         Id = customer.Id.Value,
-        FirstName = customer.FirstName,
-        LastName = customer.LastName,
+        FirstName = customer.Name.FirstName.Value,
+        LastName = customer.Name.LastName.Value,
         FullName = customer.FullName,
         Email = customer.Email.Value,
         PhoneNumber = customer.PhoneNumber.Value,

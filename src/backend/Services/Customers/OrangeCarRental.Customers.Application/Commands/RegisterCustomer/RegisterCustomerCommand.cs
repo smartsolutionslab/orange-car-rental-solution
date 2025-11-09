@@ -10,14 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 public sealed record RegisterCustomerCommand : ICommand<RegisterCustomerResult>
 {
     /// <summary>
-    ///     Customer's first name (value object with validation).
+    ///     Customer's name (includes first name, last name, and optional salutation).
     /// </summary>
-    public required FirstName FirstName { get; init; }
-
-    /// <summary>
-    ///     Customer's last name (value object with validation).
-    /// </summary>
-    public required LastName LastName { get; init; }
+    public required CustomerName Name { get; init; }
 
     /// <summary>
     ///     Customer's email address (value object with validation).
@@ -33,7 +28,7 @@ public sealed record RegisterCustomerCommand : ICommand<RegisterCustomerResult>
     ///     Customer's date of birth.
     ///     Must be at least 18 years old.
     /// </summary>
-    public required DateOnly DateOfBirth { get; init; }
+    public required BirthDate DateOfBirth { get; init; }
 
     /// <summary>
     ///     Customer's address (value object containing street, city, postal code, and country).

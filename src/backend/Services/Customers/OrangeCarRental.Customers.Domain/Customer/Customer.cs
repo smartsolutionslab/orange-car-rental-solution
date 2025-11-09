@@ -25,8 +25,7 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     // For EF Core - properties will be set by EF Core during materialization
     private Customer()
     {
-        FirstName = default!;
-        LastName = default!;
+        Name = default!;
         Email = default!;
         PhoneNumber = default!;
         Address = default!;
@@ -35,17 +34,15 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
     private Customer(
         CustomerIdentifier id,
-        FirstName firstName,
-        LastName lastName,
+        CustomerName name,
         Email email,
         PhoneNumber phoneNumber,
-        DateOnly dateOfBirth,
+        BirthDate dateOfBirth,
         Address address,
         DriversLicense driversLicense)
         : base(id)
     {
-        FirstName = firstName;
-        LastName = lastName;
+        Name = name;
         Email = email;
         PhoneNumber = phoneNumber;
         DateOfBirth = dateOfBirth;
@@ -57,19 +54,17 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
         AddDomainEvent(new CustomerRegistered(
             Id,
-            FirstName,
-            LastName,
+            Name,
             Email,
             DateOfBirth,
             RegisteredAtUtc));
     }
 
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public FirstName FirstName { get; init; }
-    public LastName LastName { get; init; }
+    public CustomerName Name { get; init; }
     public Email Email { get; init; }
     public PhoneNumber PhoneNumber { get; init; }
-    public DateOnly DateOfBirth { get; init; }
+    public BirthDate DateOfBirth { get; init; }
     public Address Address { get; init; }
     public DriversLicense DriversLicense { get; init; }
     public CustomerStatus Status { get; init; }
@@ -79,31 +74,22 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// <summary>
     ///     Gets the customer's full name.
     /// </summary>
-    public string FullName => $"{FirstName} {LastName}";
+    public string FullName => Name.FullName;
+
+    /// <summary>
+    ///     Gets the customer's formal name with salutation.
+    /// </summary>
+    public string FormalName => Name.FormalName;
 
     /// <summary>
     ///     Gets the customer's current age in years.
     /// </summary>
-    public int Age
-    {
-        get
-        {
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
-            var age = today.Year - DateOfBirth.Year;
-
-            // Adjust if birthday hasn't occurred this year
-            if (DateOfBirth.AddYears(age) > today)
-                age--;
-
-            return age;
-        }
-    }
+    public int Age => DateOfBirth.Age;
 
     /// <summary>
     ///     Registers a new customer with German market validation.
     /// </summary>
-    /// <param name="firstName">Customer's first name.</param>
-    /// <param name="lastName">Customer's last name.</param>
+    /// <param name="name">Customer's name (first name, last name, optional salutation).</param>
     /// <param name="email">Customer's email address.</param>
     /// <param name="phoneNumber">Customer's phone number (German format).</param>
     /// <param name="dateOfBirth">Customer's date of birth.</param>
@@ -112,24 +98,22 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// <returns>A new Customer instance.</returns>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public static Customer Register(
-        FirstName firstName,
-        LastName lastName,
+        CustomerName name,
         Email email,
         PhoneNumber phoneNumber,
-        DateOnly dateOfBirth,
+        BirthDate dateOfBirth,
         Address address,
         DriversLicense driversLicense)
     {
         // Validate age - must be 18+ to rent in Germany
-        ValidateAge(dateOfBirth);
+        ValidateAge(dateOfBirth.Value);
 
         // Validate driver's license
-        ValidateDriversLicense(driversLicense, dateOfBirth);
+        ValidateDriversLicense(driversLicense, dateOfBirth.Value);
 
         return new Customer(
             CustomerIdentifier.New(),
-            firstName,
-            lastName,
+            name,
             email,
             phoneNumber,
             dateOfBirth,
@@ -142,11 +126,10 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Customer CreateMutatedCopy(
-        FirstName? firstName = null,
-        LastName? lastName = null,
+        CustomerName? name = null,
         Email? email = null,
         PhoneNumber? phoneNumber = null,
-        DateOnly? dateOfBirth = null,
+        BirthDate? dateOfBirth = null,
         Address? address = null,
         DriversLicense? driversLicense = null,
         CustomerStatus? status = null,
@@ -156,8 +139,7 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         return new Customer
         {
             Id = Id,
-            FirstName = firstName ?? FirstName,
-            LastName = lastName ?? LastName,
+            Name = name ?? Name,
             Email = email ?? Email,
             PhoneNumber = phoneNumber ?? PhoneNumber,
             DateOfBirth = dateOfBirth ?? DateOfBirth,
@@ -174,13 +156,13 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     ///     Returns a new instance with the updated profile (immutable pattern).
     /// </summary>
     public Customer UpdateProfile(
-        FirstName firstName,
-        LastName lastName,
+        CustomerName name,
         PhoneNumber phoneNumber,
         Address address)
     {
-        var hasChanges = FirstName.Value != firstName.Value ||
-                         LastName.Value != lastName.Value ||
+        var hasChanges = Name.FirstName.Value != name.FirstName.Value ||
+                         Name.LastName.Value != name.LastName.Value ||
+                         Name.Salutation != name.Salutation ||
                          PhoneNumber != phoneNumber ||
                          Address != address;
 
@@ -189,16 +171,14 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
-            firstName,
-            lastName,
+            name,
             phoneNumber: phoneNumber,
             address: address,
             updatedAtUtc: now);
 
         updated.AddDomainEvent(new CustomerProfileUpdated(
             Id,
-            firstName,
-            lastName,
+            name,
             phoneNumber,
             address,
             now));

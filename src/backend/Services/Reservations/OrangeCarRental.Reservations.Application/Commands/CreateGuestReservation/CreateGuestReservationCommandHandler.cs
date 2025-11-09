@@ -25,11 +25,11 @@ public sealed class CreateGuestReservationCommandHandler(
         // Step 1: Register the customer via Customers API
         // Extract primitive values from value objects for the DTO
         var registerCustomerDto = new RegisterCustomerDto(
-            command.FirstName.Value,
-            command.LastName.Value,
+            command.Name.FirstName.Value,
+            command.Name.LastName.Value,
             command.Email.Value,
             command.PhoneNumber.Value,
-            command.DateOfBirth,
+            command.DateOfBirth.Value,
             command.Address.Street,
             command.Address.City.Value,
             command.Address.PostalCode.Value,

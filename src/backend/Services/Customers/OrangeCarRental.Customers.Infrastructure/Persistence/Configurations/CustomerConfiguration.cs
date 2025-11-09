@@ -23,16 +23,30 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
                 value => CustomerIdentifier.From(value))
             .IsRequired();
 
-        // Simple string properties
-        builder.Property(c => c.FirstName)
-            .HasColumnName("FirstName")
-            .HasMaxLength(100)
-            .IsRequired();
+        // CustomerName value object - stored as complex type
+        builder.ComplexProperty(c => c.Name, name =>
+        {
+            name.Property(n => n.FirstName)
+                .HasColumnName("FirstName")
+                .HasConversion(
+                    fn => fn.Value,
+                    value => FirstName.Of(value))
+                .HasMaxLength(100)
+                .IsRequired();
 
-        builder.Property(c => c.LastName)
-            .HasColumnName("LastName")
-            .HasMaxLength(100)
-            .IsRequired();
+            name.Property(n => n.LastName)
+                .HasColumnName("LastName")
+                .HasConversion(
+                    ln => ln.Value,
+                    value => LastName.Of(value))
+                .HasMaxLength(100)
+                .IsRequired();
+
+            name.Property(n => n.Salutation)
+                .HasColumnName("Salutation")
+                .HasConversion<string?>()
+                .HasMaxLength(20);
+        });
 
         // Email value object - converted to string
         builder.Property(c => c.Email)
@@ -52,9 +66,12 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasMaxLength(20)
             .IsRequired();
 
-        // DateOfBirth
+        // BirthDate value object - converted to DateOnly
         builder.Property(c => c.DateOfBirth)
             .HasColumnName("DateOfBirth")
+            .HasConversion(
+                bd => bd.Value,
+                value => BirthDate.Of(value))
             .HasColumnType("date")
             .IsRequired();
 
@@ -149,6 +166,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
         // Computed properties (not persisted)
         builder.Ignore(c => c.FullName);
+        builder.Ignore(c => c.FormalName);
         builder.Ignore(c => c.Age);
     }
 }

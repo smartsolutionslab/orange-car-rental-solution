@@ -29,8 +29,7 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
 
         // Update profile (domain method handles validation and returns new instance)
         customer = customer.UpdateProfile(
-            command.FirstName,
-            command.LastName,
+            command.Name,
             command.PhoneNumber,
             command.Address);
 

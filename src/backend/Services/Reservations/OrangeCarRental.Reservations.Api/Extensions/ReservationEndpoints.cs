@@ -77,11 +77,10 @@ public static class ReservationEndpoints
                     Period = BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     PickupLocationCode = LocationCode.Of(request.PickupLocationCode),
                     DropoffLocationCode = LocationCode.Of(request.DropoffLocationCode),
-                    FirstName = FirstName.Of(request.FirstName),
-                    LastName = LastName.Of(request.LastName),
+                    Name = CustomerName.Of(request.FirstName, request.LastName),
                     Email = Email.Of(request.Email),
                     PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
-                    DateOfBirth = request.DateOfBirth,
+                    DateOfBirth = BirthDate.Of(request.DateOfBirth),
                     Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
                     DriversLicense = DriversLicense.Of(
                         request.LicenseNumber,

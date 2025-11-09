@@ -8,8 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 /// </summary>
 public sealed record CustomerProfileUpdated(
     CustomerIdentifier CustomerIdentifier,
-    FirstName FirstName,
-    LastName LastName,
+    CustomerName Name,
     PhoneNumber PhoneNumber,
     Address Address,
     DateTime UpdatedAtUtc

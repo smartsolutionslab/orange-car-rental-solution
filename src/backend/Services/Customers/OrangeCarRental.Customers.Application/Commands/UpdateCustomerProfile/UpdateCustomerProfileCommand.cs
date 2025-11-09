@@ -16,14 +16,9 @@ public sealed record UpdateCustomerProfileCommand : ICommand<UpdateCustomerProfi
     public required Guid CustomerIdentifier { get; init; }
 
     /// <summary>
-    ///     Customer's updated first name (value object with validation).
+    ///     Customer's updated name (includes first name, last name, and optional salutation).
     /// </summary>
-    public required FirstName FirstName { get; init; }
-
-    /// <summary>
-    ///     Customer's updated last name (value object with validation).
-    /// </summary>
-    public required LastName LastName { get; init; }
+    public required CustomerName Name { get; init; }
 
     /// <summary>
     ///     Customer's updated phone number (value object with German format validation).

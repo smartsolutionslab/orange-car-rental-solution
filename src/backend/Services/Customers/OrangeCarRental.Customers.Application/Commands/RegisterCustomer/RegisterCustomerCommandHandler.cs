@@ -32,8 +32,7 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
 
         // Register new customer (domain method handles all business rules)
         var customer = Customer.Register(
-            command.FirstName,
-            command.LastName,
+            command.Name,
             command.Email,
             command.PhoneNumber,
             command.DateOfBirth,

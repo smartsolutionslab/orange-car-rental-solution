@@ -42,143 +42,130 @@ public class CustomerDataSeeder(
 
         // Customer 1: Maximilian Schmidt - Young professional from Berlin
         customers.Add(Customer.Register(
-            FirstName.Of("Maximilian"),
-            LastName.Of("Schmidt"),
+            CustomerName.Of("Maximilian", "Schmidt"),
             Email.Of("max.schmidt@email.de"),
             PhoneNumber.Of("+49 30 12345678"),
-            new DateOnly(1995, 3, 15),
+            BirthDate.Of(1995, 3, 15),
             Address.Of("Hauptstraße 42", "Berlin", "10115"),
             DriversLicense.Of("B123456789DE", "Germany", new DateOnly(2015, 6, 1), new DateOnly(2030, 6, 1))
         ));
 
         // Customer 2: Anna Müller - Mid-career from Munich
         customers.Add(Customer.Register(
-            FirstName.Of("Anna"),
-            LastName.Of("Müller"),
+            CustomerName.Of("Anna", "Müller"),
             Email.Of("anna.mueller@mail.de"),
             PhoneNumber.Of("+49 89 98765432"),
-            new DateOnly(1988, 7, 22),
+            BirthDate.Of(1988, 7, 22),
             Address.Of("Marienplatz 5", "München", "80331"),
             DriversLicense.Of("B987654321DE", "Germany", new DateOnly(2008, 9, 15), new DateOnly(2028, 9, 15))
         ));
 
         // Customer 3: Lukas Weber - Recent graduate from Hamburg
         customers.Add(Customer.Register(
-            FirstName.Of("Lukas"),
-            LastName.Of("Weber"),
+            CustomerName.Of("Lukas", "Weber"),
             Email.Of("l.weber@webmail.de"),
             PhoneNumber.Of("+49 40 55512345"),
-            new DateOnly(1999, 11, 8),
+            BirthDate.Of(1999, 11, 8),
             Address.Of("Reeperbahn 150", "Hamburg", "20359"),
             DriversLicense.Of("B555123456DE", "Germany", new DateOnly(2019, 3, 10), new DateOnly(2034, 3, 10))
         ));
 
         // Customer 4: Sophie Wagner - Senior professional from Frankfurt
         customers.Add(Customer.Register(
-            FirstName.Of("Sophie"),
-            LastName.Of("Wagner"),
+            CustomerName.Of("Sophie", "Wagner"),
             Email.Of("sophie.wagner@gmx.de"),
             PhoneNumber.Of("+49 69 77788899"),
-            new DateOnly(1980, 4, 30),
+            BirthDate.Of(1980, 4, 30),
             Address.Of("Zeil 80", "Frankfurt am Main", "60313"),
             DriversLicense.Of("B777888999DE", "Germany", new DateOnly(2010, 8, 20), new DateOnly(2030, 8, 20))
         ));
 
         // Customer 5: Jonas Fischer - Young driver from Cologne
         customers.Add(Customer.Register(
-            FirstName.Of("Jonas"),
-            LastName.Of("Fischer"),
+            CustomerName.Of("Jonas", "Fischer"),
             Email.Of("jonas.fischer@outlook.de"),
             PhoneNumber.Of("+49 221 33344455"),
-            new DateOnly(2001, 9, 12),
+            BirthDate.Of(2001, 9, 12),
             Address.Of("Hohe Straße 25", "Köln", "50667"),
             DriversLicense.Of("B333444555DE", "Germany", new DateOnly(2020, 2, 28), new DateOnly(2035, 2, 28))
         ));
 
         // Customer 6: Emma Becker - Experienced driver from Stuttgart
         customers.Add(Customer.Register(
-            FirstName.Of("Emma"),
-            LastName.Of("Becker"),
+            CustomerName.Of("Emma", "Becker"),
             Email.Of("emma.becker@t-online.de"),
             PhoneNumber.Of("+49 711 22211100"),
-            new DateOnly(1985, 1, 18),
+            BirthDate.Of(1985, 1, 18),
             Address.Of("Königstraße 15", "Stuttgart", "70173"),
             DriversLicense.Of("B222111000DE", "Germany", new DateOnly(2005, 5, 12), new DateOnly(2026, 5, 12))
         ));
 
         // Customer 7: Felix Hoffmann - Mid-age from Düsseldorf
         customers.Add(Customer.Register(
-            FirstName.Of("Felix"),
-            LastName.Of("Hoffmann"),
+            CustomerName.Of("Felix", "Hoffmann"),
             Email.Of("f.hoffmann@web.de"),
             PhoneNumber.Of("+49 211 66677788"),
-            new DateOnly(1990, 12, 5),
+            BirthDate.Of(1990, 12, 5),
             Address.Of("Königsallee 60", "Düsseldorf", "40212"),
             DriversLicense.Of("B666777888DE", "Germany", new DateOnly(2012, 1, 15), new DateOnly(2027, 1, 15))
         ));
 
         // Customer 8: Mia Schäfer - Young professional from Leipzig
         customers.Add(Customer.Register(
-            FirstName.Of("Mia"),
-            LastName.Of("Schäfer"),
+            CustomerName.Of("Mia", "Schäfer"),
             Email.Of("mia.schaefer@email.de"),
             PhoneNumber.Of("+49 341 44455566"),
-            new DateOnly(1996, 6, 27),
+            BirthDate.Of(1996, 6, 27),
             Address.Of("Petersstraße 30", "Leipzig", "04109"),
             DriversLicense.Of("B444555666DE", "Germany", new DateOnly(2016, 8, 22), new DateOnly(2031, 8, 22))
         ));
 
         // Customer 9: Leon Meyer - Senior citizen from Bremen
         customers.Add(Customer.Register(
-            FirstName.Of("Leon"),
-            LastName.Of("Meyer"),
+            CustomerName.Of("Leon", "Meyer"),
             Email.Of("leon.meyer@posteo.de"),
             PhoneNumber.Of("+49 421 11122233"),
-            new DateOnly(1955, 2, 14),
+            BirthDate.Of(1955, 2, 14),
             Address.Of("Böttcherstraße 8", "Bremen", "28195"),
             DriversLicense.Of("B111222333DE", "Germany", new DateOnly(1975, 6, 10), new DateOnly(2026, 6, 10))
         ));
 
         // Customer 10: Lena Koch - Mid-career from Hannover
         customers.Add(Customer.Register(
-            FirstName.Of("Lena"),
-            LastName.Of("Koch"),
+            CustomerName.Of("Lena", "Koch"),
             Email.Of("lena.koch@yahoo.de"),
             PhoneNumber.Of("+49 511 88899900"),
-            new DateOnly(1987, 10, 3),
+            BirthDate.Of(1987, 10, 3),
             Address.Of("Kröpcke 10", "Hannover", "30159"),
             DriversLicense.Of("B888999000DE", "Germany", new DateOnly(2007, 11, 5), new DateOnly(2027, 11, 5))
         ));
 
         // Customer 11: Paul Richter - Young entrepreneur from Dresden
         customers.Add(Customer.Register(
-            FirstName.Of("Paul"),
-            LastName.Of("Richter"),
+            CustomerName.Of("Paul", "Richter"),
             Email.Of("paul.richter@gmail.com"),
             PhoneNumber.Of("+49 351 55566677"),
-            new DateOnly(1992, 8, 19),
+            BirthDate.Of(1992, 8, 19),
             Address.Of("Prager Straße 20", "Dresden", "01069"),
             DriversLicense.Of("B555666777DE", "Germany", new DateOnly(2013, 4, 18), new DateOnly(2028, 4, 18))
         ));
 
         // Customer 12: Laura Zimmermann - Student from Freiburg
         customers.Add(Customer.Register(
-            FirstName.Of("Laura"),
-            LastName.Of("Zimmermann"),
+            CustomerName.Of("Laura", "Zimmermann"),
             Email.Of("laura.zimmer@student.de"),
             PhoneNumber.Of("+49 761 33322211"),
-            new DateOnly(2002, 5, 25),
+            BirthDate.Of(2002, 5, 25),
             Address.Of("Kaiser-Joseph-Straße 200", "Freiburg", "79098"),
             DriversLicense.Of("B333222111DE", "Germany", new DateOnly(2021, 7, 12), new DateOnly(2036, 7, 12))
         ));
 
         // Customer 13: David Klein - Suspended customer (late payment issue)
         var suspendedCustomer = Customer.Register(
-            FirstName.Of("David"),
-            LastName.Of("Klein"),
+            CustomerName.Of("David", "Klein"),
             Email.Of("david.klein@example.de"),
             PhoneNumber.Of("+49 228 99988877"),
-            new DateOnly(1983, 3, 8),
+            BirthDate.Of(1983, 3, 8),
             Address.Of("Münsterplatz 12", "Bonn", "53111"),
             DriversLicense.Of("B999888777DE", "Germany", new DateOnly(2003, 12, 1), new DateOnly(2028, 12, 1))
         );
@@ -187,22 +174,20 @@ public class CustomerDataSeeder(
 
         // Customer 14: Sarah Lang - Older driver from Nuremberg
         customers.Add(Customer.Register(
-            FirstName.Of("Sarah"),
-            LastName.Of("Lang"),
+            CustomerName.Of("Sarah", "Lang"),
             Email.Of("sarah.lang@freenet.de"),
             PhoneNumber.Of("+49 911 12312312"),
-            new DateOnly(1970, 11, 20),
+            BirthDate.Of(1970, 11, 20),
             Address.Of("Kaiserstraße 50", "Nürnberg", "90403"),
             DriversLicense.Of("B123123123DE", "Germany", new DateOnly(1990, 3, 15), new DateOnly(2027, 3, 15))
         ));
 
         // Customer 15: Tim Schwarz - Recent driver
         customers.Add(Customer.Register(
-            FirstName.Of("Tim"),
-            LastName.Of("Schwarz"),
+            CustomerName.Of("Tim", "Schwarz"),
             Email.Of("tim.schwarz@mailbox.org"),
             PhoneNumber.Of("+49 201 45645645"),
-            new DateOnly(1998, 7, 7),
+            BirthDate.Of(1998, 7, 7),
             Address.Of("Limbecker Platz 1", "Essen", "45127"),
             DriversLicense.Of("B456456456DE", "Germany", new DateOnly(2018, 10, 20), new DateOnly(2033, 10, 20))
         ));

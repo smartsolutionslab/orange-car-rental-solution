@@ -61,8 +61,8 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         {
             var searchTermValue = parameters.SearchTerm.Value.Value;
             query = query.Where(c =>
-                EF.Functions.Like(c.FirstName, $"%{searchTermValue}%") ||
-                EF.Functions.Like(c.LastName, $"%{searchTermValue}%"));
+                EF.Functions.Like(c.Name.FirstName.Value, $"%{searchTermValue}%") ||
+                EF.Functions.Like(c.Name.LastName.Value, $"%{searchTermValue}%"));
         }
 
         // Email filter - use value object directly
@@ -170,10 +170,10 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         return sortField switch
         {
             "firstname" or "first_name" =>
-                sortDescending ? query.OrderByDescending(c => c.FirstName) : query.OrderBy(c => c.FirstName),
+                sortDescending ? query.OrderByDescending(c => c.Name.FirstName) : query.OrderBy(c => c.Name.FirstName),
 
             "lastname" or "last_name" =>
-                sortDescending ? query.OrderByDescending(c => c.LastName) : query.OrderBy(c => c.LastName),
+                sortDescending ? query.OrderByDescending(c => c.Name.LastName) : query.OrderBy(c => c.Name.LastName),
 
             "email" =>
                 sortDescending ? query.OrderByDescending(c => c.Email) : query.OrderBy(c => c.Email),

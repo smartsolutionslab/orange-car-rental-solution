@@ -90,11 +90,11 @@ public class CreateGuestReservationCommandHandlerTests
         _customersServiceMock.Verify(
             s => s.RegisterCustomerAsync(
                 It.Is<RegisterCustomerDto>(dto =>
-                    dto.FirstName == command.FirstName.Value &&
-                    dto.LastName == command.LastName.Value &&
+                    dto.FirstName == command.Name.FirstName.Value &&
+                    dto.LastName == command.Name.LastName.Value &&
                     dto.Email == command.Email.Value &&
                     dto.PhoneNumber == command.PhoneNumber.Value &&
-                    dto.DateOfBirth == command.DateOfBirth &&
+                    dto.DateOfBirth == command.DateOfBirth.Value &&
                     dto.Street == command.Address.Street &&
                     dto.City == command.Address.City.Value &&
                     dto.PostalCode == command.Address.PostalCode.Value &&
@@ -517,11 +517,10 @@ public class CreateGuestReservationCommandHandlerTests
             DropoffLocationCode = LocationCode.Of("BER-HBF"),
 
             // Customer details
-            FirstName = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.FirstName.Of("Max"),
-            LastName = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.LastName.Of("Mustermann"),
+            Name = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.CustomerName.Of("Max", "Mustermann"),
             Email = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Email.Of("max.mustermann@example.com"),
             PhoneNumber = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.PhoneNumber.Of("+49 30 12345678"),
-            DateOfBirth = new DateOnly(1990, 1, 15),
+            DateOfBirth = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.BirthDate.Of(1990, 1, 15),
 
             // Address and License (value objects)
             Address = SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Address.Of(
