@@ -5,7 +5,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 /// </summary>
 public interface IReservationRepository
 {
-    Task<Reservation?> GetByIdAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
+    /// <summary>
+    ///     Gets a reservation by its identifier.
+    /// </summary>
+    /// <param name="id">The reservation identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The reservation.</returns>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when the reservation is not found.</exception>
+    Task<Reservation> GetByIdAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
 
     Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
 

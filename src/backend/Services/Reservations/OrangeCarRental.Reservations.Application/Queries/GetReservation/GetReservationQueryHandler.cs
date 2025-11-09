@@ -9,15 +9,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Get
 ///     Retrieves a reservation by ID and maps to DTO.
 /// </summary>
 public sealed class GetReservationQueryHandler(IReservationRepository reservations)
-    : IQueryHandler<GetReservationQuery, ReservationDto?>
+    : IQueryHandler<GetReservationQuery, ReservationDto>
 {
-    public async Task<ReservationDto?> HandleAsync(
+    public async Task<ReservationDto> HandleAsync(
         GetReservationQuery query,
         CancellationToken cancellationToken = default)
     {
         var reservation = await reservations.GetByIdAsync(query.ReservationId, cancellationToken);
 
-        return reservation == null ? null : MapToDto(reservation);
+        return MapToDto(reservation);
     }
 
     private static ReservationDto MapToDto(Reservation reservation)

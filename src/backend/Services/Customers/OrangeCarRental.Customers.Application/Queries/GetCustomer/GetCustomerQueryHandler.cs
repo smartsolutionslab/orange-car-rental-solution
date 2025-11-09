@@ -10,20 +10,20 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 ///     Retrieves a customer by ID and maps to DTO.
 /// </summary>
 public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
-    : IQueryHandler<GetCustomerQuery, CustomerDto?>
+    : IQueryHandler<GetCustomerQuery, CustomerDto>
 {
     /// <summary>
     ///     Handles the get customer query.
     /// </summary>
     /// <param name="query">The query with customer ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Customer DTO if found, otherwise null.</returns>
-    public async Task<CustomerDto?> HandleAsync(
+    /// <returns>Customer DTO.</returns>
+    public async Task<CustomerDto> HandleAsync(
         GetCustomerQuery query,
         CancellationToken cancellationToken = default)
     {
         var customer = await customers.GetByIdAsync(query.CustomerIdentifier, cancellationToken);
 
-        return customer?.ToDto();
+        return customer.ToDto();
     }
 }

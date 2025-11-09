@@ -15,8 +15,9 @@ public interface IRepository<TAggregate, in TIdentifier>
     /// </summary>
     /// <param name="id">The aggregate identifier.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The aggregate if found; otherwise, null.</returns>
-    Task<TAggregate?> GetByIdAsync(TIdentifier id, CancellationToken cancellationToken = default);
+    /// <returns>The aggregate.</returns>
+    /// <exception cref="Exceptions.EntityNotFoundException">Thrown when the aggregate is not found.</exception>
+    Task<TAggregate> GetByIdAsync(TIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Adds a new aggregate.

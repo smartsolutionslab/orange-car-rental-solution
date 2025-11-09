@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
@@ -8,11 +9,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persiste
 /// </summary>
 public sealed class ReservationRepository(ReservationsDbContext context) : IReservationRepository
 {
-    public async Task<Reservation?> GetByIdAsync(ReservationIdentifier id,
+    public async Task<Reservation> GetByIdAsync(ReservationIdentifier id,
         CancellationToken cancellationToken = default)
     {
-        return await context.Reservations
+        var reservation = await context.Reservations
             .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+        return reservation ?? throw new EntityNotFoundException(typeof(Reservation), id);
     }
 
     public async Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default)

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
@@ -226,9 +227,11 @@ public static class FleetEndpoints
                 {
                     var locationCode = LocationCode.Of(code);
                     var result = await handler.HandleAsync(new GetLocationByCodeQuery(locationCode), cancellationToken);
-                    return result is not null
-                        ? Results.Ok(result)
-                        : Results.NotFound(new { message = $"Location with code '{code}' not found" });
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
                 }
                 catch (ArgumentException ex)
                 {
@@ -239,6 +242,7 @@ public static class FleetEndpoints
             .WithSummary("Get location by code")
             .WithDescription("Returns a specific location by its code (e.g., BER-HBF).")
             .Produces<LocationDto>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound);
 
         return app;

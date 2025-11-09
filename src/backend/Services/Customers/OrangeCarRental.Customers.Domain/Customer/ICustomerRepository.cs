@@ -13,16 +13,18 @@ public interface ICustomerRepository
     /// </summary>
     /// <param name="id">The customer ID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The customer if found, otherwise null.</returns>
-    Task<Customer?> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
+    /// <returns>The customer.</returns>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when the customer is not found.</exception>
+    Task<Customer> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets a customer by their email address.
     /// </summary>
     /// <param name="email">The email address.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The customer if found, otherwise null.</returns>
-    Task<Customer?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default);
+    /// <returns>The customer.</returns>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when the customer is not found.</exception>
+    Task<Customer> GetByEmailAsync(Email email, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Checks if a customer exists with the given email address.

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -125,17 +126,28 @@ public static class ReservationEndpoints
                 Guid id,
                 GetReservationQueryHandler handler) =>
             {
-                var query = new GetReservationQuery(ReservationIdentifier.From(id));
-                var result = await handler.HandleAsync(query);
-
-                return result is not null
-                    ? Results.Ok(result)
-                    : Results.NotFound(new { Message = $"Reservation {id} not found" });
+                try
+                {
+                    var query = new GetReservationQuery(ReservationIdentifier.From(id));
+                    var result = await handler.HandleAsync(query);
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
             })
             .WithName("GetReservation")
             .WithSummary("Get reservation by ID")
             .WithDescription(
-                "Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.");
+                "Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.")
+            .Produces<object>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound);
 
         // GET /api/reservations/search - Search reservations with filters
         reservations.MapGet("/search", async (

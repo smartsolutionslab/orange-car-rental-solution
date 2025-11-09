@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
@@ -10,17 +11,21 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence
 /// </summary>
 public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRepository
 {
-    public async Task<Customer?> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
+    public async Task<Customer> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await context.Customers
+        var customer = await context.Customers
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
+        return customer ?? throw new EntityNotFoundException(typeof(Customer), id);
     }
 
-    public async Task<Customer?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<Customer> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
     {
         // Compare value objects directly - EF Core will use the value converter
-        return await context.Customers
+        var customer = await context.Customers
             .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
+
+        return customer ?? throw new EntityNotFoundException(typeof(Customer), email);
     }
 
     public async Task<bool> ExistsWithEmailAsync(Email email, CancellationToken cancellationToken = default)

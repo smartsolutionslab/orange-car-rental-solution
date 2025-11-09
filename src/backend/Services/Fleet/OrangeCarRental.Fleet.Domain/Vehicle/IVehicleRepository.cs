@@ -7,7 +7,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// </summary>
 public interface IVehicleRepository
 {
-    Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default);
+    /// <summary>
+    ///     Gets a vehicle by its identifier.
+    /// </summary>
+    /// <param name="id">The vehicle identifier.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The vehicle.</returns>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when the vehicle is not found.</exception>
+    Task<Vehicle> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default);
 
     Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
 

@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.Customers.Api.Contracts;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.Customers.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
@@ -79,9 +80,15 @@ public static class CustomerEndpoints
                 try
                 {
                     var result = await handler.HandleAsync(new GetCustomerQuery { CustomerIdentifier = CustomerIdentifier.From(id) }, cancellationToken);
-                    return result is not null
-                        ? Results.Ok(result)
-                        : Results.NotFound(new { message = $"Customer with ID '{id}' not found" });
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
                 }
                 catch (Exception ex)
                 {
@@ -95,6 +102,7 @@ public static class CustomerEndpoints
             .WithSummary("Get customer by ID")
             .WithDescription("Retrieves a customer's complete profile by their unique identifier.")
             .Produces<CustomerDto>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
@@ -108,9 +116,11 @@ public static class CustomerEndpoints
                 {
                     var result = await handler.HandleAsync(new GetCustomerByEmailQuery { Email = Email.Of(email) },
                         cancellationToken);
-                    return result is not null
-                        ? Results.Ok(result)
-                        : Results.NotFound(new { message = $"Customer with email '{email}' not found" });
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
                 }
                 catch (ArgumentException ex)
                 {

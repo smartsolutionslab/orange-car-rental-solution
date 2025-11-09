@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -13,10 +14,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext)
     : IVehicleRepository
 {
-    public async Task<Vehicle?> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
+    public async Task<Vehicle> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
-        return await context.Vehicles
+        var vehicle = await context.Vehicles
             .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+
+        return vehicle ?? throw new EntityNotFoundException(typeof(Vehicle), id);
     }
 
     public async Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
