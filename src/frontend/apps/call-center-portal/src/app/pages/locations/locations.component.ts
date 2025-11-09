@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { LocationService } from '../../services/location.service';
 import { VehicleService } from '../../services/vehicle.service';
-import { Location } from '../../services/location.model';
-import { Vehicle } from '../../services/vehicle.model';
+import { Location, LocationStatistics, VehicleDistribution } from '../../services/location.model';
+import { Vehicle, VehicleStatus } from '../../services/vehicle.model';
 
 /**
  * Locations management page for call center
@@ -12,7 +13,7 @@ import { Vehicle } from '../../services/vehicle.model';
 @Component({
   selector: 'app-locations',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css'
 })
@@ -21,6 +22,7 @@ export class LocationsComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
 
   protected readonly locations = signal<Location[]>([]);
+  protected readonly allVehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly selectedLocation = signal<Location | null>(null);
@@ -28,8 +30,49 @@ export class LocationsComponent implements OnInit {
   protected readonly locationVehicles = signal<Vehicle[]>([]);
   protected readonly loadingVehicles = signal(false);
 
-  // Map to store vehicle counts by location
-  protected readonly vehicleCountByLocation = signal<Map<string, number>>(new Map());
+  // Search filter
+  protected readonly searchCity = signal<string>('');
+
+  // Computed filtered locations
+  protected readonly filteredLocations = computed(() => {
+    const search = this.searchCity().toLowerCase();
+    if (!search) return this.locations();
+
+    return this.locations().filter(loc =>
+      loc.city.toLowerCase().includes(search) ||
+      loc.name.toLowerCase().includes(search) ||
+      loc.code.toLowerCase().includes(search)
+    );
+  });
+
+  // Statistics by location
+  protected readonly locationStats = computed(() => {
+    const stats = new Map<string, LocationStatistics>();
+    const vehicles = this.allVehicles();
+
+    this.locations().forEach(location => {
+      const locationVehicles = vehicles.filter(v => v.locationCode === location.code);
+      const available = locationVehicles.filter(v => v.status === 'Available').length;
+      const rented = locationVehicles.filter(v => v.status === 'Rented').length;
+      const maintenance = locationVehicles.filter(v => v.status === 'Maintenance').length;
+      const outOfService = locationVehicles.filter(v => v.status === 'OutOfService').length;
+      const reserved = locationVehicles.filter(v => v.status === 'Reserved').length;
+      const total = locationVehicles.length;
+
+      stats.set(location.code, {
+        locationCode: location.code,
+        locationName: location.name,
+        totalVehicles: total,
+        availableVehicles: available,
+        rentedVehicles: rented,
+        maintenanceVehicles: maintenance,
+        outOfServiceVehicles: outOfService,
+        utilizationRate: total > 0 ? Math.round(((rented + reserved) / total) * 100) : 0
+      });
+    });
+
+    return stats;
+  });
 
   ngOnInit(): void {
     this.loadLocations();
@@ -54,29 +97,49 @@ export class LocationsComponent implements OnInit {
   }
 
   /**
-   * Load vehicle counts for all locations
+   * Load all vehicles for statistics
    */
   private loadVehicleCounts(): void {
-    this.vehicleService.searchVehicles({}).subscribe({
+    this.vehicleService.searchVehicles({ pageSize: 1000 }).subscribe({
       next: (result) => {
-        const countMap = new Map<string, number>();
-        result.vehicles.forEach(vehicle => {
-          const count = countMap.get(vehicle.locationCode) || 0;
-          countMap.set(vehicle.locationCode, count + 1);
-        });
-        this.vehicleCountByLocation.set(countMap);
+        this.allVehicles.set(result.vehicles);
       },
       error: (err) => {
-        console.error('Error loading vehicle counts:', err);
+        console.error('Error loading vehicles:', err);
       }
     });
   }
 
   /**
-   * Get vehicle count for a location
+   * Get statistics for a location
    */
-  protected getVehicleCount(locationCode: string): number {
-    return this.vehicleCountByLocation().get(locationCode) || 0;
+  protected getLocationStats(locationCode: string): LocationStatistics | undefined {
+    return this.locationStats().get(locationCode);
+  }
+
+  /**
+   * Get vehicle distribution for a location
+   */
+  protected getVehicleDistribution(locationCode: string): VehicleDistribution {
+    const stats = this.locationStats().get(locationCode);
+    if (!stats) {
+      return { available: 0, rented: 0, maintenance: 0, outOfService: 0, reserved: 0 };
+    }
+
+    return {
+      available: stats.availableVehicles,
+      rented: stats.rentedVehicles,
+      maintenance: stats.maintenanceVehicles,
+      outOfService: stats.outOfServiceVehicles,
+      reserved: 0 // Reserved is included in utilizationRate calculation
+    };
+  }
+
+  /**
+   * Clear search filter
+   */
+  protected clearSearch(): void {
+    this.searchCity.set('');
   }
 
   /**
@@ -151,21 +214,77 @@ export class LocationsComponent implements OnInit {
     }
   }
 
+  /**
+   * Get total number of locations
+   */
   protected get totalLocations(): number {
     return this.locations().length;
   }
 
+  /**
+   * Get number of active locations (locations with vehicles)
+   */
   protected get activeLocations(): number {
-    // For now, assume all locations are active
-    return this.locations().length;
+    return Array.from(this.locationStats().values())
+      .filter(stat => stat.totalVehicles > 0).length;
   }
 
   /**
    * Get total vehicles across all locations
    */
   protected get totalVehicles(): number {
-    let total = 0;
-    this.vehicleCountByLocation().forEach(count => total += count);
-    return total;
+    return this.allVehicles().length;
+  }
+
+  /**
+   * Get total available vehicles across all locations
+   */
+  protected get totalAvailableVehicles(): number {
+    return this.allVehicles().filter(v => v.status === 'Available').length;
+  }
+
+  /**
+   * Get total rented vehicles across all locations
+   */
+  protected get totalRentedVehicles(): number {
+    return this.allVehicles().filter(v => v.status === 'Rented').length;
+  }
+
+  /**
+   * Get overall fleet utilization rate
+   */
+  protected get overallUtilizationRate(): number {
+    const total = this.totalVehicles;
+    if (total === 0) return 0;
+    const rented = this.totalRentedVehicles;
+    return Math.round((rented / total) * 100);
+  }
+
+  /**
+   * Get the most utilized location
+   */
+  protected get mostUtilizedLocation(): LocationStatistics | null {
+    const stats = Array.from(this.locationStats().values());
+    if (stats.length === 0) return null;
+
+    return stats.reduce((prev, current) =>
+      (current.utilizationRate > prev.utilizationRate) ? current : prev
+    );
+  }
+
+  /**
+   * Get utilization rate class for styling
+   */
+  protected getUtilizationClass(rate: number): string {
+    if (rate >= 80) return 'utilization-high';
+    if (rate >= 50) return 'utilization-medium';
+    return 'utilization-low';
+  }
+
+  /**
+   * Format percentage
+   */
+  protected formatPercentage(value: number): string {
+    return `${value}%`;
   }
 }
