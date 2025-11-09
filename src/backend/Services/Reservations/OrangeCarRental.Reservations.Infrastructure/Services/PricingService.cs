@@ -27,7 +27,7 @@ public sealed class PricingService(HttpClient httpClient) : IPricingService
         {
             CategoryCode = category.Code,
             PickupDate = period.PickupDate,
-            ReturnDate = period.PickupDate,
+            ReturnDate = period.ReturnDate,
             LocationCode = location?.Value ?? string.Empty
         };
 
@@ -40,7 +40,7 @@ public sealed class PricingService(HttpClient httpClient) : IPricingService
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new InvalidOperationException("Failed to calculate price from Pricing API. Status: {response.StatusCode}, Error: {errorContent}");
+            throw new InvalidOperationException($"Failed to calculate price from Pricing API. Status: {response.StatusCode}, Error: {errorContent}");
         }
 
         // Deserialize response

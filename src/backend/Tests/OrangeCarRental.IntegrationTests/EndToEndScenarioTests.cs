@@ -145,11 +145,11 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
 
     private class Vehicle
     {
-        public string Id { get; } = string.Empty;
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
-        public string CategoryCode { get; } = string.Empty;
-        public string LocationCode { get; } = string.Empty;
-        public string FuelType { get; } = string.Empty;
+        public string CategoryCode { get; set; } = string.Empty;
+        public string LocationCode { get; set; } = string.Empty;
+        public string FuelType { get; set; } = string.Empty;
         public decimal DailyRateNet { get; set; }
         public decimal DailyRateVat { get; set; }
         public decimal DailyRateGross { get; set; }
