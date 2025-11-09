@@ -10,32 +10,32 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Infrastructure;
 public class ReservationRepositoryTests : IAsyncLifetime
 {
     // Configure SQL Server container
-    private readonly MsSqlContainer _msSqlContainer = new MsSqlBuilder()
+    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
-    private ReservationsDbContext _context = null!;
-    private ReservationRepository _repository = null!;
+    private ReservationsDbContext context = null!;
+    private ReservationRepository repository = null!;
 
     public async Task InitializeAsync()
     {
         // Start the SQL Server container
-        await _msSqlContainer.StartAsync();
+        await msSqlContainer.StartAsync();
 
         // Create DbContext with SQL Server connection
         var options = new DbContextOptionsBuilder<ReservationsDbContext>()
-            .UseSqlServer(_msSqlContainer.GetConnectionString())
+            .UseSqlServer(msSqlContainer.GetConnectionString())
             .Options;
 
-        _context = new ReservationsDbContext(options);
-        await _context.Database.EnsureCreatedAsync();
-        _repository = new ReservationRepository(_context);
+        context = new ReservationsDbContext(options);
+        await context.Database.EnsureCreatedAsync();
+        repository = new ReservationRepository(context);
     }
 
     public async Task DisposeAsync()
     {
-        await _context.DisposeAsync();
-        await _msSqlContainer.DisposeAsync();
+        await context.DisposeAsync();
+        await msSqlContainer.DisposeAsync();
     }
 
     private Reservation CreateTestReservation()
@@ -61,11 +61,11 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var reservation = CreateTestReservation();
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddAsync(reservation);
+        await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var result = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -81,7 +81,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var nonExistingId = ReservationIdentifier.New();
 
         // Act
-        var result = await _repository.GetByIdAsync(nonExistingId, CancellationToken.None);
+        var result = await repository.GetByIdAsync(nonExistingId, CancellationToken.None);
 
         // Assert
         result.ShouldBeNull();
@@ -95,7 +95,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
     public async Task GetAllAsync_WithNoReservations_ReturnsEmptyList()
     {
         // Act
-        var result = await _repository.GetAllAsync(CancellationToken.None);
+        var result = await repository.GetAllAsync(CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -108,11 +108,11 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Arrange
         var reservations = new[] { CreateTestReservation(), CreateTestReservation(), CreateTestReservation() };
 
-        await _context.Reservations.AddRangeAsync(reservations);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddRangeAsync(reservations);
+        await context.SaveChangesAsync();
 
         // Act
-        var result = await _repository.GetAllAsync(CancellationToken.None);
+        var result = await repository.GetAllAsync(CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -130,11 +130,11 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var reservation = CreateTestReservation();
 
         // Act
-        await _repository.AddAsync(reservation, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.AddAsync(reservation, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var saved = await _context.Reservations.FindAsync(reservation.Id);
+        var saved = await context.Reservations.FindAsync(reservation.Id);
         saved.ShouldNotBeNull();
         saved!.Id.ShouldBe(reservation.Id);
     }
@@ -147,12 +147,12 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var reservation2 = CreateTestReservation();
 
         // Act
-        await _repository.AddAsync(reservation1, CancellationToken.None);
-        await _repository.AddAsync(reservation2, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.AddAsync(reservation1, CancellationToken.None);
+        await repository.AddAsync(reservation2, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var all = await _context.Reservations.ToListAsync();
+        var all = await context.Reservations.ToListAsync();
         all.Count.ShouldBe(2);
     }
 
@@ -165,23 +165,23 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var reservation = CreateTestReservation();
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddAsync(reservation);
+        await context.SaveChangesAsync();
 
         // Detach to simulate loading in new context
-        _context.Entry(reservation).State = EntityState.Detached;
+        context.Entry(reservation).State = EntityState.Detached;
 
         // Load fresh copy
-        var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(loaded!).State = EntityState.Detached;
+        var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(loaded!).State = EntityState.Detached;
         loaded = loaded!.Confirm();
 
         // Act
-        await _repository.UpdateAsync(loaded, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(loaded, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await _context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(loaded.Id);
         updated.ShouldNotBeNull();
         updated!.Status.ShouldBe(ReservationStatus.Confirmed);
         updated.ConfirmedAt.ShouldNotBeNull();
@@ -199,24 +199,24 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"), totalPrice);
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddAsync(reservation);
+        await context.SaveChangesAsync();
 
         // Detach and reload
-        _context.Entry(reservation).State = EntityState.Detached;
-        var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(loaded!).State = EntityState.Detached;
+        context.Entry(reservation).State = EntityState.Detached;
+        var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(loaded!).State = EntityState.Detached;
 
         // Confirm and activate
         loaded = loaded!.Confirm();
         loaded = loaded.MarkAsActive();
 
         // Act
-        await _repository.UpdateAsync(loaded, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(loaded, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await _context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(loaded.Id);
         updated.ShouldNotBeNull();
         updated!.Status.ShouldBe(ReservationStatus.Active);
     }
@@ -230,15 +230,15 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var reservation = CreateTestReservation();
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddAsync(reservation);
+        await context.SaveChangesAsync();
 
         // Act
-        await _repository.DeleteAsync(reservation.Id, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.DeleteAsync(reservation.Id, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var deleted = await _context.Reservations.FindAsync(reservation.Id);
+        var deleted = await context.Reservations.FindAsync(reservation.Id);
         deleted.ShouldBeNull();
     }
 
@@ -251,8 +251,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act & Assert
         await Should.NotThrowAsync(async () =>
         {
-            await _repository.DeleteAsync(nonExistingId, CancellationToken.None);
-            await _repository.SaveChangesAsync(CancellationToken.None);
+            await repository.DeleteAsync(nonExistingId, CancellationToken.None);
+            await repository.SaveChangesAsync(CancellationToken.None);
         });
     }
 
@@ -265,13 +265,13 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var reservation = CreateTestReservation();
-        await _repository.AddAsync(reservation, CancellationToken.None);
+        await repository.AddAsync(reservation, CancellationToken.None);
 
         // Act
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var saved = await _context.Reservations.FindAsync(reservation.Id);
+        var saved = await context.Reservations.FindAsync(reservation.Id);
         saved.ShouldNotBeNull();
     }
 
@@ -280,20 +280,20 @@ public class ReservationRepositoryTests : IAsyncLifetime
     {
         // Arrange
         var reservation = CreateTestReservation();
-        await _context.Reservations.AddAsync(reservation);
-        await _context.SaveChangesAsync();
+        await context.Reservations.AddAsync(reservation);
+        await context.SaveChangesAsync();
 
-        _context.Entry(reservation).State = EntityState.Detached;
-        var loaded = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(loaded!).State = EntityState.Detached;
+        context.Entry(reservation).State = EntityState.Detached;
+        var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(loaded!).State = EntityState.Detached;
         loaded = loaded!.Confirm();
-        await _repository.UpdateAsync(loaded, CancellationToken.None);
+        await repository.UpdateAsync(loaded, CancellationToken.None);
 
         // Act
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await _context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(loaded.Id);
         updated!.Status.ShouldBe(ReservationStatus.Confirmed);
     }
 
@@ -315,48 +315,48 @@ public class ReservationRepositoryTests : IAsyncLifetime
             LocationCode.Of("BER-HBF"), totalPrice);
 
         // Act - Add
-        await _repository.AddAsync(reservation, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.AddAsync(reservation, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Pending state
-        var pending = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var pending = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         pending.ShouldNotBeNull();
         pending!.Status.ShouldBe(ReservationStatus.Pending);
 
         // Act - Confirm
-        _context.Entry(pending).State = EntityState.Detached;
-        var toConfirm = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(toConfirm!).State = EntityState.Detached;
+        context.Entry(pending).State = EntityState.Detached;
+        var toConfirm = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(toConfirm!).State = EntityState.Detached;
         toConfirm = toConfirm!.Confirm();
-        await _repository.UpdateAsync(toConfirm, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(toConfirm, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Confirmed state
-        var confirmed = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var confirmed = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         confirmed!.Status.ShouldBe(ReservationStatus.Confirmed);
 
         // Act - Activate
-        _context.Entry(confirmed).State = EntityState.Detached;
-        var toActivate = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(toActivate!).State = EntityState.Detached;
+        context.Entry(confirmed).State = EntityState.Detached;
+        var toActivate = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(toActivate!).State = EntityState.Detached;
         toActivate = toActivate!.MarkAsActive();
-        await _repository.UpdateAsync(toActivate, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(toActivate, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Active state
-        var active = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var active = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         active!.Status.ShouldBe(ReservationStatus.Active);
 
         // Act - Complete
-        _context.Entry(active).State = EntityState.Detached;
-        var toComplete = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(toComplete!).State = EntityState.Detached;
+        context.Entry(active).State = EntityState.Detached;
+        var toComplete = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(toComplete!).State = EntityState.Detached;
         toComplete = toComplete!.Complete();
-        await _repository.UpdateAsync(toComplete, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(toComplete, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Completed state
-        var completed = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var completed = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         completed!.Status.ShouldBe(ReservationStatus.Completed);
         completed.CompletedAt.ShouldNotBeNull();
     }
@@ -368,19 +368,19 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var reservation = CreateTestReservation();
 
         // Act - Add
-        await _repository.AddAsync(reservation, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.AddAsync(reservation, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Act - Cancel
-        _context.Entry(reservation).State = EntityState.Detached;
-        var toCancel = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
-        _context.Entry(toCancel!).State = EntityState.Detached;
+        context.Entry(reservation).State = EntityState.Detached;
+        var toCancel = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        context.Entry(toCancel!).State = EntityState.Detached;
         toCancel = toCancel!.Cancel("Customer changed plans");
-        await _repository.UpdateAsync(toCancel, CancellationToken.None);
-        await _repository.SaveChangesAsync(CancellationToken.None);
+        await repository.UpdateAsync(toCancel, CancellationToken.None);
+        await repository.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var cancelled = await _repository.GetByIdAsync(reservation.Id, CancellationToken.None);
+        var cancelled = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         cancelled!.Status.ShouldBe(ReservationStatus.Cancelled);
         cancelled.CancellationReason.ShouldBe("Customer changed plans");
         cancelled.CancelledAt.ShouldNotBeNull();
