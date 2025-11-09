@@ -28,8 +28,7 @@ public static class FleetEndpoints
             })
             .WithName("SearchVehicles")
             .WithSummary("Search available vehicles")
-            .WithDescription(
-                "Search and filter vehicles by location, category, dates, and other criteria. Returns vehicles with German VAT-inclusive pricing (19%).")
+            .WithDescription("Search and filter vehicles by location, category, dates, and other criteria. Returns vehicles with German VAT-inclusive pricing (19%).")
             .Produces<SearchVehiclesResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
@@ -71,8 +70,7 @@ public static class FleetEndpoints
             })
             .WithName("AddVehicleToFleet")
             .WithSummary("Add a new vehicle to the fleet")
-            .WithDescription(
-                "Adds a new vehicle to the rental fleet. Daily rate is net amount in EUR, 19% German VAT will be calculated automatically. Vehicle will be available for rental immediately.")
+            .WithDescription("Adds a new vehicle to the rental fleet. Daily rate is net amount in EUR, 19% German VAT will be calculated automatically. Vehicle will be available for rental immediately.")
             .Produces<AddVehicleToFleetResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
@@ -103,8 +101,7 @@ public static class FleetEndpoints
             })
             .WithName("UpdateVehicleStatus")
             .WithSummary("Update vehicle status")
-            .WithDescription(
-                "Updates a vehicle's operational status. Valid statuses: Available, Rented, Maintenance, OutOfService, Reserved. Cannot move a rented vehicle.")
+            .WithDescription("Updates a vehicle's operational status. Valid statuses: Available, Rented, Maintenance, OutOfService, Reserved. Cannot move a rented vehicle.")
             .Produces<UpdateVehicleStatusResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -138,8 +135,7 @@ public static class FleetEndpoints
             })
             .WithName("UpdateVehicleLocation")
             .WithSummary("Move vehicle to a different location")
-            .WithDescription(
-                "Moves a vehicle to a different rental location. Vehicle must not be rented. Valid location codes: BER-HBF, MUC-FLG, FRA-FLG, HAM-HBF, CGN-HBF.")
+            .WithDescription("Moves a vehicle to a different rental location. Vehicle must not be rented. Valid location codes: BER-HBF, MUC-FLG, FRA-FLG, HAM-HBF, CGN-HBF.")
             .Produces<UpdateVehicleLocationResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
@@ -199,10 +195,7 @@ public static class FleetEndpoints
             .Produces<IReadOnlyList<LocationDto>>();
 
         // GET /api/locations/{code} - Get location by code
-        locations.MapGet("/{code}", async (
-                string code,
-                GetLocationByCodeQueryHandler handler,
-                CancellationToken cancellationToken) =>
+        locations.MapGet("/{code}", async (string code, GetLocationByCodeQueryHandler handler, CancellationToken cancellationToken) =>
             {
                 try
                 {

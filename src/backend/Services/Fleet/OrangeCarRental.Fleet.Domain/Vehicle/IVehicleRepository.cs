@@ -18,8 +18,7 @@ public interface IVehicleRepository
 
     Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<PagedResult<Vehicle>> SearchAsync(VehicleSearchParameters parameters,
-        CancellationToken cancellationToken = default);
+    Task<PagedResult<Vehicle>> SearchAsync(VehicleSearchParameters parameters, CancellationToken cancellationToken = default);
 
     Task AddAsync(Vehicle vehicle, CancellationToken cancellationToken = default);
 

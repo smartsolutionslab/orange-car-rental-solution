@@ -17,6 +17,4 @@ public sealed record SearchVehiclesQuery(
     decimal? MaxDailyRateGross,
     int? PageNumber,
     int? PageSize
-
-
 ) : IQuery<SearchVehiclesResult>;
