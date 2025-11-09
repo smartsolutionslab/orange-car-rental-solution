@@ -72,7 +72,7 @@ export class ReservationService {
       if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
     }
 
-    return this.http.get<ReservationSearchResult>(this.apiUrl, { params });
+    return this.http.get<ReservationSearchResult>(`${this.apiUrl}/search`, { params });
   }
 
   /**
@@ -82,7 +82,7 @@ export class ReservationService {
    * @returns Observable of void
    */
   cancelReservation(id: string, reason: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${id}/cancel`, { reason });
+    return this.http.put<void>(`${this.apiUrl}/${id}/cancel`, { cancellationReason: reason });
   }
 
   /**
@@ -91,6 +91,6 @@ export class ReservationService {
    * @returns Observable of void
    */
   confirmReservation(id: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${id}/confirm`, {});
+    return this.http.put<void>(`${this.apiUrl}/${id}/confirm`, {});
   }
 }
