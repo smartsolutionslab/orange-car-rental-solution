@@ -124,8 +124,13 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
 
     public async Task DeleteAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
     {
-        var vehicle = await GetByIdAsync(id, cancellationToken);
-        if (vehicle != null) context.Vehicles.Remove(vehicle);
+        var vehicle = await context.Vehicles
+            .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+
+        if (vehicle != null)
+        {
+            context.Vehicles.Remove(vehicle);
+        }
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>

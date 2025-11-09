@@ -127,8 +127,13 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
     public async Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default)
     {
-        var reservation = await GetByIdAsync(id, cancellationToken);
-        if (reservation != null) context.Reservations.Remove(reservation);
+        var reservation = await context.Reservations
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+
+        if (reservation != null)
+        {
+            context.Reservations.Remove(reservation);
+        }
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>

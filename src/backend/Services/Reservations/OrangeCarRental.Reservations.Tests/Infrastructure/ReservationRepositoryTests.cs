@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Shouldly;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
@@ -75,16 +76,14 @@ public class ReservationRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    public async Task GetByIdAsync_WithNonExistingId_ThrowsEntityNotFoundException()
     {
         // Arrange
         var nonExistingId = ReservationIdentifier.New();
 
-        // Act
-        var result = await repository.GetByIdAsync(nonExistingId, CancellationToken.None);
-
-        // Assert
-        result.ShouldBeNull();
+        // Act & Assert
+        await Should.ThrowAsync<EntityNotFoundException>(async () =>
+            await repository.GetByIdAsync(nonExistingId, CancellationToken.None));
     }
 
     #endregion

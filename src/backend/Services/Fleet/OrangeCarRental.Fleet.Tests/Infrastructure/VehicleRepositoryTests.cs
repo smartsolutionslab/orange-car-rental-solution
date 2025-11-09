@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -54,7 +55,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters { PageNumber = 1, PageSize = 20 };
+        var parameters = new VehicleSearchParameters(pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -73,12 +74,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters
-        {
-            LocationCode = LocationCode.Of("BER-HBF"),
-            PageNumber = 1,
-            PageSize = 20
-        };
+        var parameters =
+            new VehicleSearchParameters(locationCode: LocationCode.Of("BER-HBF"), pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -94,12 +91,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters
-        {
-            Category = VehicleCategory.FromCode("KLEIN"),
-            PageNumber = 1,
-            PageSize = 20
-        };
+        var parameters =
+            new VehicleSearchParameters(category: VehicleCategory.FromCode("KLEIN"), pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -114,7 +107,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters { FuelType = FuelType.Electric, PageNumber = 1, PageSize = 20 };
+        var parameters = new VehicleSearchParameters(fuelType: FuelType.Electric, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -129,7 +122,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters { MinSeats = 5, PageNumber = 1, PageSize = 20 };
+        var parameters = new VehicleSearchParameters(minSeats: 5, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -145,7 +138,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters { MaxDailyRateGross = 50.00m, PageNumber = 1, PageSize = 20 };
+        var parameters = new VehicleSearchParameters(maxDailyRateGross: 50.00m, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -160,14 +153,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters
-        {
-            LocationCode = LocationCode.Of("BER-HBF"),
-            FuelType = FuelType.Petrol,
-            MinSeats = 4,
-            PageNumber = 1,
-            PageSize = 20
-        };
+        var parameters = new VehicleSearchParameters(locationCode: LocationCode.Of("BER-HBF"),
+            fuelType: FuelType.Petrol, minSeats: 4, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -187,7 +174,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters { PageNumber = 2, PageSize = 2 };
+        var parameters = new VehicleSearchParameters(pageNumber: 2, pageSize: 2);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -213,12 +200,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         context.Vehicles.Update(vehicle);
         await context.SaveChangesAsync();
 
-        var parameters = new VehicleSearchParameters
-        {
-            Status = VehicleStatus.Available,
-            PageNumber = 1,
-            PageSize = 20
-        };
+        var parameters = new VehicleSearchParameters(status: VehicleStatus.Available, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -246,16 +228,14 @@ public class VehicleRepositoryTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    public async Task GetByIdAsync_WithNonExistingId_ThrowsEntityNotFoundException()
     {
         // Arrange
         var nonExistingId = VehicleIdentifier.New();
 
-        // Act
-        var result = await repository.GetByIdAsync(nonExistingId, CancellationToken.None);
-
-        // Assert
-        result.ShouldBeNull();
+        // Act & Assert
+        await Should.ThrowAsync<EntityNotFoundException>(async () =>
+            await repository.GetByIdAsync(nonExistingId, CancellationToken.None));
     }
 
     private async Task SeedTestDataAsync()
