@@ -1,28 +1,11 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
-
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 ///     Customer name value object with optional salutation.
 ///     Represents a complete customer name with German market conventions.
 /// </summary>
-public readonly record struct CustomerName
+public readonly record struct CustomerName(FirstName FirstName, LastName LastName, Salutation? Salutation)
 {
-    /// <summary>
-    ///     The customer's first name.
-    /// </summary>
-    public FirstName FirstName { get; init; }
-
-    /// <summary>
-    ///     The customer's last name.
-    /// </summary>
-    public LastName LastName { get; init; }
-
-    /// <summary>
-    ///     Optional salutation (e.g., Herr, Frau, Dr.).
-    /// </summary>
-    public Salutation? Salutation { get; init; }
-
     /// <summary>
     ///     Gets the full name without salutation.
     /// </summary>
@@ -47,12 +30,10 @@ public readonly record struct CustomerName
         string lastName,
         Salutation? salutation = null)
     {
-        return new CustomerName
-        {
-            FirstName = FirstName.Of(firstName),
-            LastName = LastName.Of(lastName),
-            Salutation = salutation
-        };
+        return new CustomerName(
+            FirstName.Of(firstName),
+            LastName.Of(lastName),
+            salutation);
     }
 
     /// <summary>
@@ -63,23 +44,13 @@ public readonly record struct CustomerName
         LastName lastName,
         Salutation? salutation = null)
     {
-        return new CustomerName
-        {
-            FirstName = firstName,
-            LastName = lastName,
-            Salutation = salutation
-        };
+        return new CustomerName(firstName, lastName, salutation);
     }
 
     /// <summary>
     ///     Creates an anonymized customer name for GDPR compliance.
     /// </summary>
-    public static CustomerName Anonymized() => new()
-    {
-        FirstName = FirstName.Anonymized(),
-        LastName = LastName.Anonymized(),
-        Salutation = null
-    };
+    public static CustomerName Anonymized() => new(FirstName.Anonymized(), LastName.Anonymized(), null);
 
     public override string ToString() => FormalName;
 }

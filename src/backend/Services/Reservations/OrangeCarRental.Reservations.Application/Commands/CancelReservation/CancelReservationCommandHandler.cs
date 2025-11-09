@@ -11,10 +11,9 @@ public sealed class CancelReservationCommandHandler(
     IReservationRepository reservations)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
-    public async Task<CancelReservationResult> HandleAsync(
-        CancelReservationCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<CancelReservationResult> HandleAsync(CancelReservationCommand command, CancellationToken cancellationToken = default)
     {
+        var (reservationId, cancellationReason) = command;
         // Get existing reservation
         var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken) ?? throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
 

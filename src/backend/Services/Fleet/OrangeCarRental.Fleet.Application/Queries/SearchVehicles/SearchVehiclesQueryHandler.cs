@@ -16,9 +16,7 @@ public sealed class SearchVehiclesQueryHandler(IVehicleRepository vehicles)
     /// <param name="queryCommand">The search query with filter criteria and pagination parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Paginated search results containing matching vehicles.</returns>
-    public async Task<SearchVehiclesResult> HandleAsync(
-        SearchVehiclesQuery queryCommand,
-        CancellationToken cancellationToken = default)
+    public async Task<SearchVehiclesResult> HandleAsync(SearchVehiclesQuery queryCommand, CancellationToken cancellationToken = default)
     {
         var searchParameters = queryCommand.ToVehicleSearchParameters();
         var pagedResult = await vehicles.SearchAsync(searchParameters, cancellationToken);

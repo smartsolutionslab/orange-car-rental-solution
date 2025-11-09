@@ -6,63 +6,24 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// <summary>
 ///     Parameters for searching customers with filtering, sorting, and pagination.
 /// </summary>
-public sealed class CustomerSearchParameters : SearchParameters
+public sealed record CustomerSearchParameters(
+    SearchTerm? SearchTerm,
+    Email? Email,
+    PhoneNumber? PhoneNumber,
+    CustomerStatus? Status,
+    City? City,
+    PostalCode? PostalCode,
+    int? MinAge,
+    int? MaxAge,
+    int? LicenseExpiringWithinDays,
+    DateTime? RegisteredFrom,
+    DateTime? RegisteredTo,
+    string? SortBy,
+    bool SortDescending,
+    int PageNumber,
+    int PageSize)
+    : SearchParameters(PageNumber, PageSize, SortBy, SortDescending)
 {
-    /// <summary>
-    ///     Search by customer name (first or last name) using value object.
-    /// </summary>
-    public SearchTerm? SearchTerm { get; init; }
-
-    /// <summary>
-    ///     Filter by email address (value object).
-    /// </summary>
-    public Email? Email { get; init; }
-
-    /// <summary>
-    ///     Filter by phone number (value object).
-    /// </summary>
-    public PhoneNumber? PhoneNumber { get; init; }
-
-    /// <summary>
-    ///     Filter by customer status.
-    /// </summary>
-    public CustomerStatus? Status { get; init; }
-
-    /// <summary>
-    ///     Filter by city (value object).
-    /// </summary>
-    public City? City { get; init; }
-
-    /// <summary>
-    ///     Filter by postal code (value object).
-    /// </summary>
-    public PostalCode? PostalCode { get; init; }
-
-    /// <summary>
-    ///     Filter by minimum age.
-    /// </summary>
-    public int? MinAge { get; init; }
-
-    /// <summary>
-    ///     Filter by maximum age.
-    /// </summary>
-    public int? MaxAge { get; init; }
-
-    /// <summary>
-    ///     Filter customers with expiring licenses (within N days).
-    /// </summary>
-    public int? LicenseExpiringWithinDays { get; init; }
-
-    /// <summary>
-    ///     Filter by registration date range (from).
-    /// </summary>
-    public DateTime? RegisteredFrom { get; init; }
-
-    /// <summary>
-    ///     Filter by registration date range (to).
-    /// </summary>
-    public DateTime? RegisteredTo { get; init; }
-
     /// <summary>
     ///     Validates the search parameters.
     /// </summary>

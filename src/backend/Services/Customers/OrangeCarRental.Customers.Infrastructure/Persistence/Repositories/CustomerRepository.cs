@@ -149,7 +149,7 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
     public async Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
     {
         var customer = await GetByIdAsync(id, cancellationToken);
-        if (customer != null) context.Customers.Remove(customer);
+        context.Customers.Remove(customer);
     }
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>

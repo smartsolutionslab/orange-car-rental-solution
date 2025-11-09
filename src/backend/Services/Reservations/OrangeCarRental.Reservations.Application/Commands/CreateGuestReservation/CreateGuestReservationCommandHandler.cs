@@ -18,50 +18,45 @@ public sealed class CreateGuestReservationCommandHandler(
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
 {
-    public async Task<CreateGuestReservationResult> HandleAsync(
-        CreateGuestReservationCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<CreateGuestReservationResult> HandleAsync(CreateGuestReservationCommand command, CancellationToken cancellationToken = default)
     {
+        var (vehicleId,vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, name,  email, phoneNumber, birthDate, address, driversLicense) = command;
         // Step 1: Register the customer via Customers API
         // Extract primitive values from value objects for the DTO
         var registerCustomerDto = new RegisterCustomerDto(
-            command.Name.FirstName.Value,
-            command.Name.LastName.Value,
-            command.Email.Value,
-            command.PhoneNumber.Value,
-            command.DateOfBirth.Value,
-            command.Address.Street,
-            command.Address.City.Value,
-            command.Address.PostalCode.Value,
-            command.Address.Country,
-            command.DriversLicense.LicenseNumber,
-            command.DriversLicense.IssueCountry,
-            command.DriversLicense.IssueDate,
-            command.DriversLicense.ExpiryDate
+            name.FirstName.Value,
+            name.LastName.Value,
+            email.Value,
+            phoneNumber.Value,
+            birthDate.Value,
+            address.Street,
+            address.City.Value,
+            address.PostalCode.Value,
+            address.Country,
+            driversLicense.LicenseNumber,
+            driversLicense.IssueCountry,
+            driversLicense.IssueDate,
+            driversLicense.ExpiryDate
         );
 
-        var customerId = await customersService.RegisterCustomerAsync(
-            registerCustomerDto,
-            cancellationToken);
+        var customerId = await customersService.RegisterCustomerAsync(registerCustomerDto, cancellationToken);
 
         // Step 2: Calculate price via Pricing API
         // Note: Pricing service still uses primitives, so we extract from value objects
         var priceCalculation = await pricingService.CalculatePriceAsync(
-            command.CategoryCode.Code,
-            command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
-            command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
-            command.PickupLocationCode.Value,
+            vehicleCategory, bookingPeriod,
+            pickupLocationCode,
             cancellationToken);
 
         var totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
 
         // Step 3: Create the reservation aggregate with the new customer ID
         var reservation = Reservation.Create(
-            command.VehicleId.Value,
+            vehicleId.Value,
             customerId,
-            command.Period,
-            command.PickupLocationCode,
-            command.DropoffLocationCode,
+            bookingPeriod,
+            pickupLocationCode,
+            dropoffLocationCode,
             totalPrice
         );
 

@@ -17,24 +17,22 @@ public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehi
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new rate details.</returns>
     /// <exception cref="InvalidOperationException">Thrown when vehicle is not found.</exception>
-    public async Task<UpdateVehicleDailyRateResult> HandleAsync(
-        UpdateVehicleDailyRateCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<UpdateVehicleDailyRateResult> HandleAsync(UpdateVehicleDailyRateCommand command, CancellationToken cancellationToken = default)
     {
+        var (vehicleId, newDailyRate) = command;
         // Load vehicle
-        var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken)
-            ?? throw new InvalidOperationException($"Vehicle with ID '{command.VehicleId}' not found.");
+        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken)
+            ?? throw new InvalidOperationException($"Vehicle with ID '{vehicleId}' not found.");
 
         var oldRate = vehicle.DailyRate;
 
         // Update daily rate (domain method returns new instance)
-        vehicle = vehicle.UpdateDailyRate(command.NewDailyRate);
+        vehicle = vehicle.UpdateDailyRate(newDailyRate);
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
         await vehicles.SaveChangesAsync(cancellationToken);
 
-        // Return result
         return new UpdateVehicleDailyRateResult(
             vehicle.Id.Value,
             oldRate.NetAmount,

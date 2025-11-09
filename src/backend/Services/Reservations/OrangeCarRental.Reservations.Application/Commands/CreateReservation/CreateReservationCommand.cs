@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -11,7 +12,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 /// </summary>
 public sealed record CreateReservationCommand(
     VehicleIdentifier VehicleId,
-    Guid CustomerId,
+    CustomerIdentifier CustomerId,
     VehicleCategory CategoryCode,
     BookingPeriod Period,
     LocationCode PickupLocationCode,

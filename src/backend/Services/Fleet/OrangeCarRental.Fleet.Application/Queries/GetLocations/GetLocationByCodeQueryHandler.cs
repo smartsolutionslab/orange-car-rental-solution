@@ -7,8 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocatio
 ///     Handler for GetLocationByCodeQuery.
 ///     Returns a specific location by its code.
 /// </summary>
-public sealed class GetLocationByCodeQueryHandler
-    : IQueryHandler<GetLocationByCodeQuery, LocationDto>
+public sealed class GetLocationByCodeQueryHandler: IQueryHandler<GetLocationByCodeQuery, LocationDto>
 {
     /// <summary>
     ///     Handles the query to retrieve a specific location by code.
@@ -16,9 +15,7 @@ public sealed class GetLocationByCodeQueryHandler
     /// <param name="query">The query containing the location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The location DTO.</returns>
-    public Task<LocationDto> HandleAsync(
-        GetLocationByCodeQuery query,
-        CancellationToken cancellationToken = default)
+    public Task<LocationDto> HandleAsync(GetLocationByCodeQuery query, CancellationToken cancellationToken = default)
     {
         var location = Location.FromCode(query.Code);
 

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -10,23 +11,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     This command handles both customer registration and reservation creation in a single transaction.
 ///     Uses value objects for type safety and early validation.
 /// </summary>
-public sealed record CreateGuestReservationCommand : ICommand<CreateGuestReservationResult>
-{
-    // Vehicle and Reservation Details
-    public required VehicleIdentifier VehicleId { get; init; }
-    public required VehicleCategory CategoryCode { get; init; }
-    public required BookingPeriod Period { get; init; }
-    public required LocationCode PickupLocationCode { get; init; }
-    public required LocationCode DropoffLocationCode { get; init; }
-
-    // Customer Details (for inline registration)
-    // Using value objects from Customers.Domain for validation and type safety
-    public required CustomerName Name { get; init; }
-    public required Email Email { get; init; }
-    public required PhoneNumber PhoneNumber { get; init; }
-    public required BirthDate DateOfBirth { get; init; }
-
-    // Address and License (value objects)
-    public required Address Address { get; init; }
-    public required DriversLicense DriversLicense { get; init; }
-}
+public sealed record CreateGuestReservationCommand(
+    VehicleIdentifier VehicleId,
+    VehicleCategory CategoryCode,
+    BookingPeriod Period,
+    LocationCode PickupLocationCode,
+    LocationCode DropoffLocationCode,
+    CustomerName Name,
+    Email Email,
+    PhoneNumber PhoneNumber,
+    BirthDate DateOfBirth,
+    Address Address,
+    DriversLicense DriversLicense) : ICommand<CreateGuestReservationResult>;

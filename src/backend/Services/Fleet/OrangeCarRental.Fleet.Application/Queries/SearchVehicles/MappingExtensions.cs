@@ -85,18 +85,13 @@ public static class MappingExtensions
             }
         }
 
-        return new VehicleSearchParameters
-        {
-            LocationCode = locationCode,
-            Category = category,
-            MinSeats = query.MinSeats,
-            FuelType = query.FuelType.TryParseFuelType(),
-            TransmissionType = query.TransmissionType.TryParseTransmissionType(),
-            MaxDailyRateGross = query.MaxDailyRateGross,
-            Status = VehicleStatus.Available, // Always filter to available vehicles
-            Period = period,
-            PageNumber = query.PageNumber ?? 1,
-            PageSize = query.PageSize ?? 20
-        };
+        return new VehicleSearchParameters(locationCode, category, query.MinSeats,
+            query.FuelType.TryParseFuelType(),
+            query.TransmissionType.TryParse(),
+            query.MaxDailyRateGross,
+            VehicleStatus.Available, // Always filter to available vehicles
+            period,
+            query.PageNumber ?? 1,
+            query.PageSize ?? 20);
     }
 }

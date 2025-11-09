@@ -1,37 +1,34 @@
 using System.Text;
 using System.Text.Json;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 /// <summary>
 ///     HTTP client implementation for calling the Pricing API.
 /// </summary>
-public sealed class PricingService : IPricingService
+public sealed class PricingService(HttpClient httpClient) : IPricingService
 {
-    private readonly HttpClient httpClient;
-    private readonly JsonSerializerOptions jsonOptions;
-
-    public PricingService(HttpClient httpClient)
+    private readonly JsonSerializerOptions jsonOptions = new()
     {
-        this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    }
+        PropertyNameCaseInsensitive = true
+    };
 
     public async Task<PriceCalculationDto> CalculatePriceAsync(
-        string categoryCode,
-        DateTime pickupDate,
-        DateTime returnDate,
-        string? locationCode = null,
+        VehicleCategory category,
+        BookingPeriod period,
+        LocationCode? location = null,
         CancellationToken cancellationToken = default)
     {
         // Prepare request payload
         var request = new
         {
-            CategoryCode = categoryCode,
-            PickupDate = pickupDate,
-            ReturnDate = returnDate,
-            LocationCode = locationCode
+            CategoryCode = category.Code,
+            PickupDate = period.PickupDate,
+            ReturnDate = period.PickupDate,
+            LocationCode = location?.Value ?? string.Empty
         };
 
         var json = JsonSerializer.Serialize(request, jsonOptions);
@@ -43,8 +40,7 @@ public sealed class PricingService : IPricingService
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new InvalidOperationException(
-                $"Failed to calculate price from Pricing API. Status: {response.StatusCode}, Error: {errorContent}");
+            throw new InvalidOperationException("Failed to calculate price from Pricing API. Status: {response.StatusCode}, Error: {errorContent}");
         }
 
         // Deserialize response

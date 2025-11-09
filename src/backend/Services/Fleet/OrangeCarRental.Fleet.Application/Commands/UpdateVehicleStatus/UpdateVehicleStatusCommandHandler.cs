@@ -17,9 +17,7 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new status.</returns>
     /// <exception cref="InvalidOperationException">Thrown when vehicle is not found.</exception>
-    public async Task<UpdateVehicleStatusResult> HandleAsync(
-        UpdateVehicleStatusCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<UpdateVehicleStatusResult> HandleAsync(UpdateVehicleStatusCommand command, CancellationToken cancellationToken = default)
     {
         // Load vehicle
         var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken)

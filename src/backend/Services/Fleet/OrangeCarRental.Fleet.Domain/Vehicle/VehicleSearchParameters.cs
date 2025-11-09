@@ -6,45 +6,40 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <summary>
 ///     Parameters for searching vehicles in the repository.
 /// </summary>
-public sealed class VehicleSearchParameters : SearchParameters
+public sealed record VehicleSearchParameters(
+    LocationCode? LocationCode,
+    VehicleCategory? Category,
+    int? MinSeats,
+    FuelType? FuelType,
+    TransmissionType? TransmissionType,
+    decimal? MaxDailyRateGross,
+    VehicleStatus? Status,
+    SearchPeriod? Period,
+    int PageNumber,
+    int PageSize) : SearchParameters(PageNumber, PageSize, null, false)
 {
-    /// <summary>
-    ///     Filter by location (value object).
-    /// </summary>
-    public LocationCode? LocationCode { get; init; }
+    public VehicleSearchParameters(int pageNumber, int pageSize) : this(null, null, null, null, null, null, null, null,
+        pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by vehicle category (value object).
-    /// </summary>
-    public VehicleCategory? Category { get; init; }
+    public VehicleSearchParameters(LocationCode? locationCode, int pageNumber, int pageSize) : this(locationCode, null, null,null, null, null, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by minimum seating capacity.
-    /// </summary>
-    public int? MinSeats { get; init; }
+    public VehicleSearchParameters(VehicleCategory? category, int pageNumber, int pageSize) : this(null, category, null, null, null, null, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by fuel type.
-    /// </summary>
-    public FuelType? FuelType { get; init; }
+    public VehicleSearchParameters(FuelType? fuelType, int pageNumber, int pageSize) : this(null, null, null, fuelType, null, null, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by transmission type.
-    /// </summary>
-    public TransmissionType? TransmissionType { get; init; }
+    public VehicleSearchParameters(int? minSeats, int pageNumber, int pageSize) : this(null, null, minSeats, null, null,null, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by maximum daily rate (gross amount).
-    /// </summary>
-    public decimal? MaxDailyRateGross { get; init; }
+    public VehicleSearchParameters(decimal? maxDailyRateGross, int pageNumber, int pageSize) : this(null, null, null, null, null, maxDailyRateGross, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by vehicle status.
-    /// </summary>
-    public VehicleStatus? Status { get; init; }
+    public VehicleSearchParameters(LocationCode? locationCode, FuelType? fuelType, int? minSeats, int pageNumber, int pageSize) : this(locationCode, null, minSeats, fuelType, null, null, null, null, pageNumber, pageSize)
+    {}
 
-    /// <summary>
-    ///     Filter by availability period (pickup and return dates).
-    /// </summary>
-    public SearchPeriod? Period { get; init; }
+    public VehicleSearchParameters(VehicleStatus? status, int pageNumber, int pageSize): this(null, null, null, null, null, null, status, null, pageNumber, pageSize)
+    {}
 }

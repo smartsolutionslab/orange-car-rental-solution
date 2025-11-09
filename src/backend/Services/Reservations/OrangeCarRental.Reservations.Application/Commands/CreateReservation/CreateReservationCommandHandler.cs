@@ -14,10 +14,10 @@ public sealed class CreateReservationCommandHandler(
     IPricingService pricingService)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
-    public async Task<CreateReservationResult> HandleAsync(
-        CreateReservationCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<CreateReservationResult> HandleAsync(CreateReservationCommand command, CancellationToken cancellationToken = default)
     {
+        var (vehicleId, customerId, vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, _) = command;
+
         // Determine the total price: either use provided value or calculate via Pricing API
         Money totalPrice;
         if (command.TotalPrice.HasValue)
@@ -30,10 +30,9 @@ public sealed class CreateReservationCommandHandler(
             // Calculate price via Pricing API
             // Note: Pricing service still uses primitives, so we extract from value objects
             var priceCalculation = await pricingService.CalculatePriceAsync(
-                command.CategoryCode.Code,
-                command.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
-                command.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
-                command.PickupLocationCode.Value,
+                vehicleCategory,
+                bookingPeriod,
+                pickupLocationCode,
                 cancellationToken);
 
             totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
@@ -41,11 +40,11 @@ public sealed class CreateReservationCommandHandler(
 
         // Create the reservation aggregate
         var reservation = Reservation.Create(
-            command.VehicleId.Value,
-            command.CustomerId,
-            command.Period,
-            command.PickupLocationCode,
-            command.DropoffLocationCode,
+            vehicleId.Value,
+            customerId.Value,
+            bookingPeriod,
+            pickupLocationCode,
+            dropoffLocationCode,
             totalPrice
         );
 
@@ -53,7 +52,6 @@ public sealed class CreateReservationCommandHandler(
         await reservations.AddAsync(reservation, cancellationToken);
         await reservations.SaveChangesAsync(cancellationToken);
 
-        // Map to result
         return new CreateReservationResult(
             reservation.Id.Value,
             reservation.Status.ToString(),

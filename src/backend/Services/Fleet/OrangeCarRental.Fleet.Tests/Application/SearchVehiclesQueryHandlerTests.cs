@@ -21,7 +21,8 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithNoFilters_ReturnsAllVehicles()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { PageNumber = 1, PageSize = 20 };
+        var query = new SearchVehiclesQuery(null, null, null, null, null, null,
+            null, null, 1, 20);
 
         var vehicles = CreateTestVehicles();
         var pagedResult = new PagedResult<Vehicle>
@@ -52,7 +53,9 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithLocationFilter_PassesCorrectParameters()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { LocationCode = "BER-HBF", PageNumber = 1, PageSize = 20 };
+        var query = new SearchVehiclesQuery(
+            null, null, "BER-HBF", null, null, null, null, null,
+            1, 20);
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -82,7 +85,8 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithFuelTypeFilter_ParsesAndPassesEnumCorrectly()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { FuelType = "Electric", PageNumber = 1, PageSize = 20 };
+        var query = new SearchVehiclesQuery(null, null, null, null, null,"Electric",
+            null,null, 1,20);
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -112,7 +116,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithTransmissionFilter_ParsesAndPassesEnumCorrectly()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { TransmissionType = "Automatic", PageNumber = 1, PageSize = 20 };
+        var query = new SearchVehiclesQuery(null, null, null, null, null, null, "Automatic", null, 1, 20);
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -142,17 +146,13 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithAllFilters_PassesAllParametersCorrectly()
     {
         // Arrange
-        var query = new SearchVehiclesQuery
-        {
-            LocationCode = "BER-HBF",
-            CategoryCode = "MITTEL",
-            MinSeats = 5,
-            FuelType = "Petrol",
-            TransmissionType = "Manual",
-            MaxDailyRateGross = 75.00m,
-            PageNumber = 2,
-            PageSize = 10
-        };
+        var query = new SearchVehiclesQuery(null, null, "BER-HBF", "MITTEL", 5,
+            "Petrol",
+            "Manual",
+            75.00m,
+            2,
+            10
+        );
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -189,7 +189,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_MapsVehiclesToDtosCorrectly()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { PageNumber = 1, PageSize = 20 };
+        var query = new SearchVehiclesQuery(null, null, null, null, null, null, null,null, 1, 20);
         var vehicles = CreateTestVehicles();
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -225,7 +225,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithDefaultPagination_UsesDefaults()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(); // No pagination specified
+        var query = new SearchVehiclesQuery(null, null, null, null, null, null, null, null, null,null); // No pagination specified
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -255,7 +255,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_AlwaysFiltersForAvailableVehicles()
     {
         // Arrange
-        var query = new SearchVehiclesQuery { LocationCode = "BER-HBF" };
+        var query = new SearchVehiclesQuery(null, null, "BER-HBF", null, null, null, null, null, null, null);
 
         var pagedResult = new PagedResult<Vehicle>
         {

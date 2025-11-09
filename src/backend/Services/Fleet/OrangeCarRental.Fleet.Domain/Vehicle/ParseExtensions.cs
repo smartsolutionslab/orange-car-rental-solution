@@ -11,7 +11,7 @@ public static class ParseExtensions
         return Enum.Parse<TransmissionType>(value, true);
     }
 
-    public static TransmissionType? TryParseTransmissionType(this string? value)
+    public static TransmissionType? TryParse(this string? value)
     {
         if (Enum.TryParse(value, true, out TransmissionType parsedTransmissionType)) return parsedTransmissionType;
 

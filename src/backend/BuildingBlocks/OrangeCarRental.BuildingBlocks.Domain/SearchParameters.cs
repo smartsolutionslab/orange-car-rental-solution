@@ -3,28 +3,8 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 /// <summary>
 ///     Base class for search parameters with pagination and sorting support.
 /// </summary>
-public abstract class SearchParameters
+public abstract record SearchParameters(int PageNumber, int PageSize, string? SortBy, bool SortDescending)
 {
-    /// <summary>
-    ///     Page number (1-based).
-    /// </summary>
-    public int PageNumber { get; init; } = 1;
-
-    /// <summary>
-    ///     Number of items per page.
-    /// </summary>
-    public int PageSize { get; init; } = 20;
-
-    /// <summary>
-    ///     Sort field name.
-    /// </summary>
-    public string? SortBy { get; init; }
-
-    /// <summary>
-    ///     Sort in descending order.
-    /// </summary>
-    public bool SortDescending { get; init; }
-
     /// <summary>
     ///     Calculates the number of items to skip for pagination.
     /// </summary>

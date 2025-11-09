@@ -17,24 +17,23 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new location details.</returns>
     /// <exception cref="InvalidOperationException">Thrown when vehicle is not found or cannot be moved.</exception>
-    public async Task<UpdateVehicleLocationResult> HandleAsync(
-        UpdateVehicleLocationCommand command,
-        CancellationToken cancellationToken = default)
+    public async Task<UpdateVehicleLocationResult> HandleAsync(UpdateVehicleLocationCommand command, CancellationToken cancellationToken = default)
     {
+        var (vehicleId, newLocation) = command;
+
         // Load vehicle
-        var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken)
-            ?? throw new InvalidOperationException($"Vehicle with ID '{command.VehicleId}' not found.");
+        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken)
+            ?? throw new InvalidOperationException($"Vehicle with ID '{vehicleId}' not found.");
 
         var oldLocation = vehicle.CurrentLocation;
 
         // Move to new location (domain method validates and returns new instance)
-        vehicle = vehicle.MoveToLocation(command.NewLocation);
+        vehicle = vehicle.MoveToLocation(newLocation);
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
         await vehicles.SaveChangesAsync(cancellationToken);
 
-        // Return result
         return new UpdateVehicleLocationResult(
             vehicle.Id.Value,
             oldLocation.Code.Value,

@@ -151,23 +151,21 @@ public static class MappingExtensions
             }
         }
 
-        return new CustomerSearchParameters
-        {
-            SearchTerm = searchTerm,
-            Email = email,
-            PhoneNumber = phoneNumber,
-            Status = status,
-            City = city,
-            PostalCode = postalCode,
-            MinAge = query.MinAge,
-            MaxAge = query.MaxAge,
-            LicenseExpiringWithinDays = query.LicenseExpiringWithinDays,
-            RegisteredFrom = query.RegisteredFrom,
-            RegisteredTo = query.RegisteredTo,
-            SortBy = query.SortBy,
-            SortDescending = query.SortDescending,
-            PageNumber = query.PageNumber ?? 1,
-            PageSize = query.PageSize ?? 20
-        };
+        return new CustomerSearchParameters(
+            searchTerm,
+            email,
+            phoneNumber,
+            status,
+            city,
+            postalCode,
+            query.MinAge,
+            query.MaxAge,
+            query.LicenseExpiringWithinDays,
+            query.RegisteredFrom,
+            query.RegisteredTo,
+            query.SortBy,
+            query.SortDescending,
+            query.PageNumber ?? 1,
+            query.PageSize ?? 20);
     }
 }
