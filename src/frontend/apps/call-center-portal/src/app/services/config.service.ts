@@ -1,27 +1,24 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+export interface AppConfig {
+  apiUrl: string;
+}
 
 /**
- * Configuration service
- * Loads runtime configuration from public/config.json
+ * Configuration service that holds runtime configuration
+ * Loaded via APP_INITIALIZER before the app starts
  */
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private readonly http = inject(HttpClient);
-  private config: { apiUrl: string } | null = null;
+  private config: AppConfig = { apiUrl: '' };
 
   get apiUrl(): string {
-    return this.config?.apiUrl || 'http://localhost:5002';
+    return this.config.apiUrl;
   }
 
-  async loadConfig(): Promise<void> {
-    try {
-      this.config = await this.http.get<{ apiUrl: string }>('/config.json').toPromise() as { apiUrl: string };
-    } catch (error) {
-      console.error('Failed to load config, using defaults', error);
-      this.config = { apiUrl: 'http://localhost:5002' };
-    }
+  setConfig(config: AppConfig): void {
+    this.config = config;
   }
 }
