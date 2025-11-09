@@ -142,7 +142,7 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act - Exception now thrown during command construction
         var act = () => new CreateReservationCommand(
-            VehicleIdentifier.New(),
+            VehicleIdentifier.From(Guid.Empty),
             CustomerIdentifier.New(),
             VehicleCategory.FromCode("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
@@ -158,10 +158,10 @@ public class CreateReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithEmptyCustomerId_ThrowsArgumentException()
+    public void HandleAsync_WithEmptyCustomerId_ThrowsArgumentException()
     {
-        // Arrange
-        var command = new CreateReservationCommand(
+        // Arrange & Act - Exception now thrown during command construction
+        var act = () => new CreateReservationCommand(
             VehicleIdentifier.New(),
             CustomerIdentifier.From(Guid.Empty),
             VehicleCategory.FromCode("KOMPAKT"),
@@ -171,9 +171,10 @@ public class CreateReservationCommandHandlerTests
             Money.Euro(150.00m)
         );
 
-        // Act & Assert
-        var ex = await Should.ThrowAsync<ArgumentException>(async () => await handler.HandleAsync(command, CancellationToken.None));
-        ex.Message.ShouldContain("GUID cannot be empty");
+        // Assert
+        var ex = Should.Throw<ArgumentException>(act);
+        ex.Message.ShouldContain("must not be equal to");
+        ex.Message.ShouldContain("00000000-0000-0000-0000-000000000000");
     }
 
     [Fact]
