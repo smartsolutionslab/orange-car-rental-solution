@@ -2,6 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -52,10 +56,16 @@ builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDb
 // Register repositories
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 
-// Register application services
+// Register application services - Query Handlers
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();
 builder.Services.AddScoped<GetLocationsQueryHandler>();
 builder.Services.AddScoped<GetLocationByCodeQueryHandler>();
+
+// Register application services - Command Handlers
+builder.Services.AddScoped<AddVehicleToFleetCommandHandler>();
+builder.Services.AddScoped<UpdateVehicleStatusCommandHandler>();
+builder.Services.AddScoped<UpdateVehicleLocationCommandHandler>();
+builder.Services.AddScoped<UpdateVehicleDailyRateCommandHandler>();
 
 var app = builder.Build();
 
