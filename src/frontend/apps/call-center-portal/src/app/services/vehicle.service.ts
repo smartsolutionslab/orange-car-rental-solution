@@ -1,7 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Vehicle, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import {
+  Vehicle,
+  VehicleId,
+  VehicleStatus,
+  LocationCode,
+  DailyRate,
+  VehicleSearchQuery,
+  VehicleSearchResult,
+  AddVehicleRequest,
+  AddVehicleResult
+} from './vehicle.model';
 import { ConfigService } from './config.service';
 
 /**
@@ -52,5 +62,44 @@ export class VehicleService {
    */
   getVehicleById(id: string): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Add a new vehicle to the fleet
+   * @param request Add vehicle request with vehicle details
+   * @returns Observable of the created vehicle result
+   */
+  addVehicle(request: AddVehicleRequest): Observable<AddVehicleResult> {
+    return this.http.post<AddVehicleResult>(this.apiUrl, request);
+  }
+
+  /**
+   * Update vehicle status
+   * @param vehicleId Vehicle ID
+   * @param status New status
+   * @returns Observable of void
+   */
+  updateVehicleStatus(vehicleId: VehicleId, status: VehicleStatus): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${vehicleId}/status?status=${status}`, {});
+  }
+
+  /**
+   * Update vehicle location
+   * @param vehicleId Vehicle ID
+   * @param locationCode New location code
+   * @returns Observable of void
+   */
+  updateVehicleLocation(vehicleId: VehicleId, locationCode: LocationCode): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`, {});
+  }
+
+  /**
+   * Update vehicle daily rate
+   * @param vehicleId Vehicle ID
+   * @param dailyRateNet New daily rate (net amount in EUR, VAT will be calculated)
+   * @returns Observable of void
+   */
+  updateVehicleDailyRate(vehicleId: VehicleId, dailyRateNet: DailyRate): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`, {});
   }
 }
