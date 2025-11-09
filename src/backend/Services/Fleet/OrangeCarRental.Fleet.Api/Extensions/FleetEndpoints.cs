@@ -21,10 +21,7 @@ public static class FleetEndpoints
             .WithOpenApi();
 
         // GET /api/vehicles - Search vehicles
-        fleet.MapGet("/", async (
-                [AsParameters] SearchVehiclesQuery query,
-                SearchVehiclesQueryHandler handler,
-                CancellationToken cancellationToken) =>
+        fleet.MapGet("/", async ([AsParameters] SearchVehiclesQuery query, SearchVehiclesQueryHandler handler, CancellationToken cancellationToken) =>
             {
                 var result = await handler.HandleAsync(query, cancellationToken);
                 return Results.Ok(result);
@@ -37,29 +34,25 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest);
 
         // POST /api/vehicles - Add new vehicle to fleet
-        fleet.MapPost("/", async (
-                AddVehicleToFleetRequest request,
-                AddVehicleToFleetCommandHandler handler,
-                CancellationToken cancellationToken) =>
+        fleet.MapPost("/", async (AddVehicleToFleetRequest request, AddVehicleToFleetCommandHandler handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
                     // Map request DTO to command with value objects
-                    var command = new AddVehicleToFleetCommand
-                    {
-                        Name = VehicleName.Of(request.Name),
-                        Category = VehicleCategory.FromCode(request.Category),
-                        CurrentLocation = Location.FromCode(LocationCode.Of(request.LocationCode)),
-                        DailyRate = Money.Euro(request.DailyRateNet),
-                        Seats = SeatingCapacity.Of(request.Seats),
-                        FuelType = request.FuelType.ParseFuelType(),
-                        TransmissionType = request.TransmissionType.ParseTransmissionType(),
-                        LicensePlate = request.LicensePlate,
-                        Manufacturer = request.Manufacturer is not null ? Manufacturer.Of(request.Manufacturer) : null,
-                        Model = request.Model is not null ? VehicleModel.Of(request.Model) : null,
-                        Year = request.Year.HasValue ? ManufacturingYear.Of(request.Year.Value) : null,
-                        ImageUrl = request.ImageUrl
-                    };
+                    var command = new AddVehicleToFleetCommand(
+                        VehicleName.Of(request.BasicInfo.Name),
+                        VehicleCategory.FromCode(request.Specifications.Category),
+                        Location.FromCode(LocationCode.Of(request.LocationAndPricing.LocationCode)),
+                        Money.Euro(request.LocationAndPricing.DailyRateNet),
+                        SeatingCapacity.Of(request.Specifications.Seats),
+                        request.Specifications.FuelType.ParseFuelType(),
+                        request.Specifications.TransmissionType.ParseTransmissionType(),
+                        request.Registration?.LicensePlate,
+                        request.BasicInfo.Manufacturer is not null ? Manufacturer.Of(request.BasicInfo.Manufacturer) : null,
+                        request.BasicInfo.Model is not null ? VehicleModel.Of(request.BasicInfo.Model) : null,
+                        request.BasicInfo.Year.HasValue ? ManufacturingYear.Of(request.BasicInfo.Year.Value) : null,
+                        request.BasicInfo.ImageUrl
+                    );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Created($"/api/vehicles/{result.VehicleId}", result);
@@ -85,11 +78,7 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         // PUT /api/vehicles/{id}/status - Update vehicle status
-        fleet.MapPut("/{id:guid}/status", async (
-                Guid id,
-                string status,
-                UpdateVehicleStatusCommandHandler handler,
-                CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/status", async (Guid id, string status, UpdateVehicleStatusCommandHandler handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -122,11 +111,7 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         // PUT /api/vehicles/{id}/location - Update vehicle location
-        fleet.MapPut("/{id:guid}/location", async (
-                Guid id,
-                string locationCode,
-                UpdateVehicleLocationCommandHandler handler,
-                CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/location", async (Guid id, string locationCode, UpdateVehicleLocationCommandHandler handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -161,11 +146,7 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status500InternalServerError);
 
         // PUT /api/vehicles/{id}/daily-rate - Update vehicle daily rate
-        fleet.MapPut("/{id:guid}/daily-rate", async (
-                Guid id,
-                decimal dailyRateNet,
-                UpdateVehicleDailyRateCommandHandler handler,
-                CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/daily-rate", async (Guid id, decimal dailyRateNet, UpdateVehicleDailyRateCommandHandler handler, CancellationToken cancellationToken) =>
             {
                 try
                 {

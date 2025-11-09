@@ -29,19 +29,16 @@ public static class CustomerEndpoints
                 try
                 {
                     // Map request DTO to command with value objects
-                    var command = new RegisterCustomerCommand
-                    {
-                        Name = Domain.Customer.CustomerName.Of(request.FirstName, request.LastName),
-                        Email = Email.Of(request.Email),
-                        PhoneNumber = Domain.Customer.PhoneNumber.Of(request.PhoneNumber),
-                        DateOfBirth = Domain.Customer.BirthDate.Of(request.DateOfBirth),
-                        Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
-                        DriversLicense = DriversLicense.Of(
-                            request.LicenseNumber,
-                            request.LicenseIssueCountry,
-                            request.LicenseIssueDate,
-                            request.LicenseExpiryDate)
-                    };
+                    var command = new RegisterCustomerCommand(
+                        CustomerName.Of(request.Customer.FirstName, request.Customer.LastName),
+                        Email.Of(request.Customer.Email),
+                        PhoneNumber.Of(request.Customer.PhoneNumber),
+                        BirthDate.Of(request.Customer.DateOfBirth),
+                        Address.Of(request.Address.Street, request.Address.City, request.Address.PostalCode, request.Address.Country),
+                        DriversLicense.Of(request.DriversLicense.LicenseNumber,
+                            request.DriversLicense.LicenseIssueCountry,
+                            request.DriversLicense.LicenseIssueDate,
+                            request.DriversLicense.LicenseExpiryDate));
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Created($"/api/customers/{result.CustomerIdentifier}", result);
@@ -183,13 +180,11 @@ public static class CustomerEndpoints
                 try
                 {
                     // Map request DTO to command with value objects
-                    var command = new UpdateCustomerProfileCommand
-                    {
-                        CustomerIdentifier = id,
-                        Name = Domain.Customer.CustomerName.Of(request.FirstName, request.LastName),
-                        PhoneNumber = Domain.Customer.PhoneNumber.Of(request.PhoneNumber),
-                        Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country)
-                    };
+                    var command = new UpdateCustomerProfileCommand(
+                        CustomerIdentifier.From(id),
+                        CustomerName.Of(request.Profile.FirstName, request.Profile.LastName),
+                        PhoneNumber.Of(request.Profile.PhoneNumber),
+                        Address.Of(request.Address.Street, request.Address.City, request.Address.PostalCode, request.Address.Country));
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);

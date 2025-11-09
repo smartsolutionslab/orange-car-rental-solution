@@ -1,34 +1,55 @@
 /**
- * Guest reservation request matching the backend CreateGuestReservationCommand
- * Used for creating reservations for users who haven't registered yet
+ * Vehicle and reservation details
  */
-export interface GuestReservationRequest {
-  // Vehicle and booking details
+export interface ReservationDetails {
   vehicleId: string;
   categoryCode: string;
   pickupDate: string;  // ISO date string
   returnDate: string;  // ISO date string
   pickupLocationCode: string;
   dropoffLocationCode: string;
+}
 
-  // Customer details
+/**
+ * Customer details
+ */
+export interface CustomerDetails {
   firstName: string;
   lastName: string;
   email: string;
   phoneNumber: string;
   dateOfBirth: string;  // ISO date string
+}
 
-  // Address details
+/**
+ * Address details
+ */
+export interface AddressDetails {
   street: string;
   city: string;
   postalCode: string;
   country: string;
+}
 
-  // Driver's license details
+/**
+ * Driver's license details
+ */
+export interface DriversLicenseDetails {
   licenseNumber: string;
   licenseIssueCountry: string;
   licenseIssueDate: string;  // ISO date string
   licenseExpiryDate: string;  // ISO date string
+}
+
+/**
+ * Guest reservation request matching the backend CreateGuestReservationRequest
+ * Used for creating reservations for users who haven't registered yet
+ */
+export interface GuestReservationRequest {
+  reservation: ReservationDetails;
+  customer: CustomerDetails;
+  address: AddressDetails;
+  driversLicense: DriversLicenseDetails;
 }
 
 /**

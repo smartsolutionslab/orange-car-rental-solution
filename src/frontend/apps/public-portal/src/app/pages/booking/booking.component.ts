@@ -274,27 +274,35 @@ export class BookingComponent implements OnInit {
 
     const formValue = this.bookingForm.value;
 
-    // Build the guest reservation request
+    // Build the guest reservation request with nested structure
     const request: GuestReservationRequest = {
-      vehicleId: formValue.vehicleId,
-      categoryCode: formValue.categoryCode,
-      pickupDate: formValue.pickupDate,
-      returnDate: formValue.returnDate,
-      pickupLocationCode: formValue.pickupLocationCode,
-      dropoffLocationCode: formValue.dropoffLocationCode,
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      email: formValue.email,
-      phoneNumber: formValue.phoneNumber,
-      dateOfBirth: formValue.dateOfBirth,
-      street: formValue.street,
-      city: formValue.city,
-      postalCode: formValue.postalCode,
-      country: formValue.country,
-      licenseNumber: formValue.licenseNumber,
-      licenseIssueCountry: formValue.licenseIssueCountry,
-      licenseIssueDate: formValue.licenseIssueDate,
-      licenseExpiryDate: formValue.licenseExpiryDate
+      reservation: {
+        vehicleId: formValue.vehicleId,
+        categoryCode: formValue.categoryCode,
+        pickupDate: formValue.pickupDate,
+        returnDate: formValue.returnDate,
+        pickupLocationCode: formValue.pickupLocationCode,
+        dropoffLocationCode: formValue.dropoffLocationCode
+      },
+      customer: {
+        firstName: formValue.firstName,
+        lastName: formValue.lastName,
+        email: formValue.email,
+        phoneNumber: formValue.phoneNumber,
+        dateOfBirth: formValue.dateOfBirth
+      },
+      address: {
+        street: formValue.street,
+        city: formValue.city,
+        postalCode: formValue.postalCode,
+        country: formValue.country
+      },
+      driversLicense: {
+        licenseNumber: formValue.licenseNumber,
+        licenseIssueCountry: formValue.licenseIssueCountry,
+        licenseIssueDate: formValue.licenseIssueDate,
+        licenseExpiryDate: formValue.licenseExpiryDate
+      }
     };
 
     this.reservationService.createGuestReservation(request).subscribe({

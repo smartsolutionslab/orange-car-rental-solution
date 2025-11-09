@@ -22,14 +22,12 @@ public static class ReservationEndpoints
             .WithOpenApi();
 
         // POST /api/reservations - Create a new reservation
-        reservations.MapPost("/", async (
-                CreateReservationRequest request,
-                CreateReservationCommandHandler handler) =>
+        reservations.MapPost("/", async (CreateReservationRequest request, CreateReservationCommandHandler handler) =>
             {
                 // Map request DTO to command with value objects
                 var command = new CreateReservationCommand(
                     VehicleIdentifier.From(request.VehicleId),
-                    request.CustomerId,
+                    CustomerIdentifier.From(request.CustomerId),
                     VehicleCategory.FromCode(request.CategoryCode),
                     BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     LocationCode.Of(request.PickupLocationCode),
@@ -66,29 +64,23 @@ public static class ReservationEndpoints
                              """);
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
-        reservations.MapPost("/guest", async (
-                CreateGuestReservationRequest request,
-                CreateGuestReservationCommandHandler handler) =>
+        reservations.MapPost("/guest", async (CreateGuestReservationRequest request, CreateGuestReservationCommandHandler handler) =>
             {
+                var (reservation, customer, address, driversLicense ) = request;
                 // Map request DTO to command with value objects
-                var command = new CreateGuestReservationCommand
-                {
-                    VehicleId = VehicleIdentifier.From(request.VehicleId),
-                    CategoryCode = VehicleCategory.FromCode(request.CategoryCode),
-                    Period = BookingPeriod.Of(request.PickupDate, request.ReturnDate),
-                    PickupLocationCode = LocationCode.Of(request.PickupLocationCode),
-                    DropoffLocationCode = LocationCode.Of(request.DropoffLocationCode),
-                    Name = CustomerName.Of(request.FirstName, request.LastName),
-                    Email = Email.Of(request.Email),
-                    PhoneNumber = PhoneNumber.Of(request.PhoneNumber),
-                    DateOfBirth = BirthDate.Of(request.DateOfBirth),
-                    Address = Address.Of(request.Street, request.City, request.PostalCode, request.Country),
-                    DriversLicense = DriversLicense.Of(
-                        request.LicenseNumber,
-                        request.LicenseIssueCountry,
-                        request.LicenseIssueDate,
-                        request.LicenseExpiryDate)
-                };
+                var command = new CreateGuestReservationCommand(
+                    VehicleIdentifier.From(reservation.VehicleId),
+                    VehicleCategory.FromCode(reservation.CategoryCode),
+                    BookingPeriod.Of(reservation.PickupDate, reservation.ReturnDate),
+                    LocationCode.Of(reservation.PickupLocationCode),
+                    LocationCode.Of(reservation.DropoffLocationCode),
+                    CustomerName.Of(customer.FirstName, customer.LastName, null),
+                    Email.Of(customer.Email),
+                    PhoneNumber.Of(customer.PhoneNumber),
+                    BirthDate.Of(customer.DateOfBirth),
+                    Address.Of(address.Street, address.City, address.PostalCode, address.Country),
+                    DriversLicense.Of(driversLicense.LicenseNumber, driversLicense.LicenseIssueCountry, driversLicense.LicenseIssueDate, driversLicense.LicenseExpiryDate)
+                );
 
                 var result = await handler.HandleAsync(command);
                 return Results.Created($"/api/reservations/{result.ReservationId}", result);
@@ -122,9 +114,7 @@ public static class ReservationEndpoints
                              """);
 
         // GET /api/reservations/{id} - Get reservation by ID
-        reservations.MapGet("/{id:guid}", async (
-                Guid id,
-                GetReservationQueryHandler handler) =>
+        reservations.MapGet("/{id:guid}", async (Guid id, GetReservationQueryHandler handler) =>
             {
                 try
                 {
@@ -222,9 +212,7 @@ public static class ReservationEndpoints
                              """);
 
         // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
-        reservations.MapPut("/{id:guid}/confirm", async (
-                Guid id,
-                ConfirmReservationCommandHandler handler) =>
+        reservations.MapPut("/{id:guid}/confirm", async (Guid id, ConfirmReservationCommandHandler handler) =>
             {
                 try
                 {
@@ -256,10 +244,7 @@ public static class ReservationEndpoints
                              """);
 
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
-        reservations.MapPut("/{id:guid}/cancel", async (
-                Guid id,
-                CancelReservationCommand command,
-                CancelReservationCommandHandler handler) =>
+        reservations.MapPut("/{id:guid}/cancel", async (Guid id, CancelReservationCommand command, CancelReservationCommandHandler handler) =>
             {
                 try
                 {
