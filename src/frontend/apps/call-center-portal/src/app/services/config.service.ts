@@ -6,13 +6,12 @@ export interface AppConfig {
 
 /**
  * Configuration service that holds runtime configuration
- * Loaded via APP_INITIALIZER before the app starts
  */
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private config: AppConfig = { apiUrl: '' };
+  private config: AppConfig = { apiUrl: 'http://localhost:5002' };
 
   get apiUrl(): string {
     return this.config.apiUrl;

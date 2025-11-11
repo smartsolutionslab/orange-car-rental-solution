@@ -1,7 +1,7 @@
 const { spawn } = require('child_process');
 
-// Read PORT from environment, default to 4201
-const port = process.env.PORT || '4201';
+// Read PORT from environment, default to 4202
+const port = process.env.PORT || '4202';
 
 console.log(`Starting Angular dev server on port: ${port}`);
 

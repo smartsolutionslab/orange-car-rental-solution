@@ -1,7 +1,9 @@
-<app-layout [navPosition]="'left'">
-  <app-navigation navigation />
+<div class="app-container">
+  <aside class="app-sidebar">
+    <app-navigation />
+  </aside>
 
-  <div content>
+  <main class="app-main">
     <router-outlet />
-  </div>
-</app-layout>
+  </main>
+</div>

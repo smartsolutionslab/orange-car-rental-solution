@@ -9,16 +9,24 @@ import { catchError, of } from 'rxjs';
  */
 export function initializeApp(http: HttpClient, configService: ConfigService): () => Promise<void> {
   return () => {
+    console.log('[APP_INITIALIZER] Starting configuration load...');
     return firstValueFrom(
       http.get('/config.json').pipe(
         catchError(error => {
-          console.warn('Failed to load config.json, using defaults:', error);
+          console.error('[APP_INITIALIZER] Failed to load config.json:', error);
+          console.log('[APP_INITIALIZER] Using default configuration');
           return of({ apiUrl: 'http://localhost:5002' });
         })
       )
     ).then((config: any) => {
-      console.log('Loaded configuration:', config);
+      console.log('[APP_INITIALIZER] Configuration loaded successfully:', config);
       configService.setConfig(config);
+      console.log('[APP_INITIALIZER] Configuration applied to service');
+    }).catch(error => {
+      console.error('[APP_INITIALIZER] Unexpected error:', error);
+      // Set default config even if something unexpected happens
+      configService.setConfig({ apiUrl: 'http://localhost:5002' });
+      console.log('[APP_INITIALIZER] Applied default configuration due to error');
     });
   };
 }

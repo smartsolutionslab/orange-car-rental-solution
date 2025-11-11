@@ -68,7 +68,7 @@
   <div class="filters-section">
     <div class="filter-group">
       <label for="statusFilter">Status</label>
-      <select id="statusFilter" [(ngModel)]="searchStatus" (change)="applyFilters()">
+      <select id="statusFilter" [value]="searchStatus()" (change)="searchStatus.set($any($event.target).value); applyFilters()">
         <option value="">Alle</option>
         <option value="Available">Verfügbar</option>
         <option value="Rented">Vermietet</option>
@@ -79,7 +79,7 @@
 
     <div class="filter-group">
       <label for="locationFilter">Standort</label>
-      <select id="locationFilter" [(ngModel)]="searchLocation" (change)="applyFilters()">
+      <select id="locationFilter" [value]="searchLocation()" (change)="searchLocation.set($any($event.target).value); applyFilters()">
         <option value="">Alle</option>
         @for (location of uniqueLocations; track location) {
           <option [value]="location">{{ location }}</option>
@@ -89,7 +89,7 @@
 
     <div class="filter-group">
       <label for="categoryFilter">Kategorie</label>
-      <select id="categoryFilter" [(ngModel)]="searchCategory" (change)="applyFilters()">
+      <select id="categoryFilter" [value]="searchCategory()" (change)="searchCategory.set($any($event.target).value); applyFilters()">
         <option value="">Alle</option>
         @for (category of uniqueCategories; track category) {
           <option [value]="category">{{ category }}</option>
