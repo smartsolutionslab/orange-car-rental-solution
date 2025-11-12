@@ -12,25 +12,25 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Logging__LogLevel__Default=Debug
     volumes:
-      - ./backend/Services/Fleet/OrangeCarRental.FleetService:/app:ro
+      - ./backend/Services/Fleet/OrangeCarRental.Fleet.Api:/app:ro
 
   reservation-service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Logging__LogLevel__Default=Debug
     volumes:
-      - ./backend/Services/Reservation/OrangeCarRental.ReservationService:/app:ro
+      - ./backend/Services/Reservations/OrangeCarRental.Reservations.Api:/app:ro
 
   customer-service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Logging__LogLevel__Default=Debug
     volumes:
-      - ./backend/Services/Customer/OrangeCarRental.CustomerService:/app:ro
+      - ./backend/Services/Customers/OrangeCarRental.Customers.Api:/app:ro
 
-  location-service:
+  pricing-service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Logging__LogLevel__Default=Debug
     volumes:
-      - ./backend/Services/Location/OrangeCarRental.LocationService:/app:ro
+      - ./backend/Services/Pricing/OrangeCarRental.Pricing.Api:/app:ro

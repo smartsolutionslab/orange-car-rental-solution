@@ -2,22 +2,31 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# Copy solution and project files
-COPY ["Services/Customer/OrangeCarRental.CustomerService/OrangeCarRental.CustomerService.csproj", "Services/Customer/OrangeCarRental.CustomerService/"]
+# Copy project files for dependency restoration
+# Customers service layers
+COPY ["Services/Customers/OrangeCarRental.Customers.Api/OrangeCarRental.Customers.Api.csproj", "Services/Customers/OrangeCarRental.Customers.Api/"]
+COPY ["Services/Customers/OrangeCarRental.Customers.Application/OrangeCarRental.Customers.Application.csproj", "Services/Customers/OrangeCarRental.Customers.Application/"]
+COPY ["Services/Customers/OrangeCarRental.Customers.Domain/OrangeCarRental.Customers.Domain.csproj", "Services/Customers/OrangeCarRental.Customers.Domain/"]
+COPY ["Services/Customers/OrangeCarRental.Customers.Infrastructure/OrangeCarRental.Customers.Infrastructure.csproj", "Services/Customers/OrangeCarRental.Customers.Infrastructure/"]
+
+# BuildingBlocks dependencies
+COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/OrangeCarRental.BuildingBlocks.Domain.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/"]
+COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/OrangeCarRental.BuildingBlocks.Infrastructure.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/"]
+COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/OrangeCarRental.BuildingBlocks.EventStore.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/"]
 
 # Restore dependencies
-RUN dotnet restore "Services/Customer/OrangeCarRental.CustomerService/OrangeCarRental.CustomerService.csproj"
+RUN dotnet restore "Services/Customers/OrangeCarRental.Customers.Api/OrangeCarRental.Customers.Api.csproj"
 
-# Copy source code
+# Copy all source code
 COPY . .
 
 # Build
-WORKDIR "/src/Services/Customer/OrangeCarRental.CustomerService"
-RUN dotnet build "OrangeCarRental.CustomerService.csproj" -c Release -o /app/build
+WORKDIR "/src/Services/Customers/OrangeCarRental.Customers.Api"
+RUN dotnet build "OrangeCarRental.Customers.Api.csproj" -c Release -o /app/build
 
 # Publish
 FROM build AS publish
-RUN dotnet publish "OrangeCarRental.CustomerService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OrangeCarRental.Customers.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
@@ -44,4 +53,4 @@ EXPOSE 8081
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8080/health || exit 1
 
-ENTRYPOINT ["dotnet", "OrangeCarRental.CustomerService.dll"]
+ENTRYPOINT ["dotnet", "OrangeCarRental.Customers.Api.dll"]

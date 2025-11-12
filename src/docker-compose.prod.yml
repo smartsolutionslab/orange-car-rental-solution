@@ -60,7 +60,7 @@ services:
           cpus: '0.5'
           memory: 256M
 
-  location-service:
+  pricing-service:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Logging__LogLevel__Default=Information

@@ -12,12 +12,12 @@ services:
       - FleetService__Url=http://fleet-service:8080
       - ReservationService__Url=http://reservation-service:8080
       - CustomerService__Url=http://customer-service:8080
-      - LocationService__Url=http://location-service:8080
+      - PricingService__Url=http://pricing-service:8080
     depends_on:
       - fleet-service
       - reservation-service
       - customer-service
-      - location-service
+      - pricing-service
     networks:
       - orange-network
     healthcheck:
@@ -93,17 +93,17 @@ services:
       retries: 3
       start_period: 40s
 
-  # Location Service
-  location-service:
+  # Pricing Service
+  pricing-service:
     build:
       context: ./backend
-      dockerfile: Services/Location/Dockerfile
+      dockerfile: Services/Pricing/Dockerfile
     ports:
       - "5040:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=postgres;Database=LocationDB;User Id=postgres;Password=postgres;
+      - ConnectionStrings__DefaultConnection=Server=postgres;Database=PricingDB;User Id=postgres;Password=postgres;
     depends_on:
       - postgres
     networks:
