@@ -2,6 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
+# Copy central package management files FIRST (required for version resolution)
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
+
 # Copy project files for dependency restoration
 # Pricing service layers
 COPY ["Services/Pricing/OrangeCarRental.Pricing.Api/OrangeCarRental.Pricing.Api.csproj", "Services/Pricing/OrangeCarRental.Pricing.Api/"]

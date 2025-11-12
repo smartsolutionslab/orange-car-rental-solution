@@ -2,6 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
+# Copy central package management files FIRST (required for version resolution)
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
+
 # Copy solution and project files
 COPY ["ApiGateway/OrangeCarRental.ApiGateway/OrangeCarRental.ApiGateway.csproj", "ApiGateway/OrangeCarRental.ApiGateway/"]
 

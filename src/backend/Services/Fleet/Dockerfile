@@ -2,6 +2,10 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
+# Copy central package management files FIRST (required for version resolution)
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Packages.props", "./"]
+
 # Copy project files for dependency restoration
 # Fleet service layers
 COPY ["Services/Fleet/OrangeCarRental.Fleet.Api/OrangeCarRental.Fleet.Api.csproj", "Services/Fleet/OrangeCarRental.Fleet.Api/"]
@@ -13,6 +17,13 @@ COPY ["Services/Fleet/OrangeCarRental.Fleet.Infrastructure/OrangeCarRental.Fleet
 COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/OrangeCarRental.BuildingBlocks.Domain.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/"]
 COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/OrangeCarRental.BuildingBlocks.Infrastructure.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/"]
 COPY ["BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/OrangeCarRental.BuildingBlocks.EventStore.csproj", "BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/"]
+
+# Cross-service dependency (ARCHITECTURAL SMELL - should be removed in future)
+# Fleet.Infrastructure references Reservations.Infrastructure - not ideal for microservices
+# Need all Reservations layers because of BuildingBlocks dependencies
+COPY ["Services/Reservations/OrangeCarRental.Reservations.Domain/OrangeCarRental.Reservations.Domain.csproj", "Services/Reservations/OrangeCarRental.Reservations.Domain/"]
+COPY ["Services/Reservations/OrangeCarRental.Reservations.Application/OrangeCarRental.Reservations.Application.csproj", "Services/Reservations/OrangeCarRental.Reservations.Application/"]
+COPY ["Services/Reservations/OrangeCarRental.Reservations.Infrastructure/OrangeCarRental.Reservations.Infrastructure.csproj", "Services/Reservations/OrangeCarRental.Reservations.Infrastructure/"]
 
 # Restore dependencies
 RUN dotnet restore "Services/Fleet/OrangeCarRental.Fleet.Api/OrangeCarRental.Fleet.Api.csproj"
