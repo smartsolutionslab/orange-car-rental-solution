@@ -1,0 +1,38 @@
+version: '3.8'
+
+# Development overrides
+services:
+  api-gateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Logging__LogLevel__Default=Debug
+    volumes:
+      - ./backend/ApiGateway/OrangeCarRental.ApiGateway:/app:ro
+
+  fleet-service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Logging__LogLevel__Default=Debug
+    volumes:
+      - ./backend/Services/Fleet/OrangeCarRental.FleetService:/app:ro
+
+  reservation-service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Logging__LogLevel__Default=Debug
+    volumes:
+      - ./backend/Services/Reservation/OrangeCarRental.ReservationService:/app:ro
+
+  customer-service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Logging__LogLevel__Default=Debug
+    volumes:
+      - ./backend/Services/Customer/OrangeCarRental.CustomerService:/app:ro
+
+  location-service:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Logging__LogLevel__Default=Debug
+    volumes:
+      - ./backend/Services/Location/OrangeCarRental.LocationService:/app:ro
