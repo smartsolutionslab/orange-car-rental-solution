@@ -1,0 +1,21 @@
+---
+# Staging Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: orange-car-rental-staging
+  labels:
+    name: orange-car-rental-staging
+    environment: staging
+    app: orange-car-rental
+
+---
+# Production Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: orange-car-rental-production
+  labels:
+    name: orange-car-rental-production
+    environment: production
+    app: orange-car-rental

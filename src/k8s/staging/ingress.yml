@@ -1,0 +1,67 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orange-car-rental-ingress
+  namespace: orange-car-rental-staging
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/limit-rps: "10"
+  labels:
+    app: orange-car-rental
+    environment: staging
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - staging.orangecarrental.com
+    - staging-callcenter.orangecarrental.com
+    - staging-api.orangecarrental.com
+    secretName: orange-car-rental-tls-staging
+  rules:
+  # Public Portal
+  - host: staging.orangecarrental.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: public-portal
+            port:
+              number: 8080
+
+  # Call Center Portal
+  - host: staging-callcenter.orangecarrental.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: call-center-portal
+            port:
+              number: 8080
+
+  # API Gateway
+  - host: staging-api.orangecarrental.com
+    http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 8080
+      - path: /health
+        pathType: Prefix
+        backend:
+          service:
+            name: api-gateway
+            port:
+              number: 8080
