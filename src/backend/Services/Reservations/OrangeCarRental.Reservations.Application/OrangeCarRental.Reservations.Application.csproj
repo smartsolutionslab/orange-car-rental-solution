@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj"/>
+    <!-- TODO: CRITICAL - Remove these cross-domain dependencies (see architecture review) -->
     <ProjectReference Include="..\..\Customers\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
     <ProjectReference Include="..\..\Fleet\OrangeCarRental.Fleet.Domain\OrangeCarRental.Fleet.Domain.csproj"/>
   </ItemGroup>
