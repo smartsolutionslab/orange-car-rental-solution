@@ -11,17 +11,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application.Comma
 
 public class CreateReservationCommandHandlerTests
 {
-    private readonly Mock<IReservationRepository> _reservationRepositoryMock;
-    private readonly Mock<IPricingService> _pricingServiceMock;
-    private readonly CreateReservationCommandHandler _handler;
+    private readonly Mock<IReservationRepository> reservationRepositoryMock = new();
+    private readonly Mock<IPricingService> pricingServiceMock = new();
+    private readonly CreateReservationCommandHandler handler;
 
     public CreateReservationCommandHandlerTests()
     {
-        _reservationRepositoryMock = new Mock<IReservationRepository>();
-        _pricingServiceMock = new Mock<IPricingService>();
-        _handler = new CreateReservationCommandHandler(
-            _reservationRepositoryMock.Object,
-            _pricingServiceMock.Object);
+        handler = new CreateReservationCommandHandler(reservationRepositoryMock.Object, pricingServiceMock.Object);
     }
 
     [Fact]
@@ -30,22 +26,33 @@ public class CreateReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _pricingServiceMock
+        pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationResult(250.00m, 47.50m, 297.50m));
+            .ReturnsAsync(new PriceCalculationDto
+            {
+                CategoryCode = "SUV",
+                TotalDays = 3,
+                DailyRateNet = 83.33m,
+                DailyRateGross = 99.16m,
+                TotalPriceNet = 250.00m,
+                TotalPriceGross = 297.50m,
+                VatAmount = 47.50m,
+                VatRate = 0.19m,
+                Currency = "EUR"
+            });
 
         Reservation? addedReservation = null;
-        _reservationRepositoryMock
+        reservationRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Callback<Reservation, CancellationToken>((reservation, _) => addedReservation = reservation)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -63,13 +70,13 @@ public class CreateReservationCommandHandlerTests
         addedReservation.DropoffLocationCode.ShouldBe(command.DropoffLocationCode);
         addedReservation.Status.ShouldBe(ReservationStatus.Pending);
 
-        _reservationRepositoryMock.Verify(
+        reservationRepositoryMock.Verify(
             x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()),
             Times.Once);
-        _reservationRepositoryMock.Verify(
+        reservationRepositoryMock.Verify(
             x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
-        _pricingServiceMock.Verify(
+        pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
@@ -82,17 +89,17 @@ public class CreateReservationCommandHandlerTests
     public async Task HandleAsync_WithProvidedPrice_ShouldUseProvidedPrice()
     {
         // Arrange
-        var providedPrice = Money.Of(350.00m, Currency.EUR);
+        var providedPrice = Money.Euro(350.00m);
         var command = CreateValidCommand() with { TotalPrice = providedPrice };
 
         Reservation? addedReservation = null;
-        _reservationRepositoryMock
+        reservationRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Callback<Reservation, CancellationToken>((reservation, _) => addedReservation = reservation)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -104,7 +111,7 @@ public class CreateReservationCommandHandlerTests
         addedReservation.TotalPrice.ShouldBe(providedPrice);
 
         // Should NOT call pricing service when price is provided
-        _pricingServiceMock.Verify(
+        pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
@@ -119,8 +126,19 @@ public class CreateReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with { TotalPrice = null };
 
-        var calculatedPrice = new PriceCalculationResult(200.00m, 38.00m, 238.00m);
-        _pricingServiceMock
+        var calculatedPrice = new PriceCalculationDto
+        {
+            CategoryCode = "SUV",
+            TotalDays = 3,
+            DailyRateNet = 66.67m,
+            DailyRateGross = 79.33m,
+            TotalPriceNet = 200.00m,
+            TotalPriceGross = 238.00m,
+            VatAmount = 38.00m,
+            VatRate = 0.19m,
+            Currency = "EUR"
+        };
+        pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
@@ -129,13 +147,13 @@ public class CreateReservationCommandHandlerTests
             .ReturnsAsync(calculatedPrice);
 
         Reservation? addedReservation = null;
-        _reservationRepositoryMock
+        reservationRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Callback<Reservation, CancellationToken>((reservation, _) => addedReservation = reservation)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -144,7 +162,7 @@ public class CreateReservationCommandHandlerTests
         addedReservation.ShouldNotBeNull();
         addedReservation.TotalPrice.NetAmount.ShouldBe(200.00m);
 
-        _pricingServiceMock.Verify(
+        pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
                 command.CategoryCode,
                 command.Period,
@@ -159,19 +177,30 @@ public class CreateReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _pricingServiceMock
+        pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationResult(250.00m, 47.50m, 297.50m));
+            .ReturnsAsync(new PriceCalculationDto
+            {
+                CategoryCode = "SUV",
+                TotalDays = 3,
+                DailyRateNet = 83.33m,
+                DailyRateGross = 99.16m,
+                TotalPriceNet = 250.00m,
+                TotalPriceGross = 297.50m,
+                VatAmount = 47.50m,
+                VatRate = 0.19m,
+                Currency = "EUR"
+            });
 
         // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        _reservationRepositoryMock.Verify(
+        reservationRepositoryMock.Verify(
             x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -184,7 +213,7 @@ public class CreateReservationCommandHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _pricingServiceMock
+        pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
@@ -194,7 +223,7 @@ public class CreateReservationCommandHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(command, cts.Token));
+            handler.HandleAsync(command, cts.Token));
     }
 
     [Fact]
@@ -210,22 +239,33 @@ public class CreateReservationCommandHandlerTests
             DropoffLocationCode = dropoffLocation
         };
 
-        _pricingServiceMock
+        pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationResult(250.00m, 47.50m, 297.50m));
+            .ReturnsAsync(new PriceCalculationDto
+            {
+                CategoryCode = "SUV",
+                TotalDays = 3,
+                DailyRateNet = 83.33m,
+                DailyRateGross = 99.16m,
+                TotalPriceNet = 250.00m,
+                TotalPriceGross = 297.50m,
+                VatAmount = 47.50m,
+                VatRate = 0.19m,
+                Currency = "EUR"
+            });
 
         Reservation? addedReservation = null;
-        _reservationRepositoryMock
+        reservationRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Callback<Reservation, CancellationToken>((reservation, _) => addedReservation = reservation)
             .Returns(Task.CompletedTask);
 
         // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         addedReservation.ShouldNotBeNull();

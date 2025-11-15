@@ -88,6 +88,7 @@ public class SeatingCapacityTests
         // Arrange
         var small = SeatingCapacity.Of(2);
         var medium = SeatingCapacity.Of(5);
+        var mediumCopy = SeatingCapacity.Of(5);
         var large = SeatingCapacity.Of(9);
 
         // Act & Assert
@@ -95,8 +96,8 @@ public class SeatingCapacityTests
         (small <= medium).ShouldBeTrue();
         (large > medium).ShouldBeTrue();
         (large >= medium).ShouldBeTrue();
-        (medium <= medium).ShouldBeTrue();
-        (medium >= medium).ShouldBeTrue();
+        (medium <= mediumCopy).ShouldBeTrue();
+        (medium >= mediumCopy).ShouldBeTrue();
     }
 
     [Fact]

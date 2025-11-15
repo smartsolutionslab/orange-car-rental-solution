@@ -12,7 +12,7 @@ public class ReservationTests
     private readonly BookingPeriod _validPeriod;
     private readonly LocationCode _validPickupLocation = LocationCode.Of("BER-HBF");
     private readonly LocationCode _validDropoffLocation = LocationCode.Of("MUC-FLG");
-    private readonly Money _validTotalPrice = Money.Of(299.99m, Currency.EUR);
+    private readonly Money _validTotalPrice = Money.Euro(299.99m);
 
     public ReservationTests()
     {

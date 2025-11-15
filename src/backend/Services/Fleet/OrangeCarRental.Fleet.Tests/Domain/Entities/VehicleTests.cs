@@ -11,7 +11,7 @@ public class VehicleTests
     private readonly VehicleName _validName = VehicleName.Of("BMW X5");
     private readonly VehicleCategory _validCategory = VehicleCategory.SUV;
     private readonly Location _validLocation = Location.BerlinHauptbahnhof;
-    private readonly Money _validDailyRate = Money.Of(89.99m, Currency.EUR);
+    private readonly Money _validDailyRate = Money.Euro(89.99m);
     private readonly SeatingCapacity _validSeats = SeatingCapacity.Of(5);
     private readonly FuelType _validFuelType = FuelType.Diesel;
     private readonly TransmissionType _validTransmission = TransmissionType.Automatic;
@@ -73,7 +73,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        var newRate = Money.Of(99.99m, Currency.EUR);
+        var newRate = Money.Euro(99.99m);
 
         // Act
         var updatedVehicle = vehicle.UpdateDailyRate(newRate);
@@ -104,7 +104,7 @@ public class VehicleTests
         // Arrange
         var vehicle = CreateTestVehicle();
         vehicle.ClearDomainEvents(); // Clear creation event
-        var newRate = Money.Of(99.99m, Currency.EUR);
+        var newRate = Money.Euro(99.99m);
 
         // Act
         var updatedVehicle = vehicle.UpdateDailyRate(newRate);

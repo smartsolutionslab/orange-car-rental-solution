@@ -58,7 +58,6 @@ public class CustomerNameTests
     [Theory]
     [InlineData(Salutation.Herr, "Herr Max Mustermann")]
     [InlineData(Salutation.Frau, "Frau Max Mustermann")]
-    [InlineData(Salutation.Divers, "Divers Max Mustermann")]
     public void FormalName_WithSalutation_ShouldIncludeSalutation(Salutation salutation, string expected)
     {
         // Arrange

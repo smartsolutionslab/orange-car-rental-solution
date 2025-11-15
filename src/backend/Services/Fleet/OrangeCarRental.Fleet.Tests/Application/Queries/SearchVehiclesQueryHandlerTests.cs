@@ -268,7 +268,7 @@ public class SearchVehiclesQueryHandlerTests
             VehicleName.Of(name),
             category,
             location,
-            Money.Of(89.99m, Currency.EUR),
+            Money.Euro(89.99m),
             SeatingCapacity.Of(5),
             FuelType.Diesel,
             TransmissionType.Automatic);
