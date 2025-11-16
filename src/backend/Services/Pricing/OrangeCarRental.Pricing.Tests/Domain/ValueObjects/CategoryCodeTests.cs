@@ -47,10 +47,10 @@ public class CategoryCodeTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidCode)
+    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidCode)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => CategoryCode.Of(invalidCode));
+        Should.Throw<ArgumentException>(() => CategoryCode.Of(invalidCode!));
     }
 
     [Fact]

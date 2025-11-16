@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Domain.Entities;
 public class PricingPolicyTests
 {
     private readonly CategoryCode validCategory = CategoryCode.Of("KLEIN");
-    private readonly Money validDailyRate = Money.Of(49.99m, Currency.EUR);
+    private readonly Money validDailyRate = Money.Euro(49.99m);
 
     [Fact]
     public void Create_WithValidData_ShouldCreatePricingPolicy()
@@ -62,13 +62,13 @@ public class PricingPolicyTests
         var policy = PricingPolicy.Create(validCategory, validDailyRate);
 
         // Assert
-        var events = policy.GetDomainEvents();
+        var events = policy.DomainEvents;
         events.ShouldNotBeEmpty();
         var createdEvent = events.ShouldHaveSingleItem();
         createdEvent.ShouldBeOfType<PricingPolicyCreated>();
 
         var evt = (PricingPolicyCreated)createdEvent;
-        evt.PolicyId.ShouldBe(policy.Id);
+        evt.PricingPolicyId.ShouldBe(policy.Id);
         evt.CategoryCode.ShouldBe(validCategory);
         evt.DailyRate.ShouldBe(validDailyRate);
         evt.EffectiveFrom.ShouldBe(policy.EffectiveFrom);
@@ -79,7 +79,7 @@ public class PricingPolicyTests
     {
         // Arrange
         var policy = PricingPolicy.Create(validCategory, validDailyRate);
-        var newRate = Money.Of(59.99m, Currency.EUR);
+        var newRate = Money.Euro(59.99m);
 
         // Act
         var updatedPolicy = policy.UpdateDailyRate(newRate);
@@ -110,22 +110,22 @@ public class PricingPolicyTests
         // Arrange
         var policy = PricingPolicy.Create(validCategory, validDailyRate);
         policy.ClearDomainEvents(); // Clear creation event
-        var newRate = Money.Of(59.99m, Currency.EUR);
+        var newRate = Money.Euro(59.99m);
 
         // Act
         var updatedPolicy = policy.UpdateDailyRate(newRate);
 
         // Assert
-        var events = updatedPolicy.GetDomainEvents();
+        var events = updatedPolicy.DomainEvents;
         events.ShouldNotBeEmpty();
         var updatedEvent = events.ShouldHaveSingleItem();
         updatedEvent.ShouldBeOfType<PricingPolicyUpdated>();
 
         var evt = (PricingPolicyUpdated)updatedEvent;
-        evt.PolicyId.ShouldBe(policy.Id);
+        evt.PricingPolicyId.ShouldBe(policy.Id);
         evt.CategoryCode.ShouldBe(validCategory);
-        evt.OldRate.ShouldBe(validDailyRate);
-        evt.NewRate.ShouldBe(newRate);
+        evt.OldDailyRate.ShouldBe(validDailyRate);
+        evt.NewDailyRate.ShouldBe(newRate);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class PricingPolicyTests
         deactivatedPolicy.Id.ShouldBe(policy.Id); // Same ID
         deactivatedPolicy.IsActive.ShouldBeFalse();
         deactivatedPolicy.EffectiveUntil.ShouldNotBeNull();
-        deactivatedPolicy.EffectiveUntil.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        deactivatedPolicy.EffectiveUntil.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
         policy.IsActive.ShouldBeTrue(); // Original unchanged
     }
 
@@ -171,13 +171,13 @@ public class PricingPolicyTests
         var deactivatedPolicy = policy.Deactivate();
 
         // Assert
-        var events = deactivatedPolicy.GetDomainEvents();
+        var events = deactivatedPolicy.DomainEvents;
         events.ShouldNotBeEmpty();
         var deactivatedEvent = events.ShouldHaveSingleItem();
         deactivatedEvent.ShouldBeOfType<PricingPolicyDeactivated>();
 
         var evt = (PricingPolicyDeactivated)deactivatedEvent;
-        evt.PolicyId.ShouldBe(policy.Id);
+        evt.PricingPolicyId.ShouldBe(policy.Id);
         evt.CategoryCode.ShouldBe(validCategory);
     }
 
@@ -257,7 +257,7 @@ public class PricingPolicyTests
     public void CalculatePrice_WithValidPeriod_ShouldCalculateCorrectly()
     {
         // Arrange
-        var dailyRate = Money.Of(50.00m, Currency.EUR);
+        var dailyRate = Money.Euro(50.00m);
         var policy = PricingPolicy.Create(validCategory, dailyRate);
 
         var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
@@ -276,7 +276,7 @@ public class PricingPolicyTests
     public void CalculatePrice_WithOneDayRental_ShouldCalculateCorrectly()
     {
         // Arrange
-        var dailyRate = Money.Of(50.00m, Currency.EUR);
+        var dailyRate = Money.Euro(50.00m);
         var policy = PricingPolicy.Create(validCategory, dailyRate);
 
         var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));

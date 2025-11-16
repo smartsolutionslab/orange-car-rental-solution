@@ -32,7 +32,7 @@ public class CalculatePriceQueryHandlerTests
 
         var pricingPolicy = PricingPolicy.Create(
             CategoryCode.Of("KLEIN"),
-            Money.Of(50.00m, Currency.EUR));
+            Money.Euro(50.00m));
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -76,7 +76,7 @@ public class CalculatePriceQueryHandlerTests
 
         var locationPolicy = PricingPolicy.Create(
             CategoryCode.Of("SUV"),
-            Money.Of(80.00m, Currency.EUR),
+            Money.Euro(80.00m),
             locationCode: locationCode);
 
         pricingPolicyRepositoryMock
@@ -130,12 +130,12 @@ public class CalculatePriceQueryHandlerTests
                 It.IsAny<CategoryCode>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((PricingPolicy?)null);
+            .ThrowsAsync(new BuildingBlocks.Domain.Exceptions.EntityNotFoundException(typeof(PricingPolicy), "location-specific"));
 
         // General pricing available
         var generalPolicy = PricingPolicy.Create(
             CategoryCode.Of("SUV"),
-            Money.Of(70.00m, Currency.EUR));
+            Money.Euro(70.00m));
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -179,7 +179,7 @@ public class CalculatePriceQueryHandlerTests
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync((PricingPolicy?)null);
+            .ThrowsAsync(new BuildingBlocks.Domain.Exceptions.EntityNotFoundException(typeof(PricingPolicy), "UNKNOWN"));
 
         // Act & Assert
         var ex = await Should.ThrowAsync<InvalidOperationException>(() =>
@@ -217,7 +217,7 @@ public class CalculatePriceQueryHandlerTests
 
             var policy = PricingPolicy.Create(
                 CategoryCode.Of(categoryCode),
-                Money.Of(dailyRate, Currency.EUR));
+                Money.Euro(dailyRate));
 
             pricingPolicyRepositoryMock
                 .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -248,7 +248,7 @@ public class CalculatePriceQueryHandlerTests
 
         var pricingPolicy = PricingPolicy.Create(
             CategoryCode.Of("KLEIN"),
-            Money.Of(100.00m, Currency.EUR)); // Net price per day
+            Money.Euro(100.00m)); // Net price per day
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -307,7 +307,7 @@ public class CalculatePriceQueryHandlerTests
 
         var pricingPolicy = PricingPolicy.Create(
             CategoryCode.Of("MITTEL"),
-            Money.Of(60.00m, Currency.EUR));
+            Money.Euro(60.00m));
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
