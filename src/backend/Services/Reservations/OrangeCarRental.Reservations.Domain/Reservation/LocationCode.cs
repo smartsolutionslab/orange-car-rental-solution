@@ -17,10 +17,12 @@ public readonly record struct LocationCode(string Value)
     /// <exception cref="ArgumentException">Thrown when code is invalid</exception>
     public static LocationCode Of(string code)
     {
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace();
+
         var trimmed = code.Trim().ToUpperInvariant();
 
         Ensure.That(trimmed, nameof(code))
-            .IsNotNullOrWhiteSpace()
             .AndHasLengthBetween(3, 20);
 
         return new LocationCode(trimmed);
