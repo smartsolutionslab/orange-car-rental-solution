@@ -4,19 +4,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Address value object.
 ///     Represents a physical address with street, city, and postal code.
 /// </summary>
-public readonly record struct Address
+public readonly record struct Address(Street Street, City City, PostalCode PostalCode)
 {
-    private Address(Street street, City city, PostalCode postalCode)
-    {
-        Street = street;
-        City = city;
-        PostalCode = postalCode;
-    }
-
-    public Street Street { get; }
-    public City City { get; }
-    public PostalCode PostalCode { get; }
-
     /// <summary>
     ///     Creates an empty address (for cases where address is not available)
     /// </summary>

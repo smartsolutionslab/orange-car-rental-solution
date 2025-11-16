@@ -152,7 +152,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("GUID cannot be empty");
+        ex.Message.ShouldContain("Vehicle ID cannot be empty");
     }
 
     [Fact]
@@ -171,7 +171,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("GUID cannot be empty");
+        ex.Message.ShouldContain("Customer ID cannot be empty");
     }
 
     [Fact]

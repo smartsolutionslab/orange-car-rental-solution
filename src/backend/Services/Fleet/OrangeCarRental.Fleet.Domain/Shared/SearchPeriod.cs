@@ -4,17 +4,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Represents a date range for searching vehicle availability.
 ///     Uses DateOnly for semantic correctness (date-based searches without time components).
 /// </summary>
-public readonly record struct SearchPeriod
+public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnDate)
 {
-    private SearchPeriod(DateOnly pickupDate, DateOnly returnDate)
-    {
-        PickupDate = pickupDate;
-        ReturnDate = returnDate;
-    }
-
-    public DateOnly PickupDate { get; }
-    public DateOnly ReturnDate { get; }
-
     public int Days => ReturnDate.DayNumber - PickupDate.DayNumber + 1;
 
     /// <summary>

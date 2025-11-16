@@ -202,15 +202,15 @@ public class BookingPeriodTests
     public void ToString_ShouldReturnFormattedString()
     {
         // Arrange
-        var pickupDate = new DateOnly(2025, 6, 15);
-        var returnDate = new DateOnly(2025, 6, 18);
+        var pickupDate = new DateOnly(2026, 6, 15);
+        var returnDate = new DateOnly(2026, 6, 18);
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         // Act
         var result = period.ToString();
 
         // Assert
-        result.ShouldBe("2025-06-15 to 2025-06-18 (4 days)");
+        result.ShouldBe("2026-06-15 to 2026-06-18 (4 days)");
     }
 
     [Fact]

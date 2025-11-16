@@ -4,58 +4,67 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Rental station location value object.
 ///     Represents a German city/station where vehicles can be picked up or returned.
 /// </summary>
-public readonly record struct Location
+public readonly record struct Location(LocationCode Code, LocationName Name, Address Address)
 {
     // Common German rental locations
     public static readonly Location BerlinHauptbahnhof = Of(
         LocationCode.Of("BER-HBF"),
         LocationName.Of("Berlin Hauptbahnhof"),
-        Address.Of(Street.Of("Europaplatz 1"), City.Of("Berlin"), PostalCode.Of("10557"))
+        Address.Of(
+            Street.Of("Europaplatz 1"),
+            City.Of("Berlin"),
+            PostalCode.Of("10557")
+        )
     );
 
     public static readonly Location MunichFlughafen = Of(
         LocationCode.Of("MUC-FLG"),
         LocationName.Of("München Flughafen"),
-        Address.Of(Street.Of("Flughafen München"), City.Of("München"), PostalCode.Of("85356"))
+        Address.Of(
+            Street.Of("Flughafen München"),
+            City.Of("München"),
+            PostalCode.Of("85356")
+        )
     );
 
     public static readonly Location FrankfurtFlughafen = Of(
         LocationCode.Of("FRA-FLG"),
         LocationName.Of("Frankfurt Flughafen"),
-        Address.Of(Street.Of("Flughafen Frankfurt"), City.Of("Frankfurt"), PostalCode.Of("60547"))
+        Address.Of(
+            Street.Of("Flughafen Frankfurt"),
+            City.Of("Frankfurt"),
+            PostalCode.Of("60547")
+        )
     );
 
     public static readonly Location HamburgHauptbahnhof = Of(
         LocationCode.Of("HAM-HBF"),
         LocationName.Of("Hamburg Hauptbahnhof"),
-        Address.Of(Street.Of("Hachmannplatz 16"), City.Of("Hamburg"), PostalCode.Of("20099"))
+        Address.Of(
+            Street.Of("Hachmannplatz 16"),
+            City.Of("Hamburg"),
+            PostalCode.Of("20099")
+        )
     );
 
     public static readonly Location KolnHauptbahnhof = Of(
         LocationCode.Of("CGN-HBF"),
         LocationName.Of("Köln Hauptbahnhof"),
-        Address.Of(Street.Of("Trankgasse 11"), City.Of("Köln"), PostalCode.Of("50667"))
+        Address.Of(
+            Street.Of("Trankgasse 11"),
+            City.Of("Köln"),
+            PostalCode.Of("50667")
+        )
     );
 
     private static readonly Dictionary<LocationCode, Location> locations = new()
     {
-        { LocationCode.Of("BER-HBF"), BerlinHauptbahnhof },
-        { LocationCode.Of("MUC-FLG"), MunichFlughafen },
-        { LocationCode.Of("FRA-FLG"), FrankfurtFlughafen },
-        { LocationCode.Of("HAM-HBF"), HamburgHauptbahnhof },
-        { LocationCode.Of("CGN-HBF"), KolnHauptbahnhof }
+        { BerlinHauptbahnhof.Code, BerlinHauptbahnhof },
+        { MunichFlughafen.Code, MunichFlughafen },
+        { FrankfurtFlughafen.Code, FrankfurtFlughafen },
+        { HamburgHauptbahnhof.Code, HamburgHauptbahnhof },
+        { KolnHauptbahnhof.Code, KolnHauptbahnhof }
     };
-
-    private Location(LocationCode code, LocationName name, Address address)
-    {
-        Code = code;
-        Name = name;
-        Address = address;
-    }
-
-    public LocationCode Code { get; }
-    public LocationName Name { get; }
-    public Address Address { get; }
 
     public static IReadOnlyCollection<Location> All => locations.Values.ToList();
 
