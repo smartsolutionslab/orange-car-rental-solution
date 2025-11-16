@@ -1,11 +1,10 @@
 using Moq;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application.Commands;
 
@@ -28,7 +27,7 @@ public class CreateReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -63,8 +62,8 @@ public class CreateReservationCommandHandlerTests
         result.GrossAmount.ShouldBe(297.50m);
 
         addedReservation.ShouldNotBeNull();
-        addedReservation.VehicleId.ShouldBe(command.VehicleId.Value);
-        addedReservation.CustomerId.ShouldBe(command.CustomerId.Value);
+        addedReservation.VehicleId.ShouldBe(command.VehicleId);
+        addedReservation.CustomerId.ShouldBe(command.CustomerId);
         addedReservation.Period.ShouldBe(command.Period);
         addedReservation.PickupLocationCode.ShouldBe(command.PickupLocationCode);
         addedReservation.DropoffLocationCode.ShouldBe(command.DropoffLocationCode);
@@ -78,7 +77,7 @@ public class CreateReservationCommandHandlerTests
             Times.Once);
         pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()),
@@ -113,7 +112,7 @@ public class CreateReservationCommandHandlerTests
         // Should NOT call pricing service when price is provided
         pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()),
@@ -140,7 +139,7 @@ public class CreateReservationCommandHandlerTests
         };
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -179,7 +178,7 @@ public class CreateReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -215,7 +214,7 @@ public class CreateReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -241,7 +240,7 @@ public class CreateReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -279,9 +278,9 @@ public class CreateReservationCommandHandlerTests
         var returnDate = pickupDate.AddDays(3);
 
         return new CreateReservationCommand(
-            VehicleIdentifier.New(),
-            CustomerIdentifier.New(),
-            VehicleCategory.SUV,
+            ReservationVehicleId.From(Guid.NewGuid()),
+            ReservationCustomerId.From(Guid.NewGuid()),
+            ReservationVehicleCategory.SUV,
             BookingPeriod.Of(pickupDate, returnDate),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),

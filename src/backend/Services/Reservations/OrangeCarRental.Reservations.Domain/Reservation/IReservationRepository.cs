@@ -40,4 +40,17 @@ public interface IReservationRepository
     Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
 
     Task SaveChangesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Gets list of vehicle IDs that are booked (unavailable) during the specified period.
+    ///     Used to determine vehicle availability for new reservations.
+    /// </summary>
+    /// <param name="pickupDate">Start date of the period.</param>
+    /// <param name="returnDate">End date of the period.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>List of vehicle IDs that have active or confirmed reservations during the period.</returns>
+    Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
+        DateOnly pickupDate,
+        DateOnly returnDate,
+        CancellationToken cancellationToken = default);
 }

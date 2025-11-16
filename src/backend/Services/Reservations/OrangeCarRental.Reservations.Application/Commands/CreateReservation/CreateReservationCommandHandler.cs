@@ -40,8 +40,8 @@ public sealed class CreateReservationCommandHandler(
 
         // Create the reservation aggregate
         var reservation = Reservation.Create(
-            vehicleId.Value,
-            customerId.Value,
+            vehicleId,
+            customerId,
             bookingPeriod,
             pickupLocationCode,
             dropoffLocationCode,

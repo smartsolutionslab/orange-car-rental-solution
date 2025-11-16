@@ -1,7 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
@@ -13,11 +12,11 @@ public sealed record SearchReservationsQuery(
     string? Status = null,
 
     // Customer filters
-    CustomerIdentifier? CustomerId = null,
+    ReservationCustomerId? CustomerId = null,
     string? CustomerName = null,
 
     // Vehicle filters
-    VehicleIdentifier? VehicleId = null,
+    ReservationVehicleId? VehicleId = null,
     string? CategoryCode = null,
 
     // Location filter

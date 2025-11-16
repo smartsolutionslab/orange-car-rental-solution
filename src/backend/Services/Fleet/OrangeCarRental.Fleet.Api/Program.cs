@@ -8,9 +8,10 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicle
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,11 +47,14 @@ builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions
         sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure"));
 });
 
-// Add read-only access to Reservations database for availability checking
-builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDbContextOptions: options =>
+// Register HTTP client for Reservations API (maintains bounded context boundaries)
+builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
 {
-    options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
+    // In production, use service discovery or configuration
+    // For now, using Aspire-provided base address
+    var reservationsApiUrl = builder.Configuration["Services:Reservations:Http:0"]
+                             ?? "http://localhost:5002";
+    client.BaseAddress = new Uri(reservationsApiUrl);
 });
 
 // Register repositories

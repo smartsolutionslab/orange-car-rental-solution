@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.Configurations;
 
@@ -23,13 +24,19 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 value => ReservationIdentifier.From(value))
             .IsRequired();
 
-        // Foreign keys (references to other services)
+        // Foreign keys (references to other services) - using internal value objects
         builder.Property(r => r.VehicleId)
             .HasColumnName("VehicleId")
+            .HasConversion(
+                id => id.Value,
+                value => ReservationVehicleId.From(value))
             .IsRequired();
 
         builder.Property(r => r.CustomerId)
             .HasColumnName("CustomerId")
+            .HasConversion(
+                id => id.Value,
+                value => ReservationCustomerId.From(value))
             .IsRequired();
 
         // BookingPeriod value object - complex type mapping

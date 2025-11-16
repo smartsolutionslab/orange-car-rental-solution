@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using Moq;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using Testcontainers.MsSql;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
@@ -17,7 +18,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
     private FleetDbContext context = null!;
     private VehicleRepository repository = null!;
-    private ReservationsDbContext reservationsContext = null!;
+    private Mock<IReservationService> reservationServiceMock = null!;
 
     public async Task InitializeAsync()
     {
@@ -32,21 +33,23 @@ public class VehicleRepositoryTests : IAsyncLifetime
         context = new FleetDbContext(options);
         await context.Database.EnsureCreatedAsync();
 
-        // Create Reservations DbContext with same SQL Server connection
-        var reservationsOptions = new DbContextOptionsBuilder<ReservationsDbContext>()
-            .UseSqlServer(msSqlContainer.GetConnectionString())
-            .Options;
+        // Create mock for IReservationService
+        reservationServiceMock = new Mock<IReservationService>();
 
-        reservationsContext = new ReservationsDbContext(reservationsOptions);
-        await reservationsContext.Database.EnsureCreatedAsync();
+        // Default mock behavior: return empty list (no vehicles booked)
+        reservationServiceMock
+            .Setup(x => x.GetBookedVehicleIdsAsync(
+                It.IsAny<DateOnly>(),
+                It.IsAny<DateOnly>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<Guid>());
 
-        repository = new VehicleRepository(context, reservationsContext);
+        repository = new VehicleRepository(context, reservationServiceMock.Object);
     }
 
     public async Task DisposeAsync()
     {
         await context.DisposeAsync();
-        await reservationsContext.DisposeAsync();
         await msSqlContainer.DisposeAsync();
     }
 

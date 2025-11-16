@@ -2,6 +2,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 
@@ -52,8 +53,8 @@ public sealed class CreateGuestReservationCommandHandler(
 
         // Step 3: Create the reservation aggregate with the new customer ID
         var reservation = Reservation.Create(
-            vehicleId.Value,
-            customerId,
+            vehicleId,
+            ReservationCustomerId.From(customerId),
             bookingPeriod,
             pickupLocationCode,
             dropoffLocationCode,

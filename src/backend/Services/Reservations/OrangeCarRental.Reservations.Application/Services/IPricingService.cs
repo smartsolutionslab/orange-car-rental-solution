@@ -1,5 +1,5 @@
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 public interface IPricingService
 {
     Task<PriceCalculationDto> CalculatePriceAsync(
-        VehicleCategory category,
+        ReservationVehicleCategory category,
         BookingPeriod period,
         LocationCode? location = null,
         CancellationToken cancellationToken = default);

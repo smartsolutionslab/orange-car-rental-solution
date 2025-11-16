@@ -138,4 +138,26 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
         await context.SaveChangesAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
+        DateOnly pickupDate,
+        DateOnly returnDate,
+        CancellationToken cancellationToken = default)
+    {
+        // Get all reservations that overlap with the requested period
+        // A reservation is considered "booked" if it's Confirmed or Active
+        var bookedVehicleIds = await context.Reservations
+            .AsNoTracking()
+            .Where(r =>
+                (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
+                // Period overlap check: reservation period overlaps if:
+                // reservation pickup <= requested return AND reservation return >= requested pickup
+                r.Period.PickupDate <= returnDate &&
+                r.Period.ReturnDate >= pickupDate)
+            .Select(r => r.VehicleId.Value) // Extract Guid from value object
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return bookedVehicleIds;
+    }
 }

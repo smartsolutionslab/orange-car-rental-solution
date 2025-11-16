@@ -18,8 +18,6 @@
   <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.Fleet.Domain\OrangeCarRental.Fleet.Domain.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Fleet.Application\OrangeCarRental.Fleet.Application.csproj"/>
-    <!-- TODO: CRITICAL - Remove this cross-service dependency (see architecture review) -->
-    <ProjectReference Include="..\..\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj"/>
   </ItemGroup>
 
 </Project>

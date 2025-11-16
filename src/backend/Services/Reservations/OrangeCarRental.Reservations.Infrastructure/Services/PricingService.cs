@@ -1,8 +1,8 @@
 using System.Text;
 using System.Text.Json;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
@@ -17,7 +17,7 @@ public sealed class PricingService(HttpClient httpClient) : IPricingService
     };
 
     public async Task<PriceCalculationDto> CalculatePriceAsync(
-        VehicleCategory category,
+        ReservationVehicleCategory category,
         BookingPeriod period,
         LocationCode? location = null,
         CancellationToken cancellationToken = default)

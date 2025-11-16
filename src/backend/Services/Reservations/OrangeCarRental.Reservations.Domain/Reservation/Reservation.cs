@@ -2,6 +2,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -14,6 +15,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     // For EF Core
     private Reservation()
     {
+        VehicleId = default;
+        CustomerId = default;
         Period = default!;
         PickupLocationCode = default;
         DropoffLocationCode = default;
@@ -22,8 +25,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
 
     private Reservation(
         ReservationIdentifier id,
-        Guid vehicleId,
-        Guid customerId,
+        ReservationVehicleId vehicleId,
+        ReservationCustomerId customerId,
         BookingPeriod period,
         LocationCode pickupLocationCode,
         LocationCode dropoffLocationCode,
@@ -43,8 +46,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     }
 
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public Guid VehicleId { get; init; }
-    public Guid CustomerId { get; init; }
+    public ReservationVehicleId VehicleId { get; init; }
+    public ReservationCustomerId CustomerId { get; init; }
     public BookingPeriod Period { get; init; }
     public LocationCode PickupLocationCode { get; init; }
     public LocationCode DropoffLocationCode { get; init; }
@@ -60,15 +63,14 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     ///     Create a new pending reservation.
     /// </summary>
     public static Reservation Create(
-        Guid vehicleId,
-        Guid customerId,
+        ReservationVehicleId vehicleId,
+        ReservationCustomerId customerId,
         BookingPeriod period,
         LocationCode pickupLocationCode,
         LocationCode dropoffLocationCode,
         Money totalPrice)
     {
-        Ensure.That(vehicleId, nameof(vehicleId)).IsNotEmpty();
-        Ensure.That(customerId, nameof(customerId)).IsNotEmpty();
+        // Value objects already validate on creation, no need for additional checks here
 
         return new Reservation(
             ReservationIdentifier.New(),
@@ -86,8 +88,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Reservation CreateMutatedCopy(
-        Guid? vehicleId = null,
-        Guid? customerId = null,
+        ReservationVehicleId? vehicleId = null,
+        ReservationCustomerId? customerId = null,
         BookingPeriod? period = null,
         LocationCode? pickupLocationCode = null,
         LocationCode? dropoffLocationCode = null,

@@ -1,17 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 /// <summary>
 ///     Entity Framework implementation of IVehicleRepository.
 /// </summary>
-public sealed class VehicleRepository(FleetDbContext context, ReservationsDbContext reservationsContext)
+public sealed class VehicleRepository(FleetDbContext context, IReservationService reservationService)
     : IVehicleRepository
 {
     public async Task<Vehicle> GetByIdAsync(VehicleIdentifier id, CancellationToken cancellationToken = default)
@@ -76,14 +75,11 @@ public sealed class VehicleRepository(FleetDbContext context, ReservationsDbCont
         {
             var searchPeriod = parameters.Period.Value;
 
-            // Get booked vehicle IDs for the search period
-            var bookedVehicleIds = await reservationsContext.Reservations
-                .Where(r =>
-                    (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
-                    r.Period.PickupDate <= searchPeriod.ReturnDate &&
-                    r.Period.ReturnDate >= searchPeriod.PickupDate)
-                .Select(r => r.VehicleId)
-                .ToListAsync(cancellationToken);
+            // Get booked vehicle IDs via Reservations API (maintains bounded context boundaries)
+            var bookedVehicleIds = await reservationService.GetBookedVehicleIdsAsync(
+                searchPeriod.PickupDate,
+                searchPeriod.ReturnDate,
+                cancellationToken);
 
             var bookedIdsSet = bookedVehicleIds.ToHashSet();
 

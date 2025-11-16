@@ -2,13 +2,14 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Domain.Entities;
 
 public class ReservationTests
 {
-    private readonly Guid _validVehicleId = Guid.NewGuid();
-    private readonly Guid _validCustomerId = Guid.NewGuid();
+    private readonly ReservationVehicleId _validVehicleId = ReservationVehicleId.From(Guid.NewGuid());
+    private readonly ReservationCustomerId _validCustomerId = ReservationCustomerId.From(Guid.NewGuid());
     private readonly BookingPeriod _validPeriod;
     private readonly LocationCode _validPickupLocation = LocationCode.Of("BER-HBF");
     private readonly LocationCode _validDropoffLocation = LocationCode.Of("MUC-FLG");
@@ -51,7 +52,7 @@ public class ReservationTests
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => Reservation.Create(
-            Guid.Empty,
+            ReservationVehicleId.From(Guid.Empty),
             _validCustomerId,
             _validPeriod,
             _validPickupLocation,
@@ -65,7 +66,7 @@ public class ReservationTests
         // Act & Assert
         Should.Throw<ArgumentException>(() => Reservation.Create(
             _validVehicleId,
-            Guid.Empty,
+            ReservationCustomerId.From(Guid.Empty),
             _validPeriod,
             _validPickupLocation,
             _validDropoffLocation,

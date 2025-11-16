@@ -1,10 +1,10 @@
 using Moq;
 using Shouldly;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 
@@ -38,7 +38,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
             It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -173,7 +173,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -225,7 +225,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -274,7 +274,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.VehicleId.ShouldBe(command.VehicleId.Value);
+        capturedReservation!.VehicleId.ShouldBe(command.VehicleId);
     }
 
     [Fact]
@@ -351,7 +351,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -385,7 +385,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Assert
         pricingServiceMock.Verify(
             s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()),
@@ -404,7 +404,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -434,12 +434,11 @@ public class CreateGuestReservationCommandHandlerTests
     public void HandleAsync_WithEmptyVehicleId_ThrowsArgumentException()
     {
         // Arrange & Act - Exception now thrown during value object construction
-        var act = () => CreateValidCommand() with { VehicleId = VehicleIdentifier.From(Guid.Empty) };
+        var act = () => CreateValidCommand() with { VehicleId = ReservationVehicleId.From(Guid.Empty) };
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("must not be equal to");
-        ex.Message.ShouldContain("00000000-0000-0000-0000-000000000000");
+        ex.Message.ShouldContain("Vehicle ID cannot be empty");
     }
 
     [Fact]
@@ -502,8 +501,8 @@ public class CreateGuestReservationCommandHandlerTests
     private CreateGuestReservationCommand CreateValidCommand()
     {
         return new CreateGuestReservationCommand(
-            VehicleIdentifier.From(Guid.NewGuid()),
-            VehicleCategory.FromCode("KOMPAKT"),
+            ReservationVehicleId.From(Guid.NewGuid()),
+            ReservationVehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -524,7 +523,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<VehicleCategory>(),
+                It.IsAny<ReservationVehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))

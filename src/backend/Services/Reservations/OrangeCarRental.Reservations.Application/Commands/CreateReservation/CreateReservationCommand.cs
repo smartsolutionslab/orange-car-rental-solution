@@ -1,8 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 
@@ -11,9 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Uses value objects for type safety and early validation.
 /// </summary>
 public sealed record CreateReservationCommand(
-    VehicleIdentifier VehicleId,
-    CustomerIdentifier CustomerId,
-    VehicleCategory CategoryCode,
+    ReservationVehicleId VehicleId,
+    ReservationCustomerId CustomerId,
+    ReservationVehicleCategory CategoryCode,
     BookingPeriod Period,
     LocationCode PickupLocationCode,
     LocationCode DropoffLocationCode,

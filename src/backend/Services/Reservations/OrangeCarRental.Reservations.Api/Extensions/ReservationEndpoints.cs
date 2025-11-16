@@ -1,13 +1,13 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetVehicleAvailability;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -26,9 +26,9 @@ public static class ReservationEndpoints
             {
                 // Map request DTO to command with value objects
                 var command = new CreateReservationCommand(
-                    VehicleIdentifier.From(request.VehicleId),
-                    CustomerIdentifier.From(request.CustomerId),
-                    VehicleCategory.FromCode(request.CategoryCode),
+                    ReservationVehicleId.From(request.VehicleId),
+                    ReservationCustomerId.From(request.CustomerId),
+                    ReservationVehicleCategory.From(request.CategoryCode),
                     BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     LocationCode.Of(request.PickupLocationCode),
                     LocationCode.Of(request.DropoffLocationCode),
@@ -69,8 +69,8 @@ public static class ReservationEndpoints
                 var (reservation, customer, address, driversLicense ) = request;
                 // Map request DTO to command with value objects
                 var command = new CreateGuestReservationCommand(
-                    VehicleIdentifier.From(reservation.VehicleId),
-                    VehicleCategory.FromCode(reservation.CategoryCode),
+                    ReservationVehicleId.From(reservation.VehicleId),
+                    ReservationVehicleCategory.From(reservation.CategoryCode),
                     BookingPeriod.Of(reservation.PickupDate, reservation.ReturnDate),
                     LocationCode.Of(reservation.PickupLocationCode),
                     LocationCode.Of(reservation.DropoffLocationCode),
@@ -159,9 +159,9 @@ public static class ReservationEndpoints
             {
                 var query = new SearchReservationsQuery(
                     status,
-                    customerId.HasValue ? CustomerIdentifier.From(customerId.Value) : null,
+                    customerId.HasValue ? ReservationCustomerId.From(customerId.Value) : null,
                     customerName,
-                    vehicleId.HasValue ? VehicleIdentifier.From(vehicleId.Value) : null,
+                    vehicleId.HasValue ? ReservationVehicleId.From(vehicleId.Value) : null,
                     categoryCode,
                     pickupLocationCode,
                     pickupDateFrom,
@@ -287,6 +287,36 @@ public static class ReservationEndpoints
                              - 50% refund for 24-48h before pickup
                              - No refund for < 24h before pickup
                              (Policy enforcement should be handled in payment service)
+                             """);
+
+        // GET /api/reservations/availability - Get booked vehicle IDs for a period
+        reservations.MapGet("/availability", async (
+                DateOnly pickupDate,
+                DateOnly returnDate,
+                GetVehicleAvailabilityQueryHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                var query = new GetVehicleAvailabilityQuery(pickupDate, returnDate);
+                var result = await handler.HandleAsync(query, cancellationToken);
+                return Results.Ok(result);
+            })
+            .WithName("GetVehicleAvailability")
+            .WithSummary("Get list of booked vehicle IDs for a period")
+            .WithDescription("""
+                             Returns a list of vehicle IDs that are unavailable (booked) during the specified period.
+                             Used by the Fleet service to determine which vehicles are available for new reservations.
+
+                             **Query Parameters:**
+                             - **pickupDate**: Start date of the period (format: YYYY-MM-DD)
+                             - **returnDate**: End date of the period (format: YYYY-MM-DD)
+
+                             **Business Logic:**
+                             - Only returns vehicles with Confirmed or Active reservations
+                             - Pending, Cancelled, Completed, and NoShow reservations are ignored
+                             - Period overlap check: reservation overlaps if reservation_pickup <= requested_return AND reservation_return >= requested_pickup
+
+                             **Response:**
+                             Returns a list of vehicle GUIDs that are booked during the period.
                              """);
 
         return app;
