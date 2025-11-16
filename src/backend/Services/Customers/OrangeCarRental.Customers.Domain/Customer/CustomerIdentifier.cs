@@ -1,17 +1,11 @@
-﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 ///     Strongly-typed identifier for Customer aggregate.
 ///     Uses GUID v7 for time-ordered identifiers with better database performance.
 /// </summary>
-public readonly record struct CustomerIdentifier
+public readonly record struct CustomerIdentifier(Guid Value)
 {
-    private CustomerIdentifier(Guid value)
-    {
-        Value = value;
-    }
-
-    public Guid Value { get; }
 
     /// <summary>
     ///     Creates a new unique customer identifier using GUID v7.
