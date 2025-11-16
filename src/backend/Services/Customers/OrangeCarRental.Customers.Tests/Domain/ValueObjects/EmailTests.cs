@@ -37,10 +37,10 @@ public class EmailTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidEmail)
+    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidEmail)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Email.Of(invalidEmail));
+        Should.Throw<ArgumentException>(() => Email.Of(invalidEmail!));
     }
 
     [Theory]

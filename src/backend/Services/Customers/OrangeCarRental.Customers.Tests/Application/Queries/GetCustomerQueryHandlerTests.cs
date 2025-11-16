@@ -8,12 +8,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Queries;
 
 public class GetCustomerQueryHandlerTests
 {
-    private readonly Mock<ICustomerRepository> customerRepositoryMock;
+    private readonly Mock<ICustomerRepository> customerRepositoryMock = new();
     private readonly GetCustomerQueryHandler handler;
 
     public GetCustomerQueryHandlerTests()
     {
-        customerRepositoryMock = new Mock<ICustomerRepository>();
         handler = new GetCustomerQueryHandler(customerRepositoryMock.Object);
     }
 
@@ -52,7 +51,7 @@ public class GetCustomerQueryHandlerTests
 
         customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync((Customer?)null);
+            .ThrowsAsync(new EntityNotFoundException(typeof(Customer), customerId.Value));
 
         // Act & Assert
         await Should.ThrowAsync<EntityNotFoundException>(() =>
@@ -85,7 +84,7 @@ public class GetCustomerQueryHandlerTests
         var email = Email.Of("max.mustermann@example.com");
         var phone = PhoneNumber.Of("0151 12345678");
         var birthDate = BirthDate.Of(new DateOnly(1990, 1, 1));
-        var address = Address.Of("Hauptstraße", "123", "Berlin", PostalCode.Of("10115"), City.Of("Berlin"), "Deutschland");
+        var address = Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland");
 
         var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-5));
         var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));

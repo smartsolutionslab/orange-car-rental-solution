@@ -7,13 +7,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Commands
 
 public class RegisterCustomerCommandHandlerTests
 {
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock;
-    private readonly RegisterCustomerCommandHandler _handler;
+    private readonly Mock<ICustomerRepository> customerRepositoryMock = new();
+    private readonly RegisterCustomerCommandHandler handler;
 
     public RegisterCustomerCommandHandlerTests()
     {
-        _customerRepositoryMock = new Mock<ICustomerRepository>();
-        _handler = new RegisterCustomerCommandHandler(_customerRepositoryMock.Object);
+        handler = new RegisterCustomerCommandHandler(customerRepositoryMock.Object);
     }
 
     [Fact]
@@ -22,18 +21,18 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         Customer? addedCustomer = null;
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
             .Callback<Customer, CancellationToken>((customer, _) => addedCustomer = customer)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -47,9 +46,9 @@ public class RegisterCustomerCommandHandlerTests
         addedCustomer.Name.ShouldBe(command.Name);
         addedCustomer.PhoneNumber.ShouldBe(command.PhoneNumber);
 
-        _customerRepositoryMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
-        _customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
-        _customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -58,20 +57,20 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true); // Email already exists
 
         // Act & Assert
         var ex = await Should.ThrowAsync<InvalidOperationException>(() =>
-            _handler.HandleAsync(command, CancellationToken.None));
+            handler.HandleAsync(command, CancellationToken.None));
 
         ex.Message.ShouldContain(command.Email.Value);
         ex.Message.ShouldContain("already exists");
 
-        _customerRepositoryMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
-        _customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
-        _customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
+        customerRepositoryMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
+        customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -83,15 +82,15 @@ public class RegisterCustomerCommandHandlerTests
             DateOfBirth = BirthDate.Of(DateOnly.FromDateTime(DateTime.Now.AddYears(-17))) // 17 years old
         };
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentException>(() =>
-            _handler.HandleAsync(command, CancellationToken.None));
+            handler.HandleAsync(command, CancellationToken.None));
 
-        _customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
+        customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -106,15 +105,15 @@ public class RegisterCustomerCommandHandlerTests
             DriversLicense = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate)
         };
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act & Assert
         await Should.ThrowAsync<ArgumentException>(() =>
-            _handler.HandleAsync(command, CancellationToken.None));
+            handler.HandleAsync(command, CancellationToken.None));
 
-        _customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
+        customerRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -123,15 +122,15 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        _customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -142,13 +141,13 @@ public class RegisterCustomerCommandHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(command, cts.Token));
+            handler.HandleAsync(command, cts.Token));
     }
 
     private static RegisterCustomerCommand CreateValidCommand()
@@ -161,7 +160,7 @@ public class RegisterCustomerCommandHandlerTests
             Email.Of("max.mustermann@example.com"),
             PhoneNumber.Of("0151 12345678"),
             BirthDate.Of(new DateOnly(1990, 1, 1)),
-            Address.Of("Hauptstraße", "123", "Berlin", PostalCode.Of("10115"), City.Of("Berlin"), "Deutschland"),
+            Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland"),
             DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate));
     }
 }

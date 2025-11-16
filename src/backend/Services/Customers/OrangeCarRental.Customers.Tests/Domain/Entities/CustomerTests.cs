@@ -6,19 +6,19 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Domain.Entities;
 
 public class CustomerTests
 {
-    private readonly CustomerName _validName = CustomerName.Of("Max", "Mustermann", Salutation.Herr);
-    private readonly Email _validEmail = Email.Of("max.mustermann@example.com");
-    private readonly PhoneNumber _validPhone = PhoneNumber.Of("0151 12345678");
-    private readonly BirthDate _validBirthDate = BirthDate.Of(new DateOnly(1990, 1, 1)); // 35 years old in 2025
-    private readonly Address _validAddress = Address.Of("Hauptstra\u00DFe", "123", "Berlin", PostalCode.Of("10115"), City.Of("Berlin"), "Deutschland");
-    private readonly DriversLicense _validLicense;
+    private readonly CustomerName validName = CustomerName.Of("Max", "Mustermann", Salutation.Herr);
+    private readonly Email validEmail = Email.Of("max.mustermann@example.com");
+    private readonly PhoneNumber validPhone = PhoneNumber.Of("0151 12345678");
+    private readonly BirthDate validBirthDate = BirthDate.Of(new DateOnly(1990, 1, 1)); // 35 years old in 2025
+    private readonly Address validAddress = Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland");
+    private readonly DriversLicense validLicense;
 
     public CustomerTests()
     {
         // License issued 5 years ago, expires in 5 years
         var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-5));
         var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));
-        _validLicense = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
+        validLicense = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
     }
 
     [Fact]
@@ -26,22 +26,22 @@ public class CustomerTests
     {
         // Act
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Assert
         customer.ShouldNotBeNull();
         customer.Id.Value.ShouldNotBe(Guid.Empty);
-        customer.Name.ShouldBe(_validName);
-        customer.Email.ShouldBe(_validEmail);
-        customer.PhoneNumber.ShouldBe(_validPhone);
-        customer.DateOfBirth.ShouldBe(_validBirthDate);
-        customer.Address.ShouldBe(_validAddress);
-        customer.DriversLicense.ShouldBe(_validLicense);
+        customer.Name.ShouldBe(validName);
+        customer.Email.ShouldBe(validEmail);
+        customer.PhoneNumber.ShouldBe(validPhone);
+        customer.DateOfBirth.ShouldBe(validBirthDate);
+        customer.Address.ShouldBe(validAddress);
+        customer.DriversLicense.ShouldBe(validLicense);
         customer.Status.ShouldBe(CustomerStatus.Active);
         customer.RegisteredAtUtc.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
         customer.UpdatedAtUtc.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
@@ -52,24 +52,24 @@ public class CustomerTests
     {
         // Act
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Assert
-        var events = customer.GetDomainEvents();
+        var events = customer.DomainEvents;
         events.ShouldNotBeEmpty();
         var registeredEvent = events.ShouldHaveSingleItem();
         registeredEvent.ShouldBeOfType<CustomerRegistered>();
 
         var evt = (CustomerRegistered)registeredEvent;
-        evt.CustomerId.ShouldBe(customer.Id);
-        evt.Name.ShouldBe(_validName);
-        evt.Email.ShouldBe(_validEmail);
-        evt.DateOfBirth.ShouldBe(_validBirthDate);
+        evt.CustomerIdentifier.ShouldBe(customer.Id);
+        evt.Name.ShouldBe(validName);
+        evt.Email.ShouldBe(validEmail);
+        evt.DateOfBirth.ShouldBe(validBirthDate);
     }
 
     [Fact]
@@ -80,12 +80,12 @@ public class CustomerTests
 
         // Act & Assert
         var ex = Should.Throw<ArgumentException>(() => Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
+            validName,
+            validEmail,
+            validPhone,
             tooYoung,
-            _validAddress,
-            _validLicense));
+            validAddress,
+            validLicense));
 
         ex.Message.ShouldContain("18");
     }
@@ -100,11 +100,11 @@ public class CustomerTests
 
         // Act & Assert
         var ex = Should.Throw<ArgumentException>(() => Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
             expiredLicense));
 
         ex.Message.ShouldContain("expired");
@@ -120,11 +120,11 @@ public class CustomerTests
 
         // Act & Assert
         var ex = Should.Throw<ArgumentException>(() => Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
             soonExpiringLicense));
 
         ex.Message.ShouldContain("30 days");
@@ -140,11 +140,11 @@ public class CustomerTests
 
         // Act
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
             almostExpiringLicense);
 
         // Assert
@@ -156,12 +156,12 @@ public class CustomerTests
     {
         // Arrange
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Act
         var fullName = customer.FullName;
@@ -175,12 +175,12 @@ public class CustomerTests
     {
         // Arrange
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Act
         var formalName = customer.FormalName;
@@ -194,12 +194,12 @@ public class CustomerTests
     {
         // Arrange - Born in 1990, so 35 years old in 2025
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Act
         var age = customer.Age;
@@ -214,16 +214,16 @@ public class CustomerTests
     {
         // Arrange
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         var newName = CustomerName.Of("Anna", "Schmidt", Salutation.Frau);
         var newPhone = PhoneNumber.Of("0160 98765432");
-        var newAddress = Address.Of("Neue Stra\u00DFe", "456", "München", PostalCode.Of("80331"), City.Of("München"), "Deutschland");
+        var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act
         var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
@@ -243,15 +243,15 @@ public class CustomerTests
     {
         // Arrange
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         // Act
-        var updatedCustomer = customer.UpdateProfile(_validName, _validPhone, _validAddress);
+        var updatedCustomer = customer.UpdateProfile(validName, validPhone, validAddress);
 
         // Assert
         updatedCustomer.ShouldBeSameAs(customer); // Same instance if no changes
@@ -262,24 +262,24 @@ public class CustomerTests
     {
         // Arrange
         var customer = Customer.Register(
-            _validName,
-            _validEmail,
-            _validPhone,
-            _validBirthDate,
-            _validAddress,
-            _validLicense);
+            validName,
+            validEmail,
+            validPhone,
+            validBirthDate,
+            validAddress,
+            validLicense);
 
         customer.ClearDomainEvents(); // Clear registration event
 
         var newName = CustomerName.Of("Anna", "Schmidt");
         var newPhone = PhoneNumber.Of("0160 98765432");
-        var newAddress = Address.Of("Neue Stra\u00DFe", "456", "München", PostalCode.Of("80331"), City.Of("München"), "Deutschland");
+        var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act
         var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
 
         // Assert
-        var events = updatedCustomer.GetDomainEvents();
+        var events = updatedCustomer.DomainEvents;
         events.ShouldNotBeEmpty();
         var profileUpdatedEvent = events.ShouldHaveSingleItem();
         profileUpdatedEvent.ShouldBeOfType<CustomerProfileUpdated>();

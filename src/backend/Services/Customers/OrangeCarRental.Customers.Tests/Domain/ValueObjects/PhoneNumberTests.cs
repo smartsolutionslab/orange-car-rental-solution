@@ -50,10 +50,10 @@ public class PhoneNumberTests
     [InlineData("")]
     [InlineData("   ")]
     [InlineData(null)]
-    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidPhone)
+    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidPhone)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone));
+        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone!));
     }
 
     [Theory]
