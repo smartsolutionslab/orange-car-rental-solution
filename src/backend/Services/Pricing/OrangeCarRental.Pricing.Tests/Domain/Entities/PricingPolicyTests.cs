@@ -267,8 +267,9 @@ public class PricingPolicyTests
         // Act
         var totalPrice = policy.CalculatePrice(period);
 
-        // Assert (4 days * 50.00 EUR = 200.00 EUR)
-        totalPrice.GrossAmount.ShouldBe(200.00m);
+        // Assert (4 days * 50.00 EUR = 200.00 EUR net, 238.00 EUR gross with 19% VAT)
+        totalPrice.NetAmount.ShouldBe(200.00m);
+        totalPrice.GrossAmount.ShouldBe(238.00m);
         totalPrice.Currency.ShouldBe(Currency.EUR);
     }
 
@@ -286,8 +287,9 @@ public class PricingPolicyTests
         // Act
         var totalPrice = policy.CalculatePrice(period);
 
-        // Assert (2 days * 50.00 EUR = 100.00 EUR)
-        totalPrice.GrossAmount.ShouldBe(100.00m);
+        // Assert (2 days * 50.00 EUR = 100.00 EUR net, 119.00 EUR gross with 19% VAT)
+        totalPrice.NetAmount.ShouldBe(100.00m);
+        totalPrice.GrossAmount.ShouldBe(119.00m);
     }
 
     [Fact]

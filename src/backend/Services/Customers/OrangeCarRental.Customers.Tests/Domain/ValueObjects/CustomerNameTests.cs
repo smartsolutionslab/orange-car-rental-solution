@@ -77,8 +77,8 @@ public class CustomerNameTests
         var name = CustomerName.Anonymized();
 
         // Assert
-        name.FirstName.Value.ShouldStartWith("[DELETED-");
-        name.LastName.Value.ShouldStartWith("[DELETED-");
+        name.FirstName.Value.ShouldBe("Anonymized");
+        name.LastName.Value.ShouldBe("Anonymized");
         name.Salutation.ShouldBeNull();
     }
 

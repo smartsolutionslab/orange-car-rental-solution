@@ -3,15 +3,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 /// <summary>
 ///     Strongly-typed identifier for a reservation using time-ordered UUIDs.
 /// </summary>
-public readonly record struct ReservationIdentifier
+public readonly record struct ReservationIdentifier(Guid Value)
 {
-    private ReservationIdentifier(Guid value)
-    {
-        Value = value;
-    }
-
-    public Guid Value { get; }
-
     public static ReservationIdentifier New() => new(Guid.CreateVersion7());
 
     public static ReservationIdentifier From(Guid value)

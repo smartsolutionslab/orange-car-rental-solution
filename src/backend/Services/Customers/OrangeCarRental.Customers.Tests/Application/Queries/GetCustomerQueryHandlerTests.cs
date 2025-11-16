@@ -36,7 +36,8 @@ public class GetCustomerQueryHandlerTests
         result.FirstName.ShouldBe(customer.Name.FirstName.Value);
         result.LastName.ShouldBe(customer.Name.LastName.Value);
         result.Email.ShouldBe(customer.Email.Value);
-        result.PhoneNumber.ShouldBe(customer.PhoneNumber.FormattedValue);
+        result.PhoneNumber.ShouldBe(customer.PhoneNumber.Value);
+        result.PhoneNumberFormatted.ShouldBe(customer.PhoneNumber.FormattedValue);
         result.Status.ShouldBe(customer.Status.ToString());
 
         customerRepositoryMock.Verify(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()), Times.Once);

@@ -19,7 +19,9 @@ public sealed class CreateGuestReservationCommandHandler(
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
 {
-    public async Task<CreateGuestReservationResult> HandleAsync(CreateGuestReservationCommand command, CancellationToken cancellationToken = default)
+    public async Task<CreateGuestReservationResult> HandleAsync(
+        CreateGuestReservationCommand command,
+        CancellationToken cancellationToken = default)
     {
         var (vehicleId,vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, name,  email, phoneNumber, birthDate, address, driversLicense) = command;
         // Step 1: Register the customer via Customers API

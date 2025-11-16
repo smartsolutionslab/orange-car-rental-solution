@@ -22,26 +22,25 @@ public sealed class GetReservationQueryHandler(IReservationRepository reservatio
 
     private static ReservationDto MapToDto(Reservation reservation)
     {
-        return new ReservationDto
-        {
-            ReservationId = reservation.Id.Value,
-            VehicleId = reservation.VehicleId,
-            CustomerId = reservation.CustomerId,
-            PickupDate = reservation.Period.PickupDate.ToDateTime(TimeOnly.MinValue),
-            ReturnDate = reservation.Period.ReturnDate.ToDateTime(TimeOnly.MinValue),
-            PickupLocationCode = reservation.PickupLocationCode.Value,
-            DropoffLocationCode = reservation.DropoffLocationCode.Value,
-            RentalDays = reservation.Period.Days,
-            TotalPriceNet = reservation.TotalPrice.NetAmount,
-            TotalPriceVat = reservation.TotalPrice.VatAmount,
-            TotalPriceGross = reservation.TotalPrice.GrossAmount,
-            Currency = reservation.TotalPrice.Currency.Code,
-            Status = reservation.Status.ToString(),
-            CancellationReason = reservation.CancellationReason,
-            CreatedAt = reservation.CreatedAt,
-            ConfirmedAt = reservation.ConfirmedAt,
-            CancelledAt = reservation.CancelledAt,
-            CompletedAt = reservation.CompletedAt
-        };
+        return new ReservationDto(
+            reservation.Id.Value,
+            reservation.VehicleId.Value,
+            reservation.CustomerId.Value,
+            reservation.Period.PickupDate,
+            reservation.Period.ReturnDate,
+            reservation.PickupLocationCode.Value,
+            reservation.DropoffLocationCode.Value,
+            reservation.Period.Days,
+            reservation.TotalPrice.NetAmount,
+            reservation.TotalPrice.VatAmount,
+            reservation.TotalPrice.GrossAmount,
+            reservation.TotalPrice.Currency.Code,
+            reservation.Status.ToString(),
+            reservation.CancellationReason,
+            reservation.CreatedAt,
+            reservation.ConfirmedAt,
+            reservation.CancelledAt,
+            reservation.CompletedAt
+        );
     }
 }

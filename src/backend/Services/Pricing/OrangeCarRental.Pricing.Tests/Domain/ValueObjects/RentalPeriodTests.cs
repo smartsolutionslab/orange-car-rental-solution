@@ -103,15 +103,15 @@ public class RentalPeriodTests
     public void ToString_ShouldReturnFormattedString()
     {
         // Arrange
-        var pickupDate = new DateOnly(2025, 6, 15);
-        var returnDate = new DateOnly(2025, 6, 18);
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = pickupDate.AddDays(3);
         var period = RentalPeriod.Of(pickupDate, returnDate);
 
         // Act
         var result = period.ToString();
 
         // Assert
-        result.ShouldBe("4 day(s) from 2025-06-15 to 2025-06-18");
+        result.ShouldBe($"4 day(s) from {pickupDate:yyyy-MM-dd} to {returnDate:yyyy-MM-dd}");
     }
 
     [Fact]

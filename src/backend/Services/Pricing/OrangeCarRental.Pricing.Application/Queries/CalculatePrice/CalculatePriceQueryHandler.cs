@@ -23,21 +23,36 @@ public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingP
     {
         var rentalPeriod = RentalPeriod.Of(query.PickupDate, query.ReturnDate);
 
+        PricingPolicy? pricingPolicy = null;
+
         // Try to get location-specific pricing first, then fall back to general pricing
-        var pricingPolicy = query.LocationCode.HasValue
-            ? await pricingPolicies.GetActivePolicyByCategoryAndLocationAsync(
-                query.CategoryCode,
-                query.LocationCode.Value,
-                cancellationToken)
-            : null;
+        if (query.LocationCode.HasValue)
+        {
+            try
+            {
+                pricingPolicy = await pricingPolicies.GetActivePolicyByCategoryAndLocationAsync(
+                    query.CategoryCode,
+                    query.LocationCode.Value,
+                    cancellationToken);
+            }
+            catch (BuildingBlocks.Domain.Exceptions.EntityNotFoundException)
+            {
+                // Location-specific pricing not found, will fall back to general pricing
+            }
+        }
 
         // Fall back to general pricing if location-specific pricing not found
-        pricingPolicy ??= await pricingPolicies.GetActivePolicyByCategoryAsync(query.CategoryCode, cancellationToken);
-
         if (pricingPolicy is null)
         {
-            throw new InvalidOperationException(
-                $"No active pricing policy found for category '{query.CategoryCode.Value}'");
+            try
+            {
+                pricingPolicy = await pricingPolicies.GetActivePolicyByCategoryAsync(query.CategoryCode, cancellationToken);
+            }
+            catch (BuildingBlocks.Domain.Exceptions.EntityNotFoundException)
+            {
+                throw new InvalidOperationException(
+                    $"No active pricing policy found for category '{query.CategoryCode.Value}'");
+            }
         }
 
         var totalPrice = pricingPolicy.CalculatePrice(rentalPeriod);

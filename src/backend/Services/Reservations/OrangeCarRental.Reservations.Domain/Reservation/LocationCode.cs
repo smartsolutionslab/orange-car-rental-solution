@@ -17,7 +17,7 @@ public readonly record struct LocationCode(string Value)
     /// <exception cref="ArgumentException">Thrown when code is invalid</exception>
     public static LocationCode Of(string code)
     {
-        var trimmed = code?.Trim().ToUpperInvariant() ?? string.Empty;
+        var trimmed = code.Trim().ToUpperInvariant();
 
         Ensure.That(trimmed, nameof(code))
             .IsNotNullOrWhiteSpace()

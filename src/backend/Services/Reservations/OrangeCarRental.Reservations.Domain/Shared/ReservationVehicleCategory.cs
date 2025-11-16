@@ -4,9 +4,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 ///     Value object representing a vehicle category within the Reservations bounded context.
 ///     Maps to categories from the Fleet service but is defined locally for context autonomy.
 /// </summary>
-public readonly record struct ReservationVehicleCategory
+public readonly record struct ReservationVehicleCategory(string Code)
 {
-    private ReservationVehicleCategory(string code)
+    /// <summary>
+    ///     Creates a vehicle category from a code string.
+    /// </summary>
+    /// <param name="code">The category code.</param>
+    /// <returns>A new ReservationVehicleCategory instance.</returns>
+    public static ReservationVehicleCategory From(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
             throw new ArgumentException("Category code cannot be empty", nameof(code));
@@ -14,20 +19,10 @@ public readonly record struct ReservationVehicleCategory
         if (code.Length > 20)
             throw new ArgumentException("Category code cannot exceed 20 characters", nameof(code));
 
-        Code = code.ToUpperInvariant();
+        var value = code.ToUpperInvariant();
+
+        return new ReservationVehicleCategory(value);
     }
-
-    /// <summary>
-    ///     The category code (e.g., "KLEIN", "SUV", "LUXUS").
-    /// </summary>
-    public string Code { get; }
-
-    /// <summary>
-    ///     Creates a vehicle category from a code string.
-    /// </summary>
-    /// <param name="code">The category code.</param>
-    /// <returns>A new ReservationVehicleCategory instance.</returns>
-    public static ReservationVehicleCategory From(string code) => new(code);
 
     // Predefined categories (matching Fleet service but owned by Reservations context)
 

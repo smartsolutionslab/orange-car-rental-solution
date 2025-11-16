@@ -14,7 +14,9 @@ public sealed class CreateReservationCommandHandler(
     IPricingService pricingService)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
-    public async Task<CreateReservationResult> HandleAsync(CreateReservationCommand command, CancellationToken cancellationToken = default)
+    public async Task<CreateReservationResult> HandleAsync(
+        CreateReservationCommand command,
+        CancellationToken cancellationToken = default)
     {
         var (vehicleId, customerId, vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, _) = command;
 

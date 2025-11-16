@@ -7,10 +7,10 @@ public class PhoneNumberTests
 {
     [Theory]
     [InlineData("+491512345678", "+491512345678")]
-    [InlineData("+49 151 12345678", "+491512345678")]
-    [InlineData("+49-151-12345678", "+491512345678")]
-    [InlineData("+49 (151) 1234-5678", "+491512345678")]
-    [InlineData("+49/151/12345678", "+491512345678")]
+    [InlineData("+49 151 2345678", "+491512345678")]
+    [InlineData("+49-151-2345678", "+491512345678")]
+    [InlineData("+49 (151) 2345678", "+491512345678")]
+    [InlineData("+49/151/2345678", "+491512345678")]
     public void Of_WithValidInternationalFormat_ShouldNormalize(string input, string expected)
     {
         // Act
@@ -22,9 +22,9 @@ public class PhoneNumberTests
 
     [Theory]
     [InlineData("01512345678", "+491512345678")]
-    [InlineData("0151 12345678", "+491512345678")]
-    [InlineData("0151-1234-5678", "+491512345678")]
-    [InlineData("  0151 12345678  ", "+491512345678")]
+    [InlineData("0151 2345678", "+491512345678")]
+    [InlineData("0151-2345678", "+491512345678")]
+    [InlineData("  0151 2345678  ", "+491512345678")]
     public void Of_WithGermanDomesticFormat_ShouldConvertToInternational(string input, string expected)
     {
         // Act
@@ -36,7 +36,7 @@ public class PhoneNumberTests
 
     [Theory]
     [InlineData("00491512345678", "+491512345678")]
-    [InlineData("0049 151 12345678", "+491512345678")]
+    [InlineData("0049 151 2345678", "+491512345678")]
     public void Of_WithDoubleZeroPrefix_ShouldConvertToPlus(string input, string expected)
     {
         // Act
@@ -107,8 +107,8 @@ public class PhoneNumberTests
 
     [Theory]
     [InlineData("+491512345678", "+49 151 2345678")]
-    [InlineData("+4930123456", "+49 301 23456")]
-    [InlineData("+4989123456789", "+49 891 23456789")]
+    [InlineData("+49301234567", "+49 301 234567")]
+    [InlineData("+49891234567", "+49 891 234567")]
     public void FormattedValue_ShouldFormatForDisplay(string input, string expectedFormat)
     {
         // Act
@@ -158,8 +158,8 @@ public class PhoneNumberTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var phone1 = PhoneNumber.Of("0151 12345678");
-        var phone2 = PhoneNumber.Of("+49 151 12345678");
+        var phone1 = PhoneNumber.Of("0151 2345678");
+        var phone2 = PhoneNumber.Of("+49 151 2345678");
 
         // Act & Assert
         phone1.ShouldBe(phone2);
@@ -179,13 +179,13 @@ public class PhoneNumberTests
     }
 
     [Theory]
-    [InlineData("+49 30 12345678")] // Berlin
-    [InlineData("+49 89 12345678")] // Munich
-    [InlineData("+49 40 12345678")] // Hamburg
-    [InlineData("+49 221 1234567")] // Cologne
-    [InlineData("+49 151 12345678")] // Mobile (Vodafone)
-    [InlineData("+49 170 12345678")] // Mobile (T-Mobile)
-    [InlineData("+49 176 12345678")] // Mobile (O2)
+    [InlineData("+49 30 1234567")] // Berlin
+    [InlineData("+49 89 1234567")] // Munich
+    [InlineData("+49 40 1234567")] // Hamburg
+    [InlineData("+49 221 123456")] // Cologne
+    [InlineData("+49 151 2345678")] // Mobile (Vodafone)
+    [InlineData("+49 170 2345678")] // Mobile (T-Mobile)
+    [InlineData("+49 176 2345678")] // Mobile (O2)
     public void Of_WithRealGermanNumbers_ShouldSucceed(string germanPhone)
     {
         // Act
