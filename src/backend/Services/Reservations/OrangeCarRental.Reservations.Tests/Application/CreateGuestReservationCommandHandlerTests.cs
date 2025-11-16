@@ -1,6 +1,7 @@
 using Moq;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -253,7 +254,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.CustomerId.ShouldBe(customerId);
+        capturedReservation!.CustomerId.Value.ShouldBe(customerId);
     }
 
     [Fact]

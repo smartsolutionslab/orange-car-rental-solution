@@ -57,9 +57,9 @@ public class CreateReservationCommandHandlerTests
         result.ShouldNotBeNull();
         result.ReservationId.ShouldNotBe(Guid.Empty);
         result.Status.ShouldBe("Pending");
-        result.NetAmount.ShouldBe(250.00m);
-        result.VatAmount.ShouldBe(47.50m);
-        result.GrossAmount.ShouldBe(297.50m);
+        result.TotalPriceNet.ShouldBe(250.00m);
+        result.TotalPriceVat.ShouldBe(47.50m);
+        result.TotalPriceGross.ShouldBe(297.50m);
 
         addedReservation.ShouldNotBeNull();
         addedReservation.VehicleId.ShouldBe(command.VehicleId);
@@ -102,9 +102,9 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.NetAmount.ShouldBe(providedPrice.NetAmount);
-        result.VatAmount.ShouldBe(providedPrice.VatAmount);
-        result.GrossAmount.ShouldBe(providedPrice.GrossAmount);
+        result.TotalPriceNet.ShouldBe(providedPrice.NetAmount);
+        result.TotalPriceVat.ShouldBe(providedPrice.VatAmount);
+        result.TotalPriceGross.ShouldBe(providedPrice.GrossAmount);
 
         addedReservation.ShouldNotBeNull();
         addedReservation.TotalPrice.ShouldBe(providedPrice);
@@ -156,7 +156,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.NetAmount.ShouldBe(200.00m);
+        result.TotalPriceNet.ShouldBe(200.00m);
 
         addedReservation.ShouldNotBeNull();
         addedReservation.TotalPrice.NetAmount.ShouldBe(200.00m);

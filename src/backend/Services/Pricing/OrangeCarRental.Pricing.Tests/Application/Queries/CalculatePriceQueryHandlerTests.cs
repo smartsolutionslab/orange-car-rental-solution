@@ -8,13 +8,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Application.Queries;
 
 public class CalculatePriceQueryHandlerTests
 {
-    private readonly Mock<IPricingPolicyRepository> _pricingPolicyRepositoryMock;
-    private readonly CalculatePriceQueryHandler _handler;
+    private readonly Mock<IPricingPolicyRepository> pricingPolicyRepositoryMock = new();
+    private readonly CalculatePriceQueryHandler handler;
 
     public CalculatePriceQueryHandlerTests()
     {
-        _pricingPolicyRepositoryMock = new Mock<IPricingPolicyRepository>();
-        _handler = new CalculatePriceQueryHandler(_pricingPolicyRepositoryMock.Object);
+        handler = new CalculatePriceQueryHandler(pricingPolicyRepositoryMock.Object);
     }
 
     [Fact]
@@ -35,14 +34,14 @@ public class CalculatePriceQueryHandlerTests
             CategoryCode.Of("KLEIN"),
             Money.Of(50.00m, Currency.EUR));
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(pricingPolicy);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -54,7 +53,7 @@ public class CalculatePriceQueryHandlerTests
         result.PickupDate.ShouldBe(pickupDate);
         result.ReturnDate.ShouldBe(returnDate);
 
-        _pricingPolicyRepositoryMock.Verify(
+        pricingPolicyRepositoryMock.Verify(
             x => x.GetActivePolicyByCategoryAsync(query.CategoryCode, It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -80,7 +79,7 @@ public class CalculatePriceQueryHandlerTests
             Money.Of(80.00m, Currency.EUR),
             locationCode: locationCode);
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAndLocationAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<LocationCode>(),
@@ -88,13 +87,13 @@ public class CalculatePriceQueryHandlerTests
             .ReturnsAsync(locationPolicy);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
         result.TotalPriceNet.ShouldBe(240.00m); // 3 days * 80.00
 
-        _pricingPolicyRepositoryMock.Verify(
+        pricingPolicyRepositoryMock.Verify(
             x => x.GetActivePolicyByCategoryAndLocationAsync(
                 query.CategoryCode,
                 locationCode,
@@ -102,7 +101,7 @@ public class CalculatePriceQueryHandlerTests
             Times.Once);
 
         // Should NOT call general pricing when location-specific pricing is found
-        _pricingPolicyRepositoryMock.Verify(
+        pricingPolicyRepositoryMock.Verify(
             x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()),
@@ -126,7 +125,7 @@ public class CalculatePriceQueryHandlerTests
         };
 
         // No location-specific pricing
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAndLocationAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<LocationCode>(),
@@ -138,27 +137,27 @@ public class CalculatePriceQueryHandlerTests
             CategoryCode.Of("SUV"),
             Money.Of(70.00m, Currency.EUR));
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(generalPolicy);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
         result.TotalPriceNet.ShouldBe(210.00m); // 3 days * 70.00
 
-        _pricingPolicyRepositoryMock.Verify(
+        pricingPolicyRepositoryMock.Verify(
             x => x.GetActivePolicyByCategoryAndLocationAsync(
                 query.CategoryCode,
                 locationCode,
                 It.IsAny<CancellationToken>()),
             Times.Once);
 
-        _pricingPolicyRepositoryMock.Verify(
+        pricingPolicyRepositoryMock.Verify(
             x => x.GetActivePolicyByCategoryAsync(
                 query.CategoryCode,
                 It.IsAny<CancellationToken>()),
@@ -176,7 +175,7 @@ public class CalculatePriceQueryHandlerTests
             ReturnDate = DateTime.UtcNow.AddDays(3)
         };
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
@@ -184,7 +183,7 @@ public class CalculatePriceQueryHandlerTests
 
         // Act & Assert
         var ex = await Should.ThrowAsync<InvalidOperationException>(() =>
-            _handler.HandleAsync(query, CancellationToken.None));
+            handler.HandleAsync(query, CancellationToken.None));
 
         ex.Message.ShouldContain("No active pricing policy found");
         ex.Message.ShouldContain("UNKNOWN");
@@ -220,14 +219,14 @@ public class CalculatePriceQueryHandlerTests
                 CategoryCode.Of(categoryCode),
                 Money.Of(dailyRate, Currency.EUR));
 
-            _pricingPolicyRepositoryMock
+            pricingPolicyRepositoryMock
                 .Setup(x => x.GetActivePolicyByCategoryAsync(
                     CategoryCode.Of(categoryCode),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(policy);
 
             // Act
-            var result = await _handler.HandleAsync(query, CancellationToken.None);
+            var result = await handler.HandleAsync(query, CancellationToken.None);
 
             // Assert
             result.CategoryCode.ShouldBe(categoryCode);
@@ -251,14 +250,14 @@ public class CalculatePriceQueryHandlerTests
             CategoryCode.Of("KLEIN"),
             Money.Of(100.00m, Currency.EUR)); // Net price per day
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(pricingPolicy);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert (2 days * 100 EUR = 200 EUR net, 19% VAT = 38 EUR, Gross = 238 EUR)
         result.TotalPriceNet.ShouldBe(200.00m);
@@ -281,7 +280,7 @@ public class CalculatePriceQueryHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
@@ -289,7 +288,7 @@ public class CalculatePriceQueryHandlerTests
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(query, cts.Token));
+            handler.HandleAsync(query, cts.Token));
     }
 
     [Fact]
@@ -310,14 +309,14 @@ public class CalculatePriceQueryHandlerTests
             CategoryCode.Of("MITTEL"),
             Money.Of(60.00m, Currency.EUR));
 
-        _pricingPolicyRepositoryMock
+        pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
                 It.IsAny<CategoryCode>(),
                 It.IsAny<CancellationToken>()))
             .ReturnsAsync(pricingPolicy);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.TotalDays.ShouldBe(7);

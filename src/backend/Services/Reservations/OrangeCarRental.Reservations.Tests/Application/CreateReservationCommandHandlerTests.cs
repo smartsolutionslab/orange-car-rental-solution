@@ -141,9 +141,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act - Exception now thrown during command construction
         var act = () => new CreateReservationCommand(
-            VehicleIdentifier.From(Guid.Empty),
-            CustomerIdentifier.New(),
-            VehicleCategory.FromCode("KOMPAKT"),
+            ReservationVehicleId.From(Guid.Empty),
+            ReservationCustomerId.From(Guid.NewGuid()),
+            ReservationVehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -152,8 +152,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("must not be equal to");
-        ex.Message.ShouldContain("00000000-0000-0000-0000-000000000000");
+        ex.Message.ShouldContain("GUID cannot be empty");
     }
 
     [Fact]
@@ -161,9 +160,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act - Exception now thrown during command construction
         var act = () => new CreateReservationCommand(
-            VehicleIdentifier.New(),
-            CustomerIdentifier.From(Guid.Empty),
-            VehicleCategory.FromCode("KOMPAKT"),
+            ReservationVehicleId.From(Guid.NewGuid()),
+            ReservationCustomerId.From(Guid.Empty),
+            ReservationVehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -172,8 +171,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("must not be equal to");
-        ex.Message.ShouldContain("00000000-0000-0000-0000-000000000000");
+        ex.Message.ShouldContain("GUID cannot be empty");
     }
 
     [Fact]
@@ -294,9 +292,9 @@ public class CreateReservationCommandHandlerTests
         var vehicleId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var command = new CreateReservationCommand(
-            VehicleIdentifier.From(vehicleId),
-            CustomerIdentifier.From(customerId),
-            VehicleCategory.FromCode("KOMPAKT"),
+            ReservationVehicleId.From(vehicleId),
+            ReservationCustomerId.From(customerId),
+            ReservationVehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -356,9 +354,9 @@ public class CreateReservationCommandHandlerTests
         var vehicleId = Guid.NewGuid();
         var customerId = Guid.NewGuid();
         var command = new CreateReservationCommand(
-            VehicleIdentifier.From(vehicleId),
-            CustomerIdentifier.From(customerId),
-            VehicleCategory.FromCode("KOMPAKT"),
+            ReservationVehicleId.From(vehicleId),
+            ReservationCustomerId.From(customerId),
+            ReservationVehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -376,8 +374,8 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.VehicleId.ShouldBe(vehicleId);
-        capturedReservation.CustomerId.ShouldBe(customerId);
+        capturedReservation!.VehicleId.Value.ShouldBe(vehicleId);
+        capturedReservation.CustomerId.Value.ShouldBe(customerId);
     }
 
     #endregion

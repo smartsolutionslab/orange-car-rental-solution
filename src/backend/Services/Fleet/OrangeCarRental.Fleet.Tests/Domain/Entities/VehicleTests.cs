@@ -8,37 +8,37 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Domain.Entities;
 
 public class VehicleTests
 {
-    private readonly VehicleName _validName = VehicleName.Of("BMW X5");
-    private readonly VehicleCategory _validCategory = VehicleCategory.SUV;
-    private readonly Location _validLocation = Location.BerlinHauptbahnhof;
-    private readonly Money _validDailyRate = Money.Euro(89.99m);
-    private readonly SeatingCapacity _validSeats = SeatingCapacity.Of(5);
-    private readonly FuelType _validFuelType = FuelType.Diesel;
-    private readonly TransmissionType _validTransmission = TransmissionType.Automatic;
+    private readonly VehicleName validName = VehicleName.Of("BMW X5");
+    private readonly VehicleCategory validCategory = VehicleCategory.SUV;
+    private readonly Location validLocation = Location.BerlinHauptbahnhof;
+    private readonly Money validDailyRate = Money.Euro(89.99m);
+    private readonly SeatingCapacity validSeats = SeatingCapacity.Of(5);
+    private readonly FuelType validFuelType = FuelType.Diesel;
+    private readonly TransmissionType validTransmission = TransmissionType.Automatic;
 
     [Fact]
     public void From_WithValidData_ShouldCreateVehicle()
     {
         // Act
         var vehicle = Vehicle.From(
-            _validName,
-            _validCategory,
-            _validLocation,
-            _validDailyRate,
-            _validSeats,
-            _validFuelType,
-            _validTransmission);
+            validName,
+            validCategory,
+            validLocation,
+            validDailyRate,
+            validSeats,
+            validFuelType,
+            validTransmission);
 
         // Assert
         vehicle.ShouldNotBeNull();
         vehicle.Id.Value.ShouldNotBe(Guid.Empty);
-        vehicle.Name.ShouldBe(_validName);
-        vehicle.Category.ShouldBe(_validCategory);
-        vehicle.CurrentLocation.ShouldBe(_validLocation);
-        vehicle.DailyRate.ShouldBe(_validDailyRate);
-        vehicle.Seats.ShouldBe(_validSeats);
-        vehicle.FuelType.ShouldBe(_validFuelType);
-        vehicle.TransmissionType.ShouldBe(_validTransmission);
+        vehicle.Name.ShouldBe(validName);
+        vehicle.Category.ShouldBe(validCategory);
+        vehicle.CurrentLocation.ShouldBe(validLocation);
+        vehicle.DailyRate.ShouldBe(validDailyRate);
+        vehicle.Seats.ShouldBe(validSeats);
+        vehicle.FuelType.ShouldBe(validFuelType);
+        vehicle.TransmissionType.ShouldBe(validTransmission);
         vehicle.Status.ShouldBe(VehicleStatus.Available);
     }
 
@@ -47,25 +47,25 @@ public class VehicleTests
     {
         // Act
         var vehicle = Vehicle.From(
-            _validName,
-            _validCategory,
-            _validLocation,
-            _validDailyRate,
-            _validSeats,
-            _validFuelType,
-            _validTransmission);
+            validName,
+            validCategory,
+            validLocation,
+            validDailyRate,
+            validSeats,
+            validFuelType,
+            validTransmission);
 
         // Assert
-        var events = vehicle.GetDomainEvents();
+        var events = vehicle.DomainEvents;
         events.ShouldNotBeEmpty();
         var addedEvent = events.ShouldHaveSingleItem();
         addedEvent.ShouldBeOfType<VehicleAddedToFleet>();
 
         var evt = (VehicleAddedToFleet)addedEvent;
         evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.Name.ShouldBe(_validName);
-        evt.Category.ShouldBe(_validCategory);
-        evt.DailyRate.ShouldBe(_validDailyRate);
+        evt.Name.ShouldBe(validName);
+        evt.Category.ShouldBe(validCategory);
+        evt.DailyRate.ShouldBe(validDailyRate);
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public class VehicleTests
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
         updatedVehicle.DailyRate.ShouldBe(newRate);
-        vehicle.DailyRate.ShouldBe(_validDailyRate); // Original unchanged
+        vehicle.DailyRate.ShouldBe(validDailyRate); // Original unchanged
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        var updatedVehicle = vehicle.UpdateDailyRate(_validDailyRate);
+        var updatedVehicle = vehicle.UpdateDailyRate(validDailyRate);
 
         // Assert
         updatedVehicle.ShouldBeSameAs(vehicle); // Same instance if no change
@@ -110,14 +110,14 @@ public class VehicleTests
         var updatedVehicle = vehicle.UpdateDailyRate(newRate);
 
         // Assert
-        var events = updatedVehicle.GetDomainEvents();
+        var events = updatedVehicle.DomainEvents;
         events.ShouldNotBeEmpty();
         var rateChangedEvent = events.ShouldHaveSingleItem();
         rateChangedEvent.ShouldBeOfType<VehicleDailyRateChanged>();
 
         var evt = (VehicleDailyRateChanged)rateChangedEvent;
         evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.OldRate.ShouldBe(_validDailyRate);
+        evt.OldRate.ShouldBe(validDailyRate);
         evt.NewRate.ShouldBe(newRate);
     }
 
@@ -135,7 +135,7 @@ public class VehicleTests
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
         updatedVehicle.CurrentLocation.ShouldBe(newLocation);
-        vehicle.CurrentLocation.ShouldBe(_validLocation); // Original unchanged
+        vehicle.CurrentLocation.ShouldBe(validLocation); // Original unchanged
     }
 
     [Fact]
@@ -145,7 +145,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        var updatedVehicle = vehicle.MoveToLocation(_validLocation);
+        var updatedVehicle = vehicle.MoveToLocation(validLocation);
 
         // Assert
         updatedVehicle.ShouldBeSameAs(vehicle); // Same instance if no change
@@ -176,14 +176,14 @@ public class VehicleTests
         var updatedVehicle = vehicle.MoveToLocation(newLocation);
 
         // Assert
-        var events = updatedVehicle.GetDomainEvents();
+        var events = updatedVehicle.DomainEvents;
         events.ShouldNotBeEmpty();
         var locationChangedEvent = events.ShouldHaveSingleItem();
         locationChangedEvent.ShouldBeOfType<VehicleLocationChanged>();
 
         var evt = (VehicleLocationChanged)locationChangedEvent;
         evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.OldLocation.ShouldBe(_validLocation);
+        evt.OldLocation.ShouldBe(validLocation);
         evt.NewLocation.ShouldBe(newLocation);
     }
 
@@ -227,7 +227,7 @@ public class VehicleTests
         var updatedVehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
 
         // Assert
-        var events = updatedVehicle.GetDomainEvents();
+        var events = updatedVehicle.DomainEvents;
         events.ShouldNotBeEmpty();
         var statusChangedEvent = events.ShouldHaveSingleItem();
         statusChangedEvent.ShouldBeOfType<VehicleStatusChanged>();
@@ -396,14 +396,23 @@ public class VehicleTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData(null)]
-    public void SetLicensePlate_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidPlate)
+    public void SetLicensePlate_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidPlate)
     {
         // Arrange
         var vehicle = CreateTestVehicle();
 
         // Act & Assert
         Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(invalidPlate));
+    }
+
+    [Fact]
+    public void SetLicensePlate_WithNull_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var vehicle = CreateTestVehicle();
+
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(null!));
     }
 
     [Fact]
@@ -440,12 +449,12 @@ public class VehicleTests
     private Vehicle CreateTestVehicle()
     {
         return Vehicle.From(
-            _validName,
-            _validCategory,
-            _validLocation,
-            _validDailyRate,
-            _validSeats,
-            _validFuelType,
-            _validTransmission);
+            validName,
+            validCategory,
+            validLocation,
+            validDailyRate,
+            validSeats,
+            validFuelType,
+            validTransmission);
     }
 }

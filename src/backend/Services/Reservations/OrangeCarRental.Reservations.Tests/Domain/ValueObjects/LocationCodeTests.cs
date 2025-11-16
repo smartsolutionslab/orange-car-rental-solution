@@ -43,11 +43,17 @@ public class LocationCodeTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData(null)]
     public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidCode)
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => LocationCode.Of(invalidCode));
+    }
+
+    [Fact]
+    public void Of_WithNull_ShouldThrowArgumentException()
+    {
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => LocationCode.Of(null!));
     }
 
     [Fact]

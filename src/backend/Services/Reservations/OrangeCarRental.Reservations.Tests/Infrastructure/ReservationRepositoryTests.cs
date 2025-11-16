@@ -3,6 +3,7 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using Testcontainers.MsSql;
 
@@ -49,8 +50,13 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(vehicleId, customerId, period, LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"), totalPrice);
+        var reservation = Reservation.Create(
+            ReservationVehicleId.From(vehicleId),
+            ReservationCustomerId.From(customerId),
+            period,
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            totalPrice);
         reservation.ClearDomainEvents();
         return reservation;
     }
@@ -196,8 +202,13 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"), totalPrice);
+        var reservation = Reservation.Create(
+            ReservationVehicleId.From(Guid.NewGuid()),
+            ReservationCustomerId.From(Guid.NewGuid()),
+            period,
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            totalPrice);
         await context.Reservations.AddAsync(reservation);
         await context.SaveChangesAsync();
 
@@ -310,8 +321,13 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.Of("EUR");
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
-        var reservation = Reservation.Create(Guid.NewGuid(), Guid.NewGuid(), period, LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"), totalPrice);
+        var reservation = Reservation.Create(
+            ReservationVehicleId.From(Guid.NewGuid()),
+            ReservationCustomerId.From(Guid.NewGuid()),
+            period,
+            LocationCode.Of("BER-HBF"),
+            LocationCode.Of("BER-HBF"),
+            totalPrice);
 
         // Act - Add
         await repository.AddAsync(reservation, CancellationToken.None);

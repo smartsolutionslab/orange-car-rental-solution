@@ -32,11 +32,17 @@ public class VehicleNameTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData(null)]
-    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidName)
+    public void Of_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidName)
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => VehicleName.Of(invalidName));
+    }
+
+    [Fact]
+    public void Of_WithNull_ShouldThrowArgumentException()
+    {
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => VehicleName.Of(null!));
     }
 
     [Fact]

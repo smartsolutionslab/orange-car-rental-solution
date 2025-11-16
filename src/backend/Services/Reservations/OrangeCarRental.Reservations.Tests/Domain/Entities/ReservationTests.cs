@@ -86,7 +86,7 @@ public class ReservationTests
             _validTotalPrice);
 
         // Assert
-        var events = reservation.GetDomainEvents();
+        var events = reservation.DomainEvents;
         events.ShouldNotBeEmpty();
         var createdEvent = events.ShouldHaveSingleItem();
         createdEvent.ShouldBeOfType<ReservationCreated>();
@@ -113,7 +113,7 @@ public class ReservationTests
         confirmedReservation.Id.ShouldBe(reservation.Id); // Same ID
         confirmedReservation.Status.ShouldBe(ReservationStatus.Confirmed);
         confirmedReservation.ConfirmedAt.ShouldNotBeNull();
-        confirmedReservation.ConfirmedAt.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        confirmedReservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
         reservation.Status.ShouldBe(ReservationStatus.Pending); // Original unchanged
     }
 
@@ -128,7 +128,7 @@ public class ReservationTests
         var confirmedReservation = reservation.Confirm();
 
         // Assert
-        var events = confirmedReservation.GetDomainEvents();
+        var events = confirmedReservation.DomainEvents;
         events.ShouldNotBeEmpty();
         var confirmedEvent = events.ShouldHaveSingleItem();
         confirmedEvent.ShouldBeOfType<ReservationConfirmed>();
@@ -180,7 +180,7 @@ public class ReservationTests
         cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
         cancelledReservation.CancellationReason.ShouldBe(reason);
         cancelledReservation.CancelledAt.ShouldNotBeNull();
-        cancelledReservation.CancelledAt.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        cancelledReservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -223,14 +223,14 @@ public class ReservationTests
         var cancelledReservation = reservation.Cancel(reason);
 
         // Assert
-        var events = cancelledReservation.GetDomainEvents();
+        var events = cancelledReservation.DomainEvents;
         events.ShouldNotBeEmpty();
         var cancelledEvent = events.ShouldHaveSingleItem();
         cancelledEvent.ShouldBeOfType<ReservationCancelled>();
 
         var evt = (ReservationCancelled)cancelledEvent;
         evt.ReservationId.ShouldBe(reservation.Id);
-        evt.Reason.ShouldBe(reason);
+        evt.CancellationReason.ShouldBe(reason);
     }
 
     [Fact]
@@ -320,7 +320,7 @@ public class ReservationTests
         completedReservation.Id.ShouldBe(reservation.Id); // Same ID
         completedReservation.Status.ShouldBe(ReservationStatus.Completed);
         completedReservation.CompletedAt.ShouldNotBeNull();
-        completedReservation.CompletedAt.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        completedReservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -347,7 +347,7 @@ public class ReservationTests
         var completedReservation = activeReservation.Complete();
 
         // Assert
-        var events = completedReservation.GetDomainEvents();
+        var events = completedReservation.DomainEvents;
         events.ShouldNotBeEmpty();
         var completedEvent = events.ShouldHaveSingleItem();
         completedEvent.ShouldBeOfType<ReservationCompleted>();

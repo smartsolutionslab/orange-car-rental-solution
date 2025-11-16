@@ -7,9 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 /// <typeparam name="TId">The type of the entity's identifier (must be a value object).</typeparam>
 public abstract class Entity<TId> where TId : notnull
 {
-    protected Entity()
-    {
-    }
+    protected Entity() { }
 
     protected Entity(TId id)
     {

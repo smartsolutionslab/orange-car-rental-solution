@@ -34,11 +34,17 @@ public class ManufacturerTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData(null)]
-    public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidManufacturer)
+    public void Of_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidManufacturer)
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => Manufacturer.Of(invalidManufacturer));
+    }
+
+    [Fact]
+    public void Of_WithNull_ShouldThrowArgumentException()
+    {
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => Manufacturer.Of(null!));
     }
 
     [Fact]

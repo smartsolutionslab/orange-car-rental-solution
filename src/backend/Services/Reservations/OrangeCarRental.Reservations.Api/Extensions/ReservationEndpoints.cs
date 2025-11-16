@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;

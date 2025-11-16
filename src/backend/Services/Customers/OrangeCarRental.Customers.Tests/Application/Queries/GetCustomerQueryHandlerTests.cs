@@ -8,13 +8,13 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Queries;
 
 public class GetCustomerQueryHandlerTests
 {
-    private readonly Mock<ICustomerRepository> _customerRepositoryMock;
-    private readonly GetCustomerQueryHandler _handler;
+    private readonly Mock<ICustomerRepository> customerRepositoryMock;
+    private readonly GetCustomerQueryHandler handler;
 
     public GetCustomerQueryHandlerTests()
     {
-        _customerRepositoryMock = new Mock<ICustomerRepository>();
-        _handler = new GetCustomerQueryHandler(_customerRepositoryMock.Object);
+        customerRepositoryMock = new Mock<ICustomerRepository>();
+        handler = new GetCustomerQueryHandler(customerRepositoryMock.Object);
     }
 
     [Fact]
@@ -24,12 +24,12 @@ public class GetCustomerQueryHandlerTests
         var customer = CreateTestCustomer();
         var query = new GetCustomerQuery { CustomerIdentifier = customer.Id };
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(customer);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -40,7 +40,7 @@ public class GetCustomerQueryHandlerTests
         result.PhoneNumber.ShouldBe(customer.PhoneNumber.FormattedValue);
         result.Status.ShouldBe(customer.Status.ToString());
 
-        _customerRepositoryMock.Verify(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -50,15 +50,15 @@ public class GetCustomerQueryHandlerTests
         var customerId = CustomerIdentifier.New();
         var query = new GetCustomerQuery { CustomerIdentifier = customerId };
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Customer?)null);
 
         // Act & Assert
         await Should.ThrowAsync<EntityNotFoundException>(() =>
-            _handler.HandleAsync(query, CancellationToken.None));
+            handler.HandleAsync(query, CancellationToken.None));
 
-        _customerRepositoryMock.Verify(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()), Times.Once);
+        customerRepositoryMock.Verify(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -70,13 +70,13 @@ public class GetCustomerQueryHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel();
 
-        _customerRepositoryMock
+        customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(query, cts.Token));
+            handler.HandleAsync(query, cts.Token));
     }
 
     private static Customer CreateTestCustomer()

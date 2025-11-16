@@ -10,11 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 /// </summary>
 public class DistributedApplicationFixture : IAsyncLifetime
 {
-    private DistributedApplication? _app;
+    private DistributedApplication? app;
 
-    public DistributedApplication App => _app
-                                         ?? throw new InvalidOperationException(
-                                             "App not initialized. Call InitializeAsync first.");
+    public DistributedApplication App => app ?? throw new InvalidOperationException("App not initialized. Call InitializeAsync first.");
 
     public async Task InitializeAsync()
     {
@@ -22,20 +20,19 @@ public class DistributedApplicationFixture : IAsyncLifetime
             .CreateAsync<OrangeCarRental_AppHost>();
 
         // Build and start the application
-        _app = await appHost.BuildAsync();
-        await _app.StartAsync();
+        app = await appHost.BuildAsync();
+        await app.StartAsync();
     }
 
     public async Task DisposeAsync()
     {
-        if (_app != null) await _app.DisposeAsync();
+        if (app != null) await app.DisposeAsync();
     }
 
     public HttpClient CreateHttpClient(string resourceName)
     {
-        if (_app == null)
-            throw new InvalidOperationException("App not initialized");
+        if (app == null) throw new InvalidOperationException("App not initialized");
 
-        return _app.CreateHttpClient(resourceName);
+        return app.CreateHttpClient(resourceName);
     }
 }

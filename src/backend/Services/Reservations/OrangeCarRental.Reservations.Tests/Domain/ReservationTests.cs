@@ -1,14 +1,15 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Domain;
 
 public class ReservationTests
 {
-    private readonly Guid _customerId = Guid.NewGuid();
+    private readonly ReservationCustomerId _customerId = ReservationCustomerId.From(Guid.NewGuid());
     private readonly BookingPeriod _period;
     private readonly Money _totalPrice;
-    private readonly Guid _vehicleId = Guid.NewGuid();
+    private readonly ReservationVehicleId _vehicleId = ReservationVehicleId.From(Guid.NewGuid());
 
     public ReservationTests()
     {
@@ -47,7 +48,7 @@ public class ReservationTests
     public void Create_WithEmptyVehicleId_ThrowsArgumentException()
     {
         // Act
-        var act = () => Reservation.Create(Guid.Empty, _customerId, _period, LocationCode.Of("BER-HBF"),
+        var act = () => Reservation.Create(ReservationVehicleId.From(Guid.Empty), _customerId, _period, LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert
@@ -59,7 +60,7 @@ public class ReservationTests
     public void Create_WithEmptyCustomerId_ThrowsArgumentException()
     {
         // Act
-        var act = () => Reservation.Create(_vehicleId, Guid.Empty, _period, LocationCode.Of("BER-HBF"),
+        var act = () => Reservation.Create(_vehicleId, ReservationCustomerId.From(Guid.Empty), _period, LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"), _totalPrice);
 
         // Assert

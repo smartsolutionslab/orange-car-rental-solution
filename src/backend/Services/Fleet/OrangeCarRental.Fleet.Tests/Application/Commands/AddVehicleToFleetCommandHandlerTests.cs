@@ -9,13 +9,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application.Commands;
 
 public class AddVehicleToFleetCommandHandlerTests
 {
-    private readonly Mock<IVehicleRepository> _vehicleRepositoryMock;
-    private readonly AddVehicleToFleetCommandHandler _handler;
+    private readonly Mock<IVehicleRepository> vehicleRepositoryMock = new();
+    private readonly AddVehicleToFleetCommandHandler handler;
 
     public AddVehicleToFleetCommandHandlerTests()
     {
-        _vehicleRepositoryMock = new Mock<IVehicleRepository>();
-        _handler = new AddVehicleToFleetCommandHandler(_vehicleRepositoryMock.Object);
+        handler = new AddVehicleToFleetCommandHandler(vehicleRepositoryMock.Object);
     }
 
     [Fact]
@@ -25,24 +24,24 @@ public class AddVehicleToFleetCommandHandlerTests
         var command = CreateValidCommand();
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
         result.VehicleId.ShouldNotBe(Guid.Empty);
         result.Name.ShouldBe(command.Name.Value);
-        result.CategoryCode.ShouldBe(command.Category.Code);
+        result.Category.ShouldBe(command.Category.Code);
         result.Status.ShouldBe("Available");
         result.LocationCode.ShouldBe(command.CurrentLocation.Code.Value);
-        result.NetAmount.ShouldBe(command.DailyRate.NetAmount);
-        result.VatAmount.ShouldBe(command.DailyRate.VatAmount);
-        result.GrossAmount.ShouldBe(command.DailyRate.GrossAmount);
+        result.DailyRateNet.ShouldBe(command.DailyRate.NetAmount);
+        result.DailyRateVat.ShouldBe(command.DailyRate.VatAmount);
+        result.DailyRateGross.ShouldBe(command.DailyRate.GrossAmount);
 
         addedVehicle.ShouldNotBeNull();
         addedVehicle.Name.ShouldBe(command.Name);
@@ -53,8 +52,8 @@ public class AddVehicleToFleetCommandHandlerTests
         addedVehicle.FuelType.ShouldBe(command.FuelType);
         addedVehicle.TransmissionType.ShouldBe(command.TransmissionType);
 
-        _vehicleRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()), Times.Once);
-        _vehicleRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        vehicleRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()), Times.Once);
+        vehicleRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -77,13 +76,13 @@ public class AddVehicleToFleetCommandHandlerTests
         };
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         addedVehicle.ShouldNotBeNull();
@@ -108,13 +107,13 @@ public class AddVehicleToFleetCommandHandlerTests
         };
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
 
         // Act
-        var result = await _handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
         addedVehicle.ShouldNotBeNull();
@@ -132,10 +131,10 @@ public class AddVehicleToFleetCommandHandlerTests
         var command = CreateValidCommand();
 
         // Act
-        await _handler.HandleAsync(command, CancellationToken.None);
+        await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        _vehicleRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        vehicleRepositoryMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -146,13 +145,13 @@ public class AddVehicleToFleetCommandHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(command, cts.Token));
+            handler.HandleAsync(command, cts.Token));
     }
 
     [Fact]
@@ -176,18 +175,18 @@ public class AddVehicleToFleetCommandHandlerTests
             var command = CreateValidCommand() with { Category = category };
 
             Vehicle? addedVehicle = null;
-            _vehicleRepositoryMock
+            vehicleRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
                 .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
                 .Returns(Task.CompletedTask);
 
             // Act
-            var result = await _handler.HandleAsync(command, CancellationToken.None);
+            var result = await handler.HandleAsync(command, CancellationToken.None);
 
             // Assert
             addedVehicle.ShouldNotBeNull();
             addedVehicle.Category.ShouldBe(category);
-            result.CategoryCode.ShouldBe(category.Code);
+            result.Category.ShouldBe(category.Code);
         }
     }
 
@@ -210,13 +209,13 @@ public class AddVehicleToFleetCommandHandlerTests
             var command = CreateValidCommand() with { FuelType = fuelType };
 
             Vehicle? addedVehicle = null;
-            _vehicleRepositoryMock
+            vehicleRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
                 .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
                 .Returns(Task.CompletedTask);
 
             // Act
-            await _handler.HandleAsync(command, CancellationToken.None);
+            await handler.HandleAsync(command, CancellationToken.None);
 
             // Assert
             addedVehicle.ShouldNotBeNull();

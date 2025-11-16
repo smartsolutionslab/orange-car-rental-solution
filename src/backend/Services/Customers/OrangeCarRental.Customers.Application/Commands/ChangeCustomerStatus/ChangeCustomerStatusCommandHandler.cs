@@ -45,14 +45,13 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         await customers.SaveChangesAsync(cancellationToken);
 
         // Return result
-        return new ChangeCustomerStatusResult
-        {
-            CustomerIdentifier = customer.Id.Value,
-            OldStatus = oldStatus.ToString(),
-            NewStatus = customer.Status.ToString(),
-            Success = true,
-            Message = $"Customer status changed from {oldStatus} to {customer.Status}",
-            UpdatedAtUtc = customer.UpdatedAtUtc
-        };
+        return new ChangeCustomerStatusResult(
+            customer.Id,
+            oldStatus.ToString(),
+            customer.Status.ToString(),
+            true,
+            $"Customer status changed from {oldStatus} to {customer.Status}",
+            customer.UpdatedAtUtc
+        );
     }
 }

@@ -9,6 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj"/>
     <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj"/>
+    <!-- Reference to Customers.Domain for guest reservation value objects only (Email, PhoneNumber, etc.) -->
+    <!-- These are used at the Application layer boundary and immediately converted to primitives -->
+    <ProjectReference Include="..\..\Customers\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
   </ItemGroup>
 
 </Project>

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
@@ -100,8 +101,8 @@ public class ReservationsDataSeeder(
     {
         var period = BookingPeriod.Of(pickupDate, returnDate);
         return Reservation.Create(
-            vehicleId,
-            customerId,
+            ReservationVehicleId.From(vehicleId),
+            ReservationCustomerId.From(customerId),
             period,
             LocationCode.Of(pickupLocationCode),
             LocationCode.Of(dropoffLocationCode),

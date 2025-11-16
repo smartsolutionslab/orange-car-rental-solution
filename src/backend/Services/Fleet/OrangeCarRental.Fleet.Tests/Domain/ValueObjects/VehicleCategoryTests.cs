@@ -111,11 +111,17 @@ public class VehicleCategoryTests
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    [InlineData(null)]
-    public void FromCode_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidCode)
+    public void FromCode_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidCode)
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => VehicleCategory.FromCode(invalidCode));
+    }
+
+    [Fact]
+    public void FromCode_WithNull_ShouldThrowArgumentException()
+    {
+        // Act & Assert
+        Should.Throw<ArgumentException>(() => VehicleCategory.FromCode(null!));
     }
 
     [Fact]

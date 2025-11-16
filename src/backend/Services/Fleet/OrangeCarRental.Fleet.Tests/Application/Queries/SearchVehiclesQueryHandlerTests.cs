@@ -10,13 +10,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application.Queries;
 
 public class SearchVehiclesQueryHandlerTests
 {
-    private readonly Mock<IVehicleRepository> _vehicleRepositoryMock;
-    private readonly SearchVehiclesQueryHandler _handler;
+    private readonly Mock<IVehicleRepository> vehicleRepositoryMock = new();
+    private readonly SearchVehiclesQueryHandler handler;
 
     public SearchVehiclesQueryHandlerTests()
     {
-        _vehicleRepositoryMock = new Mock<IVehicleRepository>();
-        _handler = new SearchVehiclesQueryHandler(_vehicleRepositoryMock.Object);
+        handler = new SearchVehiclesQueryHandler(vehicleRepositoryMock.Object);
     }
 
     [Fact]
@@ -42,14 +41,20 @@ public class SearchVehiclesQueryHandlerTests
             CreateTestVehicle("Audi Q7", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
         };
 
-        var pagedResult = new PagedResult<Vehicle>(vehicles, 2, 1, 10);
+        var pagedResult = new PagedResult<Vehicle>
+        {
+            Items = vehicles,
+            TotalCount = 2,
+            PageNumber = 1,
+            PageSize = 10
+        };
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResult);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -59,7 +64,7 @@ public class SearchVehiclesQueryHandlerTests
         result.PageSize.ShouldBe(10);
         result.TotalPages.ShouldBe(1);
 
-        _vehicleRepositoryMock.Verify(
+        vehicleRepositoryMock.Verify(
             x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -81,14 +86,20 @@ public class SearchVehiclesQueryHandlerTests
             PageSize: 10
         );
 
-        var pagedResult = new PagedResult<Vehicle>(new List<Vehicle>(), 0, 1, 10);
+        var pagedResult = new PagedResult<Vehicle>
+        {
+            Items = new List<Vehicle>(),
+            TotalCount = 0,
+            PageNumber = 1,
+            PageSize = 10
+        };
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResult);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.ShouldNotBeNull();
@@ -115,13 +126,19 @@ public class SearchVehiclesQueryHandlerTests
         );
 
         VehicleSearchParameters? capturedParameters = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .Callback<VehicleSearchParameters, CancellationToken>((param, _) => capturedParameters = param)
-            .ReturnsAsync(new PagedResult<Vehicle>(new List<Vehicle>(), 0, 2, 20));
+            .ReturnsAsync(new PagedResult<Vehicle>
+            {
+                Items = new List<Vehicle>(),
+                TotalCount = 0,
+                PageNumber = 2,
+                PageSize = 20
+            });
 
         // Act
-        await _handler.HandleAsync(query, CancellationToken.None);
+        await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         capturedParameters.ShouldNotBeNull();
@@ -149,13 +166,13 @@ public class SearchVehiclesQueryHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
         // Act & Assert
         await Should.ThrowAsync<OperationCanceledException>(() =>
-            _handler.HandleAsync(query, cts.Token));
+            handler.HandleAsync(query, cts.Token));
     }
 
     [Fact]
@@ -180,14 +197,20 @@ public class SearchVehiclesQueryHandlerTests
             CreateTestVehicle("BMW X5", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
         };
 
-        var pagedResult = new PagedResult<Vehicle>(vehicles, 1, 1, 10);
+        var pagedResult = new PagedResult<Vehicle>
+        {
+            Items = vehicles,
+            TotalCount = 1,
+            PageNumber = 1,
+            PageSize = 10
+        };
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResult);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.Vehicles.Count.ShouldBe(1);
@@ -216,14 +239,20 @@ public class SearchVehiclesQueryHandlerTests
             CreateTestVehicle("BMW X5", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
         };
 
-        var pagedResult = new PagedResult<Vehicle>(vehicles, 1, 1, 10);
+        var pagedResult = new PagedResult<Vehicle>
+        {
+            Items = vehicles,
+            TotalCount = 1,
+            PageNumber = 1,
+            PageSize = 10
+        };
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(pagedResult);
 
         // Act
-        var result = await _handler.HandleAsync(query, CancellationToken.None);
+        var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         result.Vehicles.Count.ShouldBe(1);
@@ -248,13 +277,19 @@ public class SearchVehiclesQueryHandlerTests
         );
 
         VehicleSearchParameters? capturedParameters = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.SearchAsync(It.IsAny<VehicleSearchParameters>(), It.IsAny<CancellationToken>()))
             .Callback<VehicleSearchParameters, CancellationToken>((param, _) => capturedParameters = param)
-            .ReturnsAsync(new PagedResult<Vehicle>(new List<Vehicle>(), 0, 1, 10));
+            .ReturnsAsync(new PagedResult<Vehicle>
+            {
+                Items = new List<Vehicle>(),
+                TotalCount = 0,
+                PageNumber = 1,
+                PageSize = 10
+            });
 
         // Act
-        await _handler.HandleAsync(query, CancellationToken.None);
+        await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
         capturedParameters.ShouldNotBeNull();
