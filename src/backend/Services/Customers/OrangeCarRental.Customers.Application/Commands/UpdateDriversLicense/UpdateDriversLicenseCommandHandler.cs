@@ -16,15 +16,14 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
     /// <param name="command">The update command with new license data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Update result with success status and details.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when customer is not found.</exception>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when customer is not found.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public async Task<UpdateDriversLicenseResult> HandleAsync(
         UpdateDriversLicenseCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load customer
-        var customer = await customers.GetByIdAsync(command.CustomerIdentifier, cancellationToken) ?? throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerIdentifier}' not found.");
+        // Load customer (throws EntityNotFoundException if not found)
+        var customer = await customers.GetByIdAsync(command.CustomerIdentifier, cancellationToken);
 
         // Update driver's license (domain method handles validation and returns new instance)
         customer = customer.UpdateDriversLicense(command.DriversLicense);

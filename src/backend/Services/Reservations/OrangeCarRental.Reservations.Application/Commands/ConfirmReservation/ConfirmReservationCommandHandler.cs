@@ -15,8 +15,8 @@ public sealed class ConfirmReservationCommandHandler(
         ConfirmReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Get existing reservation
-        var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken) ?? throw new InvalidOperationException($"Reservation {command.ReservationId} not found");
+        // Get existing reservation (throws EntityNotFoundException if not found)
+        var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken);
 
         // Confirm the reservation (returns new instance due to immutability)
         var confirmedReservation = reservation.Confirm();

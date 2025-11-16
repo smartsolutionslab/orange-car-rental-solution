@@ -16,15 +16,14 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
     /// <param name="command">The command with new status and reason.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Status change result with old and new status details.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when customer is not found.</exception>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when customer is not found.</exception>
     /// <exception cref="ArgumentException">Thrown when status is invalid or validation fails.</exception>
     public async Task<ChangeCustomerStatusResult> HandleAsync(
         ChangeCustomerStatusCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load customer
-        var customer = await customers.GetByIdAsync(command.CustomerId, cancellationToken) ?? throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerId}' not found.");
+        // Load customer (throws EntityNotFoundException if not found)
+        var customer = await customers.GetByIdAsync(command.CustomerId, cancellationToken);
 
         // Parse and validate new status
         if (!Enum.TryParse<CustomerStatus>(command.NewStatus, true, out var newStatus))
