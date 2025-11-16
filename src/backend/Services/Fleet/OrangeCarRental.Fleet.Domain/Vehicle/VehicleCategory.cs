@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -6,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 ///     Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
 ///     German car rental standard categories.
 /// </summary>
-public readonly record struct VehicleCategory
+public readonly record struct VehicleCategory : IValueObject
 {
     // Standard German car rental categories
     public static readonly VehicleCategory Kleinwagen = new("KLEIN", "Kleinwagen");

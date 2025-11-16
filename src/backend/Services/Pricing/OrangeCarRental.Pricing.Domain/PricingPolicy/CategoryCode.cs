@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 ///     Maps to VehicleCategory from Fleet service.
 /// </summary>
 /// <param name="Value">The category code value.</param>
-public readonly record struct CategoryCode(string Value)
+public readonly record struct CategoryCode(string Value) : IValueObject
 {
     public static CategoryCode Of(string value)
     {

@@ -1,9 +1,11 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
 ///     Strongly-typed identifier for a reservation using time-ordered UUIDs.
 /// </summary>
-public readonly record struct ReservationIdentifier(Guid Value)
+public readonly record struct ReservationIdentifier(Guid Value) : IValueObject
 {
     public static ReservationIdentifier New() => new(Guid.CreateVersion7());
 

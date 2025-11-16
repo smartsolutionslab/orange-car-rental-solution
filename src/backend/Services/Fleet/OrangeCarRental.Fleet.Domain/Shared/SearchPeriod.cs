@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
 ///     Represents a date range for searching vehicle availability.
 ///     Uses DateOnly for semantic correctness (date-based searches without time components).
 /// </summary>
-public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnDate)
+public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnDate) : IValueObject
 {
     public int Days => ReturnDate.DayNumber - PickupDate.DayNumber + 1;
 

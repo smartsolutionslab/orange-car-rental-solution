@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Represents a German postal code (5 digits, e.g., "10115").
 /// </summary>
 /// <param name="Value">The postal code value.</param>
-public readonly record struct PostalCode(string Value)
+public readonly record struct PostalCode(string Value) : IValueObject
 {
     public static PostalCode Of(string postalCode)
     {

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 ///     References a location in the Fleet service where vehicles can be picked up or dropped off.
 /// </summary>
 /// <param name="Value">The location code value.</param>
-public readonly record struct LocationCode(string Value)
+public readonly record struct LocationCode(string Value) : IValueObject
 {
     /// <summary>
     ///     Creates a new location code.

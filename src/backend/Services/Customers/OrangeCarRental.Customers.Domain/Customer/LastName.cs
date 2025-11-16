@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Names are trimmed and must be between 1 and 100 characters.
 /// </summary>
 /// <param name="Value">The last name value.</param>
-public readonly record struct LastName(string Value)
+public readonly record struct LastName(string Value) : IValueObject
 {
     /// <summary>
     ///     Creates a last name value object from a string.

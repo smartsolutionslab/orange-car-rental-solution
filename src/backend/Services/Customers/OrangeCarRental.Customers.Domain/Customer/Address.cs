@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -10,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// <param name="City">City name (value object).</param>
 /// <param name="PostalCode">Postal code (value object).</param>
 /// <param name="Country">Country name.</param>
-public readonly record struct Address(string Street, City City, PostalCode PostalCode, string Country)
+public readonly record struct Address(string Street, City City, PostalCode PostalCode, string Country) : IValueObject
 {
     /// <summary>
     ///     Gets the full formatted address.

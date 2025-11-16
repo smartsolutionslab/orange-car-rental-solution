@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Represents the display name/title of a rental location (e.g., "Berlin Hauptbahnhof").
 /// </summary>
 /// <param name="Value">The location name value.</param>
-public readonly record struct LocationName(string Value)
+public readonly record struct LocationName(string Value) : IValueObject
 {
     public static LocationName Of(string name)
     {

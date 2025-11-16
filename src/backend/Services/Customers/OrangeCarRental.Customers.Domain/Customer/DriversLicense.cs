@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -14,7 +15,7 @@ public readonly record struct DriversLicense(
     string LicenseNumber,
     string IssueCountry,
     DateOnly IssueDate,
-    DateOnly ExpiryDate)
+    DateOnly ExpiryDate) : IValueObject
 {
     /// <summary>
     ///     Creates a driver's license value object.

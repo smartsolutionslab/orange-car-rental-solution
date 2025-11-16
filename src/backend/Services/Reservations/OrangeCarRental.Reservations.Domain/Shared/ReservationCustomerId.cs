@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 /// <summary>
 ///     Value object representing a customer ID within the Reservations bounded context.
 ///     This is an internal representation, not a reference to Customers.Domain.Customer.CustomerIdentifier.
 /// </summary>
-public readonly record struct ReservationCustomerId(Guid Value)
+public readonly record struct ReservationCustomerId(Guid Value) : IValueObject
 {
     /// <summary>
     ///     Creates a new customer ID from a GUID.

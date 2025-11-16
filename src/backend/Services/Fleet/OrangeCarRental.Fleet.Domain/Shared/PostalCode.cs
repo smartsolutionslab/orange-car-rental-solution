@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
 ///     Postal code value object.
 ///     Represents a German postal code (5 digits, e.g., "10557").
 /// </summary>
-public readonly record struct PostalCode(string Value)
+public readonly record struct PostalCode(string Value) : IValueObject
 {
     public static PostalCode Empty => new(string.Empty);
 

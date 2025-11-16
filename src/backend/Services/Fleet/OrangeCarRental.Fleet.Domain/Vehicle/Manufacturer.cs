@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -6,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 ///     Represents the manufacturer/brand of a vehicle (e.g., BMW, Volkswagen, Mercedes-Benz).
 /// </summary>
 /// <param name="Value">The manufacturer name value.</param>
-public readonly record struct Manufacturer(string Value)
+public readonly record struct Manufacturer(string Value) : IValueObject
 {
     public static Manufacturer Of(string value)
     {

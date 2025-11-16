@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 ///     Strongly-typed identifier for Customer aggregate.
 ///     Uses GUID v7 for time-ordered identifiers with better database performance.
 /// </summary>
-public readonly record struct CustomerIdentifier(Guid Value)
+public readonly record struct CustomerIdentifier(Guid Value) : IValueObject
 {
 
     /// <summary>

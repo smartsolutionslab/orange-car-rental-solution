@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
 ///     Represents the manufacturing year of a vehicle.
 ///     Typical rental vehicles are from recent years (e.g., 1990-current year).
 /// </summary>
-public readonly record struct ManufacturingYear(int Value)
+public readonly record struct ManufacturingYear(int Value) : IValueObject
 {
     public static ManufacturingYear Of(int value)
     {

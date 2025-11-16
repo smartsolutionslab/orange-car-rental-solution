@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
 ///     Represents the seating capacity of a vehicle.
 ///     Typical rental vehicles have 2-9 seats.
 /// </summary>
-public readonly record struct SeatingCapacity
+public readonly record struct SeatingCapacity : IValueObject
 {
     private SeatingCapacity(int value)
     {

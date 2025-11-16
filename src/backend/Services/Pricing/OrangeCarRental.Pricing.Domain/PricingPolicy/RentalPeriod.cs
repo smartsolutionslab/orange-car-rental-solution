@@ -1,9 +1,11 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
 ///     Represents a rental period for price calculation.
 /// </summary>
-public readonly record struct RentalPeriod
+public readonly record struct RentalPeriod : IValueObject
 {
     private RentalPeriod(DateOnly pickupDate, DateOnly returnDate)
     {

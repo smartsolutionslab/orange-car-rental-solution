@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
 ///     Birth date value object with German market validation.
 ///     Ensures valid date of birth for customer registration.
 /// </summary>
-public readonly record struct BirthDate(DateOnly Value)
+public readonly record struct BirthDate(DateOnly Value) : IValueObject
 {
     /// <summary>
     ///     Gets the customer's current age in years.

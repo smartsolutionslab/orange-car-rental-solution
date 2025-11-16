@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
 ///     Address value object.
 ///     Represents a physical address with street, city, and postal code.
 /// </summary>
-public readonly record struct Address(Street Street, City City, PostalCode PostalCode)
+public readonly record struct Address(Street Street, City City, PostalCode PostalCode) : IValueObject
 {
     /// <summary>
     ///     Creates an empty address (for cases where address is not available)

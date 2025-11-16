@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 ///     Email addresses are stored in lowercase for consistency.
 /// </summary>
 /// <param name="Value">The email address value.</param>
-public readonly record struct EmailAddress(string Value)
+public readonly record struct EmailAddress(string Value) : IValueObject
 {
     public static EmailAddress Of(string value)
     {

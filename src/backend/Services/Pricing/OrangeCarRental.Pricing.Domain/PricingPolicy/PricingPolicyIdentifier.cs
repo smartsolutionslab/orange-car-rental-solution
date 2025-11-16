@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
 ///     Strongly-typed identifier for PricingPolicy aggregate.
 ///     Uses GUID v7 for time-ordered identifiers with better database performance.
 /// </summary>
-public readonly record struct PricingPolicyIdentifier(Guid Value)
+public readonly record struct PricingPolicyIdentifier(Guid Value) : IValueObject
 {
     /// <summary>
     ///     Creates a new unique pricing policy identifier using GUID v7.

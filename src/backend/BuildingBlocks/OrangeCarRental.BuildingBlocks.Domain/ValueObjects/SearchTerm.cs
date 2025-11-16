@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 ///     Represents a user-provided search string with validation and normalization.
 /// </summary>
 /// <param name="Value">The search term value.</param>
-public readonly record struct SearchTerm(string Value)
+public readonly record struct SearchTerm(string Value) : IValueObject
 {
     /// <summary>
     ///     Creates a search term value object with validation.

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -6,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 ///     Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
 /// </summary>
 /// <param name="Value">The vehicle model value.</param>
-public readonly record struct VehicleModel(string Value)
+public readonly record struct VehicleModel(string Value) : IValueObject
 {
     public static VehicleModel Of(string value)
     {

@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
 ///     Represents the rental period with pickup and return dates.
 ///     Validates that the period is valid and meets minimum/maximum rental duration requirements.
 /// </summary>
-public readonly record struct BookingPeriod(DateOnly PickupDate, DateOnly ReturnDate)
+public readonly record struct BookingPeriod(DateOnly PickupDate, DateOnly ReturnDate) : IValueObject
 {
     /// <summary>
     ///     Number of rental days (minimum 1 day).

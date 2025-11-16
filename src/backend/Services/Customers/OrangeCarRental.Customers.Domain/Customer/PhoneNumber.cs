@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -8,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Stored in normalized format: +49XXXXXXXXXX
 /// </summary>
 /// <param name="Value">The phone number value.</param>
-public readonly record struct PhoneNumber(string Value)
+public readonly record struct PhoneNumber(string Value) : IValueObject
 {
     /// <summary>
     ///     Gets a formatted display version of the phone number.

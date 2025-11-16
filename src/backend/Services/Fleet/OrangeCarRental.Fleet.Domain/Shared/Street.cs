@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
@@ -6,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Street address value object.
 ///     Represents the street portion of an address (e.g., "Europaplatz 1").
 /// </summary>
-public readonly record struct Street(string Value)
+public readonly record struct Street(string Value) : IValueObject
 {
     public static Street Empty => new(string.Empty);
 

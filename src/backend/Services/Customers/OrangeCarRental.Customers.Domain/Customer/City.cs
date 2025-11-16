@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Represents a city name (e.g., "Berlin", "München").
 /// </summary>
 /// <param name="Value">The city name value.</param>
-public readonly record struct City(string Value)
+public readonly record struct City(string Value) : IValueObject
 {
     public static City Of(string city)
     {

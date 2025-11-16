@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 /// <summary>
 ///     Value object representing a vehicle category within the Reservations bounded context.
 ///     Maps to categories from the Fleet service but is defined locally for context autonomy.
 /// </summary>
-public readonly record struct ReservationVehicleCategory(string Code)
+public readonly record struct ReservationVehicleCategory(string Code) : IValueObject
 {
     /// <summary>
     ///     Creates a vehicle category from a code string.

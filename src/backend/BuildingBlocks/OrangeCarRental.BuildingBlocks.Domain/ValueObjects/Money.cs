@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// <param name="NetAmount">Net amount (before VAT).</param>
 /// <param name="VatAmount">VAT amount.</param>
 /// <param name="Currency">Currency code (ISO 4217).</param>
-public readonly record struct Money(decimal NetAmount, decimal VatAmount, Currency Currency)
+public readonly record struct Money(decimal NetAmount, decimal VatAmount, Currency Currency) : IValueObject
 {
     /// <summary>
     ///     Gross amount (net + VAT).

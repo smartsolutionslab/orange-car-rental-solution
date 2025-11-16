@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Email addresses are stored in lowercase for consistency and case-insensitive comparison.
 /// </summary>
 /// <param name="Value">The email address value.</param>
-public readonly record struct Email(string Value)
+public readonly record struct Email(string Value) : IValueObject
 {
     /// <summary>
     ///     Creates an email value object from a string.

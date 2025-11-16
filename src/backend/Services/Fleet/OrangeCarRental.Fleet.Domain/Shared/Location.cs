@@ -1,10 +1,12 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
 ///     Rental station location value object.
 ///     Represents a German city/station where vehicles can be picked up or returned.
 /// </summary>
-public readonly record struct Location(LocationCode Code, LocationName Name, Address Address)
+public readonly record struct Location(LocationCode Code, LocationName Name, Address Address) : IValueObject
 {
     // Common German rental locations
     public static readonly Location BerlinHauptbahnhof = Of(

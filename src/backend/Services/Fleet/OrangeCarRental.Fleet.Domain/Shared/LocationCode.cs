@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 ///     Represents a unique identifier for a rental location (e.g., "BER-HBF", "MUC-FLG").
 /// </summary>
 /// <param name="Value">The location code value.</param>
-public readonly record struct LocationCode(string Value)
+public readonly record struct LocationCode(string Value) : IValueObject
 {
     public static LocationCode Of(string code)
     {
