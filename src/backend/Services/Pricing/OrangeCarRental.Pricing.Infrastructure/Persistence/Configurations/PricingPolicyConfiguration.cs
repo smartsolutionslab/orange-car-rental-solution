@@ -20,7 +20,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("PricingPolicyId")
             .HasConversion(
                 id => id.Value,
-                value => PricingPolicyIdentifier.Of(value))
+                value => PricingPolicyIdentifier.From(value))
             .IsRequired();
 
         // CategoryCode value object
