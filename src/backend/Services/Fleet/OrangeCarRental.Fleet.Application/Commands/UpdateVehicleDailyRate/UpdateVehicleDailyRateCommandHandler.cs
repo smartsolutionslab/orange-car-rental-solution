@@ -16,13 +16,13 @@ public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehi
     /// <param name="command">The command with vehicle ID and new daily rate.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new rate details.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when vehicle is not found.</exception>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when vehicle is not found.</exception>
     public async Task<UpdateVehicleDailyRateResult> HandleAsync(UpdateVehicleDailyRateCommand command, CancellationToken cancellationToken = default)
     {
         var (vehicleId, newDailyRate) = command;
-        // Load vehicle
-        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken)
-            ?? throw new InvalidOperationException($"Vehicle with ID '{vehicleId}' not found.");
+
+        // Load vehicle (throws EntityNotFoundException if not found)
+        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
 
         var oldRate = vehicle.DailyRate;
 

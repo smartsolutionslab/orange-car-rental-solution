@@ -16,15 +16,14 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
     /// <param name="command">The update command with new profile data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Update result with success status and details.</returns>
-    /// <exception cref="InvalidOperationException">Thrown when customer is not found.</exception>
+    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when customer is not found.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public async Task<UpdateCustomerProfileResult> HandleAsync(UpdateCustomerProfileCommand command, CancellationToken cancellationToken = default)
     {
         var (customerId, name, phoneNumber, address ) = command;
 
-        // Load customer
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken)
-                       ?? throw new InvalidOperationException($"Customer with ID '{command.CustomerId}' not found.");
+        // Load customer (throws EntityNotFoundException if not found)
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         // Update profile (domain method handles validation and returns new instance)
         customer = customer.UpdateProfile(name, phoneNumber, address);
