@@ -21,14 +21,14 @@ public readonly record struct VehicleCategory : IValueObject
 
     private static readonly Dictionary<string, VehicleCategory> categories = new()
     {
-        { "KLEIN", Kleinwagen },
-        { "KOMPAKT", Kompaktklasse },
-        { "MITTEL", Mittelklasse },
-        { "OBER", Oberklasse },
-        { "SUV", SUV },
-        { "KOMBI", Kombi },
-        { "TRANS", Transporter },
-        { "LUXUS", Luxus }
+        { Kleinwagen.Code, Kleinwagen },
+        { Kompaktklasse.Code, Kompaktklasse },
+        { Mittelklasse.Code, Mittelklasse },
+        { Oberklasse.Code, Oberklasse },
+        { SUV.Code, SUV },
+        { Kombi.Code, Kombi },
+        { Transporter.Code, Transporter },
+        { Luxus.Code, Luxus }
     };
 
     private VehicleCategory(string code, string name)
