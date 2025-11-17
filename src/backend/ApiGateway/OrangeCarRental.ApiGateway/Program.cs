@@ -17,17 +17,26 @@ var fleetApiUrl = builder.Configuration["FLEET_API_URL"] ?? "http://localhost:50
 var reservationsApiUrl = builder.Configuration["RESERVATIONS_API_URL"] ?? "http://localhost:5001";
 var pricingApiUrl = builder.Configuration["PRICING_API_URL"] ?? "http://localhost:5002";
 var customersApiUrl = builder.Configuration["CUSTOMERS_API_URL"] ?? "http://localhost:5003";
+var paymentsApiUrl = builder.Configuration["PAYMENTS_API_URL"] ?? "http://localhost:5004";
+var notificationsApiUrl = builder.Configuration["NOTIFICATIONS_API_URL"] ?? "http://localhost:5005";
+var locationsApiUrl = builder.Configuration["LOCATIONS_API_URL"] ?? "http://localhost:5006";
 
 Log.Information("Fleet API URL: {FleetApiUrl}", fleetApiUrl);
 Log.Information("Reservations API URL: {ReservationsApiUrl}", reservationsApiUrl);
 Log.Information("Pricing API URL: {PricingApiUrl}", pricingApiUrl);
 Log.Information("Customers API URL: {CustomersApiUrl}", customersApiUrl);
+Log.Information("Payments API URL: {PaymentsApiUrl}", paymentsApiUrl);
+Log.Information("Notifications API URL: {NotificationsApiUrl}", notificationsApiUrl);
+Log.Information("Locations API URL: {LocationsApiUrl}", locationsApiUrl);
 
 // Update configuration with actual URLs
 builder.Configuration["ReverseProxy:Clusters:fleet-cluster:Destinations:destination1:Address"] = fleetApiUrl;
 builder.Configuration["ReverseProxy:Clusters:reservations-cluster:Destinations:destination1:Address"] = reservationsApiUrl;
 builder.Configuration["ReverseProxy:Clusters:pricing-cluster:Destinations:destination1:Address"] = pricingApiUrl;
 builder.Configuration["ReverseProxy:Clusters:customers-cluster:Destinations:destination1:Address"] = customersApiUrl;
+builder.Configuration["ReverseProxy:Clusters:payments-cluster:Destinations:destination1:Address"] = paymentsApiUrl;
+builder.Configuration["ReverseProxy:Clusters:notifications-cluster:Destinations:destination1:Address"] = notificationsApiUrl;
+builder.Configuration["ReverseProxy:Clusters:locations-cluster:Destinations:destination1:Address"] = locationsApiUrl;
 
 // Add YARP Reverse Proxy with configuration
 builder.Services.AddReverseProxy()

@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj"/>
+  </ItemGroup>
+
 </Project>
