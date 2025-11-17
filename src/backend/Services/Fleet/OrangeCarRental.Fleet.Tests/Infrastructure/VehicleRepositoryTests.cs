@@ -6,6 +6,7 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 using Testcontainers.MsSql;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
@@ -263,21 +264,17 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         var category = VehicleCategory.FromCode(categoryCode);
         var location = Location.Of(locationCode, "Test City");
-        var currency = Currency.Of("EUR");
+        var dailyRateNet = dailyRateGross / 1.19m; // Convert gross to net (19% VAT)
 
-        // Create money from gross amount
-        var dailyRate = Money.FromGross(dailyRateGross, 0.19m, currency);
-
-        var vehicle = Vehicle.From(
-            VehicleName.Of(name),
-            category,
-            location,
-            dailyRate,
-            SeatingCapacity.Of(seats),
-            fuelType,
-            TransmissionType.Manual
-        );
-        vehicle.SetLicensePlate($"B-{Guid.NewGuid().ToString()[..6].ToUpper()}");
-        return vehicle;
+        return VehicleBuilder.Default()
+            .WithName(name)
+            .WithCategory(category)
+            .AtLocation(location)
+            .WithDailyRate(dailyRateNet)
+            .WithSeats(seats)
+            .WithFuelType(fuelType)
+            .WithTransmission(TransmissionType.Manual)
+            .WithLicensePlate($"B-{Guid.NewGuid().ToString()[..6].ToUpper()}")
+            .Build();
     }
 }
