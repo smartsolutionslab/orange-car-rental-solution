@@ -3,6 +3,7 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.Customers.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Queries;
 
@@ -81,16 +82,6 @@ public class GetCustomerQueryHandlerTests
 
     private static Customer CreateTestCustomer()
     {
-        var name = CustomerName.Of("Max", "Mustermann", Salutation.Herr);
-        var email = Email.Of("max.mustermann@example.com");
-        var phone = PhoneNumber.Of("0151 12345678");
-        var birthDate = BirthDate.Of(new DateOnly(1990, 1, 1));
-        var address = Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland");
-
-        var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-5));
-        var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));
-        var license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
-
-        return Customer.Register(name, email, phone, birthDate, address, license);
+        return CustomerBuilder.MaxMustermann().Build();
     }
 }
