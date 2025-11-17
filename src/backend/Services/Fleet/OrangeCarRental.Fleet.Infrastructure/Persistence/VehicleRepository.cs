@@ -80,19 +80,15 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
                 searchPeriod,
                 cancellationToken);
 
-            var bookedIdsSet = bookedVehicleIds.ToHashSet();
-
-            // Get all matching vehicles and filter in memory
-            var allVehicles = await query.ToListAsync(cancellationToken);
-            var availableVehicles = allVehicles
-                .Where(v => !bookedIdsSet.Contains(v.Id))
-                .ToList();
-
-            // Apply pagination for in-memory collection
-            return availableVehicles.ToPagedResult(parameters);
+            // Apply exclusion filter at database level - NOT in memory
+            if (bookedVehicleIds.Count > 0)
+            {
+                var bookedIdsSet = bookedVehicleIds.ToHashSet();
+                query = query.Where(v => !bookedIdsSet.Contains(v.Id));
+            }
         }
 
-        // Get total count and apply pagination for queryable
+        // Get total count and apply pagination at database level for all queries
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
             .Skip(parameters.Skip)
