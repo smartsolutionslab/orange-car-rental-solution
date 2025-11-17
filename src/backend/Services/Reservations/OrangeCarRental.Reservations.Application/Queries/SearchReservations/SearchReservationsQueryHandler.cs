@@ -69,8 +69,8 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
     {
         return new ReservationDto(
             reservation.Id.Value,
-            reservation.VehicleId.Value,
-            reservation.CustomerId.Value,
+            reservation.VehicleIdentifier.Value,
+            reservation.CustomerIdentifier.Value,
             reservation.Period.PickupDate,
             reservation.Period.ReturnDate,
             reservation.PickupLocationCode.Value,

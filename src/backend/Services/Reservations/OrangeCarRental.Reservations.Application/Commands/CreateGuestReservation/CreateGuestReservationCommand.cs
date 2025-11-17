@@ -13,8 +13,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Uses value objects for type safety and early validation.
 /// </summary>
 public sealed record CreateGuestReservationCommand(
-    ReservationVehicleId VehicleId,
-    ReservationVehicleCategory CategoryCode,
+    VehicleIdentifier VehicleIdentifier,
+    VehicleCategory CategoryCode,
     BookingPeriod Period,
     LocationCode PickupLocationCode,
     LocationCode DropoffLocationCode,

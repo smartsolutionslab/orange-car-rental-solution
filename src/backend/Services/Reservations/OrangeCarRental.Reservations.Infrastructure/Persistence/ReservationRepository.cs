@@ -47,11 +47,11 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         // Apply filters
         if (status != null) query = query.Where(r => r.Status == status);
 
-        if (customerId.HasValue) query = query.Where(r => r.CustomerId == customerId.Value);
+        if (customerId.HasValue) query = query.Where(r => r.CustomerIdentifier == customerId.Value);
 
         // Note: customerName filter requires denormalized customer data (not yet implemented)
 
-        if (vehicleId.HasValue) query = query.Where(r => r.VehicleId == vehicleId.Value);
+        if (vehicleId.HasValue) query = query.Where(r => r.VehicleIdentifier == vehicleId.Value);
 
         // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
 
@@ -140,8 +140,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         await context.SaveChangesAsync(cancellationToken);
 
     public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
-        DateOnly pickupDate,
-        DateOnly returnDate,
+       BookingPeriod period,
         CancellationToken cancellationToken = default)
     {
         // Get all reservations that overlap with the requested period
@@ -152,9 +151,9 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
                 (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
                 // Period overlap check: reservation period overlaps if:
                 // reservation pickup <= requested return AND reservation return >= requested pickup
-                r.Period.PickupDate <= returnDate &&
-                r.Period.ReturnDate >= pickupDate)
-            .Select(r => r.VehicleId.Value) // Extract Guid from value object
+                r.Period.PickupDate <=  period.ReturnDate &&
+                r.Period.ReturnDate >= period.PickupDate)
+            .Select(r => r.VehicleIdentifier.Value) // Extract Guid from value object
             .Distinct()
             .ToListAsync(cancellationToken);
 

@@ -1,5 +1,7 @@
 using System.Text.Json;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Services;
 
@@ -9,32 +11,27 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Services;
 /// </summary>
 public sealed class ReservationService(HttpClient httpClient) : IReservationService
 {
-    private readonly JsonSerializerOptions _jsonOptions = new()
-    {
-        PropertyNameCaseInsensitive = true
-    };
+    private readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
-    public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
-        DateOnly pickupDate,
-        DateOnly returnDate,
+    public async Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(
+        SearchPeriod period,
         CancellationToken cancellationToken = default)
     {
         // Call Reservations API availability endpoint
-        var url = $"/api/reservations/availability?pickupDate={pickupDate:yyyy-MM-dd}&returnDate={returnDate:yyyy-MM-dd}";
+        var url = $"/api/reservations/availability?pickupDate={period.PickupDate:yyyy-MM-dd}&returnDate={period.ReturnDate:yyyy-MM-dd}";
         var response = await httpClient.GetAsync(url, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new InvalidOperationException(
-                $"Failed to get vehicle availability from Reservations API. Status: {response.StatusCode}, Error: {errorContent}");
+            throw new InvalidOperationException($"Failed to get vehicle availability from Reservations API. Status: {response.StatusCode}, Error: {errorContent}");
         }
 
         // Deserialize response
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var result = JsonSerializer.Deserialize<VehicleAvailabilityResponse>(responseJson, _jsonOptions);
+        var result = JsonSerializer.Deserialize<VehicleAvailabilityResponse>(responseJson, jsonOptions);
 
-        return result?.BookedVehicleIds ?? Array.Empty<Guid>();
+        return result?.BookedVehicleIds.Select(id => VehicleIdentifier.From(id)).ToArray() ?? [];
     }
 
     /// <summary>

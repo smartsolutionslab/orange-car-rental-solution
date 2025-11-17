@@ -12,11 +12,11 @@ public sealed record SearchReservationsQuery(
     string? Status = null,
 
     // Customer filters
-    ReservationCustomerId? CustomerId = null,
+    CustomerIdentifier? CustomerId = null,
     string? CustomerName = null,
 
     // Vehicle filters
-    ReservationVehicleId? VehicleId = null,
+    VehicleIdentifier? VehicleId = null,
     string? CategoryCode = null,
 
     // Location filter

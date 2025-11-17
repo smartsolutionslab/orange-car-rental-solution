@@ -6,14 +6,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 ///     Value object representing a vehicle category within the Reservations bounded context.
 ///     Maps to categories from the Fleet service but is defined locally for context autonomy.
 /// </summary>
-public readonly record struct ReservationVehicleCategory(string Code) : IValueObject
+public readonly record struct VehicleCategory(string Code) : IValueObject
 {
     /// <summary>
     ///     Creates a vehicle category from a code string.
     /// </summary>
     /// <param name="code">The category code.</param>
     /// <returns>A new ReservationVehicleCategory instance.</returns>
-    public static ReservationVehicleCategory From(string code)
+    public static VehicleCategory From(string code)
     {
         if (string.IsNullOrWhiteSpace(code))
             throw new ArgumentException("Category code cannot be empty", nameof(code));
@@ -23,39 +23,39 @@ public readonly record struct ReservationVehicleCategory(string Code) : IValueOb
 
         var value = code.ToUpperInvariant();
 
-        return new ReservationVehicleCategory(value);
+        return new VehicleCategory(value);
     }
 
     // Predefined categories (matching Fleet service but owned by Reservations context)
 
     /// <summary>Kleinwagen (Small car)</summary>
-    public static readonly ReservationVehicleCategory Kleinwagen = From("KLEIN");
+    public static readonly VehicleCategory Kleinwagen = From("KLEIN");
 
     /// <summary>Kompaktklasse (Compact)</summary>
-    public static readonly ReservationVehicleCategory Kompaktklasse = From("KOMPAKT");
+    public static readonly VehicleCategory Kompaktklasse = From("KOMPAKT");
 
     /// <summary>Mittelklasse (Mid-size)</summary>
-    public static readonly ReservationVehicleCategory Mittelklasse = From("MITTEL");
+    public static readonly VehicleCategory Mittelklasse = From("MITTEL");
 
     /// <summary>Oberklasse (Premium)</summary>
-    public static readonly ReservationVehicleCategory Oberklasse = From("OBER");
+    public static readonly VehicleCategory Oberklasse = From("OBER");
 
     /// <summary>SUV</summary>
-    public static readonly ReservationVehicleCategory SUV = From("SUV");
+    public static readonly VehicleCategory SUV = From("SUV");
 
     /// <summary>Kombi (Estate)</summary>
-    public static readonly ReservationVehicleCategory Kombi = From("KOMBI");
+    public static readonly VehicleCategory Kombi = From("KOMBI");
 
     /// <summary>Transporter (Van)</summary>
-    public static readonly ReservationVehicleCategory Transporter = From("TRANS");
+    public static readonly VehicleCategory Transporter = From("TRANS");
 
     /// <summary>Luxus (Luxury)</summary>
-    public static readonly ReservationVehicleCategory Luxus = From("LUXUS");
+    public static readonly VehicleCategory Luxus = From("LUXUS");
 
     /// <summary>
     ///     Implicit conversion to string for database mapping and serialization.
     /// </summary>
-    public static implicit operator string(ReservationVehicleCategory category) => category.Code;
+    public static implicit operator string(VehicleCategory category) => category.Code;
 
     /// <summary>
     ///     Returns the category code.

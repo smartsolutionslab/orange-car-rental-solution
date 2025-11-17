@@ -17,7 +17,7 @@ public sealed class PricingService(HttpClient httpClient) : IPricingService
     };
 
     public async Task<PriceCalculationDto> CalculatePriceAsync(
-        ReservationVehicleCategory category,
+        VehicleCategory category,
         BookingPeriod period,
         LocationCode? location = null,
         CancellationToken cancellationToken = default)

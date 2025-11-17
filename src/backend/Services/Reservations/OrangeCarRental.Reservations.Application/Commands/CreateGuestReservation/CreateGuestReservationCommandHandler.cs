@@ -56,7 +56,7 @@ public sealed class CreateGuestReservationCommandHandler(
         // Step 3: Create the reservation aggregate with the new customer ID
         var reservation = Reservation.Create(
             vehicleId,
-            ReservationCustomerId.From(customerId),
+            CustomerIdentifier.From(customerId),
             bookingPeriod,
             pickupLocationCode,
             dropoffLocationCode,

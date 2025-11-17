@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 public interface IPricingService
 {
     Task<PriceCalculationDto> CalculatePriceAsync(
-        ReservationVehicleCategory category,
+        VehicleCategory category,
         BookingPeriod period,
         LocationCode? location = null,
         CancellationToken cancellationToken = default);

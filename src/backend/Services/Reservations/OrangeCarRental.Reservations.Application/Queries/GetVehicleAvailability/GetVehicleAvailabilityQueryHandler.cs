@@ -15,8 +15,7 @@ public sealed class GetVehicleAvailabilityQueryHandler(IReservationRepository re
         CancellationToken cancellationToken = default)
     {
         var bookedVehicleIds = await reservations.GetBookedVehicleIdsAsync(
-            query.PickupDate,
-            query.ReturnDate,
+            BookingPeriod.Of(query.PickupDate, query.ReturnDate),
             cancellationToken);
 
         return new GetVehicleAvailabilityResult(

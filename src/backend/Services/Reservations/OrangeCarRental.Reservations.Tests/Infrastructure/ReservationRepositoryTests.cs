@@ -42,8 +42,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
     private Reservation CreateTestReservation()
     {
-        var vehicleId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
+        var vehicleId = VehicleIdentifier.New();
+        var customerId = CustomerIdentifier.New();
         var pickupDate = DateTime.UtcNow.Date.AddDays(7);
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
@@ -51,8 +51,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
-            ReservationVehicleId.From(vehicleId),
-            ReservationCustomerId.From(customerId),
+            vehicleId,
+            customerId,
             period,
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -77,8 +77,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Assert
         result.ShouldNotBeNull();
         result!.Id.ShouldBe(reservation.Id);
-        result.VehicleId.ShouldBe(reservation.VehicleId);
-        result.CustomerId.ShouldBe(reservation.CustomerId);
+        result.VehicleIdentifier.ShouldBe(reservation.VehicleIdentifier);
+        result.CustomerIdentifier.ShouldBe(reservation.CustomerIdentifier);
     }
 
     [Fact]
@@ -203,8 +203,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
             period,
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -322,8 +322,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
             period,
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),

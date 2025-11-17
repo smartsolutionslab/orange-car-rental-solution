@@ -1,3 +1,6 @@
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 
 /// <summary>
@@ -9,12 +12,8 @@ public interface IReservationService
     /// <summary>
     ///     Gets list of vehicle IDs that are booked (unavailable) during the specified period.
     /// </summary>
-    /// <param name="pickupDate">Start date of the rental period.</param>
-    /// <param name="returnDate">End date of the rental period.</param>
+    /// <param name="period">Start and end date of the rental period.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of vehicle IDs that have confirmed or active reservations during the period.</returns>
-    Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
-        DateOnly pickupDate,
-        DateOnly returnDate,
-        CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(SearchPeriod period, CancellationToken cancellationToken = default);
 }

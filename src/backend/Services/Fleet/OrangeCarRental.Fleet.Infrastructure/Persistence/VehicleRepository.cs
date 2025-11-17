@@ -77,8 +77,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
 
             // Get booked vehicle IDs via Reservations API (maintains bounded context boundaries)
             var bookedVehicleIds = await reservationService.GetBookedVehicleIdsAsync(
-                searchPeriod.PickupDate,
-                searchPeriod.ReturnDate,
+                searchPeriod,
                 cancellationToken);
 
             var bookedIdsSet = bookedVehicleIds.ToHashSet();
@@ -86,7 +85,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
             // Get all matching vehicles and filter in memory
             var allVehicles = await query.ToListAsync(cancellationToken);
             var availableVehicles = allVehicles
-                .Where(v => !bookedIdsSet.Contains(v.Id.Value))
+                .Where(v => !bookedIdsSet.Contains(v.Id))
                 .ToList();
 
             // Apply pagination for in-memory collection

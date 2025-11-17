@@ -1,6 +1,4 @@
 using Moq;
-using Shouldly;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
@@ -39,7 +37,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
             It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -174,7 +172,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -226,7 +224,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -254,7 +252,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.CustomerId.Value.ShouldBe(customerId);
+        capturedReservation!.CustomerIdentifier.Value.ShouldBe(customerId);
     }
 
     [Fact]
@@ -275,7 +273,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.VehicleId.ShouldBe(command.VehicleId);
+        capturedReservation!.VehicleIdentifier.ShouldBe(command.VehicleIdentifier);
     }
 
     [Fact]
@@ -352,7 +350,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -386,7 +384,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Assert
         pricingServiceMock.Verify(
             s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()),
@@ -405,7 +403,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
@@ -435,7 +433,7 @@ public class CreateGuestReservationCommandHandlerTests
     public void HandleAsync_WithEmptyVehicleId_ThrowsArgumentException()
     {
         // Arrange & Act - Exception now thrown during value object construction
-        var act = () => CreateValidCommand() with { VehicleId = ReservationVehicleId.From(Guid.Empty) };
+        var act = () => CreateValidCommand() with { VehicleIdentifier = VehicleIdentifier.From(Guid.Empty) };
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
@@ -459,7 +457,10 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange & Act
         var act = () => CreateValidCommand() with
         {
-            Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(10), DateTime.UtcNow.Date.AddDays(5))
+            Period = BookingPeriod.Of(
+                DateTime.UtcNow.Date.AddDays(10),
+                DateTime.UtcNow.Date.AddDays(5)
+            )
         };
 
         // Assert
@@ -487,7 +488,10 @@ public class CreateGuestReservationCommandHandlerTests
         // Arrange & Act
         var act = () => CreateValidCommand() with
         {
-            Period = BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(100)) // 95 days
+            Period = BookingPeriod.Of(
+                DateTime.UtcNow.Date.AddDays(5),
+                DateTime.UtcNow.Date.AddDays(100)
+            ) // 95 days
         };
 
         // Assert
@@ -502,9 +506,12 @@ public class CreateGuestReservationCommandHandlerTests
     private CreateGuestReservationCommand CreateValidCommand()
     {
         return new CreateGuestReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
-            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
+            VehicleIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
+            BookingPeriod.Of(
+                DateTime.UtcNow.Date.AddDays(7),
+                DateTime.UtcNow.Date.AddDays(10)
+            ),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
             CustomerName.Of("Max", "Mustermann"),
@@ -512,7 +519,12 @@ public class CreateGuestReservationCommandHandlerTests
             PhoneNumber.Of("+49 30 12345678"),
             BirthDate.Of(1990, 1, 15),
             Address.Of("Musterstraße 123", "Berlin", "10115", "Germany"),
-            DriversLicense.Of("B123456789", "Germany", new DateOnly(2010, 6, 1), new DateOnly(2030, 6, 1))
+            DriversLicense.Of(
+                "B123456789",
+                "Germany",
+                new DateOnly(2010, 6, 1),
+                new DateOnly(2030, 6, 1)
+            )
         );
     }
 
@@ -524,7 +536,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
-                It.IsAny<ReservationVehicleCategory>(),
+                It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))

@@ -15,8 +15,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     // For EF Core
     private Reservation()
     {
-        VehicleId = default;
-        CustomerId = default;
+        VehicleIdentifier = default;
+        CustomerIdentifier = default;
         Period = default!;
         PickupLocationCode = default;
         DropoffLocationCode = default;
@@ -25,16 +25,16 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
 
     private Reservation(
         ReservationIdentifier id,
-        ReservationVehicleId vehicleId,
-        ReservationCustomerId customerId,
+        VehicleIdentifier vehicleIdentifier,
+        CustomerIdentifier customerIdentifier,
         BookingPeriod period,
         LocationCode pickupLocationCode,
         LocationCode dropoffLocationCode,
         Money totalPrice)
         : base(id)
     {
-        VehicleId = vehicleId;
-        CustomerId = customerId;
+        VehicleIdentifier = vehicleIdentifier;
+        CustomerIdentifier = customerIdentifier;
         Period = period;
         PickupLocationCode = pickupLocationCode;
         DropoffLocationCode = dropoffLocationCode;
@@ -42,12 +42,12 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         Status = ReservationStatus.Pending;
         CreatedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new ReservationCreated(Id, VehicleId, CustomerId, Period, TotalPrice));
+        AddDomainEvent(new ReservationCreated(Id, VehicleIdentifier, CustomerIdentifier, Period, TotalPrice));
     }
 
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public ReservationVehicleId VehicleId { get; init; }
-    public ReservationCustomerId CustomerId { get; init; }
+    public VehicleIdentifier VehicleIdentifier { get; init; }
+    public CustomerIdentifier CustomerIdentifier { get; init; }
     public BookingPeriod Period { get; init; }
     public LocationCode PickupLocationCode { get; init; }
     public LocationCode DropoffLocationCode { get; init; }
@@ -63,8 +63,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     ///     Create a new pending reservation.
     /// </summary>
     public static Reservation Create(
-        ReservationVehicleId vehicleId,
-        ReservationCustomerId customerId,
+        VehicleIdentifier vehicleIdentifier,
+        CustomerIdentifier customerIdentifier,
         BookingPeriod period,
         LocationCode pickupLocationCode,
         LocationCode dropoffLocationCode,
@@ -74,8 +74,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
 
         return new Reservation(
             ReservationIdentifier.New(),
-            vehicleId,
-            customerId,
+            vehicleIdentifier,
+            customerIdentifier,
             period,
             pickupLocationCode,
             dropoffLocationCode,
@@ -88,8 +88,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private Reservation CreateMutatedCopy(
-        ReservationVehicleId? vehicleId = null,
-        ReservationCustomerId? customerId = null,
+        VehicleIdentifier? vehicleId = null,
+        CustomerIdentifier? customerId = null,
         BookingPeriod? period = null,
         LocationCode? pickupLocationCode = null,
         LocationCode? dropoffLocationCode = null,
@@ -104,8 +104,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         return new Reservation
         {
             Id = Id,
-            VehicleId = vehicleId ?? VehicleId,
-            CustomerId = customerId ?? CustomerId,
+            VehicleIdentifier = vehicleId ?? VehicleIdentifier,
+            CustomerIdentifier = customerId ?? CustomerIdentifier,
             Period = period ?? Period,
             PickupLocationCode = pickupLocationCode ?? PickupLocationCode,
             DropoffLocationCode = dropoffLocationCode ?? DropoffLocationCode,

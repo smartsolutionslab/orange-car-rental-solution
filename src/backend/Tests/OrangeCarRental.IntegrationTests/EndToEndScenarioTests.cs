@@ -51,8 +51,7 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
             if (createResponse.StatusCode != HttpStatusCode.Created)
             {
                 var errorContent = await createResponse.Content.ReadAsStringAsync();
-                throw new Exception(
-                    $"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
+                throw new Exception($"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
             }
 
             // Assert reservation was created

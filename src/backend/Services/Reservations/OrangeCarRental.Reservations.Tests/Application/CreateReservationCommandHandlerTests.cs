@@ -1,5 +1,4 @@
 using Moq;
-using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
@@ -26,10 +25,13 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
-            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
+            BookingPeriod.Of(
+                DateTime.UtcNow.Date.AddDays(7),
+                DateTime.UtcNow.Date.AddDays(10)
+            ),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
             Money.Euro(168.07m) // Net amount (200 gross with 19% VAT)
@@ -60,9 +62,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -83,9 +85,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -106,9 +108,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -141,9 +143,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act - Exception now thrown during command construction
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.Empty),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.From(Guid.Empty),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -160,9 +162,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act - Exception now thrown during command construction
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.Empty),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.From(Guid.Empty),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -179,9 +181,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(-1), DateTime.UtcNow.Date.AddDays(3)), // Yesterday
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -198,9 +200,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(10), DateTime.UtcNow.Date.AddDays(5)), // Before pickup
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -220,9 +222,9 @@ public class CreateReservationCommandHandlerTests
 
         // Act
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(pickupDate, pickupDate), // Same as pickup
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -239,9 +241,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange & Act
         var act = () => new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(100)), // 95 days
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -260,9 +262,9 @@ public class CreateReservationCommandHandlerTests
         var pickupDate = DateTime.UtcNow.Date.AddDays(7);
         var returnDate = pickupDate.AddDays(6); // 7 days
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(pickupDate, returnDate),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -289,12 +291,12 @@ public class CreateReservationCommandHandlerTests
     public async Task HandleAsync_MapsResultCorrectly()
     {
         // Arrange
-        var vehicleId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
+        var vehicleId = VehicleIdentifier.New();
+        var customerId = CustomerIdentifier.New();
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(vehicleId),
-            ReservationCustomerId.From(customerId),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            vehicleId,
+            customerId,
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -324,9 +326,9 @@ public class CreateReservationCommandHandlerTests
     {
         // Arrange
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(Guid.NewGuid()),
-            ReservationCustomerId.From(Guid.NewGuid()),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            VehicleIdentifier.New(),
+            CustomerIdentifier.New(),
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -351,12 +353,12 @@ public class CreateReservationCommandHandlerTests
     public async Task HandleAsync_CreatesReservationWithCorrectVehicleAndCustomerId()
     {
         // Arrange
-        var vehicleId = Guid.NewGuid();
-        var customerId = Guid.NewGuid();
+        var vehicleId = VehicleIdentifier.New();
+        var customerId = CustomerIdentifier.New();
         var command = new CreateReservationCommand(
-            ReservationVehicleId.From(vehicleId),
-            ReservationCustomerId.From(customerId),
-            ReservationVehicleCategory.From("KOMPAKT"),
+            vehicleId,
+            customerId,
+            VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
@@ -374,8 +376,8 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         capturedReservation.ShouldNotBeNull();
-        capturedReservation!.VehicleId.Value.ShouldBe(vehicleId);
-        capturedReservation.CustomerId.Value.ShouldBe(customerId);
+        capturedReservation!.VehicleIdentifier.Value.ShouldBe(vehicleId);
+        capturedReservation.CustomerIdentifier.Value.ShouldBe(customerId);
     }
 
     #endregion

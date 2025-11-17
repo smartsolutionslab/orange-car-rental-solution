@@ -11,6 +11,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetRese
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetVehicleAvailability;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using CustomerIdentifier = SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared.CustomerIdentifier;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 
@@ -27,9 +28,9 @@ public static class ReservationEndpoints
             {
                 // Map request DTO to command with value objects
                 var command = new CreateReservationCommand(
-                    ReservationVehicleId.From(request.VehicleId),
-                    ReservationCustomerId.From(request.CustomerId),
-                    ReservationVehicleCategory.From(request.CategoryCode),
+                    VehicleIdentifier.From(request.VehicleId),
+                    CustomerIdentifier.From(request.CustomerId),
+                    VehicleCategory.From(request.CategoryCode),
                     BookingPeriod.Of(request.PickupDate, request.ReturnDate),
                     LocationCode.Of(request.PickupLocationCode),
                     LocationCode.Of(request.DropoffLocationCode),
@@ -70,8 +71,8 @@ public static class ReservationEndpoints
                 var (reservation, customer, address, driversLicense ) = request;
                 // Map request DTO to command with value objects
                 var command = new CreateGuestReservationCommand(
-                    ReservationVehicleId.From(reservation.VehicleId),
-                    ReservationVehicleCategory.From(reservation.CategoryCode),
+                    VehicleIdentifier.From(reservation.VehicleId),
+                    VehicleCategory.From(reservation.CategoryCode),
                     BookingPeriod.Of(reservation.PickupDate, reservation.ReturnDate),
                     LocationCode.Of(reservation.PickupLocationCode),
                     LocationCode.Of(reservation.DropoffLocationCode),
@@ -160,9 +161,9 @@ public static class ReservationEndpoints
             {
                 var query = new SearchReservationsQuery(
                     status,
-                    customerId.HasValue ? ReservationCustomerId.From(customerId.Value) : null,
+                    customerId.HasValue ? CustomerIdentifier.From(customerId.Value) : null,
                     customerName,
-                    vehicleId.HasValue ? ReservationVehicleId.From(vehicleId.Value) : null,
+                    vehicleId.HasValue ? VehicleIdentifier.From(vehicleId.Value) : null,
                     categoryCode,
                     pickupLocationCode,
                     pickupDateFrom,

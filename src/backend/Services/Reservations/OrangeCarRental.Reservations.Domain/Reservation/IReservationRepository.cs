@@ -45,12 +45,10 @@ public interface IReservationRepository
     ///     Gets list of vehicle IDs that are booked (unavailable) during the specified period.
     ///     Used to determine vehicle availability for new reservations.
     /// </summary>
-    /// <param name="pickupDate">Start date of the period.</param>
-    /// <param name="returnDate">End date of the period.</param>
+    /// <param name="period">Start date and end date of the period.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of vehicle IDs that have active or confirmed reservations during the period.</returns>
     Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
-        DateOnly pickupDate,
-        DateOnly returnDate,
+        BookingPeriod period,
         CancellationToken cancellationToken = default);
 }

@@ -25,18 +25,18 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
             .IsRequired();
 
         // Foreign keys (references to other services) - using internal value objects
-        builder.Property(r => r.VehicleId)
+        builder.Property(r => r.VehicleIdentifier)
             .HasColumnName("VehicleId")
             .HasConversion(
                 id => id.Value,
-                value => ReservationVehicleId.From(value))
+                value => VehicleIdentifier.From(value))
             .IsRequired();
 
-        builder.Property(r => r.CustomerId)
+        builder.Property(r => r.CustomerIdentifier)
             .HasColumnName("CustomerId")
             .HasConversion(
                 id => id.Value,
-                value => ReservationCustomerId.From(value))
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
         // BookingPeriod value object - complex type mapping
@@ -121,8 +121,8 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         builder.Ignore(r => r.DomainEvents);
 
         // Indexes for common queries
-        builder.HasIndex(r => r.VehicleId);
-        builder.HasIndex(r => r.CustomerId);
+        builder.HasIndex(r => r.VehicleIdentifier);
+        builder.HasIndex(r => r.CustomerIdentifier);
         builder.HasIndex(r => r.Status);
         builder.HasIndex(r => r.PickupLocationCode);
         builder.HasIndex(r => r.DropoffLocationCode);

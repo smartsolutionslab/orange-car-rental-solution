@@ -8,7 +8,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// </summary>
 public readonly record struct CustomerIdentifier(Guid Value) : IValueObject
 {
-
     /// <summary>
     ///     Creates a new unique customer identifier using GUID v7.
     /// </summary>

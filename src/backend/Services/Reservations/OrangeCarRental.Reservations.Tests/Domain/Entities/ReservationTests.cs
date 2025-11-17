@@ -1,4 +1,3 @@
-using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
@@ -8,41 +7,36 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Domain.Entities;
 
 public class ReservationTests
 {
-    private readonly ReservationVehicleId _validVehicleId = ReservationVehicleId.From(Guid.NewGuid());
-    private readonly ReservationCustomerId _validCustomerId = ReservationCustomerId.From(Guid.NewGuid());
-    private readonly BookingPeriod _validPeriod;
-    private readonly LocationCode _validPickupLocation = LocationCode.Of("BER-HBF");
-    private readonly LocationCode _validDropoffLocation = LocationCode.Of("MUC-FLG");
-    private readonly Money _validTotalPrice = Money.Euro(299.99m);
-
-    public ReservationTests()
-    {
-        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7));
-        var returnDate = pickupDate.AddDays(3);
-        _validPeriod = BookingPeriod.Of(pickupDate, returnDate);
-    }
+    private readonly VehicleIdentifier validVehicleIdentifier = VehicleIdentifier.New();
+    private readonly CustomerIdentifier validCustomerIdentifier = CustomerIdentifier.New();
+    private readonly BookingPeriod validPeriod = BookingPeriod.Of(
+        DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
+        DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)));
+    private readonly LocationCode validPickupLocation = LocationCode.Of("BER-HBF");
+    private readonly LocationCode validDropoffLocation = LocationCode.Of("MUC-FLG");
+    private readonly Money validTotalPrice = Money.Euro(299.99m);
 
     [Fact]
     public void Create_WithValidData_ShouldCreateReservation()
     {
         // Act
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
-            _validPeriod,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validVehicleIdentifier,
+            validCustomerIdentifier,
+            validPeriod,
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         // Assert
         reservation.ShouldNotBeNull();
         reservation.Id.Value.ShouldNotBe(Guid.Empty);
-        reservation.VehicleId.ShouldBe(_validVehicleId);
-        reservation.CustomerId.ShouldBe(_validCustomerId);
-        reservation.Period.ShouldBe(_validPeriod);
-        reservation.PickupLocationCode.ShouldBe(_validPickupLocation);
-        reservation.DropoffLocationCode.ShouldBe(_validDropoffLocation);
-        reservation.TotalPrice.ShouldBe(_validTotalPrice);
+        reservation.VehicleIdentifier.ShouldBe(validVehicleIdentifier);
+        reservation.CustomerIdentifier.ShouldBe(validCustomerIdentifier);
+        reservation.Period.ShouldBe(validPeriod);
+        reservation.PickupLocationCode.ShouldBe(validPickupLocation);
+        reservation.DropoffLocationCode.ShouldBe(validDropoffLocation);
+        reservation.TotalPrice.ShouldBe(validTotalPrice);
         reservation.Status.ShouldBe(ReservationStatus.Pending);
         reservation.CreatedAt.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
@@ -52,12 +46,12 @@ public class ReservationTests
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => Reservation.Create(
-            ReservationVehicleId.From(Guid.Empty),
-            _validCustomerId,
-            _validPeriod,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice));
+            VehicleIdentifier.From(Guid.Empty),
+            validCustomerIdentifier,
+            validPeriod,
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice));
     }
 
     [Fact]
@@ -65,12 +59,12 @@ public class ReservationTests
     {
         // Act & Assert
         Should.Throw<ArgumentException>(() => Reservation.Create(
-            _validVehicleId,
-            ReservationCustomerId.From(Guid.Empty),
-            _validPeriod,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice));
+            validVehicleIdentifier,
+            CustomerIdentifier.From(Guid.Empty),
+            validPeriod,
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice));
     }
 
     [Fact]
@@ -78,12 +72,12 @@ public class ReservationTests
     {
         // Act
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
-            _validPeriod,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validVehicleIdentifier,
+            validCustomerIdentifier,
+            validPeriod,
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         // Assert
         var events = reservation.DomainEvents;
@@ -93,10 +87,10 @@ public class ReservationTests
 
         var evt = (ReservationCreated)createdEvent;
         evt.ReservationId.ShouldBe(reservation.Id);
-        evt.VehicleId.ShouldBe(_validVehicleId);
-        evt.CustomerId.ShouldBe(_validCustomerId);
-        evt.Period.ShouldBe(_validPeriod);
-        evt.TotalPrice.ShouldBe(_validTotalPrice);
+        evt.VehicleId.ShouldBe(validVehicleIdentifier);
+        evt.CustomerId.ShouldBe(validCustomerIdentifier);
+        evt.Period.ShouldBe(validPeriod);
+        evt.TotalPrice.ShouldBe(validTotalPrice);
     }
 
     [Fact]
@@ -242,12 +236,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         var confirmedReservation = reservation.Confirm();
 
@@ -269,12 +263,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() => reservation.MarkAsActive());
@@ -302,12 +296,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         var confirmedReservation = reservation.Confirm();
         var activeReservation = confirmedReservation.MarkAsActive();
@@ -332,12 +326,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         var confirmedReservation = reservation.Confirm();
         var activeReservation = confirmedReservation.MarkAsActive();
@@ -377,12 +371,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         var confirmedReservation = reservation.Confirm();
 
@@ -403,12 +397,12 @@ public class ReservationTests
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
         var reservation = Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
+            validVehicleIdentifier,
+            validCustomerIdentifier,
             period,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() => reservation.MarkAsNoShow());
@@ -433,8 +427,8 @@ public class ReservationTests
         // Arrange
         var reservation = CreateTestReservation();
 
-        var overlappingPickup = _validPeriod.PickupDate.AddDays(1);
-        var overlappingReturn = _validPeriod.ReturnDate.AddDays(1);
+        var overlappingPickup = validPeriod.PickupDate.AddDays(1);
+        var overlappingReturn = validPeriod.ReturnDate.AddDays(1);
         var overlappingPeriod = BookingPeriod.Of(overlappingPickup, overlappingReturn);
 
         // Act
@@ -447,11 +441,11 @@ public class ReservationTests
     private Reservation CreateTestReservation()
     {
         return Reservation.Create(
-            _validVehicleId,
-            _validCustomerId,
-            _validPeriod,
-            _validPickupLocation,
-            _validDropoffLocation,
-            _validTotalPrice);
+            validVehicleIdentifier,
+            validCustomerIdentifier,
+            validPeriod,
+            validPickupLocation,
+            validDropoffLocation,
+            validTotalPrice);
     }
 }

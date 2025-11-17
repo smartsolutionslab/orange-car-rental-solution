@@ -38,11 +38,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
         // Default mock behavior: return empty list (no vehicles booked)
         reservationServiceMock
-            .Setup(x => x.GetBookedVehicleIdsAsync(
-                It.IsAny<DateOnly>(),
-                It.IsAny<DateOnly>(),
-                It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Array.Empty<Guid>());
+            .Setup(x => x.GetBookedVehicleIdsAsync(It.IsAny<SearchPeriod>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(Array.Empty<VehicleIdentifier>());
 
         repository = new VehicleRepository(context, reservationServiceMock.Object);
     }
