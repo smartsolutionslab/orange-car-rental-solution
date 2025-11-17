@@ -3,6 +3,7 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Application.Queries;
 
@@ -30,9 +31,10 @@ public class CalculatePriceQueryHandlerTests
             ReturnDate = returnDate
         };
 
-        var pricingPolicy = PricingPolicy.Create(
-            CategoryCode.Of("KLEIN"),
-            Money.Euro(50.00m));
+        var pricingPolicy = PricingPolicyBuilder.Default()
+            .WithCategory("KLEIN")
+            .WithDailyRate(50.00m)
+            .Build();
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -74,10 +76,11 @@ public class CalculatePriceQueryHandlerTests
             LocationCode = locationCode
         };
 
-        var locationPolicy = PricingPolicy.Create(
-            CategoryCode.Of("SUV"),
-            Money.Euro(80.00m),
-            locationCode: locationCode);
+        var locationPolicy = PricingPolicyBuilder.Default()
+            .AsSuv()
+            .WithDailyRate(80.00m)
+            .ForLocation("BER-HBF")
+            .Build();
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAndLocationAsync(
@@ -133,9 +136,10 @@ public class CalculatePriceQueryHandlerTests
             .ThrowsAsync(new BuildingBlocks.Domain.Exceptions.EntityNotFoundException(typeof(PricingPolicy), "location-specific"));
 
         // General pricing available
-        var generalPolicy = PricingPolicy.Create(
-            CategoryCode.Of("SUV"),
-            Money.Euro(70.00m));
+        var generalPolicy = PricingPolicyBuilder.Default()
+            .AsSuv()
+            .WithDailyRate(70.00m)
+            .Build();
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -215,9 +219,10 @@ public class CalculatePriceQueryHandlerTests
                 ReturnDate = returnDate
             };
 
-            var policy = PricingPolicy.Create(
-                CategoryCode.Of(categoryCode),
-                Money.Euro(dailyRate));
+            var policy = PricingPolicyBuilder.Default()
+                .WithCategory(categoryCode)
+                .WithDailyRate(dailyRate)
+                .Build();
 
             pricingPolicyRepositoryMock
                 .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -246,9 +251,10 @@ public class CalculatePriceQueryHandlerTests
             ReturnDate = DateTime.UtcNow.AddDays(2) // 2 days
         };
 
-        var pricingPolicy = PricingPolicy.Create(
-            CategoryCode.Of("KLEIN"),
-            Money.Euro(100.00m)); // Net price per day
+        var pricingPolicy = PricingPolicyBuilder.Default()
+            .WithCategory("KLEIN")
+            .WithDailyRate(100.00m) // Net price per day
+            .Build();
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -305,9 +311,9 @@ public class CalculatePriceQueryHandlerTests
             ReturnDate = returnDate
         };
 
-        var pricingPolicy = PricingPolicy.Create(
-            CategoryCode.Of("MITTEL"),
-            Money.Euro(60.00m));
+        var pricingPolicy = PricingPolicyBuilder.Default()
+            .AsMidSize()
+            .Build();
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
