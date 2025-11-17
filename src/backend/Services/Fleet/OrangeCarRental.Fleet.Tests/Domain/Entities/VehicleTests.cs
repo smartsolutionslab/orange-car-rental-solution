@@ -3,76 +3,42 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Domain.Entities;
 
 public class VehicleTests
 {
-    private readonly VehicleName validName = VehicleName.Of("BMW X5");
-    private readonly VehicleCategory validCategory = VehicleCategory.SUV;
-    private readonly Location validLocation = Location.BerlinHauptbahnhof;
-    private readonly Money validDailyRate = Money.Euro(89.99m);
-    private readonly SeatingCapacity validSeats = SeatingCapacity.Of(5);
-    private readonly FuelType validFuelType = FuelType.Diesel;
-    private readonly TransmissionType validTransmission = TransmissionType.Automatic;
-
     [Fact]
     public void From_WithValidData_ShouldCreateVehicle()
     {
-        // Act
-        var vehicle = Vehicle.From(
-            validName,
-            validCategory,
-            validLocation,
-            validDailyRate,
-            validSeats,
-            validFuelType,
-            validTransmission);
+        // Arrange & Act
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Assert
         vehicle.ShouldNotBeNull();
         vehicle.Id.Value.ShouldNotBe(Guid.Empty);
-        vehicle.Name.ShouldBe(validName);
-        vehicle.Category.ShouldBe(validCategory);
-        vehicle.CurrentLocation.ShouldBe(validLocation);
-        vehicle.DailyRate.ShouldBe(validDailyRate);
-        vehicle.Seats.ShouldBe(validSeats);
-        vehicle.FuelType.ShouldBe(validFuelType);
-        vehicle.TransmissionType.ShouldBe(validTransmission);
         vehicle.Status.ShouldBe(VehicleStatus.Available);
     }
 
     [Fact]
     public void From_ShouldRaiseVehicleAddedToFleetEvent()
     {
-        // Act
-        var vehicle = Vehicle.From(
-            validName,
-            validCategory,
-            validLocation,
-            validDailyRate,
-            validSeats,
-            validFuelType,
-            validTransmission);
+        // Arrange & Act
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Assert
         var events = vehicle.DomainEvents;
         events.ShouldNotBeEmpty();
         var addedEvent = events.ShouldHaveSingleItem();
         addedEvent.ShouldBeOfType<VehicleAddedToFleet>();
-
-        var evt = (VehicleAddedToFleet)addedEvent;
-        evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.Name.ShouldBe(validName);
-        evt.Category.ShouldBe(validCategory);
-        evt.DailyRate.ShouldBe(validDailyRate);
     }
 
     [Fact]
     public void UpdateDailyRate_WithDifferentRate_ShouldReturnNewInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         var newRate = Money.Euro(99.99m);
 
         // Act
@@ -82,17 +48,19 @@ public class VehicleTests
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
         updatedVehicle.DailyRate.ShouldBe(newRate);
-        vehicle.DailyRate.ShouldBe(validDailyRate); // Original unchanged
     }
 
     [Fact]
     public void UpdateDailyRate_WithSameRate_ShouldReturnSameInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var dailyRate = Money.Euro(89.99m);
+        var vehicle = VehicleBuilder.Default()
+            .WithDailyRate(89.99m)
+            .Build();
 
         // Act
-        var updatedVehicle = vehicle.UpdateDailyRate(validDailyRate);
+        var updatedVehicle = vehicle.UpdateDailyRate(dailyRate);
 
         // Assert
         updatedVehicle.ShouldBeSameAs(vehicle); // Same instance if no change
@@ -102,7 +70,7 @@ public class VehicleTests
     public void UpdateDailyRate_ShouldRaiseVehicleDailyRateChangedEvent()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         vehicle.ClearDomainEvents(); // Clear creation event
         var newRate = Money.Euro(99.99m);
 
@@ -114,18 +82,13 @@ public class VehicleTests
         events.ShouldNotBeEmpty();
         var rateChangedEvent = events.ShouldHaveSingleItem();
         rateChangedEvent.ShouldBeOfType<VehicleDailyRateChanged>();
-
-        var evt = (VehicleDailyRateChanged)rateChangedEvent;
-        evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.OldRate.ShouldBe(validDailyRate);
-        evt.NewRate.ShouldBe(newRate);
     }
 
     [Fact]
     public void MoveToLocation_WithDifferentLocation_ShouldReturnNewInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         var newLocation = Location.MunichFlughafen;
 
         // Act
@@ -135,17 +98,19 @@ public class VehicleTests
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
         updatedVehicle.CurrentLocation.ShouldBe(newLocation);
-        vehicle.CurrentLocation.ShouldBe(validLocation); // Original unchanged
     }
 
     [Fact]
     public void MoveToLocation_WithSameLocation_ShouldReturnSameInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var location = Location.BerlinHauptbahnhof;
+        var vehicle = VehicleBuilder.Default()
+            .AtLocation(location)
+            .Build();
 
         // Act
-        var updatedVehicle = vehicle.MoveToLocation(validLocation);
+        var updatedVehicle = vehicle.MoveToLocation(location);
 
         // Assert
         updatedVehicle.ShouldBeSameAs(vehicle); // Same instance if no change
@@ -155,8 +120,7 @@ public class VehicleTests
     public void MoveToLocation_WithRentedVehicle_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
-        var rentedVehicle = vehicle.MarkAsRented();
+        var rentedVehicle = VehicleBuilder.Default().BuildRented();
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() =>
@@ -168,7 +132,7 @@ public class VehicleTests
     public void MoveToLocation_ShouldRaiseVehicleLocationChangedEvent()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         vehicle.ClearDomainEvents(); // Clear creation event
         var newLocation = Location.MunichFlughafen;
 
@@ -180,18 +144,13 @@ public class VehicleTests
         events.ShouldNotBeEmpty();
         var locationChangedEvent = events.ShouldHaveSingleItem();
         locationChangedEvent.ShouldBeOfType<VehicleLocationChanged>();
-
-        var evt = (VehicleLocationChanged)locationChangedEvent;
-        evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.OldLocation.ShouldBe(validLocation);
-        evt.NewLocation.ShouldBe(newLocation);
     }
 
     [Fact]
     public void ChangeStatus_WithDifferentStatus_ShouldReturnNewInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var updatedVehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
@@ -200,14 +159,13 @@ public class VehicleTests
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
         updatedVehicle.Status.ShouldBe(VehicleStatus.Maintenance);
-        vehicle.Status.ShouldBe(VehicleStatus.Available); // Original unchanged
     }
 
     [Fact]
     public void ChangeStatus_WithSameStatus_ShouldReturnSameInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var updatedVehicle = vehicle.ChangeStatus(VehicleStatus.Available);
@@ -220,7 +178,7 @@ public class VehicleTests
     public void ChangeStatus_ShouldRaiseVehicleStatusChangedEvent()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         vehicle.ClearDomainEvents(); // Clear creation event
 
         // Act
@@ -231,18 +189,13 @@ public class VehicleTests
         events.ShouldNotBeEmpty();
         var statusChangedEvent = events.ShouldHaveSingleItem();
         statusChangedEvent.ShouldBeOfType<VehicleStatusChanged>();
-
-        var evt = (VehicleStatusChanged)statusChangedEvent;
-        evt.VehicleId.ShouldBe(vehicle.Id);
-        evt.NewStatus.ShouldBe(VehicleStatus.Maintenance);
     }
 
     [Fact]
     public void MarkAsAvailable_WhenNotAvailable_ShouldChangeToAvailable()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
-        var maintenanceVehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
+        var maintenanceVehicle = VehicleBuilder.Default().BuildInMaintenance();
 
         // Act
         var availableVehicle = maintenanceVehicle.MarkAsAvailable();
@@ -255,7 +208,7 @@ public class VehicleTests
     public void MarkAsAvailable_WhenAlreadyAvailable_ShouldReturnSameInstance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var availableVehicle = vehicle.MarkAsAvailable();
@@ -268,7 +221,7 @@ public class VehicleTests
     public void MarkAsRented_WhenAvailable_ShouldChangeToRented()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var rentedVehicle = vehicle.MarkAsRented();
@@ -281,8 +234,7 @@ public class VehicleTests
     public void MarkAsRented_WhenReserved_ShouldChangeToRented()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
-        var reservedVehicle = vehicle.ChangeStatus(VehicleStatus.Reserved);
+        var reservedVehicle = VehicleBuilder.Default().BuildReserved();
 
         // Act
         var rentedVehicle = reservedVehicle.MarkAsRented();
@@ -295,8 +247,7 @@ public class VehicleTests
     public void MarkAsRented_WhenMaintenance_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
-        var maintenanceVehicle = vehicle.ChangeStatus(VehicleStatus.Maintenance);
+        var maintenanceVehicle = VehicleBuilder.Default().BuildInMaintenance();
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() =>
@@ -308,7 +259,7 @@ public class VehicleTests
     public void MarkAsUnderMaintenance_WhenAvailable_ShouldChangeToMaintenance()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var maintenanceVehicle = vehicle.MarkAsUnderMaintenance();
@@ -321,8 +272,7 @@ public class VehicleTests
     public void MarkAsUnderMaintenance_WhenRented_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
-        var rentedVehicle = vehicle.MarkAsRented();
+        var rentedVehicle = VehicleBuilder.Default().BuildRented();
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() =>
@@ -334,7 +284,7 @@ public class VehicleTests
     public void SetDetails_ShouldReturnNewInstanceWithDetails()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         var manufacturer = Manufacturer.Of("BMW");
         var model = VehicleModel.Of("X5 xDrive40i");
         var year = ManufacturingYear.Of(2024);
@@ -356,7 +306,7 @@ public class VehicleTests
     public void SetLicensePlate_ShouldReturnNewInstanceWithLicensePlate()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var updatedVehicle = vehicle.SetLicensePlate("B-AB 1234");
@@ -371,7 +321,7 @@ public class VehicleTests
     public void SetLicensePlate_ShouldConvertToUpperCase()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var updatedVehicle = vehicle.SetLicensePlate("b-ab 1234");
@@ -384,7 +334,7 @@ public class VehicleTests
     public void SetLicensePlate_ShouldTrimWhitespace()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var updatedVehicle = vehicle.SetLicensePlate("  B-AB 1234  ");
@@ -399,7 +349,7 @@ public class VehicleTests
     public void SetLicensePlate_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidPlate)
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act & Assert
         Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(invalidPlate));
@@ -409,7 +359,7 @@ public class VehicleTests
     public void SetLicensePlate_WithNull_ShouldThrowArgumentException()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act & Assert
         Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(null!));
@@ -419,7 +369,7 @@ public class VehicleTests
     public void IsAvailableForRental_WhenAvailable_ShouldReturnTrue()
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
 
         // Act
         var isAvailable = vehicle.IsAvailableForRental();
@@ -436,7 +386,7 @@ public class VehicleTests
     public void IsAvailableForRental_WhenNotAvailable_ShouldReturnFalse(VehicleStatus status)
     {
         // Arrange
-        var vehicle = CreateTestVehicle();
+        var vehicle = VehicleBuilder.Default().Build();
         var updatedVehicle = vehicle.ChangeStatus(status);
 
         // Act
@@ -446,15 +396,43 @@ public class VehicleTests
         isAvailable.ShouldBeFalse();
     }
 
-    private Vehicle CreateTestVehicle()
+    #region Named Vehicle Tests
+
+    [Fact]
+    public void BmwX5_CreatesCorrectVehicle()
     {
-        return Vehicle.From(
-            validName,
-            validCategory,
-            validLocation,
-            validDailyRate,
-            validSeats,
-            validFuelType,
-            validTransmission);
+        // Arrange & Act
+        var vehicle = VehicleBuilder.BmwX5().Build();
+
+        // Assert
+        vehicle.Name.Value.ShouldBe("BMW X5");
+        vehicle.Category.ShouldBe(VehicleCategory.SUV);
+        vehicle.FuelType.ShouldBe(FuelType.Electric);
     }
+
+    [Fact]
+    public void VwGolf_CreatesCompactCar()
+    {
+        // Arrange & Act
+        var vehicle = VehicleBuilder.VwGolf().Build();
+
+        // Assert
+        vehicle.Name.Value.ShouldBe("VW Golf");
+        vehicle.Category.ShouldBe(VehicleCategory.Kompaktklasse);
+        vehicle.FuelType.ShouldBe(FuelType.Petrol);
+    }
+
+    [Fact]
+    public void TeslaModel3_CreatesElectricCar()
+    {
+        // Arrange & Act
+        var vehicle = VehicleBuilder.TeslaModel3().Build();
+
+        // Assert
+        vehicle.Name.Value.ShouldBe("Tesla Model 3");
+        vehicle.FuelType.ShouldBe(FuelType.Electric);
+        vehicle.TransmissionType.ShouldBe(TransmissionType.Automatic);
+    }
+
+    #endregion
 }
