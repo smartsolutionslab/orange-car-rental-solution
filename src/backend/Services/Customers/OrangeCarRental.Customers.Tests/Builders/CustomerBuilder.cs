@@ -93,15 +93,33 @@ public class CustomerBuilder
         var earliestLicenseDate = birthDate.AddYears(18);
         var now = DateOnly.FromDateTime(DateTime.Now);
 
-        // If person is 18 or older, issue license 1 year after they turned 18 (or 1 year ago if younger than 19)
-        var issueDate = years >= 19
-            ? earliestLicenseDate.AddYears(1)
-            : now.AddYears(-1);
-
-        // Ensure issue date is not in the future
-        if (issueDate > now)
+        // Calculate issue date:
+        // - If person just turned 18, issue the license recently
+        // - If person is older than 18, issue license 1 year after they turned 18
+        // - Issue date must be >= earliestLicenseDate (18th birthday) and <= today
+        DateOnly issueDate;
+        if (years == 18)
         {
-            issueDate = now.AddDays(-30); // Issued 30 days ago
+            // For 18-year-olds, use the later of: 30 days ago OR their 18th birthday
+            var proposedIssueDate = now.AddDays(-30);
+            issueDate = proposedIssueDate < earliestLicenseDate ? earliestLicenseDate : proposedIssueDate;
+
+            // Ensure it's not in the future (edge case: if 18th birthday is today)
+            if (issueDate > now)
+            {
+                issueDate = now;
+            }
+        }
+        else
+        {
+            // For older people, issue license 1 year after they turned 18
+            issueDate = earliestLicenseDate.AddYears(1);
+
+            // Ensure issue date is not in the future
+            if (issueDate > now)
+            {
+                issueDate = now.AddDays(-30);
+            }
         }
 
         var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));

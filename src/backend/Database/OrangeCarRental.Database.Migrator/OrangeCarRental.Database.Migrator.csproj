@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Infrastructure\OrangeCarRental.Customers.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Infrastructure\OrangeCarRental.Pricing.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

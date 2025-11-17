@@ -80,16 +80,6 @@ builder.Services.AddScoped<CancelReservationCommandHandler>();
 
 var app = builder.Build();
 
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<ReservationsDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<ReservationsDbContext>();
-
 // Seed database with sample data (development only)
 await app.SeedReservationsDataAsync();
 

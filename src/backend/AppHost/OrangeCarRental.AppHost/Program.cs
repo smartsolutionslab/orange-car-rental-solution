@@ -19,9 +19,14 @@ var pricingDb = sqlServer.AddDatabase("pricing", "OrangeCarRental_Pricing");
 // Customers database - manages customer profiles and driver's license information
 var customersDb = sqlServer.AddDatabase("customers", "OrangeCarRental_Customers");
 
-// Check if we should run migrations as separate jobs (for Azure deployment simulation)
-var runMigrationJobs = builder.Configuration["RunMigrationJobs"]?.Equals("true", StringComparison.OrdinalIgnoreCase) ??
-                       false;
+// Database Migrator - Standalone console app for running all database migrations
+// Can be triggered manually from the Aspire dashboard
+var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>("db-migrator")
+    .WithReference(fleetDb)
+    .WithReference(reservationsDb)
+    .WithReference(pricingDb)
+    .WithReference(customersDb)
+    .WaitFor(sqlServer);
 
 // Fleet API - Vehicle inventory and availability management
 // Also needs read-only access to Reservations database for date filtering
@@ -52,42 +57,6 @@ var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
     .WithReference(customersDb)
     .WaitFor(sqlServer);
-
-if (runMigrationJobs)
-{
-    // Migration jobs - run before APIs start (for Azure deployment pattern)
-    var fleetMigration = builder.AddProject<OrangeCarRental_Fleet_Api>("fleet-migration")
-        .WithReference(fleetDb)
-        .WithArgs("--migrate-only");
-
-    var reservationsMigration = builder.AddProject<OrangeCarRental_Reservations_Api>("reservations-migration")
-        .WithReference(reservationsDb)
-        .WithArgs("--migrate-only");
-
-    var pricingMigration = builder.AddProject<OrangeCarRental_Pricing_Api>("pricing-migration")
-        .WithReference(pricingDb)
-        .WithArgs("--migrate-only");
-
-    var customersMigration = builder.AddProject<OrangeCarRental_Customers_Api>("customers-migration")
-        .WithReference(customersDb)
-        .WithArgs("--migrate-only");
-
-    // Fleet API - wait for migrations to complete
-    fleetApi = fleetApi
-        .WaitFor(fleetMigration);
-
-    // Reservations API - wait for migrations to complete
-    reservationsApi = reservationsApi
-        .WaitFor(reservationsMigration);
-
-    // Pricing API - wait for migrations to complete
-    pricingApi = pricingApi
-        .WaitFor(pricingMigration);
-
-    // Customers API - wait for migrations to complete
-    customersApi = customersApi
-        .WaitFor(customersMigration);
-}
 
 // API Gateway - YARP reverse proxy with service discovery
 // Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, /api/pricing/* to Pricing API, and /api/customers/* to Customers API

@@ -85,11 +85,17 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
             address.Property(a => a.City)
                 .HasColumnName("Address_City")
+                .HasConversion(
+                    city => city.Value,
+                    value => City.Of(value))
                 .HasMaxLength(100)
                 .IsRequired();
 
             address.Property(a => a.PostalCode)
                 .HasColumnName("Address_PostalCode")
+                .HasConversion(
+                    pc => pc.Value,
+                    value => PostalCode.Of(value))
                 .HasMaxLength(10)
                 .IsRequired();
 

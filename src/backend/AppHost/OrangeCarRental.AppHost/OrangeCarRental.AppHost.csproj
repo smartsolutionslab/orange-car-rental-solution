@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\ApiGateway\OrangeCarRental.ApiGateway\OrangeCarRental.ApiGateway.csproj"/>
+    <ProjectReference Include="..\..\Database\OrangeCarRental.Database.Migrator\OrangeCarRental.Database.Migrator.csproj"/>
     <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Api\OrangeCarRental.Fleet.Api.csproj"/>
     <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Api\OrangeCarRental.Reservations.Api.csproj"/>
     <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Api\OrangeCarRental.Pricing.Api.csproj"/>
