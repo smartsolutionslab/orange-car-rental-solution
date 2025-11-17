@@ -5,6 +5,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application.Queries;
 
@@ -299,13 +300,10 @@ public class SearchVehiclesQueryHandlerTests
 
     private static Vehicle CreateTestVehicle(string name, VehicleCategory category, Location location)
     {
-        return Vehicle.From(
-            VehicleName.Of(name),
-            category,
-            location,
-            Money.Euro(89.99m),
-            SeatingCapacity.Of(5),
-            FuelType.Diesel,
-            TransmissionType.Automatic);
+        return VehicleBuilder.Default()
+            .WithName(name)
+            .WithCategory(category)
+            .AtLocation(location)
+            .Build();
     }
 }
