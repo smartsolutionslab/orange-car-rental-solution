@@ -39,8 +39,8 @@ export class NavigationComponent implements OnInit {
 
   constructor(private authService: AuthService) {}
 
-  async ngOnInit() {
-    this.isAuthenticated = await this.authService.isAuthenticated();
+  ngOnInit() {
+    this.isAuthenticated = this.authService.isAuthenticated();
     if (this.isAuthenticated) {
       this.username = this.authService.getUsername();
     }

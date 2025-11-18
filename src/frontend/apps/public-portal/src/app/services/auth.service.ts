@@ -11,7 +11,7 @@ export class AuthService {
   /**
    * Check if user is authenticated
    */
-  isAuthenticated(): Promise<boolean> {
+  isAuthenticated(): boolean {
     return this.keycloakService.isLoggedIn();
   }
 
@@ -20,7 +20,7 @@ export class AuthService {
    */
   async getUserProfile(): Promise<KeycloakProfile | null> {
     try {
-      if (await this.isAuthenticated()) {
+      if (this.isAuthenticated()) {
         return await this.keycloakService.loadUserProfile();
       }
       return null;
