@@ -18,5 +18,6 @@
     <ProjectReference Include="..\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Customers.Application\OrangeCarRental.Customers.Application.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Customers.Infrastructure\OrangeCarRental.Customers.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj"/>
   </ItemGroup>
 </Project>

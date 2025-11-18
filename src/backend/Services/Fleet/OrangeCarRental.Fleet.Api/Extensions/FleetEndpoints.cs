@@ -30,7 +30,8 @@ public static class FleetEndpoints
             .WithSummary("Search available vehicles")
             .WithDescription("Search and filter vehicles by location, category, dates, and other criteria. Returns vehicles with German VAT-inclusive pricing (19%).")
             .Produces<SearchVehiclesResult>()
-            .ProducesProblem(StatusCodes.Status400BadRequest);
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
 
         // POST /api/vehicles - Add new vehicle to fleet
         fleet.MapPost("/", async (AddVehicleToFleetRequest request, AddVehicleToFleetCommandHandler handler, CancellationToken cancellationToken) =>
@@ -73,7 +74,8 @@ public static class FleetEndpoints
             .WithDescription("Adds a new vehicle to the rental fleet. Daily rate is net amount in EUR, 19% German VAT will be calculated automatically. Vehicle will be available for rental immediately.")
             .Produces<AddVehicleToFleetResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/status - Update vehicle status
         fleet.MapPut("/{id:guid}/status", async (Guid id, string status, UpdateVehicleStatusCommandHandler handler, CancellationToken cancellationToken) =>
@@ -105,7 +107,8 @@ public static class FleetEndpoints
             .Produces<UpdateVehicleStatusResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/location - Update vehicle location
         fleet.MapPut("/{id:guid}/location", async (Guid id, string locationCode, UpdateVehicleLocationCommandHandler handler, CancellationToken cancellationToken) =>
@@ -139,7 +142,8 @@ public static class FleetEndpoints
             .Produces<UpdateVehicleLocationResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/daily-rate - Update vehicle daily rate
         fleet.MapPut("/{id:guid}/daily-rate", async (Guid id, decimal dailyRateNet, UpdateVehicleDailyRateCommandHandler handler, CancellationToken cancellationToken) =>
@@ -174,7 +178,8 @@ public static class FleetEndpoints
             .Produces<UpdateVehicleDailyRateResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // Location endpoints
         var locations = app.MapGroup("/api/locations")
@@ -192,7 +197,8 @@ public static class FleetEndpoints
             .WithName("GetLocations")
             .WithSummary("Get all rental locations")
             .WithDescription("Returns all available rental locations in Germany.")
-            .Produces<IReadOnlyList<LocationDto>>();
+            .Produces<IReadOnlyList<LocationDto>>()
+            .AllowAnonymous();
 
         // GET /api/locations/{code} - Get location by code
         locations.MapGet("/{code}", async (string code, GetLocationByCodeQueryHandler handler, CancellationToken cancellationToken) =>
@@ -217,7 +223,8 @@ public static class FleetEndpoints
             .WithDescription("Returns a specific location by its code (e.g., BER-HBF).")
             .Produces<LocationDto>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status404NotFound);
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .AllowAnonymous();
 
         return app;
     }

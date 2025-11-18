@@ -21,4 +21,17 @@
       </li>
     }
   </ul>
+
+  <div class="nav__auth">
+    @if (isAuthenticated) {
+      <span class="nav__username">{{ username }}</span>
+      <button (click)="logout()" class="nav__auth-button nav__auth-button--logout">
+        Abmelden
+      </button>
+    } @else {
+      <button (click)="login()" class="nav__auth-button nav__auth-button--login">
+        Anmelden
+      </button>
+    }
+  </div>
 </nav>

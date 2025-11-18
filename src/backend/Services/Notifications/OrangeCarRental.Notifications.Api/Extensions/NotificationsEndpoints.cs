@@ -39,7 +39,8 @@ public static class NotificationsEndpoints
             .WithDescription("Sends an email notification to the specified recipient. The email will be tracked in the notifications database.")
             .Produces<SendEmailResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("AdminPolicy");
 
         // POST /api/notifications/sms - Send SMS notification
         notifications.MapPost("/sms", async (
@@ -69,7 +70,8 @@ public static class NotificationsEndpoints
             .WithDescription("Sends an SMS notification to the specified phone number (German format +49). The SMS will be tracked in the notifications database.")
             .Produces<SendSmsResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("AdminPolicy");
 
         return app;
     }

@@ -66,7 +66,8 @@ public static class CustomerEndpoints
             .Produces<RegisterCustomerResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status409Conflict)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .AllowAnonymous();
 
         // GET /api/customers/{id} - Get customer by ID
         customers.MapGet("/{id:guid}", async (
@@ -101,7 +102,8 @@ public static class CustomerEndpoints
             .Produces<CustomerDto>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // GET /api/customers/by-email/{email} - Get customer by email
         customers.MapGet("/by-email/{email}", async (
@@ -137,7 +139,8 @@ public static class CustomerEndpoints
             .Produces<CustomerDto>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // GET /api/customers/search - Search customers with filtering and pagination
         customers.MapGet("/search", async (
@@ -168,7 +171,8 @@ public static class CustomerEndpoints
                 "Search and filter customers by name, email, phone, status, city, postal code, age range, license expiry, and registration date. Supports sorting and pagination. Returns paged results with customer details.")
             .Produces<SearchCustomersResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/customers/{id}/profile - Update customer profile
         customers.MapPut("/{id:guid}/profile", async (
@@ -212,7 +216,8 @@ public static class CustomerEndpoints
             .Produces<UpdateCustomerProfileResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/customers/{id}/license - Update driver's license
         customers.MapPut("/{id:guid}/license", async (
@@ -260,7 +265,8 @@ public static class CustomerEndpoints
             .Produces<UpdateDriversLicenseResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/customers/{id}/status - Change customer status
         customers.MapPut("/{id:guid}/status", async (
@@ -301,7 +307,8 @@ public static class CustomerEndpoints
             .Produces<ChangeCustomerStatusResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         return app;
     }

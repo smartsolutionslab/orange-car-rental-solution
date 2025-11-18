@@ -22,7 +22,8 @@ public static class LocationEndpoints
             })
             .WithName("GetAllLocations")
             .WithSummary("Get all active rental locations")
-            .Produces<GetAllLocationsResult>();
+            .Produces<GetAllLocationsResult>()
+            .AllowAnonymous();
 
         // POST /api/locations - Create new location
         locations.MapPost("/", async (
@@ -51,7 +52,8 @@ public static class LocationEndpoints
             .WithSummary("Create a new rental location")
             .Produces<CreateLocationResult>(StatusCodes.Status201Created)
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status500InternalServerError);
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         return app;
     }

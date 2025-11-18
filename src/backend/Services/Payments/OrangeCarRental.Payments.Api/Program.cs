@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
@@ -34,6 +35,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context
 builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextOptions: options =>
@@ -89,6 +94,10 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseCors("AllowFrontend");
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map API endpoints
 app.MapPaymentEndpoints();

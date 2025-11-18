@@ -2,6 +2,17 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
+// Keycloak - Identity and Access Management
+// Persistent lifetime ensures realm configuration survives container restarts
+var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.0.7")
+    .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
+    .WithEnvironment("KEYCLOAK_ADMIN", "admin")
+    .WithEnvironment("KEYCLOAK_ADMIN_PASSWORD", "admin")
+    .WithEnvironment("KC_HEALTH_ENABLED", "true")
+    .WithEnvironment("KC_METRICS_ENABLED", "true")
+    .WithArgs("start-dev")
+    .WithLifetime(ContainerLifetime.Persistent);
+
 // SQL Server container for both databases
 // Persistent lifetime ensures data survives container restarts
 var sqlServer = builder.AddSqlServer("sql")
@@ -34,6 +45,7 @@ var fleetApi = builder
     .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
     .WithReference(fleetDb)
     .WithReference(reservationsDb)
+    .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
 // Pricing API - Pricing policy and rental rate calculation
@@ -41,6 +53,7 @@ var fleetApi = builder
 var pricingApi = builder
     .AddProject<OrangeCarRental_Pricing_Api>("pricing-api")
     .WithReference(pricingDb)
+    .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
 // Reservations API - Customer booking and rental management
@@ -49,6 +62,7 @@ var reservationsApi = builder
     .AddProject<OrangeCarRental_Reservations_Api>("reservations-api")
     .WithReference(reservationsDb)
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
+    .WaitFor(keycloak)
     .WaitFor(sqlServer)
     .WaitFor(pricingApi);
 
@@ -56,6 +70,7 @@ var reservationsApi = builder
 var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
     .WithReference(customersDb)
+    .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
 // API Gateway - YARP reverse proxy with service discovery
@@ -67,6 +82,7 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
     .WithEnvironment("CUSTOMERS_API_URL", customersApi.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
+    .WaitFor(keycloak)
     .WaitFor(fleetApi)
     .WaitFor(reservationsApi)
     .WaitFor(pricingApi)
@@ -79,6 +95,7 @@ var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/pu
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
+    .WaitFor(keycloak)
     .WaitFor(apiGateway);
 
 // Call Center Portal - Agent-facing Angular application for reservation management
@@ -88,6 +105,7 @@ var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../fronten
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
+    .WaitFor(keycloak)
     .WaitFor(apiGateway);
 
 builder.Build().Run();

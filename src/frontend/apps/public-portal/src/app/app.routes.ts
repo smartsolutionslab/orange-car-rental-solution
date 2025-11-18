@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { VehicleListComponent } from './pages/vehicle-list/vehicle-list.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { ConfirmationComponent } from './pages/confirmation/confirmation.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -10,10 +11,12 @@ export const routes: Routes = [
   },
   {
     path: 'booking',
-    component: BookingComponent
+    component: BookingComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'confirmation',
-    component: ConfirmationComponent
+    component: ConfirmationComponent,
+    canActivate: [authGuard]
   }
 ];

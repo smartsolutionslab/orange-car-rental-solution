@@ -47,7 +47,8 @@ public static class PricingEndpoints
             .WithDescription(
                 "Calculates the total rental price for a vehicle category and period with German VAT (19%). Supports location-specific pricing if configured.")
             .Produces<PriceCalculationResult>()
-            .ProducesProblem(StatusCodes.Status400BadRequest);
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
 
         return app;
     }

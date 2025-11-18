@@ -15,4 +15,8 @@
     <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>

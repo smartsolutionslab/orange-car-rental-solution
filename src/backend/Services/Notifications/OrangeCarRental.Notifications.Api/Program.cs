@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendEmail;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendSms;
@@ -35,6 +36,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context (connection string provided by Aspire)
 builder.AddSqlServerDbContext<NotificationsDbContext>("notifications", configureDbContextOptions: options =>
@@ -91,6 +96,10 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseCors("AllowFrontend");
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map API endpoints
 app.MapNotificationsEndpoints();

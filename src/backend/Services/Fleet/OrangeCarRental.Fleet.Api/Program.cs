@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
@@ -39,6 +40,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database contexts (connection strings provided by Aspire)
 builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions: options =>
@@ -100,7 +105,12 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
+
 app.UseCors("AllowFrontend");
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map API endpoints
 app.MapFleetEndpoints();

@@ -42,7 +42,8 @@ public static class PaymentEndpoints
                 }
             })
             .WithName("ProcessPayment")
-            .WithSummary("Process a payment for a reservation");
+            .WithSummary("Process a payment for a reservation")
+            .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
 
         payments.MapPost("/{paymentId:guid}/refund", async Task<Results<Ok<RefundPaymentResult>, BadRequest<ProblemDetails>, NotFound>> (
                 Guid paymentId,
@@ -71,7 +72,8 @@ public static class PaymentEndpoints
                 }
             })
             .WithName("RefundPayment")
-            .WithSummary("Refund a captured payment");
+            .WithSummary("Refund a captured payment")
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         return app;
     }

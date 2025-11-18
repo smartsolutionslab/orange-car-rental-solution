@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
@@ -40,6 +41,10 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context (connection string provided by Aspire)
 builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContextOptions: options =>
@@ -96,6 +101,10 @@ app.UseSerilogRequestLogging(options =>
 
 app.UseCors();
 app.UseHttpsRedirection();
+
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map API endpoints
 app.MapCustomerEndpoints();

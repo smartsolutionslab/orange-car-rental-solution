@@ -1,14 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navigation',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.css'
 })
-export class NavigationComponent {
+export class NavigationComponent implements OnInit {
   protected readonly navItems = [
     {
       path: '',
@@ -36,4 +38,24 @@ export class NavigationComponent {
       icon: '<path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>'
     }
   ];
+
+  isAuthenticated = false;
+  username = '';
+
+  constructor(private authService: AuthService) {}
+
+  async ngOnInit() {
+    this.isAuthenticated = await this.authService.isAuthenticated();
+    if (this.isAuthenticated) {
+      this.username = this.authService.getUsername();
+    }
+  }
+
+  login() {
+    this.authService.login();
+  }
+
+  logout() {
+    this.authService.logout();
+  }
 }

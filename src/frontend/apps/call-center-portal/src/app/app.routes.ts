@@ -4,26 +4,32 @@ import { ReservationsComponent } from './pages/reservations/reservations.compone
 import { CustomersComponent } from './pages/customers/customers.component';
 import { LocationsComponent } from './pages/locations/locations.component';
 import { ContactComponent } from './pages/contact/contact.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: VehiclesComponent
+    component: VehiclesComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'reservations',
-    component: ReservationsComponent
+    component: ReservationsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'customers',
-    component: CustomersComponent
+    component: CustomersComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'locations',
-    component: LocationsComponent
+    component: LocationsComponent,
+    canActivate: [authGuard]
   },
   {
     path: 'contact',
-    component: ContactComponent
+    component: ContactComponent,
+    canActivate: [authGuard]
   }
 ];

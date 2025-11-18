@@ -1,4 +1,5 @@
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,9 @@ builder.Configuration["ReverseProxy:Clusters:locations-cluster:Destinations:dest
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
+// Add JWT Authentication (validates tokens at the gateway)
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
 // Add CORS for frontend applications
 builder.Services.AddCors(options =>
 {
@@ -72,7 +76,10 @@ app.UseSerilogRequestLogging(options =>
 
 app.UseCors();
 
-// Map reverse proxy
+// Add Authentication middleware (validates JWT tokens)
+app.UseAuthentication();
+
+// Map reverse proxy (will forward Authorization header to backend services)
 app.MapReverseProxy();
 
 // Health check

@@ -63,7 +63,8 @@ public static class ReservationEndpoints
                              - Return date must be after pickup date
                              - Maximum rental period is 90 days
 
-                             """);
+                             """)
+            .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
         reservations.MapPost("/guest", async (CreateGuestReservationRequest request, CreateGuestReservationCommandHandler handler) =>
@@ -113,7 +114,8 @@ public static class ReservationEndpoints
                              **Response:**
                              Returns the newly created customer ID, reservation ID, and pricing breakdown.
 
-                             """);
+                             """)
+            .AllowAnonymous();
 
         // GET /api/reservations/{id} - Get reservation by ID
         reservations.MapGet("/{id:guid}", async (Guid id, GetReservationQueryHandler handler) =>
@@ -139,7 +141,8 @@ public static class ReservationEndpoints
                 "Retrieves detailed information about a specific reservation including pricing breakdown with German VAT.")
             .Produces<object>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status404NotFound);
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
 
         // GET /api/reservations/search - Search reservations with filters
         reservations.MapGet("/search", async (
@@ -211,7 +214,8 @@ public static class ReservationEndpoints
                              - **pageSize**: Items per page (default: 50, max: 100)
 
                              Returns paginated results with total count and pagination metadata.
-                             """);
+                             """)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
         reservations.MapPut("/{id:guid}/confirm", async (Guid id, ConfirmReservationCommandHandler handler) =>
@@ -243,7 +247,8 @@ public static class ReservationEndpoints
                              - ReservationConfirmed domain event is raised
 
                              **Use Case:** Call this endpoint after payment gateway confirms successful payment.
-                             """);
+                             """)
+            .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
         reservations.MapPut("/{id:guid}/cancel", async (Guid id, CancelReservationCommand command, CancelReservationCommandHandler handler) =>
@@ -289,7 +294,8 @@ public static class ReservationEndpoints
                              - 50% refund for 24-48h before pickup
                              - No refund for < 24h before pickup
                              (Policy enforcement should be handled in payment service)
-                             """);
+                             """)
+            .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
 
         // GET /api/reservations/availability - Get booked vehicle IDs for a period
         reservations.MapGet("/availability", async (
@@ -319,7 +325,8 @@ public static class ReservationEndpoints
 
                              **Response:**
                              Returns a list of vehicle GUIDs that are booked during the period.
-                             """);
+                             """)
+            .AllowAnonymous();
 
         return app;
     }
