@@ -149,6 +149,7 @@ Complete guides for operating and developing the Orange Car Rental system:
 - 🔧 [**MONITORING.md**](./MONITORING.md) - Observability and alerting
 - 🔐 [**SECURITY.md**](./SECURITY.md) - Security guidelines
 - 🚢 [**CI/CD Pipeline**](./CI_CD.md) - GitHub Actions workflows
+- 🔍 [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ### Database
 - 🗄️ [**DATABASE.md**](./DATABASE.md) - Database setup and management
