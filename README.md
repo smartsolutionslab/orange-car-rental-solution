@@ -127,6 +127,33 @@ npx nx serve public-portal
 npx nx serve call-center-portal
 ```
 
+## Documentation
+
+Complete guides for operating and developing the Orange Car Rental system:
+
+### Quick Start & Operations
+- 📘 [**ASPIRE-QUICKSTART.md**](./ASPIRE-QUICKSTART.md) - Quick start guide for .NET Aspire development
+- 🛠️ [**SERVICE-MANAGEMENT.md**](./SERVICE-MANAGEMENT.md) - Starting, stopping, and managing all services
+- 📊 [**DEPLOYMENT-STATUS.md**](./DEPLOYMENT-STATUS.md) - Current system status and health report
+- 🗺️ [**NEXT-STEPS.md**](./NEXT-STEPS.md) - Recommended development tasks and roadmap
+
+### Architecture & Testing
+- 🏗️ [**ARCHITECTURE.md**](./ARCHITECTURE.md) - System architecture and design patterns
+- 🎭 [**E2E Testing Guide**](./src/frontend/apps/public-portal/E2E_TESTING.md) - Playwright E2E testing
+- ⚡ [**Performance Testing**](./performance-tests/README.md) - k6 load and performance testing
+- 📋 [**User Stories**](./USER_STORIES.md) - Feature implementation status
+- 📈 [**Performance SLOs**](./PERFORMANCE_SLOS.md) - Service Level Objectives
+
+### Deployment & Operations
+- 🚀 [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Production deployment guide
+- 🔧 [**MONITORING.md**](./MONITORING.md) - Observability and alerting
+- 🔐 [**SECURITY.md**](./SECURITY.md) - Security guidelines
+- 🚢 [**CI/CD Pipeline**](./CI_CD.md) - GitHub Actions workflows
+
+### Database
+- 🗄️ [**DATABASE.md**](./DATABASE.md) - Database setup and management
+- 📝 [**Seed Data Script**](./scripts/db/seed-test-data-sqlserver.sql) - Test data for development
+
 ## Project Structure
 
 ```
