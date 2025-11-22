@@ -1,0 +1,14 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "Orange Car Rental - Development",
+      "Group": "Development",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "orange_rental",
+      "Username": "orange_user",
+      "SSLMode": "prefer",
+      "Comment": "Orange Car Rental PostgreSQL Database"
+    }
+  }
+}

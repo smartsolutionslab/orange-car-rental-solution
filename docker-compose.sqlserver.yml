@@ -1,0 +1,74 @@
+version: '3.8'
+
+# Docker Compose for SQL Server Database
+# Alternative to PostgreSQL setup - use SQL Server for backend services
+
+services:
+  # SQL Server Database
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: orange-rental-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong@Passw0rd"
+      MSSQL_PID: "Developer"
+      MSSQL_TCP_PORT: 1433
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+      - ./scripts/db/init-sqlserver.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q 'SELECT 1' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - orange-network
+    restart: unless-stopped
+
+  # Azure Data Studio (Optional - for database management)
+  # Access at http://localhost:8081
+  # cloudbeaver:
+  #   image: dbeaver/cloudbeaver:latest
+  #   container_name: orange-rental-cloudbeaver
+  #   ports:
+  #     - "8081:8978"
+  #   volumes:
+  #     - cloudbeaver_data:/opt/cloudbeaver/workspace
+  #   depends_on:
+  #     - sqlserver
+  #   networks:
+  #     - orange-network
+  #   restart: unless-stopped
+
+volumes:
+  sqlserver_data:
+    driver: local
+  # cloudbeaver_data:
+  #   driver: local
+
+networks:
+  orange-network:
+    driver: bridge
+
+# Usage:
+# Start SQL Server:        docker-compose -f docker-compose.sqlserver.yml up -d
+# Stop SQL Server:         docker-compose -f docker-compose.sqlserver.yml down
+# View logs:               docker-compose -f docker-compose.sqlserver.yml logs -f sqlserver
+# Remove volumes:          docker-compose -f docker-compose.sqlserver.yml down -v
+#
+# Connection Information:
+# - Server:     localhost,1433
+# - Username:   sa
+# - Password:   YourStrong@Passw0rd
+# - Databases:  Will be created automatically via init script
+#
+# Connection String Example:
+# Server=localhost,1433;Database=OrangeCarRental_Customers;User Id=sa;Password=YourStrong@Passw0rd;TrustServerCertificate=True;
+#
+# To use SQL Server instead of PostgreSQL:
+# 1. Update appsettings.Development.json with SQL Server connection strings
+# 2. Ensure EF Core SQL Server provider is installed in each service
+# 3. Run migrations: dotnet ef database update
