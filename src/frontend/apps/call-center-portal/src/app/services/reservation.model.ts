@@ -100,6 +100,12 @@ export interface ReservationSearchQuery {
   status?: string;
   pickupDateFrom?: string;
   pickupDateTo?: string;
+  locationCode?: string;
+  categoryCode?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
+  sortOrder?: 'asc' | 'desc';
   pageNumber?: number;
   pageSize?: number;
 }

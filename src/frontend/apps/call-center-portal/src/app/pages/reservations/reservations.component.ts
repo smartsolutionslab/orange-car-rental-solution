@@ -1,12 +1,19 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation } from '../../services/reservation.model';
+import { Reservation, ReservationSearchQuery } from '../../services/reservation.model';
+
+type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
+
+interface GroupedReservations {
+  [key: string]: Reservation[];
+}
 
 /**
  * Reservations management page for call center
- * Displays booking management tools
+ * Displays booking management tools with advanced filtering, sorting, and grouping
  */
 @Component({
   selector: 'app-reservations',
@@ -17,6 +24,8 @@ import { Reservation } from '../../services/reservation.model';
 })
 export class ReservationsComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   protected readonly reservations = signal<Reservation[]>([]);
   protected readonly loading = signal(false);
@@ -28,39 +37,193 @@ export class ReservationsComponent implements OnInit {
   protected readonly actionInProgress = signal(false);
   protected readonly successMessage = signal<string | null>(null);
 
-  // Search filters
+  // Filter controls
   protected readonly searchStatus = signal<string>('');
   protected readonly searchCustomerId = signal<string>('');
+  protected readonly searchPickupDateFrom = signal<string>('');
+  protected readonly searchPickupDateTo = signal<string>('');
+  protected readonly searchLocation = signal<string>('');
+  protected readonly searchMinPrice = signal<number | null>(null);
+  protected readonly searchMaxPrice = signal<number | null>(null);
+
+  // Sorting controls
+  protected readonly sortBy = signal<'PickupDate' | 'Price' | 'Status' | 'CreatedDate'>('PickupDate');
+  protected readonly sortOrder = signal<'asc' | 'desc'>('desc');
+
+  // Grouping controls
+  protected readonly groupBy = signal<GroupBy>('none');
+
+  // Pagination
+  protected readonly currentPage = signal(1);
+  protected readonly pageSize = signal(25);
+  protected readonly totalCount = signal(0);
+  protected readonly totalPages = computed(() =>
+    Math.ceil(this.totalCount() / this.pageSize())
+  );
 
   // Stats
-  protected readonly totalReservations = signal(0);
   protected readonly todayReservations = signal(0);
   protected readonly activeReservations = signal(0);
   protected readonly pendingReservations = signal(0);
 
+  // Active filters count
+  protected readonly activeFiltersCount = computed(() => {
+    let count = 0;
+    if (this.searchStatus()) count++;
+    if (this.searchCustomerId()) count++;
+    if (this.searchPickupDateFrom()) count++;
+    if (this.searchPickupDateTo()) count++;
+    if (this.searchLocation()) count++;
+    if (this.searchMinPrice() !== null) count++;
+    if (this.searchMaxPrice() !== null) count++;
+    return count;
+  });
+
+  // Grouped reservations
+  protected readonly groupedReservations = computed<GroupedReservations>(() => {
+    const reservations = this.reservations();
+    const grouping = this.groupBy();
+
+    if (grouping === 'none') {
+      return { 'all': reservations };
+    }
+
+    const grouped: GroupedReservations = {};
+
+    reservations.forEach(reservation => {
+      let key: string;
+
+      switch (grouping) {
+        case 'status':
+          key = reservation.status || 'Unknown';
+          break;
+        case 'pickupDate':
+          key = this.getDateGroup(reservation.pickupDate);
+          break;
+        case 'location':
+          key = reservation.pickupLocationCode || 'Unknown';
+          break;
+        default:
+          key = 'all';
+      }
+
+      if (!grouped[key]) {
+        grouped[key] = [];
+      }
+      grouped[key].push(reservation);
+    });
+
+    return grouped;
+  });
+
+  protected readonly groupKeys = computed(() => Object.keys(this.groupedReservations()));
+
+  // Sort options
+  protected readonly sortOptions = [
+    { value: 'PickupDate', label: 'Abholdatum' },
+    { value: 'Price', label: 'Preis' },
+    { value: 'Status', label: 'Status' },
+    { value: 'CreatedDate', label: 'Erstellungsdatum' }
+  ];
+
+  // Group options
+  protected readonly groupOptions = [
+    { value: 'none', label: 'Keine Gruppierung' },
+    { value: 'status', label: 'Nach Status' },
+    { value: 'pickupDate', label: 'Nach Abholdatum' },
+    { value: 'location', label: 'Nach Standort' }
+  ];
+
+  // Status options
+  protected readonly statusOptions = [
+    { value: '', label: 'Alle Status' },
+    { value: 'Pending', label: 'Ausstehend' },
+    { value: 'Confirmed', label: 'Bestätigt' },
+    { value: 'Active', label: 'Aktiv' },
+    { value: 'Completed', label: 'Abgeschlossen' },
+    { value: 'Cancelled', label: 'Storniert' }
+  ];
+
   ngOnInit(): void {
+    // Load filters from URL parameters
+    this.loadFiltersFromUrl();
     this.loadReservations();
   }
 
   /**
-   * Load reservations with optional filters
+   * Load filter values from URL query parameters
+   */
+  private loadFiltersFromUrl(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['status']) this.searchStatus.set(params['status']);
+      if (params['customerId']) this.searchCustomerId.set(params['customerId']);
+      if (params['dateFrom']) this.searchPickupDateFrom.set(params['dateFrom']);
+      if (params['dateTo']) this.searchPickupDateTo.set(params['dateTo']);
+      if (params['location']) this.searchLocation.set(params['location']);
+      if (params['minPrice']) this.searchMinPrice.set(Number(params['minPrice']));
+      if (params['maxPrice']) this.searchMaxPrice.set(Number(params['maxPrice']));
+      if (params['sortBy']) this.sortBy.set(params['sortBy'] as any);
+      if (params['sortOrder']) this.sortOrder.set(params['sortOrder'] as any);
+      if (params['groupBy']) this.groupBy.set(params['groupBy'] as GroupBy);
+      if (params['page']) this.currentPage.set(Number(params['page']));
+      if (params['pageSize']) this.pageSize.set(Number(params['pageSize']));
+    });
+  }
+
+  /**
+   * Update URL with current filter values
+   */
+  private updateUrl(): void {
+    const queryParams: any = {};
+
+    if (this.searchStatus()) queryParams.status = this.searchStatus();
+    if (this.searchCustomerId()) queryParams.customerId = this.searchCustomerId();
+    if (this.searchPickupDateFrom()) queryParams.dateFrom = this.searchPickupDateFrom();
+    if (this.searchPickupDateTo()) queryParams.dateTo = this.searchPickupDateTo();
+    if (this.searchLocation()) queryParams.location = this.searchLocation();
+    if (this.searchMinPrice() !== null) queryParams.minPrice = this.searchMinPrice();
+    if (this.searchMaxPrice() !== null) queryParams.maxPrice = this.searchMaxPrice();
+    if (this.sortBy() !== 'PickupDate') queryParams.sortBy = this.sortBy();
+    if (this.sortOrder() !== 'desc') queryParams.sortOrder = this.sortOrder();
+    if (this.groupBy() !== 'none') queryParams.groupBy = this.groupBy();
+    if (this.currentPage() !== 1) queryParams.page = this.currentPage();
+    if (this.pageSize() !== 25) queryParams.pageSize = this.pageSize();
+
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams,
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  /**
+   * Load reservations with current filters
    */
   protected loadReservations(): void {
     this.loading.set(true);
     this.error.set(null);
 
-    const query = {
+    const query: ReservationSearchQuery = {
       status: this.searchStatus() || undefined,
       customerId: this.searchCustomerId() || undefined,
-      pageSize: 50
+      pickupDateFrom: this.searchPickupDateFrom() || undefined,
+      pickupDateTo: this.searchPickupDateTo() || undefined,
+      locationCode: this.searchLocation() || undefined,
+      minPrice: this.searchMinPrice() ?? undefined,
+      maxPrice: this.searchMaxPrice() ?? undefined,
+      sortBy: this.sortBy(),
+      sortOrder: this.sortOrder(),
+      pageNumber: this.currentPage(),
+      pageSize: this.pageSize()
     };
 
     this.reservationService.searchReservations(query).subscribe({
       next: (result) => {
         this.reservations.set(result.reservations);
-        this.totalReservations.set(result.totalCount);
+        this.totalCount.set(result.totalCount);
         this.calculateStats(result.reservations);
         this.loading.set(false);
+        this.updateUrl();
       },
       error: (err) => {
         console.error('Error loading reservations:', err);
@@ -90,6 +253,92 @@ export class ReservationsComponent implements OnInit {
   }
 
   /**
+   * Group reservations by date
+   */
+  private getDateGroup(dateString: string): string {
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const nextWeek = new Date(today);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+
+    const dateOnly = date.toISOString().split('T')[0];
+    const todayOnly = today.toISOString().split('T')[0];
+    const tomorrowOnly = tomorrow.toISOString().split('T')[0];
+
+    if (dateOnly === todayOnly) return 'Heute';
+    if (dateOnly === tomorrowOnly) return 'Morgen';
+    if (date <= nextWeek) return 'Diese Woche';
+    return 'Später';
+  }
+
+  /**
+   * Apply search filters
+   */
+  protected applyFilters(): void {
+    this.currentPage.set(1); // Reset to first page
+    this.loadReservations();
+  }
+
+  /**
+   * Clear all search filters
+   */
+  protected clearFilters(): void {
+    this.searchStatus.set('');
+    this.searchCustomerId.set('');
+    this.searchPickupDateFrom.set('');
+    this.searchPickupDateTo.set('');
+    this.searchLocation.set('');
+    this.searchMinPrice.set(null);
+    this.searchMaxPrice.set(null);
+    this.sortBy.set('PickupDate');
+    this.sortOrder.set('desc');
+    this.groupBy.set('none');
+    this.currentPage.set(1);
+    this.loadReservations();
+  }
+
+  /**
+   * Change sort field
+   */
+  protected changeSortBy(field: 'PickupDate' | 'Price' | 'Status' | 'CreatedDate'): void {
+    if (this.sortBy() === field) {
+      // Toggle sort order
+      this.sortOrder.set(this.sortOrder() === 'asc' ? 'desc' : 'asc');
+    } else {
+      this.sortBy.set(field);
+      this.sortOrder.set('desc');
+    }
+    this.loadReservations();
+  }
+
+  /**
+   * Change grouping
+   */
+  protected changeGroupBy(group: GroupBy): void {
+    this.groupBy.set(group);
+    this.updateUrl();
+  }
+
+  /**
+   * Pagination
+   */
+  protected goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages()) return;
+    this.currentPage.set(page);
+    this.loadReservations();
+  }
+
+  protected nextPage(): void {
+    this.goToPage(this.currentPage() + 1);
+  }
+
+  protected previousPage(): void {
+    this.goToPage(this.currentPage() - 1);
+  }
+
+  /**
    * View reservation details
    */
   protected viewDetails(reservation: Reservation): void {
@@ -106,22 +355,6 @@ export class ReservationsComponent implements OnInit {
   }
 
   /**
-   * Apply search filters
-   */
-  protected applyFilters(): void {
-    this.loadReservations();
-  }
-
-  /**
-   * Clear search filters
-   */
-  protected clearFilters(): void {
-    this.searchStatus.set('');
-    this.searchCustomerId.set('');
-    this.loadReservations();
-  }
-
-  /**
    * Format date for display
    */
   protected formatDate(dateString: string): string {
@@ -132,6 +365,21 @@ export class ReservationsComponent implements OnInit {
       day: '2-digit'
     });
   }
+
+  /**
+   * Format price for display
+   */
+  protected formatPrice(price: number): string {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(price);
+  }
+
+  /**
+   * Math helper for templates
+   */
+  protected readonly Math = Math;
 
   /**
    * Get status badge class
@@ -150,6 +398,20 @@ export class ReservationsComponent implements OnInit {
       default:
         return '';
     }
+  }
+
+  /**
+   * Get status label in German
+   */
+  protected getStatusLabel(status: string): string {
+    const labels: Record<string, string> = {
+      'Pending': 'Ausstehend',
+      'Confirmed': 'Bestätigt',
+      'Active': 'Aktiv',
+      'Completed': 'Abgeschlossen',
+      'Cancelled': 'Storniert'
+    };
+    return labels[status] || status;
   }
 
   /**

@@ -8,20 +8,26 @@ import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { Vehicle } from '../../services/vehicle.model';
 import { GuestReservationRequest } from '../../services/reservation.model';
+import { AuthService } from '../../services/auth.service';
+import { CustomerService } from '../../services/customer.service';
+import { CustomerProfile, UpdateCustomerProfileRequest } from '../../services/customer.model';
+import { SimilarVehiclesComponent } from '../../components/similar-vehicles/similar-vehicles.component';
 
 /**
- * Booking form component for creating guest reservations
+ * Booking form component for creating guest and authenticated user reservations
  *
  * Features:
  * - Multi-step form (Vehicle Details → Customer Info → Address → Driver's License → Review)
  * - Form validation at each step
+ * - Auto-fill customer data for authenticated users
+ * - Optional profile update after booking
  * - Integration with Reservations API
  * - Navigation to confirmation page on success
  */
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent],
   templateUrl: './booking.component.html',
   styleUrl: './booking.component.css'
 })
@@ -32,6 +38,8 @@ export class BookingComponent implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly vehicleService = inject(VehicleService);
   private readonly reservationService = inject(ReservationService);
+  private readonly authService = inject(AuthService);
+  private readonly customerService = inject(CustomerService);
 
   // Form state
   protected readonly bookingForm: FormGroup;
@@ -42,10 +50,15 @@ export class BookingComponent implements OnInit {
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
   protected readonly locationsLoading = signal(false);
+  protected readonly profileLoading = signal(false);
 
   // Data
   protected readonly locations = signal<Location[]>([]);
   protected readonly selectedVehicle = signal<Vehicle | null>(null);
+  protected readonly similarVehicles = signal<Vehicle[]>([]);
+  protected readonly customerProfile = signal<CustomerProfile | null>(null);
+  protected readonly isAuthenticated = signal(false);
+  protected readonly showVehicleUnavailableWarning = signal(false);
 
   // Date constraints
   protected readonly today = new Date().toISOString().split('T')[0];
@@ -81,13 +94,22 @@ export class BookingComponent implements OnInit {
       licenseNumber: ['', [Validators.required, Validators.minLength(5)]],
       licenseIssueCountry: ['Deutschland', Validators.required],
       licenseIssueDate: ['', Validators.required],
-      licenseExpiryDate: ['', Validators.required]
+      licenseExpiryDate: ['', Validators.required],
+
+      // Profile update option (only for authenticated users)
+      updateMyProfile: [false]
     });
   }
 
   ngOnInit(): void {
     // Load locations
     this.loadLocations();
+
+    // Check if user is authenticated and load their profile
+    this.isAuthenticated.set(this.authService.isAuthenticated());
+    if (this.isAuthenticated()) {
+      this.loadCustomerProfile();
+    }
 
     // Get vehicle ID from route query params
     this.route.queryParams.subscribe(params => {
@@ -131,7 +153,7 @@ export class BookingComponent implements OnInit {
   }
 
   /**
-   * Load vehicle details
+   * Load vehicle details and similar vehicles
    */
   private loadVehicle(vehicleId: string): void {
     this.vehicleService.getVehicleById(vehicleId).subscribe({
@@ -141,11 +163,77 @@ export class BookingComponent implements OnInit {
         this.bookingForm.patchValue({
           categoryCode: vehicle.categoryCode
         });
+
+        // Load similar vehicles
+        this.loadSimilarVehicles(vehicle);
       },
       error: (error) => {
         console.error('Error loading vehicle:', error);
+        this.showVehicleUnavailableWarning.set(true);
         // Don't show error to user, just log it
         // The form will require manual categoryCode entry if vehicle load fails
+      }
+    });
+  }
+
+  /**
+   * Load similar vehicles for the selected vehicle
+   */
+  private loadSimilarVehicles(vehicle: Vehicle): void {
+    const pickupDate = this.bookingForm.get('pickupDate')?.value;
+    const returnDate = this.bookingForm.get('returnDate')?.value;
+
+    this.vehicleService.getSimilarVehicles(vehicle, pickupDate, returnDate).subscribe({
+      next: (similar) => {
+        this.similarVehicles.set(similar);
+      },
+      error: (error) => {
+        console.error('Error loading similar vehicles:', error);
+        // Non-critical error, just log it
+      }
+    });
+  }
+
+  /**
+   * Load customer profile for authenticated users
+   * Pre-fills the form with saved profile data
+   */
+  private loadCustomerProfile(): void {
+    this.profileLoading.set(true);
+
+    this.customerService.getMyProfile().subscribe({
+      next: (profile) => {
+        this.customerProfile.set(profile);
+        this.profileLoading.set(false);
+
+        // Pre-fill customer information
+        this.bookingForm.patchValue({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          email: profile.email,
+          phoneNumber: profile.phoneNumber,
+          dateOfBirth: profile.dateOfBirth,
+
+          // Pre-fill address
+          street: profile.address.street,
+          city: profile.address.city,
+          postalCode: profile.address.postalCode,
+          country: profile.address.country,
+
+          // Pre-fill driver's license if available
+          ...(profile.driversLicense && {
+            licenseNumber: profile.driversLicense.licenseNumber,
+            licenseIssueCountry: profile.driversLicense.licenseIssueCountry,
+            licenseIssueDate: profile.driversLicense.licenseIssueDate,
+            licenseExpiryDate: profile.driversLicense.licenseExpiryDate
+          })
+        });
+      },
+      error: (error) => {
+        console.error('Error loading customer profile:', error);
+        this.profileLoading.set(false);
+        // Don't show error to user, just log it
+        // User can still fill the form manually
       }
     });
   }
@@ -307,6 +395,11 @@ export class BookingComponent implements OnInit {
 
     this.reservationService.createGuestReservation(request).subscribe({
       next: (response) => {
+        // Update profile if checkbox is checked and user is authenticated
+        if (this.isAuthenticated() && this.bookingForm.get('updateMyProfile')?.value) {
+          this.updateProfileAfterBooking(formValue);
+        }
+
         this.submitting.set(false);
         // Navigate to confirmation page with reservation details
         this.router.navigate(['/confirmation'], {
@@ -328,6 +421,49 @@ export class BookingComponent implements OnInit {
   }
 
   /**
+   * Update customer profile after successful booking
+   * Called when updateMyProfile checkbox is checked
+   */
+  private updateProfileAfterBooking(formValue: any): void {
+    const profile = this.customerProfile();
+    if (!profile) {
+      return;
+    }
+
+    const updateRequest: UpdateCustomerProfileRequest = {
+      firstName: formValue.firstName,
+      lastName: formValue.lastName,
+      email: formValue.email,
+      phoneNumber: formValue.phoneNumber,
+      dateOfBirth: formValue.dateOfBirth,
+      address: {
+        street: formValue.street,
+        city: formValue.city,
+        postalCode: formValue.postalCode,
+        country: formValue.country
+      },
+      driversLicense: {
+        licenseNumber: formValue.licenseNumber,
+        licenseIssueCountry: formValue.licenseIssueCountry,
+        licenseIssueDate: formValue.licenseIssueDate,
+        licenseExpiryDate: formValue.licenseExpiryDate
+      }
+    };
+
+    this.customerService.updateMyProfile(updateRequest).subscribe({
+      next: (updatedProfile) => {
+        this.customerProfile.set(updatedProfile);
+        console.log('Profile updated successfully');
+      },
+      error: (error) => {
+        console.error('Error updating profile:', error);
+        // Don't show error to user since booking was successful
+        // Profile update failure should not block the booking flow
+      }
+    });
+  }
+
+  /**
    * Calculate number of rental days
    */
   protected getRentalDays(): number {
@@ -344,5 +480,29 @@ export class BookingComponent implements OnInit {
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     return diffDays;
+  }
+
+  /**
+   * Handle selection of an alternative vehicle
+   * Replaces the current vehicle while preserving all other booking details
+   */
+  protected onSimilarVehicleSelected(vehicle: Vehicle): void {
+    // Update the selected vehicle
+    this.selectedVehicle.set(vehicle);
+
+    // Update form with new vehicle details
+    this.bookingForm.patchValue({
+      vehicleId: vehicle.id,
+      categoryCode: vehicle.categoryCode
+    });
+
+    // Clear unavailable warning if it was shown
+    this.showVehicleUnavailableWarning.set(false);
+
+    // Reload similar vehicles for the new selection
+    this.loadSimilarVehicles(vehicle);
+
+    // Scroll to top to show the updated vehicle
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }

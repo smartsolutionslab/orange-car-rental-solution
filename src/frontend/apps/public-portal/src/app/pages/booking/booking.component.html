@@ -399,6 +399,21 @@
             </div>
           </div>
         </div>
+
+        <!-- Update Profile Option (only for authenticated users) -->
+        @if (isAuthenticated()) {
+          <div class="profile-update-option">
+            <label class="checkbox-label">
+              <input type="checkbox" formControlName="updateMyProfile" class="checkbox-input" />
+              <span class="checkbox-text">
+                Diese Änderungen in meinem Profil speichern
+              </span>
+            </label>
+            <p class="profile-update-hint">
+              Wenn aktiviert, werden Ihre persönlichen Daten, Adresse und Führerscheininformationen in Ihrem Profil aktualisiert.
+            </p>
+          </div>
+        }
       </div>
     }
 
@@ -448,4 +463,16 @@
       }
     </div>
   </form>
+
+  <!-- Similar Vehicles Section -->
+  @if (selectedVehicle() && (similarVehicles().length > 0 || showVehicleUnavailableWarning())) {
+    <div class="similar-vehicles-section">
+      <app-similar-vehicles
+        [currentVehicle]="selectedVehicle()"
+        [similarVehicles]="similarVehicles()"
+        [showUnavailableWarning]="showVehicleUnavailableWarning()"
+        (vehicleSelected)="onSimilarVehicleSelected($event)"
+      ></app-similar-vehicles>
+    </div>
+  }
 </div>

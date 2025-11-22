@@ -81,4 +81,45 @@ export interface Reservation {
   totalPriceGross: number;
   currency: string;
   status: string;
+  createdAt?: string;
+}
+
+/**
+ * Reservation search filters
+ */
+export interface ReservationSearchFilters {
+  customerId?: string;
+  status?: string;
+  pickupDateFrom?: string;
+  pickupDateTo?: string;
+  sortBy?: 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
+  sortOrder?: 'asc' | 'desc';
+  pageNumber?: number;
+  pageSize?: number;
+}
+
+/**
+ * Paginated search results
+ */
+export interface ReservationSearchResponse {
+  items: Reservation[];
+  totalCount: number;
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+/**
+ * Cancel reservation request
+ */
+export interface CancelReservationRequest {
+  reason: string;
+}
+
+/**
+ * Guest lookup request
+ */
+export interface GuestLookupRequest {
+  reservationId: string;
+  email: string;
 }

@@ -3,6 +3,7 @@
   <p class="subtitle">Verwalten Sie alle Reservierungen und Buchungen</p>
 </div>
 
+<!-- Statistics Dashboard -->
 <div class="dashboard-grid">
   <div class="stat-card">
     <div class="stat-icon">
@@ -48,7 +49,7 @@
     </div>
     <div class="stat-content">
       <h3>Gesamt</h3>
-      <p class="stat-value">{{ totalReservations() }}</p>
+      <p class="stat-value">{{ totalCount() }}</p>
     </div>
   </div>
 </div>
@@ -63,6 +64,16 @@
   </div>
 }
 
+<!-- Error Message -->
+@if (error()) {
+  <div class="error-message">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+    </svg>
+    {{ error() }}
+  </div>
+}
+
 <div class="content-section">
   <div class="section-header">
     <h2>Reservierungsübersicht</h2>
@@ -74,115 +85,357 @@
     </button>
   </div>
 
-  <!-- Search Filters -->
-  <div class="filters-section">
-    <div class="filter-group">
-      <label for="statusFilter">Status</label>
-      <select id="statusFilter" [(ngModel)]="searchStatus" (change)="applyFilters()">
-        <option value="">Alle</option>
-        <option value="Pending">Ausstehend</option>
-        <option value="Confirmed">Bestätigt</option>
-        <option value="Active">Aktiv</option>
-        <option value="Completed">Abgeschlossen</option>
-        <option value="Cancelled">Storniert</option>
-      </select>
+  <!-- Advanced Filters Section -->
+  <div class="filters-panel">
+    <div class="filters-header">
+      <h3>Filter & Sortierung</h3>
+      <div class="filters-actions">
+        @if (activeFiltersCount() > 0) {
+          <span class="active-filters-badge">{{ activeFiltersCount() }} aktive Filter</span>
+        }
+        <button class="btn-secondary btn-sm" (click)="clearFilters()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+          Zurücksetzen
+        </button>
+      </div>
     </div>
 
-    <div class="filter-group">
-      <label for="customerFilter">Kunden-ID</label>
-      <input
-        type="text"
-        id="customerFilter"
-        [(ngModel)]="searchCustomerId"
-        placeholder="Kunden-ID eingeben..."
-      />
+    <!-- Filter Grid -->
+    <div class="filters-grid">
+      <!-- Status Filter -->
+      <div class="filter-group">
+        <label for="statusFilter">Status</label>
+        <select id="statusFilter" [(ngModel)]="searchStatus">
+          @for (option of statusOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Customer ID Filter -->
+      <div class="filter-group">
+        <label for="customerFilter">Kunden-ID</label>
+        <input
+          type="text"
+          id="customerFilter"
+          [(ngModel)]="searchCustomerId"
+          placeholder="Kunden-ID eingeben..."
+        />
+      </div>
+
+      <!-- Pickup Date From -->
+      <div class="filter-group">
+        <label for="dateFromFilter">Abholung von</label>
+        <input
+          type="date"
+          id="dateFromFilter"
+          [(ngModel)]="searchPickupDateFrom"
+        />
+      </div>
+
+      <!-- Pickup Date To -->
+      <div class="filter-group">
+        <label for="dateToFilter">Abholung bis</label>
+        <input
+          type="date"
+          id="dateToFilter"
+          [(ngModel)]="searchPickupDateTo"
+        />
+      </div>
+
+      <!-- Location Filter -->
+      <div class="filter-group">
+        <label for="locationFilter">Standort</label>
+        <input
+          type="text"
+          id="locationFilter"
+          [(ngModel)]="searchLocation"
+          placeholder="z.B. MUC, BER..."
+        />
+      </div>
+
+      <!-- Min Price Filter -->
+      <div class="filter-group">
+        <label for="minPriceFilter">Min. Preis (€)</label>
+        <input
+          type="number"
+          id="minPriceFilter"
+          [(ngModel)]="searchMinPrice"
+          placeholder="0"
+          min="0"
+        />
+      </div>
+
+      <!-- Max Price Filter -->
+      <div class="filter-group">
+        <label for="maxPriceFilter">Max. Preis (€)</label>
+        <input
+          type="number"
+          id="maxPriceFilter"
+          [(ngModel)]="searchMaxPrice"
+          placeholder="1000"
+          min="0"
+        />
+      </div>
+
+      <!-- Apply Filters Button -->
+      <div class="filter-group filter-actions">
+        <button class="btn-primary btn-block" (click)="applyFilters()" [disabled]="loading()">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+            <path d="M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z"/>
+          </svg>
+          Filter anwenden
+        </button>
+      </div>
     </div>
 
-    <button class="btn-secondary" (click)="clearFilters()">Filter zurücksetzen</button>
+    <!-- Sorting and Grouping Controls -->
+    <div class="controls-row">
+      <!-- Sorting -->
+      <div class="control-group">
+        <label>Sortierung</label>
+        <div class="sort-controls">
+          <select [(ngModel)]="sortBy" (change)="applyFilters()">
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+          <button
+            class="btn-icon"
+            (click)="changeSortBy(sortBy())"
+            [title]="sortOrder() === 'asc' ? 'Aufsteigend' : 'Absteigend'"
+          >
+            @if (sortOrder() === 'asc') {
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M7 14l5-5 5 5z"/>
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                <path d="M7 10l5 5 5-5z"/>
+              </svg>
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Grouping -->
+      <div class="control-group">
+        <label>Gruppierung</label>
+        <select [(ngModel)]="groupBy" (change)="changeGroupBy(groupBy())">
+          @for (option of groupOptions; track option.value) {
+            <option [value]="option.value">{{ option.label }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Page Size -->
+      <div class="control-group">
+        <label>Einträge pro Seite</label>
+        <select [(ngModel)]="pageSize" (change)="applyFilters()">
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Result Count -->
+    <div class="results-info">
+      <p>
+        Zeige {{ (currentPage() - 1) * pageSize() + 1 }} -
+        {{ Math.min(currentPage() * pageSize(), totalCount()) }}
+        von {{ totalCount() }} Reservierungen
+      </p>
+    </div>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Lade Reservierungen...</p>
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Reservierungen werden geladen...</p>
     </div>
   }
 
-  <!-- Error State -->
-  @if (error()) {
-    <div class="error-state">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      <p>{{ error() }}</p>
-    </div>
-  }
+  <!-- Reservations Table/List -->
+  @if (!loading() && reservations().length > 0) {
+    <!-- Grouped Display -->
+    @if (groupBy() !== 'none') {
+      <div class="grouped-reservations">
+        @for (groupKey of groupKeys(); track groupKey) {
+          <div class="group-section">
+            <div class="group-header">
+              <h3>{{ groupKey }}</h3>
+              <span class="group-count">{{ groupedReservations()[groupKey].length }} Buchungen</span>
+            </div>
+            <div class="reservations-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Reservierungs-ID</th>
+                    <th>Kunde</th>
+                    <th>Abholdatum</th>
+                    <th>Rückgabedatum</th>
+                    <th>Standort</th>
+                    <th>Preis</th>
+                    <th>Status</th>
+                    <th>Aktionen</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (reservation of groupedReservations()[groupKey]; track reservation.reservationId) {
+                    <tr>
+                      <td>
+                        <span class="reservation-id" [title]="reservation.reservationId">
+                          {{ reservation.reservationId.substring(0, 8) }}...
+                        </span>
+                      </td>
+                      <td>{{ reservation.customerId.substring(0, 8) }}...</td>
+                      <td>{{ formatDate(reservation.pickupDate) }}</td>
+                      <td>{{ formatDate(reservation.returnDate) }}</td>
+                      <td>{{ reservation.pickupLocationCode }}</td>
+                      <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
+                      <td>
+                        <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                          {{ getStatusLabel(reservation.status) }}
+                        </span>
+                      </td>
+                      <td class="actions-cell">
+                        <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                        @if (canConfirm(reservation)) {
+                          <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">Bestätigen</button>
+                        }
+                        @if (canCancel(reservation)) {
+                          <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">Stornieren</button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    }
 
-  <!-- Reservations Table -->
-  @if (!loading() && !error() && reservations().length > 0) {
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Reservierungs-ID</th>
-            <th>Kunden-ID</th>
-            <th>Abholung</th>
-            <th>Rückgabe</th>
-            <th>Tage</th>
-            <th>Preis</th>
-            <th>Status</th>
-            <th>Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (reservation of reservations(); track reservation.reservationId) {
+    <!-- Ungrouped Display -->
+    @else {
+      <div class="reservations-table">
+        <table>
+          <thead>
             <tr>
-              <td><span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span></td>
-              <td><span class="id-badge">{{ reservation.customerId.substring(0, 8) }}</span></td>
-              <td>{{ formatDate(reservation.pickupDate) }}</td>
-              <td>{{ formatDate(reservation.returnDate) }}</td>
-              <td>{{ reservation.rentalDays }}</td>
-              <td>{{ reservation.totalPriceGross.toFixed(2) }} {{ reservation.currency }}</td>
-              <td><span class="status-badge" [ngClass]="getStatusClass(reservation.status)">{{ reservation.status }}</span></td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-icon" (click)="viewDetails(reservation)" title="Details anzeigen">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                    </svg>
-                  </button>
+              <th>Reservierungs-ID</th>
+              <th>Kunde</th>
+              <th>Abholdatum</th>
+              <th>Rückgabedatum</th>
+              <th>Standort</th>
+              <th>Preis</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reservation of reservations(); track reservation.reservationId) {
+              <tr>
+                <td>
+                  <span class="reservation-id" [title]="reservation.reservationId">
+                    {{ reservation.reservationId.substring(0, 8) }}...
+                  </span>
+                </td>
+                <td>{{ reservation.customerId.substring(0, 8) }}...</td>
+                <td>{{ formatDate(reservation.pickupDate) }}</td>
+                <td>{{ formatDate(reservation.returnDate) }}</td>
+                <td>{{ reservation.pickupLocationCode }}</td>
+                <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
+                <td>
+                  <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                    {{ getStatusLabel(reservation.status) }}
+                  </span>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">Details</button>
                   @if (canConfirm(reservation)) {
-                    <button class="btn-icon btn-icon-success" (click)="confirmReservation(reservation)" title="Bestätigen" [disabled]="actionInProgress()">
-                      <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                      </svg>
-                    </button>
+                    <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">Bestätigen</button>
                   }
                   @if (canCancel(reservation)) {
-                    <button class="btn-icon btn-icon-danger" (click)="showCancelDialog(reservation)" title="Stornieren" [disabled]="actionInProgress()">
-                      <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                      </svg>
-                    </button>
+                    <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">Stornieren</button>
                   }
-                </div>
-              </td>
-            </tr>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- Pagination -->
+    @if (totalPages() > 1) {
+      <div class="pagination">
+        <button
+          class="btn-pagination"
+          (click)="previousPage()"
+          [disabled]="currentPage() === 1"
+        >
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+          </svg>
+          Zurück
+        </button>
+
+        <div class="page-numbers">
+          @if (currentPage() > 3) {
+            <button class="btn-page" (click)="goToPage(1)">1</button>
+            @if (currentPage() > 4) {
+              <span class="pagination-ellipsis">...</span>
+            }
           }
-        </tbody>
-      </table>
-    </div>
+
+          @for (page of [currentPage() - 2, currentPage() - 1, currentPage(), currentPage() + 1, currentPage() + 2]; track page) {
+            @if (page > 0 && page <= totalPages()) {
+              <button
+                class="btn-page"
+                [class.active]="page === currentPage()"
+                (click)="goToPage(page)"
+              >
+                {{ page }}
+              </button>
+            }
+          }
+
+          @if (currentPage() < totalPages() - 2) {
+            @if (currentPage() < totalPages() - 3) {
+              <span class="pagination-ellipsis">...</span>
+            }
+            <button class="btn-page" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+          }
+        </div>
+
+        <button
+          class="btn-pagination"
+          (click)="nextPage()"
+          [disabled]="currentPage() === totalPages()"
+        >
+          Weiter
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
+          </svg>
+        </button>
+      </div>
+    }
   }
 
-  <!-- No Results -->
-  @if (!loading() && !error() && reservations().length === 0) {
-    <div class="no-results">
-      <svg class="no-results-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z"/>
+  <!-- Empty State -->
+  @if (!loading() && reservations().length === 0) {
+    <div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="64" height="64">
+        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5z"/>
       </svg>
       <h3>Keine Reservierungen gefunden</h3>
-      <p>Versuchen Sie, die Filter zu ändern oder zu löschen.</p>
+      <p>Versuchen Sie, die Filter anzupassen, um weitere Ergebnisse zu sehen.</p>
     </div>
   }
 </div>
@@ -190,14 +443,10 @@
 <!-- Details Modal -->
 @if (showDetails() && selectedReservation()) {
   <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>Reservierungsdetails</h2>
-        <button class="btn-close" (click)="closeDetails()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
+        <button class="btn-close" (click)="closeDetails()">&times;</button>
       </div>
       <div class="modal-body">
         <div class="detail-grid">
@@ -215,15 +464,11 @@
           </div>
           <div class="detail-item">
             <label>Status</label>
-            <p><span class="status-badge" [ngClass]="getStatusClass(selectedReservation()!.status)">{{ selectedReservation()!.status }}</span></p>
-          </div>
-          <div class="detail-item">
-            <label>Abholort</label>
-            <p>{{ selectedReservation()!.pickupLocationCode }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Rückgabeort</label>
-            <p>{{ selectedReservation()!.dropoffLocationCode }}</p>
+            <p>
+              <span class="status-badge" [class]="getStatusClass(selectedReservation()!.status)">
+                {{ getStatusLabel(selectedReservation()!.status) }}
+              </span>
+            </p>
           </div>
           <div class="detail-item">
             <label>Abholdatum</label>
@@ -234,47 +479,49 @@
             <p>{{ formatDate(selectedReservation()!.returnDate) }}</p>
           </div>
           <div class="detail-item">
-            <label>Mietdauer</label>
-            <p>{{ selectedReservation()!.rentalDays }} Tage</p>
+            <label>Abholort</label>
+            <p>{{ selectedReservation()!.pickupLocationCode }}</p>
           </div>
           <div class="detail-item">
-            <label>Preis (Netto)</label>
-            <p>{{ selectedReservation()!.totalPriceNet.toFixed(2) }} {{ selectedReservation()!.currency }}</p>
+            <label>Rückgabeort</label>
+            <p>{{ selectedReservation()!.dropoffLocationCode }}</p>
           </div>
           <div class="detail-item">
-            <label>MwSt. (19%)</label>
-            <p>{{ selectedReservation()!.totalPriceVat.toFixed(2) }} {{ selectedReservation()!.currency }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Gesamt (Brutto)</label>
-            <p><strong>{{ selectedReservation()!.totalPriceGross.toFixed(2) }} {{ selectedReservation()!.currency }}</strong></p>
+            <label>Miettage</label>
+            <p>{{ selectedReservation()!.rentalDays }}</p>
           </div>
           <div class="detail-item">
             <label>Erstellt am</label>
             <p>{{ formatDate(selectedReservation()!.createdAt) }}</p>
           </div>
-          @if (selectedReservation()!.confirmedAt) {
-            <div class="detail-item">
-              <label>Bestätigt am</label>
-              <p>{{ formatDate(selectedReservation()!.confirmedAt!) }}</p>
+        </div>
+
+        <div class="price-section">
+          <h3>Preisübersicht</h3>
+          <div class="price-breakdown">
+            <div class="price-row">
+              <span>Nettobetrag:</span>
+              <span>{{ formatPrice(selectedReservation()!.totalPriceNet) }}</span>
             </div>
-          }
+            <div class="price-row">
+              <span>MwSt. (19%):</span>
+              <span>{{ formatPrice(selectedReservation()!.totalPriceVat) }}</span>
+            </div>
+            <div class="price-row total">
+              <span><strong>Gesamtbetrag:</strong></span>
+              <span><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="modal-footer">
         @if (canConfirm(selectedReservation()!)) {
           <button class="btn-success" (click)="confirmReservation(selectedReservation()!)" [disabled]="actionInProgress()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
             Bestätigen
           </button>
         }
         @if (canCancel(selectedReservation()!)) {
           <button class="btn-danger" (click)="showCancelDialog(selectedReservation()!)" [disabled]="actionInProgress()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
             Stornieren
           </button>
         }
@@ -284,48 +531,42 @@
   </div>
 }
 
-<!-- Cancel Reservation Modal -->
+<!-- Cancel Modal -->
 @if (showCancelModal() && selectedReservation()) {
   <div class="modal-overlay" (click)="closeCancelModal()">
-    <div class="modal-content modal-content-small" (click)="$event.stopPropagation()">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>Reservierung stornieren</h2>
-        <button class="btn-close" (click)="closeCancelModal()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
+        <button class="btn-close" (click)="closeCancelModal()">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-description">
-          Möchten Sie die Reservierung <strong>{{ selectedReservation()!.reservationId.substring(0, 8) }}</strong> wirklich stornieren?
-        </p>
+        <p>Möchten Sie diese Reservierung wirklich stornieren?</p>
+        <p><strong>Reservierungs-ID:</strong> {{ selectedReservation()!.reservationId.substring(0, 8) }}...</p>
+
         <div class="form-group">
           <label for="cancelReason">Stornierungsgrund *</label>
           <textarea
             id="cancelReason"
             [(ngModel)]="cancelReason"
-            placeholder="Bitte geben Sie den Grund für die Stornierung ein..."
             rows="4"
-            [disabled]="actionInProgress()"
+            placeholder="Bitte geben Sie einen Grund für die Stornierung ein..."
+            class="form-control"
           ></textarea>
-          @if (error() && !cancelReason().trim()) {
-            <span class="error-text">{{ error() }}</span>
-          }
         </div>
+
+        @if (error()) {
+          <div class="error-message-inline">{{ error() }}</div>
+        }
       </div>
       <div class="modal-footer">
-        <button class="btn-danger" (click)="cancelReservation()" [disabled]="actionInProgress() || !cancelReason().trim()">
-          @if (actionInProgress()) {
-            <div class="button-spinner"></div>
-          } @else {
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          }
-          Stornieren
+        <button class="btn-secondary" (click)="closeCancelModal()">Abbrechen</button>
+        <button
+          class="btn-danger"
+          (click)="cancelReservation()"
+          [disabled]="!cancelReason() || actionInProgress()"
+        >
+          {{ actionInProgress() ? 'Wird storniert...' : 'Stornierung bestätigen' }}
         </button>
-        <button class="btn-secondary" (click)="closeCancelModal()" [disabled]="actionInProgress()">Abbrechen</button>
       </div>
     </div>
   </div>
