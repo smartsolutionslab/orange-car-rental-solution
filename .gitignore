@@ -35,6 +35,13 @@ bld/
 .idea/
 *.sln.iml
 
+# Claude Code local settings (keep shared configs, ignore local overrides)
+**/.claude/*.local.json
+**/.claude/settings.local.json
+
+# Windows command artifacts
+nul
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json
