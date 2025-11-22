@@ -1,0 +1,201 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  lint-frontend:
+    name: Lint Frontend Code
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    strategy:
+      matrix:
+        app: [public-portal, call-center-portal]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm ci
+
+      - name: Run linter
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm run lint
+
+      - name: Check formatting
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm run format:check
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        app: [public-portal, call-center-portal]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm ci
+
+      - name: Run unit tests
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm run test:ci
+
+      - name: Generate coverage
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm run test:coverage
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          files: src/frontend/apps/${{ matrix.app }}/coverage/lcov.info
+          flags: ${{ matrix.app }}
+
+  e2e-smoke:
+    name: E2E Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/public-portal/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend/apps/public-portal
+        run: npm ci
+
+      - name: Install Playwright
+        working-directory: src/frontend/apps/public-portal
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke tests
+        working-directory: src/frontend/apps/public-portal
+        run: npx playwright test --project=chromium --grep "@smoke"
+        env:
+          CI: true
+
+      - name: Upload results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-test-results
+          path: src/frontend/apps/public-portal/test-results/
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      matrix:
+        app: [public-portal, call-center-portal]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+
+      - name: Install dependencies
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm ci
+
+      - name: Build production
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: npm run build:production
+
+      - name: Check bundle size
+        working-directory: src/frontend/apps/${{ matrix.app }}
+        run: |
+          echo "Checking bundle size..."
+          du -sh dist/
+          # Add bundle size checks here
+
+  summary:
+    name: PR Check Summary
+    needs: [lint-frontend, unit-tests, e2e-smoke, build-check]
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Check results
+        run: |
+          if [ "${{ needs.lint-frontend.result }}" == "success" ] && \
+             [ "${{ needs.unit-tests.result }}" == "success" ] && \
+             [ "${{ needs.e2e-smoke.result }}" == "success" ] && \
+             [ "${{ needs.build-check.result }}" == "success" ]; then
+            echo "✅ All PR checks passed!"
+            exit 0
+          else
+            echo "❌ Some PR checks failed"
+            exit 1
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const lintStatus = '${{ needs.lint-frontend.result }}' === 'success' ? '✅' : '❌';
+            const unitStatus = '${{ needs.unit-tests.result }}' === 'success' ? '✅' : '❌';
+            const e2eStatus = '${{ needs.e2e-smoke.result }}' === 'success' ? '✅' : '❌';
+            const buildStatus = '${{ needs.build-check.result }}' === 'success' ? '✅' : '❌';
+
+            const body = `## 🔍 Pull Request Checks
+
+            | Check | Status |
+            |-------|--------|
+            | Linting | ${lintStatus} |
+            | Unit Tests | ${unitStatus} |
+            | E2E Smoke Tests | ${e2eStatus} |
+            | Build | ${buildStatus} |
+
+            ${lintStatus === '✅' && unitStatus === '✅' && e2eStatus === '✅' && buildStatus === '✅'
+              ? '✅ **All checks passed!** This PR is ready for review.'
+              : '⚠️ **Some checks failed.** Please review the errors above.'}
+
+            ---
+            [View full workflow run](https://github.com/${{github.repository}}/actions/runs/${{github.run_id}})`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });

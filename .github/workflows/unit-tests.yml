@@ -1,0 +1,140 @@
+name: Unit Tests
+
+on:
+  push:
+    branches: [develop, main, master]
+  pull_request:
+    branches: [develop, main, master]
+
+jobs:
+  test-public-portal:
+    name: Public Portal Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend/apps/public-portal
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/public-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Generate coverage report
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./src/frontend/apps/public-portal/coverage/lcov.info
+          flags: public-portal
+          name: public-portal-coverage
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: public-portal-test-results
+          path: src/frontend/apps/public-portal/test-results/
+
+  test-call-center-portal:
+    name: Call Center Portal Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/frontend/apps/call-center-portal
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/frontend/apps/call-center-portal/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        run: npm run test:ci
+
+      - name: Generate coverage report
+        run: npm run test:coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./src/frontend/apps/call-center-portal/coverage/lcov.info
+          flags: call-center-portal
+          name: call-center-portal-coverage
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: call-center-portal-test-results
+          path: src/frontend/apps/call-center-portal/test-results/
+
+  test-backend:
+    name: Backend Unit Tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./src/backend/**/coverage.cobertura.xml
+          flags: backend
+          name: backend-coverage
+
+  test-summary:
+    name: Test Summary
+    runs-on: ubuntu-latest
+    needs: [test-public-portal, test-call-center-portal, test-backend]
+    if: always()
+
+    steps:
+      - name: Check test results
+        run: |
+          if [[ "${{ needs.test-public-portal.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-call-center-portal.result }}" == "failure" ]] || \
+             [[ "${{ needs.test-backend.result }}" == "failure" ]]; then
+            echo "❌ One or more test suites failed"
+            exit 1
+          else
+            echo "✅ All test suites passed"
+          fi

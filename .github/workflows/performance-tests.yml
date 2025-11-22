@@ -1,0 +1,215 @@
+name: Performance Tests
+
+on:
+  # Run on demand
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to test'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: staging
+      test_type:
+        description: 'Type of performance test'
+        required: true
+        type: choice
+        options:
+          - smoke
+          - load
+          - stress
+          - spike
+          - booking-flow
+          - vehicles-api
+        default: load
+
+  # Run weekly on staging
+  schedule:
+    - cron: '0 2 * * 1' # Every Monday at 2 AM
+
+  # Allow manual trigger from PRs (staging only)
+  pull_request:
+    types: [labeled]
+    # Only run if PR has "perf-test" label
+
+jobs:
+  performance-test:
+    name: Run Performance Tests
+    runs-on: ubuntu-latest
+    # Only run on schedule, workflow_dispatch, or PRs with "perf-test" label
+    if: |
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'perf-test'))
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install k6
+        run: |
+          sudo gpg -k
+          sudo gpg --no-default-keyring --keyring /usr/share/keyrings/k6-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys C5AD17C747E3415A3642D57D77C6C491D6AC1D69
+          echo "deb [signed-by=/usr/share/keyrings/k6-archive-keyring.gpg] https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install k6
+
+      - name: Set test environment
+        id: set-env
+        run: |
+          if [ "${{ github.event_name }}" == "schedule" ]; then
+            echo "ENVIRONMENT=staging" >> $GITHUB_ENV
+            echo "TEST_TYPE=load" >> $GITHUB_ENV
+          elif [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "ENVIRONMENT=${{ github.event.inputs.environment }}" >> $GITHUB_ENV
+            echo "TEST_TYPE=${{ github.event.inputs.test_type }}" >> $GITHUB_ENV
+          else
+            echo "ENVIRONMENT=staging" >> $GITHUB_ENV
+            echo "TEST_TYPE=smoke" >> $GITHUB_ENV
+          fi
+
+      - name: Run smoke test (pre-check)
+        working-directory: performance-tests
+        run: |
+          echo "Running pre-check smoke test..."
+          k6 run scenarios/smoke-test.js \
+            --env ENVIRONMENT=${{ env.ENVIRONMENT }} \
+            --out json=reports/smoke-pre-check.json
+
+      - name: Run performance test
+        working-directory: performance-tests
+        run: |
+          echo "Running ${{ env.TEST_TYPE }} test on ${{ env.ENVIRONMENT }}..."
+          k6 run scenarios/${{ env.TEST_TYPE }}-test.js \
+            --env ENVIRONMENT=${{ env.ENVIRONMENT }} \
+            --out json=reports/${{ env.TEST_TYPE }}-results.json \
+            --summary-export=reports/${{ env.TEST_TYPE }}-summary.json
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-test-results-${{ env.TEST_TYPE }}-${{ env.ENVIRONMENT }}-${{ github.run_number }}
+          path: performance-tests/reports/*.json
+          retention-days: 30
+
+      - name: Parse results and create summary
+        if: always()
+        run: |
+          cd performance-tests/reports
+
+          echo "# Performance Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** ${{ env.ENVIRONMENT }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Test Type:** ${{ env.TEST_TYPE }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ -f "${{ env.TEST_TYPE }}-summary.json" ]; then
+            echo "## Test Summary" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # Extract key metrics using jq
+            HTTP_REQS=$(jq -r '.metrics.http_reqs.values.count // 0' ${{ env.TEST_TYPE }}-summary.json)
+            HTTP_RATE=$(jq -r '.metrics.http_reqs.values.rate // 0' ${{ env.TEST_TYPE }}-summary.json)
+            FAILED_RATE=$(jq -r '.metrics.http_req_failed.values.rate // 0' ${{ env.TEST_TYPE }}-summary.json)
+            AVG_DURATION=$(jq -r '.metrics.http_req_duration.values.avg // 0' ${{ env.TEST_TYPE }}-summary.json)
+            P95_DURATION=$(jq -r '.metrics.http_req_duration.values["p(95)"] // 0' ${{ env.TEST_TYPE }}-summary.json)
+            P99_DURATION=$(jq -r '.metrics.http_req_duration.values["p(99)"] // 0' ${{ env.TEST_TYPE }}-summary.json)
+
+            echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Total Requests | $HTTP_REQS |" >> $GITHUB_STEP_SUMMARY
+            echo "| Requests/sec | $(printf "%.2f" $HTTP_RATE) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Failed Requests | $(printf "%.2f%%" $(echo "$FAILED_RATE * 100" | bc)) |" >> $GITHUB_STEP_SUMMARY
+            echo "| Avg Response Time | $(printf "%.2f ms" $AVG_DURATION) |" >> $GITHUB_STEP_SUMMARY
+            echo "| P95 Response Time | $(printf "%.2f ms" $P95_DURATION) |" >> $GITHUB_STEP_SUMMARY
+            echo "| P99 Response Time | $(printf "%.2f ms" $P99_DURATION) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            # Check if test passed
+            FAILED_PERCENT=$(printf "%.2f" $(echo "$FAILED_RATE * 100" | bc))
+            if (( $(echo "$FAILED_RATE < 0.01" | bc -l) )) && (( $(echo "$P95_DURATION < 1000" | bc -l) )); then
+              echo "## ✅ Test PASSED" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "## ❌ Test FAILED" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "**Failure reasons:**" >> $GITHUB_STEP_SUMMARY
+              if (( $(echo "$FAILED_RATE >= 0.01" | bc -l) )); then
+                echo "- Failed request rate ($FAILED_PERCENT%) exceeds threshold (1%)" >> $GITHUB_STEP_SUMMARY
+              fi
+              if (( $(echo "$P95_DURATION >= 1000" | bc -l) )); then
+                echo "- P95 response time ($(printf "%.2f" $P95_DURATION)ms) exceeds threshold (1000ms)" >> $GITHUB_STEP_SUMMARY
+              fi
+            fi
+          fi
+
+      - name: Comment on PR (if applicable)
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summaryFile = 'performance-tests/reports/${{ env.TEST_TYPE }}-summary.json';
+
+            if (!fs.existsSync(summaryFile)) {
+              return;
+            }
+
+            const summary = JSON.parse(fs.readFileSync(summaryFile, 'utf8'));
+            const metrics = summary.metrics;
+
+            const httpReqs = metrics.http_reqs.values.count;
+            const httpRate = metrics.http_reqs.values.rate.toFixed(2);
+            const failedRate = (metrics.http_req_failed.values.rate * 100).toFixed(2);
+            const avgDuration = metrics.http_req_duration.values.avg.toFixed(2);
+            const p95Duration = metrics.http_req_duration.values['p(95)'].toFixed(2);
+
+            const passed = metrics.http_req_failed.values.rate < 0.01 &&
+                          metrics.http_req_duration.values['p(95)'] < 1000;
+
+            const body = `## 📊 Performance Test Results
+
+**Environment:** ${{ env.ENVIRONMENT }}
+**Test Type:** ${{ env.TEST_TYPE }}
+**Status:** ${passed ? '✅ PASSED' : '❌ FAILED'}
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | ${httpReqs} |
+| Requests/sec | ${httpRate} |
+| Failed Requests | ${failedRate}% |
+| Avg Response Time | ${avgDuration}ms |
+| P95 Response Time | ${p95Duration}ms |
+
+[View detailed results in artifacts](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      - name: Fail if performance degraded
+        if: always()
+        run: |
+          cd performance-tests/reports
+
+          if [ -f "${{ env.TEST_TYPE }}-summary.json" ]; then
+            FAILED_RATE=$(jq -r '.metrics.http_req_failed.values.rate // 0' ${{ env.TEST_TYPE }}-summary.json)
+            P95_DURATION=$(jq -r '.metrics.http_req_duration.values["p(95)"] // 0' ${{ env.TEST_TYPE }}-summary.json)
+
+            if (( $(echo "$FAILED_RATE >= 0.01" | bc -l) )) || (( $(echo "$P95_DURATION >= 1000" | bc -l) )); then
+              echo "Performance test failed: error rate or response time exceeded thresholds"
+              exit 1
+            fi
+          fi

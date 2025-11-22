@@ -1,0 +1,123 @@
+name: Integration Tests
+
+on:
+  push:
+    branches: [develop, main, master]
+  pull_request:
+    branches: [develop, main, master]
+
+jobs:
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: orange_car_rental_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      keycloak:
+        image: quay.io/keycloak/keycloak:latest
+        env:
+          KEYCLOAK_ADMIN: admin
+          KEYCLOAK_ADMIN_PASSWORD: admin
+          KC_DB: postgres
+          KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+          KC_DB_USERNAME: postgres
+          KC_DB_PASSWORD: postgres
+        ports:
+          - 8080:8080
+        options: >-
+          --health-cmd "curl -f http://localhost:8080/health/ready || exit 1"
+          --health-interval 30s
+          --health-timeout 10s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Start Backend API
+        run: |
+          cd src/backend/Api
+          dotnet restore
+          dotnet build --configuration Release
+          dotnet run --configuration Release &
+          echo "Waiting for API to start..."
+          sleep 30
+        env:
+          ASPNETCORE_ENVIRONMENT: Test
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=orange_car_rental_test;Username=postgres;Password=postgres"
+          Keycloak__Authority: "http://localhost:8080/realms/orange-car-rental"
+
+      - name: Run database migrations
+        run: |
+          cd src/backend/Infrastructure
+          dotnet ef database update --project ../Api
+        env:
+          ConnectionStrings__DefaultConnection: "Host=localhost;Database=orange_car_rental_test;Username=postgres;Password=postgres"
+
+      - name: Install Public Portal dependencies
+        run: |
+          cd src/frontend/apps/public-portal
+          npm ci
+
+      - name: Run Public Portal Integration Tests
+        run: |
+          cd src/frontend/apps/public-portal
+          npm run test:integration
+        env:
+          API_URL: http://localhost:5000/api
+
+      - name: Upload Public Portal integration test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: public-portal-integration-results
+          path: src/frontend/apps/public-portal/test-results/
+
+      - name: Install Call Center Portal dependencies
+        run: |
+          cd src/frontend/apps/call-center-portal
+          npm ci
+
+      - name: Run Call Center Portal Integration Tests
+        run: |
+          cd src/frontend/apps/call-center-portal
+          npm run test:integration
+        env:
+          API_URL: http://localhost:5000/api
+
+      - name: Upload Call Center Portal integration test results
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: call-center-portal-integration-results
+          path: src/frontend/apps/call-center-portal/test-results/
+
+      - name: Generate integration coverage report
+        if: always()
+        run: |
+          echo "## Integration Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Public Portal: Completed" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Call Center Portal: Completed" >> $GITHUB_STEP_SUMMARY

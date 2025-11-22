@@ -1,0 +1,114 @@
+version: '3.8'
+
+services:
+  # Frontend E2E Test Environment
+  public-portal-e2e:
+    build:
+      context: ./src/frontend/apps/public-portal
+      dockerfile: Dockerfile.test
+    container_name: orange-public-portal-e2e
+    environment:
+      - NODE_ENV=test
+      - CI=true
+    volumes:
+      - ./src/frontend/apps/public-portal:/app
+      - /app/node_modules
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
+    command: npm run e2e
+    depends_on:
+      - backend-test
+    networks:
+      - test-network
+
+  call-center-portal-e2e:
+    build:
+      context: ./src/frontend/apps/call-center-portal
+      dockerfile: Dockerfile.test
+    container_name: orange-callcenter-e2e
+    environment:
+      - NODE_ENV=test
+      - CI=true
+    volumes:
+      - ./src/frontend/apps/call-center-portal:/app
+      - /app/node_modules
+      - ./test-results-callcenter:/app/test-results
+      - ./playwright-report-callcenter:/app/playwright-report
+    command: npm run e2e
+    depends_on:
+      - backend-test
+    networks:
+      - test-network
+
+  # Backend Test Environment
+  backend-test:
+    build:
+      context: ./src/Services
+      dockerfile: Dockerfile.test
+    container_name: orange-backend-test
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Testing
+      - ConnectionStrings__DefaultConnection=Host=postgres-test;Database=orangecarrental_test;Username=postgres;Password=testpassword
+    ports:
+      - "5000-5010:5000-5010"
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+      keycloak-test:
+        condition: service_healthy
+    networks:
+      - test-network
+
+  # PostgreSQL Test Database
+  postgres-test:
+    image: postgres:16-alpine
+    container_name: orange-postgres-test
+    environment:
+      - POSTGRES_DB=orangecarrental_test
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=testpassword
+    volumes:
+      - postgres-test-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - test-network
+
+  # Keycloak Test Instance
+  keycloak-test:
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: orange-keycloak-test
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://postgres-test:5432/keycloak_test
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=testpassword
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ./keycloak/realms:/opt/keycloak/data/import
+    ports:
+      - "8180:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    depends_on:
+      postgres-test:
+        condition: service_healthy
+    networks:
+      - test-network
+
+volumes:
+  postgres-test-data:
+
+networks:
+  test-network:
+    driver: bridge
