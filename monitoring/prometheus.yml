@@ -1,0 +1,112 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'orange-car-rental-local'
+    environment: 'development'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: []
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - 'alert-rules.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # API Gateway
+  - job_name: 'api-gateway'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5000']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'api-gateway'
+
+  # Customers Service
+  - job_name: 'customers-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5001']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'customers-service'
+
+  # Fleet Service
+  - job_name: 'fleet-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5002']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'fleet-service'
+
+  # Location Service
+  - job_name: 'location-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5003']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'location-service'
+
+  # Reservations Service
+  - job_name: 'reservations-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5004']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'reservations-service'
+
+  # Pricing Service
+  - job_name: 'pricing-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5005']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'pricing-service'
+
+  # Payments Service
+  - job_name: 'payments-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5006']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'payments-service'
+
+  # Notifications Service
+  - job_name: 'notifications-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['host.docker.internal:5007']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'notifications-service'
+
+  # SQL Server Exporter (optional)
+  - job_name: 'sqlserver'
+    static_configs:
+      - targets: ['host.docker.internal:9399']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'sqlserver'
