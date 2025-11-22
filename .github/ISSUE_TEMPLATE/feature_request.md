@@ -1,66 +1,52 @@
 ---
-name: ✨ Feature Request
-about: Suggest a new feature or enhancement
+name: Feature Request
+about: Suggest an idea for this project
 title: '[FEATURE] '
-labels: 'enhancement'
+labels: enhancement
 assignees: ''
 ---
 
-## 💡 Feature Description
-<!-- A clear and concise description of the feature you'd like -->
+## Feature Description
 
+<!-- Clear description of the feature -->
 
-## 🎯 Problem Statement
-<!-- What problem does this feature solve? -->
-**As a** [user type]
-**I want to** [do something]
-**So that** [achieve goal]
+## Problem Statement
 
-## 📋 Proposed Solution
-<!-- How would you like to see this implemented? -->
+<!-- What problem does this solve? -->
+**Is your feature request related to a problem?**
 
+## Proposed Solution
 
-## 🎨 Design/Mockups
-<!-- If applicable, add mockups or wireframes -->
+<!-- How should this feature work? -->
 
+## Alternatives Considered
 
-## ✅ Acceptance Criteria
-<!-- Define what "done" means for this feature -->
+<!-- Any alternative solutions or features considered? -->
+
+## User Story
+
+**As a** [type of user]
+**I want** [an action]
+**So that** [benefit/value]
+
+## Acceptance Criteria
+
 - [ ] Criterion 1
 - [ ] Criterion 2
 - [ ] Criterion 3
 
-## 📊 Priority
-<!-- How important is this feature? -->
-- [ ] High - Critical functionality
-- [ ] Medium - Important but not blocking
-- [ ] Low - Nice to have
+## Additional Context
 
-## 🔧 Technical Considerations
-<!-- Any technical details or constraints to consider -->
-- **Backend Changes:**
-- **Frontend Changes:**
-- **Database Changes:**
-- **API Changes:**
+<!-- Screenshots, mockups, or examples -->
 
-## 🧪 Testing Requirements
-<!-- How should this feature be tested? -->
-- [ ] Unit tests
-- [ ] Integration tests
-- [ ] E2E tests
-- [ ] Manual testing steps:
-  1.
-  2.
+## Priority
 
-## 📝 Additional Context
-<!-- Add any other context, screenshots, or examples -->
+- [ ] High
+- [ ] Medium
+- [ ] Low
 
+## Estimated Effort
 
-## 💡 Alternatives Considered
-<!-- What other solutions did you consider? -->
-
-
-## 🔗 Related Issues/User Stories
-<!-- Link to related issues or user stories -->
-- Related to #
-- Part of US-X
+- [ ] Small (1-2 days)
+- [ ] Medium (3-5 days)
+- [ ] Large (1-2 weeks)

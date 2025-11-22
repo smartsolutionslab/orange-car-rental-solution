@@ -166,3 +166,35 @@ yarn-error.log*
 
 # Aspire
 *.binlog
+
+# ============================================
+# Testing Artifacts
+# ============================================
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+*.trace.zip
+
+# Test Coverage
+coverage/
+*.lcov
+.nyc_output/
+*.coverage
+*.coveragexml
+
+# Jest
+/jest-coverage/
+
+# Angular Test Results
+/test-results/
+*.spec.js.map
+
+# E2E Screenshots and Videos
+/screenshots/
+/videos/
+
+# Test Logs
+*.test.log
+test-output/
