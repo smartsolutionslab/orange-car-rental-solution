@@ -12,17 +12,24 @@ export class AuthGuardService {
   ) {}
 
   async canActivate(): Promise<boolean> {
-    const authenticated = await this.keycloakService.isLoggedIn();
+    try {
+      const authenticated = this.keycloakService.isLoggedIn();
 
-    if (!authenticated) {
-      // Redirect to login
-      await this.keycloakService.login({
-        redirectUri: window.location.origin + window.location.pathname
-      });
+      if (!authenticated) {
+        // Redirect to login
+        await this.keycloakService.login({
+          redirectUri: window.location.origin + window.location.pathname
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Auth guard error:', error);
+      // If Keycloak is not available, redirect to login page
+      this.router.navigate(['/login']);
       return false;
     }
-
-    return true;
   }
 }
 

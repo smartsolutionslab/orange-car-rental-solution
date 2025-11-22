@@ -1,6 +1,8 @@
 /* Orange Car Rental Global Styles */
 
 :host {
+  display: block;
+  min-height: 100vh;
   --orange-primary: #ff7f00;
   --orange-dark: #cc6600;
   --orange-light: #ff9933;

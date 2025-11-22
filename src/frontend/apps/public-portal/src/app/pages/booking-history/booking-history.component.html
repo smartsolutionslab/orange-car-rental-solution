@@ -1,0 +1,359 @@
+<div class="booking-history-container">
+  <div class="page-header">
+    <h1>Meine Buchungen</h1>
+    <p class="subtitle">Verwalten Sie Ihre Reservierungen</p>
+  </div>
+
+  <!-- Authenticated User View -->
+  @if (isAuthenticated()) {
+    <div class="reservations-content">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Buchungen werden geladen...</p>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (error()) {
+        <div class="error-message">
+          <p>{{ error() }}</p>
+          <button class="btn-retry" (click)="loadCustomerReservations()">Erneut versuchen</button>
+        </div>
+      }
+
+      <!-- Reservations Content -->
+      @if (!isLoading() && !error()) {
+        <!-- Upcoming Bookings -->
+        @if (groupedReservations().upcoming.length > 0) {
+          <section class="reservations-section">
+            <h2>Bevorstehende Buchungen</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().upcoming; track reservation.id) {
+                <div class="reservation-card">
+                  <div class="card-header">
+                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
+                    <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                      {{ getStatusLabel(reservation.status) }}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <div class="detail-row">
+                      <span class="label">Abholtermin:</span>
+                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">Rückgabetermin:</span>
+                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">Abholort:</span>
+                      <span class="value">{{ reservation.pickupLocationCode }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">Rückgabeort:</span>
+                      <span class="value">{{ reservation.dropoffLocationCode }}</span>
+                    </div>
+                    <div class="detail-row price">
+                      <span class="label">Gesamtpreis:</span>
+                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                    @if (canCancel(reservation)) {
+                      <button class="btn-danger" (click)="openCancelModal(reservation)">Stornieren</button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Pending Bookings -->
+        @if (groupedReservations().pending.length > 0) {
+          <section class="reservations-section">
+            <h2>Ausstehende Bestätigungen</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().pending; track reservation.id) {
+                <div class="reservation-card pending">
+                  <div class="card-header">
+                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
+                    <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                      {{ getStatusLabel(reservation.status) }}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <div class="detail-row">
+                      <span class="label">Abholtermin:</span>
+                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">Rückgabetermin:</span>
+                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
+                    </div>
+                    <div class="detail-row price">
+                      <span class="label">Gesamtpreis:</span>
+                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                    @if (canCancel(reservation)) {
+                      <button class="btn-danger" (click)="openCancelModal(reservation)">Stornieren</button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Past Bookings -->
+        @if (groupedReservations().past.length > 0) {
+          <section class="reservations-section">
+            <h2>Vergangene Buchungen</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().past; track reservation.id) {
+                <div class="reservation-card past">
+                  <div class="card-header">
+                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
+                    <span class="status-badge" [class]="getStatusClass(reservation.status)">
+                      {{ getStatusLabel(reservation.status) }}
+                    </span>
+                  </div>
+                  <div class="card-body">
+                    <div class="detail-row">
+                      <span class="label">Abholtermin:</span>
+                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
+                    </div>
+                    <div class="detail-row">
+                      <span class="label">Rückgabetermin:</span>
+                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
+                    </div>
+                    <div class="detail-row price">
+                      <span class="label">Gesamtpreis:</span>
+                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
+                    </div>
+                  </div>
+                  <div class="card-footer">
+                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                  </div>
+                </div>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Empty State -->
+        @if (groupedReservations().upcoming.length === 0 &&
+             groupedReservations().pending.length === 0 &&
+             groupedReservations().past.length === 0) {
+          <div class="empty-state">
+            <p>Sie haben noch keine Buchungen.</p>
+            <a href="/" class="btn-primary">Fahrzeuge durchsuchen</a>
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- Guest Lookup View -->
+  @else {
+    <div class="guest-lookup">
+      <h2>Buchung suchen</h2>
+      <p>Geben Sie Ihre Reservierungsnummer und E-Mail-Adresse ein, um Ihre Buchung zu finden.</p>
+
+      <form class="lookup-form" (ngSubmit)="onGuestLookup()">
+        <div class="form-group">
+          <label for="reservationId">Reservierungsnummer</label>
+          <input
+            type="text"
+            id="reservationId"
+            name="reservationId"
+            [(ngModel)]="guestLookupForm.reservationId"
+            placeholder="z.B. 550e8400-e29b-41d4"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">E-Mail-Adresse</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="guestLookupForm.email"
+            placeholder="ihre@email.de"
+            required
+          />
+        </div>
+
+        @if (guestLookupError()) {
+          <div class="error-message-inline">
+            {{ guestLookupError() }}
+          </div>
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          {{ isLoading() ? 'Suche läuft...' : 'Buchung suchen' }}
+        </button>
+      </form>
+
+      <!-- Guest Reservation Result -->
+      @if (guestReservation()) {
+        <div class="guest-result">
+          <h3>Ihre Buchung</h3>
+          <div class="reservation-card">
+            <div class="card-header">
+              <span class="reservation-id">{{ guestReservation()!.id }}</span>
+              <span class="status-badge" [class]="getStatusClass(guestReservation()!.status)">
+                {{ getStatusLabel(guestReservation()!.status) }}
+              </span>
+            </div>
+            <div class="card-body">
+              <div class="detail-row">
+                <span class="label">Abholtermin:</span>
+                <span class="value">{{ formatDate(guestReservation()!.pickupDate) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Rückgabetermin:</span>
+                <span class="value">{{ formatDate(guestReservation()!.returnDate) }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Abholort:</span>
+                <span class="value">{{ guestReservation()!.pickupLocationCode }}</span>
+              </div>
+              <div class="detail-row">
+                <span class="label">Rückgabeort:</span>
+                <span class="value">{{ guestReservation()!.dropoffLocationCode }}</span>
+              </div>
+              <div class="detail-row price">
+                <span class="label">Gesamtpreis:</span>
+                <span class="value">{{ formatPrice(guestReservation()!.totalPriceGross) }}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <button class="btn-secondary" (click)="printReservation(guestReservation()!)">Drucken</button>
+              @if (canCancel(guestReservation()!)) {
+                <button class="btn-danger" (click)="openCancelModal(guestReservation()!)">Stornieren</button>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Detail Modal -->
+  @if (showDetailModal() && detailReservation()) {
+    <div class="modal-overlay" (click)="closeDetailModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Buchungsdetails</h2>
+          <button class="close-btn" (click)="closeDetailModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="detail-section">
+            <h3>Reservierung</h3>
+            <div class="detail-row">
+              <span class="label">Reservierungsnummer:</span>
+              <span class="value">{{ detailReservation()!.id }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Status:</span>
+              <span class="status-badge" [class]="getStatusClass(detailReservation()!.status)">
+                {{ getStatusLabel(detailReservation()!.status) }}
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Mietzeitraum</h3>
+            <div class="detail-row">
+              <span class="label">Abholung:</span>
+              <span class="value">{{ formatDate(detailReservation()!.pickupDate) }} - {{ detailReservation()!.pickupLocationCode }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Rückgabe:</span>
+              <span class="value">{{ formatDate(detailReservation()!.returnDate) }} - {{ detailReservation()!.dropoffLocationCode }}</span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Preise</h3>
+            <div class="detail-row">
+              <span class="label">Nettobetrag:</span>
+              <span class="value">{{ formatPrice(detailReservation()!.totalPriceNet) }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">MwSt. (19%):</span>
+              <span class="value">{{ formatPrice(detailReservation()!.totalPriceVat) }}</span>
+            </div>
+            <div class="detail-row price-total">
+              <span class="label"><strong>Gesamtbetrag:</strong></span>
+              <span class="value"><strong>{{ formatPrice(detailReservation()!.totalPriceGross) }}</strong></span>
+            </div>
+          </div>
+
+          <div class="detail-section">
+            <h3>Stornierungsbedingungen</h3>
+            <p>Kostenlose Stornierung bis 48 Stunden vor Abholung.</p>
+            <p>Spätere Stornierungen können Gebühren nach sich ziehen.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="printReservation(detailReservation()!)">Drucken</button>
+          <button class="btn-primary" (click)="closeDetailModal()">Schließen</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Cancel Modal -->
+  @if (showCancelModal() && selectedReservation()) {
+    <div class="modal-overlay" (click)="closeCancelModal()">
+      <div class="modal-content cancel-modal" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2>Buchung stornieren</h2>
+          <button class="close-btn" (click)="closeCancelModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p>Möchten Sie diese Buchung wirklich stornieren?</p>
+          <p><strong>Reservierungsnummer:</strong> {{ selectedReservation()!.id }}</p>
+          <p><strong>Abholtermin:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
+
+          <div class="form-group">
+            <label for="cancellationReason">Grund für Stornierung *</label>
+            <select
+              id="cancellationReason"
+              [(ngModel)]="cancellationReason"
+              class="form-control"
+            >
+              <option value="">Bitte wählen...</option>
+              @for (reason of cancellationReasons; track reason) {
+                <option [value]="reason">{{ reason }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="warning-box">
+            <p><strong>Hinweis:</strong> Diese Aktion kann nicht rückgängig gemacht werden.</p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" (click)="closeCancelModal()">Abbrechen</button>
+          <button
+            class="btn-danger"
+            (click)="confirmCancellation()"
+            [disabled]="!cancellationReason || isLoading()"
+          >
+            {{ isLoading() ? 'Wird storniert...' : 'Stornierung bestätigen' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
