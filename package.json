@@ -1,0 +1,40 @@
+{
+  "name": "orange-car-rental",
+  "version": "1.0.0",
+  "description": "Orange Car Rental - Car Rental Management System",
+  "private": true,
+  "scripts": {
+    "setup": "bash scripts/setup-local.sh",
+    "setup:windows": "powershell -ExecutionPolicy Bypass -File scripts/setup-local.ps1",
+    "precommit": "bash scripts/pre-commit-check.sh",
+    "analyze:bundle": "bash scripts/analyze-bundle.sh",
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:firefox": "playwright test --project=firefox",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:e2e:mobile": "playwright test --project='Mobile Chrome' --project='Mobile Safari'",
+    "playwright:install": "playwright install --with-deps",
+    "playwright:report": "playwright show-report",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:unit": "cd src/frontend/apps/public-portal && npm run test:ci && cd ../call-center-portal && npm run test:ci",
+    "test:integration": "cd src/frontend/apps/public-portal && npm run test:integration && cd ../call-center-portal && npm run test:integration",
+    "lint": "cd src/frontend/apps/public-portal && npm run lint && cd ../call-center-portal && npm run lint",
+    "format": "cd src/frontend/apps/public-portal && npm run format && cd ../call-center-portal && npm run format",
+    "format:check": "cd src/frontend/apps/public-portal && npm run format:check && cd ../call-center-portal && npm run format:check"
+  },
+  "keywords": [
+    "car-rental",
+    "angular",
+    "dotnet",
+    "keycloak"
+  ],
+  "author": "Orange Car Rental Team",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^24.9.2"
+  }
+}

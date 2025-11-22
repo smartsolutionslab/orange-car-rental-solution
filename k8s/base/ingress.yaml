@@ -1,0 +1,92 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orange-car-rental-ingress
+  labels:
+    app: orange-car-rental
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "30"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+spec:
+  tls:
+  - hosts:
+    - orange-rental.de
+    - www.orange-rental.de
+    - api.orange-rental.de
+    - auth.orange-rental.de
+    secretName: orange-rental-tls
+  rules:
+  # Public Portal
+  - host: orange-rental.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: public-portal
+            port:
+              number: 80
+  - host: www.orange-rental.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: public-portal
+            port:
+              number: 80
+
+  # API Gateway
+  - host: api.orange-rental.de
+    http:
+      paths:
+      - path: /vehicles
+        pathType: Prefix
+        backend:
+          service:
+            name: vehicles-api
+            port:
+              number: 8080
+      - path: /reservations
+        pathType: Prefix
+        backend:
+          service:
+            name: reservations-api
+            port:
+              number: 8080
+      - path: /customers
+        pathType: Prefix
+        backend:
+          service:
+            name: customers-api
+            port:
+              number: 8080
+      - path: /locations
+        pathType: Prefix
+        backend:
+          service:
+            name: locations-api
+            port:
+              number: 8080
+
+  # Keycloak Authentication
+  - host: auth.orange-rental.de
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: keycloak
+            port:
+              number: 8080

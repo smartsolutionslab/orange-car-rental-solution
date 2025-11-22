@@ -1,0 +1,46 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: orange-staging
+
+bases:
+- ../../base
+
+namePrefix: staging-
+
+commonLabels:
+  environment: staging
+
+images:
+- name: orangecarrental.azurecr.io/public-portal
+  newTag: staging-latest
+- name: orangecarrental.azurecr.io/vehicles-api
+  newTag: staging-latest
+- name: orangecarrental.azurecr.io/reservations-api
+  newTag: staging-latest
+- name: orangecarrental.azurecr.io/customers-api
+  newTag: staging-latest
+- name: orangecarrental.azurecr.io/locations-api
+  newTag: staging-latest
+
+replicas:
+- name: public-portal
+  count: 2
+- name: vehicles-api
+  count: 2
+- name: reservations-api
+  count: 2
+- name: customers-api
+  count: 2
+- name: locations-api
+  count: 1
+- name: keycloak
+  count: 2
+
+configMapGenerator:
+- name: app-config
+  behavior: merge
+  literals:
+  - api.base.url=https://api-staging.orange-rental.de
+  - keycloak.url=https://auth-staging.orange-rental.de
+  - app.environment=staging

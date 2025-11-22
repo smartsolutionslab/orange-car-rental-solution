@@ -1,0 +1,120 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: db-migration
+  labels:
+    app: db-migration
+    component: database
+spec:
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400 # Keep job for 24 hours
+  template:
+    metadata:
+      labels:
+        app: db-migration
+    spec:
+      restartPolicy: OnFailure
+      initContainers:
+      # Wait for database to be ready
+      - name: wait-for-db
+        image: postgres:15-alpine
+        command:
+        - sh
+        - -c
+        - |
+          until pg_isready -h postgres -p 5432; do
+            echo "Waiting for database to be ready..."
+            sleep 5
+          done
+          echo "Database is ready!"
+      containers:
+      - name: migrate
+        image: orangecarrental.azurecr.io/db-migrator:latest
+        env:
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: connection-string
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        command:
+        - dotnet
+        - ef
+        - database
+        - update
+        - --project
+        - /app/Migrations.csproj
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: db-backup
+  labels:
+    app: db-backup
+    component: database
+spec:
+  schedule: "0 2 * * *" # Daily at 2 AM
+  successfulJobsHistoryLimit: 7
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: db-backup
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: backup
+            image: postgres:15-alpine
+            env:
+            - name: PGHOST
+              value: "postgres"
+            - name: PGDATABASE
+              value: "orangecarrental"
+            - name: PGUSER
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: username
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: database-secrets
+                  key: password
+            - name: AZURE_STORAGE_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: storage-secrets
+                  key: connection-string
+            command:
+            - sh
+            - -c
+            - |
+              BACKUP_FILE="backup-$(date +%Y%m%d-%H%M%S).sql.gz"
+              echo "Creating backup: $BACKUP_FILE"
+              pg_dump | gzip > /tmp/$BACKUP_FILE
+
+              # Upload to Azure Storage (requires azure-cli)
+              az storage blob upload \
+                --container-name backups \
+                --file /tmp/$BACKUP_FILE \
+                --name $BACKUP_FILE \
+                --connection-string "$AZURE_STORAGE_CONNECTION_STRING"
+
+              echo "Backup completed: $BACKUP_FILE"
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "1Gi"
+                cpu: "1000m"
