@@ -56,26 +56,30 @@ var pricingApi = builder
     .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
-// Reservations API - Customer booking and rental management
-// Also needs access to Pricing API for automatic price calculation
-var reservationsApi = builder
-    .AddProject<OrangeCarRental_Reservations_Api>("reservations-api")
-    .WithReference(reservationsDb)
-    .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
-    .WaitFor(keycloak)
-    .WaitFor(sqlServer)
-    .WaitFor(pricingApi);
-
 // Customers API - Customer profile and driver's license management
+// Must be defined before Reservations API since Reservations depends on it
 var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
     .WithReference(customersDb)
     .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
-// API Gateway - YARP reverse proxy with service discovery
-// Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, /api/pricing/* to Pricing API, and /api/customers/* to Customers API
-// Configured on port 5002 (see launchSettings.json)
+// Reservations API - Customer booking and rental management
+// Uses Service Discovery to communicate with Pricing and Customers APIs
+var reservationsApi = builder
+    .AddProject<OrangeCarRental_Reservations_Api>("reservations-api")
+    .WithReference(reservationsDb)
+    .WithReference(pricingApi)
+    .WithReference(customersApi)
+    .WaitFor(keycloak)
+    .WaitFor(sqlServer)
+    .WaitFor(pricingApi)
+    .WaitFor(customersApi);
+
+// API Gateway - YARP reverse proxy
+// Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, etc.
+// YARP requires explicit URLs for cluster configuration, so we use GetEndpoint() here
+// Note: This is different from service-to-service communication which uses WithReference()
 var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("FLEET_API_URL", fleetApi.GetEndpoint("http"))
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))

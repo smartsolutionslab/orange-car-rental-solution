@@ -52,25 +52,30 @@ builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDb
         sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
 });
 
-// Register HTTP client for Pricing API
-var pricingApiUrl = builder.Configuration["PRICING_API_URL"] ?? "http://localhost:5002";
-Log.Information("Pricing API URL: {PricingApiUrl}", pricingApiUrl);
+// Register Aspire Service Discovery for inter-service communication
+builder.Services.AddServiceDiscovery();
 
+// Register HTTP client for Pricing API with Service Discovery
+// The service name "http://pricing-api" is resolved by Aspire's Service Discovery
 builder.Services.AddHttpClient<IPricingService, PricingService>(client =>
 {
-    client.BaseAddress = new Uri(pricingApiUrl);
+    client.BaseAddress = new Uri("http://pricing-api");
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+})
+.AddServiceDiscovery();
 
-// Register HTTP client for Customers API
-var customersApiUrl = builder.Configuration["CUSTOMERS_API_URL"] ?? "http://localhost:5001";
-Log.Information("Customers API URL: {CustomersApiUrl}", customersApiUrl);
+Log.Information("Pricing API: Using Aspire Service Discovery (http://pricing-api)");
 
+// Register HTTP client for Customers API with Service Discovery
+// The service name "http://customers-api" is resolved by Aspire's Service Discovery
 builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
 {
-    client.BaseAddress = new Uri(customersApiUrl);
+    client.BaseAddress = new Uri("http://customers-api");
     client.Timeout = TimeSpan.FromSeconds(30);
-});
+})
+.AddServiceDiscovery();
+
+Log.Information("Customers API: Using Aspire Service Discovery (http://customers-api)");
 
 // Register repositories
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
