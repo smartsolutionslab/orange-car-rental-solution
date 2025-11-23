@@ -27,6 +27,19 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <!-- Enable NuGet Lock Files for Deterministic Builds (12-Factor App - Factor 2) -->
+  <PropertyGroup>
+    <!-- Generate packages.lock.json for reproducible builds -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <!-- In CI environments, use locked mode to ensure exact versions -->
+    <!-- This will fail the build if packages.lock.json is out of sync -->
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+
+    <!-- Lock file path -->
+    <NuGetLockFilePath>$(MSBuildProjectDirectory)\packages.lock.json</NuGetLockFilePath>
+  </PropertyGroup>
+
   <!-- Analyzer Configuration -->
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers">
