@@ -92,24 +92,41 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WaitFor(pricingApi)
     .WaitFor(customersApi);
 
-// Public Portal - Customer-facing Angular application for vehicle search and booking
-// Accessible at http://localhost:4200
-var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal")
-    .WithHttpEndpoint(4200, env: "PORT")
-    .WithReference(apiGateway)
-    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
-    .WithExternalHttpEndpoints()
-    .WaitFor(keycloak)
-    .WaitFor(apiGateway);
-
-// Call Center Portal - Agent-facing Angular application for reservation management
+// Public Portal - Remote microfrontend for vehicle search and booking
 // Accessible at http://localhost:4201
-var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal")
+// Exposes remote entry point for Module Federation
+var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal")
     .WithHttpEndpoint(4201, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
     .WaitFor(keycloak)
     .WaitFor(apiGateway);
+
+// Call Center Portal - Remote microfrontend for reservation management
+// Accessible at http://localhost:4202
+// Exposes remote entry point for Module Federation
+var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal")
+    .WithHttpEndpoint(4202, env: "PORT")
+    .WithReference(apiGateway)
+    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
+    .WithExternalHttpEndpoints()
+    .WaitFor(keycloak)
+    .WaitFor(apiGateway);
+
+// Shell - Host microfrontend application that orchestrates remote microfrontends
+// Main entry point accessible at http://localhost:4200
+// Dynamically loads Public Portal and Call Center Portal via Module Federation
+var shell = builder.AddNpmApp("shell", "../../../frontend/apps/shell")
+    .WithHttpEndpoint(4200, env: "PORT")
+    .WithReference(apiGateway)
+    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
+    .WithEnvironment("PUBLIC_PORTAL_URL", publicPortal.GetEndpoint("http"))
+    .WithEnvironment("CALLCENTER_PORTAL_URL", callCenterPortal.GetEndpoint("http"))
+    .WithExternalHttpEndpoints()
+    .WaitFor(keycloak)
+    .WaitFor(apiGateway)
+    .WaitFor(publicPortal)
+    .WaitFor(callCenterPortal);
 
 builder.Build().Run();
