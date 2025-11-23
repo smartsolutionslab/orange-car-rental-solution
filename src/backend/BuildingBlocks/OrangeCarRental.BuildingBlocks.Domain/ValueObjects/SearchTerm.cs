@@ -27,6 +27,13 @@ public readonly record struct SearchTerm(string Value) : IValueObject
         return new SearchTerm(trimmed);
     }
 
+    public static SearchTerm? TryParse(string? searchTerm)
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm)) return null;
+
+        return Of(searchTerm);
+    }
+
     /// <summary>
     ///     Checks if the search term contains a specific substring (case-insensitive).
     /// </summary>

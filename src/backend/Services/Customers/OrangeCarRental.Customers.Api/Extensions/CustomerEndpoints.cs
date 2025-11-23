@@ -26,24 +26,26 @@ public static class CustomerEndpoints
                 RegisterCustomerCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
+                var (customer, address, driversLicense) = request;
+
                 try
                 {
                     // Map request DTO to command with value objects
                     var command = new RegisterCustomerCommand(
-                        CustomerName.Of(request.Customer.FirstName, request.Customer.LastName),
-                        Email.Of(request.Customer.Email),
-                        PhoneNumber.Of(request.Customer.PhoneNumber),
-                        BirthDate.Of(request.Customer.DateOfBirth),
+                        CustomerName.Of(customer.FirstName, customer.LastName),
+                        Email.Of(customer.Email),
+                        PhoneNumber.Of(customer.PhoneNumber),
+                        BirthDate.Of(customer.DateOfBirth),
                         Address.Of(
-                            request.Address.Street,
-                            request.Address.City,
-                            request.Address.PostalCode,
-                            request.Address.Country),
+                            address.Street,
+                            address.City,
+                            address.PostalCode,
+                            address.Country),
                         DriversLicense.Of(
-                            request.DriversLicense.LicenseNumber,
-                            request.DriversLicense.LicenseIssueCountry,
-                            request.DriversLicense.LicenseIssueDate,
-                            request.DriversLicense.LicenseExpiryDate));
+                            driversLicense.LicenseNumber,
+                            driversLicense.LicenseIssueCountry,
+                            driversLicense.LicenseIssueDate,
+                            driversLicense.LicenseExpiryDate));
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Created($"/api/customers/{result.CustomerIdentifier}", result);
@@ -189,18 +191,20 @@ public static class CustomerEndpoints
                 UpdateCustomerProfileCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
+                var (profile, address) = request;
+
                 try
                 {
                     // Map request DTO to command with value objects
                     var command = new UpdateCustomerProfileCommand(
                         CustomerIdentifier.From(id),
-                        CustomerName.Of(request.Profile.FirstName, request.Profile.LastName),
-                        PhoneNumber.Of(request.Profile.PhoneNumber),
+                        CustomerName.Of(profile.FirstName, profile.LastName),
+                        PhoneNumber.Of(profile.PhoneNumber),
                         Address.Of(
-                            request.Address.Street,
-                            request.Address.City,
-                            request.Address.PostalCode,
-                            request.Address.Country)
+                            address.Street,
+                            address.City,
+                            address.PostalCode,
+                            address.Country)
                         );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -239,15 +243,13 @@ public static class CustomerEndpoints
                 UpdateDriversLicenseCommandHandler handler,
                 CancellationToken cancellationToken) =>
             {
+                var (licenseNumber, issueCountry, issueDate, expiryDate) = request;
+
                 try
                 {
                     var command = new UpdateDriversLicenseCommand(
                         CustomerIdentifier.From(id),
-                        DriversLicense.Of(
-                            request.LicenseNumber,
-                            request.IssueCountry,
-                            request.IssueDate,
-                            request.ExpiryDate)
+                        DriversLicense.Of(licenseNumber, issueCountry, issueDate, expiryDate)
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);

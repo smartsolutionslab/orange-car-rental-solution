@@ -27,6 +27,13 @@ public readonly record struct Email(string Value) : IValueObject
         return new Email(normalized);
     }
 
+    public static Email? TryParse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return Of(value);
+    }
+
     /// <summary>
     ///     Creates an anonymized email address for GDPR compliance.
     ///     Used when a customer requests data deletion.

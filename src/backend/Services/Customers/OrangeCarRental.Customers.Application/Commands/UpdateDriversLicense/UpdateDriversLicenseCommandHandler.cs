@@ -22,11 +22,11 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         UpdateDriversLicenseCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load customer (throws EntityNotFoundException if not found)
-        var customer = await customers.GetByIdAsync(command.CustomerIdentifier, cancellationToken);
+        var (customerId, driversLicense) = command;
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         // Update driver's license (domain method handles validation and returns new instance)
-        customer = customer.UpdateDriversLicense(command.DriversLicense);
+        customer = customer.UpdateDriversLicense(driversLicense);
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);

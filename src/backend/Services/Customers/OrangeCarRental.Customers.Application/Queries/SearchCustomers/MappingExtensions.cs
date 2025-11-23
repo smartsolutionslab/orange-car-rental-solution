@@ -69,81 +69,12 @@ public static class MappingExtensions
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
-        // Parse search term to value object if provided
-        SearchTerm? searchTerm = null;
-        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
-        {
-            try
-            {
-                searchTerm = SearchTerm.Of(query.SearchTerm.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid search term format (too short/long) - leave as null to filter nothing
-            }
-        }
-
-        // Parse status if provided
-        CustomerStatus? status = null;
-        if (!string.IsNullOrWhiteSpace(query.Status))
-            if (Enum.TryParse<CustomerStatus>(query.Status, true, out var parsedStatus))
-                status = parsedStatus;
-
-        // Parse email to value object if provided
-        Email? email = null;
-        if (!string.IsNullOrWhiteSpace(query.Email))
-        {
-            try
-            {
-                email = Email.Of(query.Email.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid email format - leave as null to filter nothing
-            }
-        }
-
-        // Parse phone number to value object if provided
-        PhoneNumber? phoneNumber = null;
-        if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
-        {
-            try
-            {
-                phoneNumber = PhoneNumber.Of(query.PhoneNumber.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid phone number format - leave as null to filter nothing
-            }
-        }
-
-        // Parse city to value object if provided
-        City? city = null;
-        if (!string.IsNullOrWhiteSpace(query.City))
-        {
-            try
-            {
-                city = City.Of(query.City.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid city format - leave as null to filter nothing
-            }
-        }
-
-        // Parse postal code to value object if provided
-        PostalCode? postalCode = null;
-        if (!string.IsNullOrWhiteSpace(query.PostalCode))
-        {
-            try
-            {
-                postalCode = PostalCode.Of(query.PostalCode.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid postal code format - leave as null to filter nothing
-            }
-        }
+        var searchTerm = SearchTerm.TryParse(query.SearchTerm);
+        var status = query.Status.TryParse();
+        var email = Email.TryParse(query.Email);
+        var phoneNumber = PhoneNumber.TryParse(query.PhoneNumber);
+        var city =  City.TryParse(query.City);
+        var postalCode =  PostalCode.TryParse(query.PostalCode);
 
         return new CustomerSearchParameters(
             searchTerm,
@@ -162,4 +93,6 @@ public static class MappingExtensions
             query.PageNumber ?? 1,
             query.PageSize ?? 20);
     }
+
+
 }

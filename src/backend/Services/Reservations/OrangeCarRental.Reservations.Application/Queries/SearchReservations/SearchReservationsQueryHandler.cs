@@ -1,6 +1,8 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
+using CustomerIdentifier = SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared.CustomerIdentifier;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 
@@ -15,26 +17,12 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
         SearchReservationsQuery query,
         CancellationToken cancellationToken = default)
     {
-        // Parse status if provided
-        ReservationStatus? status = null;
-        if (!string.IsNullOrWhiteSpace(query.Status) &&
-            Enum.TryParse<ReservationStatus>(query.Status, ignoreCase: true, out var parsedStatus))
-        {
-            status = parsedStatus;
-        }
 
-        // Convert DateTime to DateOnly for pickup date filters
-        DateOnly? pickupDateFrom = query.PickupDateFrom.HasValue
-            ? DateOnly.FromDateTime(query.PickupDateFrom.Value)
-            : null;
-
-        DateOnly? pickupDateTo = query.PickupDateTo.HasValue
-            ? DateOnly.FromDateTime(query.PickupDateTo.Value)
-            : null;
-
-        // Extract Guid values from value objects for repository query
-        Guid? customerId = query.CustomerId?.Value;
-        Guid? vehicleId = query.VehicleId?.Value;
+        var status = query.Status.TryParseReservationStatus();
+        var pickupDateFrom = query.PickupDateFrom;
+        var pickupDateTo = query.PickupDateTo;
+        var customerId = CustomerIdentifier.From(query.CustomerId);
+        var vehicleId = VehicleIdentifier.From(query.VehicleId);
 
         // Search reservations
         var (reservationsList, totalCount) = await reservations.SearchAsync(

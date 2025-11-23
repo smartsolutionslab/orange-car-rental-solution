@@ -12,4 +12,12 @@ public static class CustomerStatusExtensions
 
         return newStatus;
     }
+
+    public static CustomerStatus? TryParse(this string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        Enum.TryParse<CustomerStatus>(value, true, out var parsedStatus);
+        return parsedStatus;
+    }
 }

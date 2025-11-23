@@ -19,15 +19,14 @@ public sealed class GetLocationByCodeQueryHandler: IQueryHandler<GetLocationByCo
     {
         var location = Location.FromCode(query.Code);
 
-        var dto = new LocationDto
-        {
-            Code = location.Code.Value,
-            Name = location.Name.Value,
-            Street = location.Address.Street.Value,
-            City = location.Address.City.Value,
-            PostalCode = location.Address.PostalCode.Value,
-            FullAddress = location.Address.FullAddress
-        };
+        var dto = new LocationDto(
+            location.Code.Value,
+            location.Name.Value,
+            location.Address.Street.Value,
+            location.Address.City.Value,
+            location.Address.PostalCode.Value,
+            location.Address.FullAddress
+            );
 
         return Task.FromResult(dto);
     }

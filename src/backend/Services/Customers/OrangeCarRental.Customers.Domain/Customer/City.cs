@@ -21,6 +21,13 @@ public readonly record struct City(string Value) : IValueObject
         return new City(trimmed);
     }
 
+    public static City? TryParse(string? city)
+    {
+        if (string.IsNullOrWhiteSpace(city)) return null;
+
+        return Of(city);
+    }
+
     public static implicit operator string(City city) => city.Value;
 
     public override string ToString() => Value;

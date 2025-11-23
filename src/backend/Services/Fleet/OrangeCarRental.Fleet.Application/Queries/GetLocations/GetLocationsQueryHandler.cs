@@ -18,15 +18,13 @@ public sealed class GetLocationsQueryHandler : IQueryHandler<GetLocationsQuery, 
     public Task<IReadOnlyList<LocationDto>> HandleAsync(GetLocationsQuery query, CancellationToken cancellationToken = default)
     {
         var locations = Location.All
-            .Select(location => new LocationDto
-            {
-                Code = location.Code.Value,
-                Name = location.Name.Value,
-                Street = location.Address.Street.Value,
-                City = location.Address.City.Value,
-                PostalCode = location.Address.PostalCode.Value,
-                FullAddress = location.Address.FullAddress
-            })
+            .Select(location => new LocationDto(
+                location.Code.Value,
+                location.Name.Value,
+                location.Address.Street.Value,
+                location.Address.City.Value,
+                location.Address.PostalCode.Value,
+                location.Address.FullAddress))
             .ToList();
 
         return Task.FromResult<IReadOnlyList<LocationDto>>(locations);

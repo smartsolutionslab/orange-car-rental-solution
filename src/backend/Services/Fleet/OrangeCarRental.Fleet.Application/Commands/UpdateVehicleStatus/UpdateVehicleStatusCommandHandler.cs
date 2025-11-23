@@ -21,13 +21,12 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
         UpdateVehicleStatusCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load vehicle (throws EntityNotFoundException if not found)
-        var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken);
+        var (vehicleId, newStatus) = command;
 
+        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
         var oldStatus = vehicle.Status;
 
-        // Update status (domain method returns new instance)
-        vehicle = vehicle.ChangeStatus(command.NewStatus);
+        vehicle = vehicle.ChangeStatus(newStatus);
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);

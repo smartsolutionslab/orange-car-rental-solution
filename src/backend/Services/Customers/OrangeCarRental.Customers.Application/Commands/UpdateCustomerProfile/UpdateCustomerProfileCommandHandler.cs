@@ -24,10 +24,7 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
     {
         var (customerId, name, phoneNumber, address) = command;
 
-        // Load customer (throws EntityNotFoundException if not found)
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-
-        // Update profile (domain method handles validation and returns new instance)
         customer = customer.UpdateProfile(name, phoneNumber, address);
 
         // Persist changes (repository updates with the new immutable instance)

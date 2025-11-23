@@ -59,6 +59,13 @@ public readonly record struct Money(decimal NetAmount, decimal VatAmount, Curren
     /// <param name="netAmount">Net amount in EUR.</param>
     public static Money Euro(decimal netAmount) => Of(netAmount, 0.19m, Currency.EUR);
 
+    public static Money? TryEuro(decimal? netAmount)
+    {
+        if (!netAmount.HasValue) return null;
+
+        return Euro(netAmount.Value);
+    }
+
     /// <summary>
     ///     Creates money in EUR from gross amount with German VAT (19%).
     /// </summary>

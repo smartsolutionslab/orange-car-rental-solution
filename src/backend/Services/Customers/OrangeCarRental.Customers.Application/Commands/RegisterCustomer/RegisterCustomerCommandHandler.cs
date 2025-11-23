@@ -22,21 +22,23 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
         RegisterCustomerCommand command,
         CancellationToken cancellationToken = default)
     {
+        var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
+
+
         // Check email uniqueness
-        var emailExists = await customers.ExistsWithEmailAsync(command.Email, cancellationToken);
+        var emailExists = await customers.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
-            throw new InvalidOperationException($"A customer with email '{command.Email.Value}' already exists.");
+            throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
         }
 
-        // Register new customer (domain method handles all business rules)
         var customer = Customer.Register(
-            command.Name,
-            command.Email,
-            command.PhoneNumber,
-            command.DateOfBirth,
-            command.Address,
-            command.DriversLicense);
+            customerName,
+            email,
+            phoneNumber,
+            dateOfBirth,
+            address,
+            driversLicense);
 
         // Persist to repository
         await customers.AddAsync(customer, cancellationToken);

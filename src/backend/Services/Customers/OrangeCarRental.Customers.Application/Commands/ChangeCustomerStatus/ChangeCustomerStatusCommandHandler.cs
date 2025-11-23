@@ -22,22 +22,14 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         ChangeCustomerStatusCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load customer (throws EntityNotFoundException if not found)
-        var customer = await customers.GetByIdAsync(command.CustomerId, cancellationToken);
+        var (customerId, newStatusValue, reason) = command;
 
-        // Parse and validate new status
-        if (!Enum.TryParse<CustomerStatus>(command.NewStatus, true, out var newStatus))
-        {
-            throw new ArgumentException(
-                $"Invalid customer status: '{command.NewStatus}'. Valid values are: Active, Suspended, Blocked.",
-                nameof(command.NewStatus));
-        }
+        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
+        var newStatus = newStatusValue.Parse();
 
-        // Store old status before change
         var oldStatus = customer.Status;
 
-        // Change status (domain method handles validation and returns new instance)
-        customer = customer.ChangeStatus(newStatus, command.Reason);
+        customer = customer.ChangeStatus(newStatus, reason);
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
@@ -52,4 +44,6 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
             customer.UpdatedAtUtc
         );
     }
+
+
 }

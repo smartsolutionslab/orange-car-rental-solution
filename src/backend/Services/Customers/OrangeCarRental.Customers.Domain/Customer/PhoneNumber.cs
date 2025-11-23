@@ -70,6 +70,13 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
         return new PhoneNumber(normalized);
     }
 
+    public static PhoneNumber? TryParse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return Of(value);
+    }
+
     private static bool IsValidGermanPhone(string phone)
     {
         if (string.IsNullOrWhiteSpace(phone))

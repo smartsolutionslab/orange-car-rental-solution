@@ -22,7 +22,7 @@ public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
     {
         var (name, category, currentLocation, dailyRate, seats, fuelType, transmissionType, licensePlate, manufacturer,
             vehicleModel, year, imageUrl) = command;
-        // Create new vehicle from command (value objects already validated)
+
         var vehicle = Vehicle.From(
             name,
             category,

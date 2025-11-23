@@ -23,8 +23,8 @@ public sealed record SearchReservationsQuery(
     string? PickupLocationCode = null,
 
     // Date range filters
-    DateTime? PickupDateFrom = null,
-    DateTime? PickupDateTo = null,
+    DateOnly? PickupDateFrom = null,
+    DateOnly? PickupDateTo = null,
 
     // Price range filters (gross amount in EUR)
     decimal? PriceMin = null,

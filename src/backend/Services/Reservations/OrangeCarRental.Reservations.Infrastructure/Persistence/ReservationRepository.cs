@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -27,9 +28,9 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
     public async Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
         ReservationStatus? status = null,
-        Guid? customerId = null,
+        CustomerIdentifier? customerId = null,
         string? customerName = null,
-        Guid? vehicleId = null,
+        VehicleIdentifier? vehicleId = null,
         string? categoryCode = null,
         string? pickupLocationCode = null,
         DateOnly? pickupDateFrom = null,
@@ -45,22 +46,27 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         var query = context.Reservations.AsNoTracking();
 
         // Apply filters
-        if (status != null) query = query.Where(r => r.Status == status);
+        if (status != null)
+            query = query.Where(r => r.Status == status);
 
-        if (customerId.HasValue) query = query.Where(r => r.CustomerIdentifier == customerId.Value);
+        if (customerId.HasValue)
+            query = query.Where(r => r.CustomerIdentifier == customerId.Value);
 
         // Note: customerName filter requires denormalized customer data (not yet implemented)
 
-        if (vehicleId.HasValue) query = query.Where(r => r.VehicleIdentifier == vehicleId.Value);
+        if (vehicleId.HasValue)
+            query = query.Where(r => r.VehicleIdentifier == vehicleId.Value);
 
         // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
 
         if (!string.IsNullOrWhiteSpace(pickupLocationCode))
             query = query.Where(r => r.PickupLocationCode.Value == pickupLocationCode);
 
-        if (pickupDateFrom.HasValue) query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
+        if (pickupDateFrom.HasValue)
+            query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
 
-        if (pickupDateTo.HasValue) query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
+        if (pickupDateTo.HasValue)
+            query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
 
         // Price range filters - access GrossAmount from Money complex property
         if (priceMin.HasValue)

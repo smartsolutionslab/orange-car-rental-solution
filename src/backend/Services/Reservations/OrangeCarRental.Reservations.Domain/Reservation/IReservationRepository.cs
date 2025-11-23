@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
@@ -18,9 +20,9 @@ public interface IReservationRepository
 
     Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
         ReservationStatus? status = null,
-        Guid? customerId = null,
+        CustomerIdentifier? customerId = null,
         string? customerName = null,
-        Guid? vehicleId = null,
+        VehicleIdentifier? vehicleId = null,
         string? categoryCode = null,
         string? pickupLocationCode = null,
         DateOnly? pickupDateFrom = null,

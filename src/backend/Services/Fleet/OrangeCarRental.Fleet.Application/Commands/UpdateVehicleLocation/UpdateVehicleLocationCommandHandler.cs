@@ -24,12 +24,9 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
     {
         var (vehicleId, newLocation) = command;
 
-        // Load vehicle (throws EntityNotFoundException if not found)
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
-
         var oldLocation = vehicle.CurrentLocation;
 
-        // Move to new location (domain method validates and returns new instance)
         vehicle = vehicle.MoveToLocation(newLocation);
 
         // Persist changes

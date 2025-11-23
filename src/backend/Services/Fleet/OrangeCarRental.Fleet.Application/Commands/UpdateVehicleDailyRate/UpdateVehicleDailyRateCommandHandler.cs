@@ -23,12 +23,9 @@ public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehi
     {
         var (vehicleId, newDailyRate) = command;
 
-        // Load vehicle (throws EntityNotFoundException if not found)
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
-
         var oldRate = vehicle.DailyRate;
 
-        // Update daily rate (domain method returns new instance)
         vehicle = vehicle.UpdateDailyRate(newDailyRate);
 
         // Persist changes

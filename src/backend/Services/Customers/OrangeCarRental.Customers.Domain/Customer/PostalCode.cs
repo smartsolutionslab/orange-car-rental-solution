@@ -21,6 +21,13 @@ public readonly record struct PostalCode(string Value) : IValueObject
         return new PostalCode(trimmed);
     }
 
+    public static PostalCode? TryParse(string? postalCode)
+    {
+        if (string.IsNullOrWhiteSpace(postalCode)) return null;
+
+        return Of(postalCode);
+    }
+
     public static implicit operator string(PostalCode postalCode) => postalCode.Value;
 
     public override string ToString() => Value;

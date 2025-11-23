@@ -26,6 +26,13 @@ public readonly record struct VehicleIdentifier(Guid Value) : IValueObject
         return new(value);
     }
 
+    public static VehicleIdentifier? From(Guid? value)
+    {
+        if (value == null || value == Guid.Empty) return null;
+
+        return From(value.Value);
+    }
+
     /// <summary>
     ///     Implicit conversion to Guid for database mapping and serialization.
     /// </summary>
