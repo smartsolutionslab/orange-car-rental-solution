@@ -5,7 +5,7 @@
     "ng": "ng",
     "prestart": "node configure-proxy.js",
     "start": "node start.js",
-    "start:dev": "ng serve --port 4201",
+    "start:dev": "ng serve --port 4202",
     "build": "ng build",
     "build:development": "ng build --configuration development",
     "build:production": "ng build --configuration production",
@@ -46,6 +46,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-architects/native-federation": "^18.0.0",
     "@angular/build": "^20.3.7",
     "@angular/cli": "^20.3.7",
     "@angular/compiler-cli": "^20.3.0",
