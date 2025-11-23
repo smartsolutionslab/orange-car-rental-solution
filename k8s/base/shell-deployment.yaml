@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: public-portal
+  name: shell
   labels:
-    app: public-portal
+    app: shell
     component: frontend
-    microfrontend: remote
+    microfrontend: host
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
-      app: public-portal
+      app: shell
   template:
     metadata:
       labels:
-        app: public-portal
+        app: shell
         component: frontend
-        microfrontend: remote
+        microfrontend: host
     spec:
       containers:
-      - name: public-portal
-        image: orangecarrental.azurecr.io/public-portal:latest
+      - name: shell
+        image: orangecarrental.azurecr.io/shell:latest
         ports:
         - containerPort: 80
           name: http
@@ -45,6 +45,16 @@ spec:
             configMapKeyRef:
               name: app-config
               key: keycloak.client.id
+        # Federation manifest URLs for production
+        - name: PUBLIC_PORTAL_URL
+          value: "https://public.orangecarrental.com/remoteEntry.json"
+        - name: CALLCENTER_PORTAL_URL
+          value: "https://admin.orangecarrental.com/remoteEntry.json"
+        volumeMounts:
+        - name: federation-manifest
+          mountPath: /usr/share/nginx/html/assets/federation.manifest.json
+          subPath: federation.manifest.json
+          readOnly: true
         resources:
           requests:
             memory: "256Mi"
@@ -68,13 +78,21 @@ spec:
           periodSeconds: 5
           timeoutSeconds: 3
           failureThreshold: 3
+      volumes:
+      - name: federation-manifest
+        configMap:
+          name: federation-manifest
+          items:
+          - key: federation.manifest.json
+            path: federation.manifest.json
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: public-portal
+  name: shell
   labels:
-    app: public-portal
+    app: shell
+    component: frontend
 spec:
   type: ClusterIP
   ports:
@@ -83,4 +101,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: public-portal
+    app: shell

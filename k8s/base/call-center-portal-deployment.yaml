@@ -1,26 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: public-portal
+  name: call-center-portal
   labels:
-    app: public-portal
+    app: call-center-portal
     component: frontend
     microfrontend: remote
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: public-portal
+      app: call-center-portal
   template:
     metadata:
       labels:
-        app: public-portal
+        app: call-center-portal
         component: frontend
         microfrontend: remote
     spec:
       containers:
-      - name: public-portal
-        image: orangecarrental.azurecr.io/public-portal:latest
+      - name: call-center-portal
+        image: orangecarrental.azurecr.io/call-center-portal:latest
         ports:
         - containerPort: 80
           name: http
@@ -72,9 +72,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: public-portal
+  name: call-center-portal
   labels:
-    app: public-portal
+    app: call-center-portal
+    component: frontend
 spec:
   type: ClusterIP
   ports:
@@ -83,4 +84,4 @@ spec:
     protocol: TCP
     name: http
   selector:
-    app: public-portal
+    app: call-center-portal

@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        app: [public-portal, call-center-portal]
+        app: [shell, public-portal, call-center-portal]
 
     steps:
       - name: Checkout code
@@ -43,7 +43,7 @@ jobs:
     needs: lint-frontend
     strategy:
       matrix:
-        app: [public-portal, call-center-portal]
+        app: [shell, public-portal, call-center-portal]
         environment: [development, production]
 
     steps:
@@ -164,6 +164,16 @@ jobs:
           file: ./src/backend/Api/Dockerfile
           push: false
           tags: orange-car-rental-api:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Shell Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./src/frontend/apps/shell
+          file: ./src/frontend/apps/shell/Dockerfile
+          push: false
+          tags: orange-car-rental-shell:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -19,7 +19,7 @@ jobs:
 
     strategy:
       matrix:
-        app: [public-portal, call-center-portal]
+        app: [shell, public-portal, call-center-portal]
 
     steps:
       - name: Checkout code
@@ -102,6 +102,7 @@ jobs:
     strategy:
       matrix:
         component:
+          - shell
           - public-portal
           - call-center-portal
           - vehicles-service
