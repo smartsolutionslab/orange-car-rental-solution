@@ -18,9 +18,11 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
     /// <returns>Update result with success status and details.</returns>
     /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when customer is not found.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public async Task<UpdateCustomerProfileResult> HandleAsync(UpdateCustomerProfileCommand command, CancellationToken cancellationToken = default)
+    public async Task<UpdateCustomerProfileResult> HandleAsync(
+        UpdateCustomerProfileCommand command,
+        CancellationToken cancellationToken = default)
     {
-        var (customerId, name, phoneNumber, address ) = command;
+        var (customerId, name, phoneNumber, address) = command;
 
         // Load customer (throws EntityNotFoundException if not found)
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
@@ -32,8 +34,10 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 
-        // Return result
-        return new UpdateCustomerProfileResult(CustomerIdentifier: customer.Id.Value, Success: true,
-            Message: "Customer profile updated successfully", UpdatedAtUtc: customer.UpdatedAtUtc);
+        return new UpdateCustomerProfileResult(
+            customer.Id.Value,
+            true,
+            "Customer profile updated successfully",
+            customer.UpdatedAtUtc);
     }
 }

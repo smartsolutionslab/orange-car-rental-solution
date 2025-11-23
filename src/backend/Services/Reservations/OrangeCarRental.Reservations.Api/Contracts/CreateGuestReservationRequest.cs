@@ -13,46 +13,38 @@ public sealed record CreateGuestReservationRequest(
 /// <summary>
 ///     Vehicle and reservation details.
 /// </summary>
-public sealed record ReservationDetailsDto
-{
-    public required Guid VehicleId { get; init; }
-    public required string CategoryCode { get; init; }
-    public required DateTime PickupDate { get; init; }
-    public required DateTime ReturnDate { get; init; }
-    public required string PickupLocationCode { get; init; }
-    public required string DropoffLocationCode { get; init; }
-}
+public sealed record ReservationDetailsDto(
+    Guid VehicleId,
+    string CategoryCode,
+    DateOnly PickupDate,
+    DateOnly ReturnDate,
+    string PickupLocationCode,
+    string DropoffLocationCode);
 
 /// <summary>
 ///     Customer details for inline registration.
 /// </summary>
-public sealed record CustomerDetailsDto
-{
-    public required string FirstName { get; init; }
-    public required string LastName { get; init; }
-    public required string Email { get; init; }
-    public required string PhoneNumber { get; init; }
-    public required DateOnly DateOfBirth { get; init; }
-}
+public sealed record CustomerDetailsDto(
+    string FirstName,
+    string LastName,
+    string Email,
+    string PhoneNumber,
+    DateOnly DateOfBirth);
 
 /// <summary>
 ///     Address details.
 /// </summary>
-public sealed record AddressDetailsDto
-{
-    public required string Street { get; init; }
-    public required string City { get; init; }
-    public required string PostalCode { get; init; }
-    public string Country { get; init; } = "Germany";
-}
+public sealed record AddressDetailsDto(
+    string Street,
+    string City,
+    string PostalCode,
+    string Country = "Germany");
 
 /// <summary>
 ///     Driver's license details.
 /// </summary>
-public sealed record DriversLicenseDetailsDto
-{
-    public required string LicenseNumber { get; init; }
-    public required string LicenseIssueCountry { get; init; }
-    public required DateOnly LicenseIssueDate { get; init; }
-    public required DateOnly LicenseExpiryDate { get; init; }
-}
+public sealed record DriversLicenseDetailsDto(
+    string LicenseNumber,
+    string LicenseIssueCountry,
+    DateOnly LicenseIssueDate,
+    DateOnly LicenseExpiryDate);

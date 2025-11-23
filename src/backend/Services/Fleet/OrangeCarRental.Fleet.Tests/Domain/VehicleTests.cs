@@ -20,7 +20,14 @@ public class VehicleTests
         var licensePlate = "B-XY-1234";
 
         // Act
-        var vehicle = Vehicle.From(name, category, location, dailyRate, seats, fuelType, transmission);
+        var vehicle = Vehicle.From(
+            name,
+            category,
+            location,
+            dailyRate,
+            seats,
+            fuelType,
+            transmission);
         vehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
@@ -319,7 +326,7 @@ public class VehicleTests
             VehicleName.Of("VW Golf"),
             VehicleCategory.FromCode("MITTEL"),
             Location.Of("BER-HBF", "Berlin Hauptbahnhof"),
-            Money.FromGross(50.00m, 0.19m, Currency.Of("EUR")),
+            Money.FromGross(50.00m, 0.19m, Currency.EUR),
             SeatingCapacity.Of(5),
             FuelType.Petrol,
             TransmissionType.Manual

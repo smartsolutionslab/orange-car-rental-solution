@@ -4,41 +4,23 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Api.Contracts;
 ///     Request DTO for updating customer profile.
 ///     Accepts primitives from HTTP requests and maps to UpdateCustomerProfileCommand with value objects.
 /// </summary>
-public sealed record UpdateCustomerProfileRequest
-{
-    public required CustomerProfileDto Profile { get; init; }
-    public required AddressUpdateDto Address { get; init; }
-}
+public sealed record UpdateCustomerProfileRequest(
+    CustomerProfileDto Profile,
+    AddressUpdateDto Address);
 
 /// <summary>
 ///     Customer profile information for updates.
 /// </summary>
-public sealed record CustomerProfileDto
-{
-    /// <summary>First name</summary>
-    public required string FirstName { get; init; }
-
-    /// <summary>Last name</summary>
-    public required string LastName { get; init; }
-
-    /// <summary>Phone number</summary>
-    public required string PhoneNumber { get; init; }
-}
+public sealed record CustomerProfileDto(
+    string FirstName,
+    string LastName,
+    string PhoneNumber);
 
 /// <summary>
 ///     Address information for updates.
 /// </summary>
-public sealed record AddressUpdateDto
-{
-    /// <summary>Street address</summary>
-    public required string Street { get; init; }
-
-    /// <summary>City</summary>
-    public required string City { get; init; }
-
-    /// <summary>Postal code</summary>
-    public required string PostalCode { get; init; }
-
-    /// <summary>Country (defaults to Germany)</summary>
-    public string Country { get; init; } = "Germany";
-}
+public sealed record AddressUpdateDto(
+    string Street,
+    string City,
+    string PostalCode,
+    string Country = "Germany");

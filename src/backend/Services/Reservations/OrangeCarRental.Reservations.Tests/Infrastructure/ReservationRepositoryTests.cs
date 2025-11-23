@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Mono.TextTemplating;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
@@ -47,13 +48,14 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var pickupDate = DateTime.UtcNow.Date.AddDays(7);
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var currency = Currency.Of("EUR");
+        var currency = Currency.EUR;
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
             vehicleId,
             customerId,
             period,
+
             LocationCode.Of("BER-HBF"),
             LocationCode.Of("BER-HBF"),
             totalPrice);

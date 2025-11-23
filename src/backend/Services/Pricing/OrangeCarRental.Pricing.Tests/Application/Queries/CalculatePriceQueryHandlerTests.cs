@@ -1,6 +1,4 @@
 using Moq;
-using Shouldly;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
@@ -21,15 +19,13 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_WithValidQuery_ShouldCalculatePrice()
     {
         // Arrange
-        var pickupDate = DateTime.UtcNow.AddDays(1);
-        var returnDate = DateTime.UtcNow.AddDays(4);
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(4));
 
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("KLEIN"),
-            PickupDate = pickupDate,
-            ReturnDate = returnDate
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("KLEIN"),
+            pickupDate,
+            returnDate, null);
 
         var pricingPolicy = PricingPolicyBuilder.Default()
             .WithCategory("KLEIN")
@@ -64,17 +60,15 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_WithLocationCode_ShouldTryLocationSpecificPricingFirst()
     {
         // Arrange
-        var pickupDate = DateTime.UtcNow.AddDays(1);
-        var returnDate = DateTime.UtcNow.AddDays(3);
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3));
         var locationCode = LocationCode.Of("BER-HBF");
 
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("SUV"),
-            PickupDate = pickupDate,
-            ReturnDate = returnDate,
-            LocationCode = locationCode
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("SUV"),
+            pickupDate,
+            returnDate,
+            locationCode);
 
         var locationPolicy = PricingPolicyBuilder.Default()
             .AsSuv()
@@ -115,17 +109,15 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_WithLocationCodeButNoLocationPolicy_ShouldFallbackToGeneralPricing()
     {
         // Arrange
-        var pickupDate = DateTime.UtcNow.AddDays(1);
-        var returnDate = DateTime.UtcNow.AddDays(3);
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3));
         var locationCode = LocationCode.Of("BER-HBF");
 
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("SUV"),
-            PickupDate = pickupDate,
-            ReturnDate = returnDate,
-            LocationCode = locationCode
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("SUV"),
+            pickupDate,
+            returnDate,
+            locationCode);
 
         // No location-specific pricing
         pricingPolicyRepositoryMock
@@ -172,12 +164,11 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_WithNoPricingPolicy_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("UNKNOWN"),
-            PickupDate = DateTime.UtcNow.AddDays(1),
-            ReturnDate = DateTime.UtcNow.AddDays(3)
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("UNKNOWN"),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
+            null);
 
         pricingPolicyRepositoryMock
             .Setup(x => x.GetActivePolicyByCategoryAsync(
@@ -207,17 +198,15 @@ public class CalculatePriceQueryHandlerTests
             ("LUXUS", 150.00m)
         };
 
-        var pickupDate = DateTime.UtcNow.AddDays(1);
-        var returnDate = DateTime.UtcNow.AddDays(3); // 3 days
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)); // 3 days
 
         foreach (var (categoryCode, dailyRate) in categories)
         {
-            var query = new CalculatePriceQuery
-            {
-                CategoryCode = CategoryCode.Of(categoryCode),
-                PickupDate = pickupDate,
-                ReturnDate = returnDate
-            };
+            var query = new CalculatePriceQuery(
+                CategoryCode.Of(categoryCode),
+                pickupDate,
+                returnDate, null);
 
             var policy = PricingPolicyBuilder.Default()
                 .WithCategory(categoryCode)
@@ -244,12 +233,11 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_ShouldCalculateVATCorrectly()
     {
         // Arrange
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("KLEIN"),
-            PickupDate = DateTime.UtcNow.AddDays(1),
-            ReturnDate = DateTime.UtcNow.AddDays(2) // 2 days
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("KLEIN"),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)), // 2 days,
+            null);
 
         var pricingPolicy = PricingPolicyBuilder.Default()
             .WithCategory("KLEIN")
@@ -276,12 +264,11 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_ShouldRespectCancellationToken()
     {
         // Arrange
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("KLEIN"),
-            PickupDate = DateTime.UtcNow.AddDays(1),
-            ReturnDate = DateTime.UtcNow.AddDays(3)
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("KLEIN"),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
+            null);
 
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
@@ -301,15 +288,14 @@ public class CalculatePriceQueryHandlerTests
     public async Task HandleAsync_WithWeekRental_ShouldCalculate7Days()
     {
         // Arrange
-        var pickupDate = DateTime.UtcNow.AddDays(1);
-        var returnDate = DateTime.UtcNow.AddDays(7); // 7 days
+        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
+        var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)); // 7 days
 
-        var query = new CalculatePriceQuery
-        {
-            CategoryCode = CategoryCode.Of("MITTEL"),
-            PickupDate = pickupDate,
-            ReturnDate = returnDate
-        };
+        var query = new CalculatePriceQuery(
+            CategoryCode.Of("MITTEL"),
+            pickupDate,
+            returnDate,
+            null);
 
         var pricingPolicy = PricingPolicyBuilder.Default()
             .AsMidSize()

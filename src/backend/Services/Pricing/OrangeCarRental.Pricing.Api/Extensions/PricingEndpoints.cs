@@ -20,15 +20,13 @@ public static class PricingEndpoints
                 try
                 {
                     // Map request DTO to query with value objects
-                    var query = new CalculatePriceQuery
-                    {
-                        CategoryCode = CategoryCode.Of(request.CategoryCode),
-                        PickupDate = request.PickupDate,
-                        ReturnDate = request.ReturnDate,
-                        LocationCode = !string.IsNullOrWhiteSpace(request.LocationCode)
+                    var query = new CalculatePriceQuery(
+                        CategoryCode.Of(request.CategoryCode),
+                        request.PickupDate,
+                        request.ReturnDate,
+                        !string.IsNullOrWhiteSpace(request.LocationCode)
                             ? LocationCode.Of(request.LocationCode)
-                            : null
-                    };
+                            : null);
 
                     var result = await handler.HandleAsync(query, cancellationToken);
                     return Results.Ok(result);
@@ -57,25 +55,8 @@ public static class PricingEndpoints
 /// <summary>
 ///     Request DTO for calculating rental price.
 /// </summary>
-public sealed record CalculatePriceRequest
-{
-    /// <summary>
-    ///     Vehicle category code (e.g., "KLEIN", "MITTEL", "SUV").
-    /// </summary>
-    public required string CategoryCode { get; init; }
-
-    /// <summary>
-    ///     Pickup date.
-    /// </summary>
-    public required DateTime PickupDate { get; init; }
-
-    /// <summary>
-    ///     Return date.
-    /// </summary>
-    public required DateTime ReturnDate { get; init; }
-
-    /// <summary>
-    ///     Optional location code for location-specific pricing.
-    /// </summary>
-    public string? LocationCode { get; init; }
-}
+public sealed record CalculatePriceRequest(
+    string CategoryCode,
+    DateOnly PickupDate,
+    DateOnly ReturnDate,
+    string? LocationCode);

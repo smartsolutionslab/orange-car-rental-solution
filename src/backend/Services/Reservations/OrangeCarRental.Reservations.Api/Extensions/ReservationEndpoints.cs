@@ -82,7 +82,11 @@ public static class ReservationEndpoints
                     PhoneNumber.Of(customer.PhoneNumber),
                     BirthDate.Of(customer.DateOfBirth),
                     Address.Of(address.Street, address.City, address.PostalCode, address.Country),
-                    DriversLicense.Of(driversLicense.LicenseNumber, driversLicense.LicenseIssueCountry, driversLicense.LicenseIssueDate, driversLicense.LicenseExpiryDate)
+                    DriversLicense.Of(
+                        driversLicense.LicenseNumber,
+                        driversLicense.LicenseIssueCountry,
+                        driversLicense.LicenseIssueDate,
+                        driversLicense.LicenseExpiryDate)
                 );
 
                 var result = await handler.HandleAsync(command);

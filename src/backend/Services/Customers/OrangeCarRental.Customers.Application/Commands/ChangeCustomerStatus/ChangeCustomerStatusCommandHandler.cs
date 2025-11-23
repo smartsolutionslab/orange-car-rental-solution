@@ -43,7 +43,6 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 
-        // Return result
         return new ChangeCustomerStatusResult(
             customer.Id,
             oldStatus.ToString(),

@@ -31,18 +31,16 @@ public class CreateReservationCommandHandlerTests
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "SUV",
-                TotalDays = 3,
-                DailyRateNet = 83.33m,
-                DailyRateGross = 99.16m,
-                TotalPriceNet = 250.00m,
-                TotalPriceGross = 297.50m,
-                VatAmount = 47.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "SUV",
+                3,
+                83.33m,
+                99.16m,
+                250.00m,
+                297.50m,
+                47.50m,
+                0.19m,
+                "EUR"));
 
         Reservation? addedReservation = null;
         reservationRepositoryMock
@@ -125,18 +123,17 @@ public class CreateReservationCommandHandlerTests
         // Arrange
         var command = CreateValidCommand() with { TotalPrice = null };
 
-        var calculatedPrice = new PriceCalculationDto
-        {
-            CategoryCode = "SUV",
-            TotalDays = 3,
-            DailyRateNet = 66.67m,
-            DailyRateGross = 79.33m,
-            TotalPriceNet = 200.00m,
-            TotalPriceGross = 238.00m,
-            VatAmount = 38.00m,
-            VatRate = 0.19m,
-            Currency = "EUR"
-        };
+        var calculatedPrice = new PriceCalculationDto(
+            "SUV",
+            3,
+            66.67m,
+            79.33m,
+            200.00m,
+            238.00m,
+            38.00m,
+            0.19m,
+            "EUR");
+
         pricingServiceMock
             .Setup(x => x.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
@@ -182,18 +179,16 @@ public class CreateReservationCommandHandlerTests
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "SUV",
-                TotalDays = 3,
-                DailyRateNet = 83.33m,
-                DailyRateGross = 99.16m,
-                TotalPriceNet = 250.00m,
-                TotalPriceGross = 297.50m,
-                VatAmount = 47.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "SUV",
+                3,
+                83.33m,
+                99.16m,
+                250.00m,
+                297.50m,
+                47.50m,
+                0.19m,
+                "EUR"));
 
         // Act
         await handler.HandleAsync(command, CancellationToken.None);
@@ -244,18 +239,16 @@ public class CreateReservationCommandHandlerTests
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "SUV",
-                TotalDays = 3,
-                DailyRateNet = 83.33m,
-                DailyRateGross = 99.16m,
-                TotalPriceNet = 250.00m,
-                TotalPriceGross = 297.50m,
-                VatAmount = 47.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "SUV",
+                3,
+                83.33m,
+                99.16m,
+                250.00m,
+                297.50m,
+                47.50m,
+                0.19m,
+                "EUR"));
 
         Reservation? addedReservation = null;
         reservationRepositoryMock

@@ -16,7 +16,9 @@ public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
     /// <param name="command">The command with vehicle data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with the new vehicle ID and details.</returns>
-    public async Task<AddVehicleToFleetResult> HandleAsync(AddVehicleToFleetCommand command, CancellationToken cancellationToken = default)
+    public async Task<AddVehicleToFleetResult> HandleAsync(
+        AddVehicleToFleetCommand command,
+        CancellationToken cancellationToken = default)
     {
         var (name, category, currentLocation, dailyRate, seats, fuelType, transmissionType, licensePlate, manufacturer,
             vehicleModel, year, imageUrl) = command;

@@ -39,20 +39,18 @@ public class CreateGuestReservationCommandHandlerTests
             .Setup(s => s.CalculatePriceAsync(
                 It.IsAny<VehicleCategory>(),
                 It.IsAny<BookingPeriod>(),
-            It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "KOMPAKT",
-                TotalDays = 3,
-                DailyRateNet = 56.02m,
-                DailyRateGross = 66.67m,
-                TotalPriceNet = 168.07m,
-                TotalPriceGross = 200.00m,
-                VatAmount = 31.93m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "KOMPAKT",
+                3,
+                56.02m,
+                66.67m,
+                168.07m,
+                200.00m,
+                31.93m,
+                0.19m,
+                "EUR"));
 
         repositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
@@ -177,18 +175,16 @@ public class CreateGuestReservationCommandHandlerTests
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
             .Callback(() => callOrder.Add("CalculatePrice"))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "KOMPAKT",
-                TotalDays = 3,
-                DailyRateNet = 50.00m,
-                DailyRateGross = 59.50m,
-                TotalPriceNet = 150.00m,
-                TotalPriceGross = 178.50m,
-                VatAmount = 28.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "KOMPAKT",
+                3,
+                50.00m,
+                59.50m,
+                150.00m,
+                178.50m,
+                28.50m,
+                0.19m,
+                "EUR"));
 
         repositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
@@ -228,18 +224,16 @@ public class CreateGuestReservationCommandHandlerTests
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "KOMPAKT",
-                TotalDays = 3,
-                DailyRateNet = 50.00m,
-                DailyRateGross = 59.50m,
-                TotalPriceNet = 150.00m,
-                TotalPriceGross = 178.50m,
-                VatAmount = 28.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "KOMPAKT",
+                3,
+                50.00m,
+                59.50m,
+                150.00m,
+                178.50m,
+                28.50m,
+                0.19m,
+                "EUR"));
 
         Reservation? capturedReservation = null;
         repositoryMock
@@ -540,18 +534,16 @@ public class CreateGuestReservationCommandHandlerTests
                 It.IsAny<BookingPeriod>(),
                 It.IsAny<LocationCode>(),
                 It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new PriceCalculationDto
-            {
-                CategoryCode = "KOMPAKT",
-                TotalDays = 3,
-                DailyRateNet = 50.00m,
-                DailyRateGross = 59.50m,
-                TotalPriceNet = 150.00m,
-                TotalPriceGross = 178.50m,
-                VatAmount = 28.50m,
-                VatRate = 0.19m,
-                Currency = "EUR"
-            });
+            .ReturnsAsync(new PriceCalculationDto(
+                "KOMPAKT",
+                3,
+                50.00m,
+                59.50m,
+                150.00m,
+                178.50m,
+                28.50m,
+                0.19m,
+                "EUR"));
 
         repositoryMock
             .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))

@@ -8,15 +8,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Uses value object for type safety and early validation.
 ///     Used when a customer renews their license or provides updated license details.
 /// </summary>
-public sealed record UpdateDriversLicenseCommand : ICommand<UpdateDriversLicenseResult>
-{
-    /// <summary>
-    ///     The unique identifier of the customer to update.
-    /// </summary>
-    public required CustomerIdentifier CustomerIdentifier { get; init; }
-
-    /// <summary>
-    ///     Updated driver's license (value object with validation).
-    /// </summary>
-    public required DriversLicense DriversLicense { get; init; }
-}
+public sealed record UpdateDriversLicenseCommand(
+    CustomerIdentifier CustomerIdentifier,
+    DriversLicense DriversLicense) : ICommand<UpdateDriversLicenseResult>;

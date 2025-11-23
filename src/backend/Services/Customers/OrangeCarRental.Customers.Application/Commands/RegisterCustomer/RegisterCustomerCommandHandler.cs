@@ -26,8 +26,7 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
         var emailExists = await customers.ExistsWithEmailAsync(command.Email, cancellationToken);
         if (emailExists)
         {
-            throw new InvalidOperationException(
-                $"A customer with email '{command.Email.Value}' already exists.");
+            throw new InvalidOperationException($"A customer with email '{command.Email.Value}' already exists.");
         }
 
         // Register new customer (domain method handles all business rules)
@@ -43,13 +42,10 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
         await customers.AddAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 
-        // Return result
-        return new RegisterCustomerResult
-        {
-            CustomerIdentifier = customer.Id.Value,
-            Email = customer.Email.Value,
-            Status = "Customer registered successfully",
-            RegisteredAtUtc = customer.RegisteredAtUtc
-        };
+        return new RegisterCustomerResult(
+            customer.Id.Value,
+            customer.Email.Value,
+            "Customer registered successfully",
+            customer.RegisteredAtUtc);
     }
 }

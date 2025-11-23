@@ -22,7 +22,7 @@ public class GetCustomerQueryHandlerTests
     {
         // Arrange
         var customer = CreateTestCustomer();
-        var query = new GetCustomerQuery { CustomerIdentifier = customer.Id };
+        var query = new GetCustomerQuery(customer.Id);
 
         customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()))
@@ -49,7 +49,7 @@ public class GetCustomerQueryHandlerTests
     {
         // Arrange
         var customerId = CustomerIdentifier.New();
-        var query = new GetCustomerQuery { CustomerIdentifier = customerId };
+        var query = new GetCustomerQuery(customerId);
 
         customerRepositoryMock
             .Setup(x => x.GetByIdAsync(customerId, It.IsAny<CancellationToken>()))
@@ -67,7 +67,7 @@ public class GetCustomerQueryHandlerTests
     {
         // Arrange
         var customerId = CustomerIdentifier.New();
-        var query = new GetCustomerQuery { CustomerIdentifier = customerId };
+        var query = new GetCustomerQuery(customerId);
         var cts = new CancellationTokenSource();
         cts.Cancel();
 

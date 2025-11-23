@@ -7,10 +7,4 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 /// <summary>
 ///     Query to retrieve a customer by their unique identifier.
 /// </summary>
-public sealed record GetCustomerQuery : IQuery<CustomerDto>
-{
-    /// <summary>
-    ///     The unique identifier of the customer to retrieve.
-    /// </summary>
-    public required CustomerIdentifier CustomerIdentifier { get; init; }
-}
+public sealed record GetCustomerQuery(CustomerIdentifier CustomerIdentifier) : IQuery<CustomerDto>;

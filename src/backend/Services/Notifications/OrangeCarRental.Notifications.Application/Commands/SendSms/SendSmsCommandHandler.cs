@@ -48,13 +48,12 @@ public sealed class SendSmsCommandHandler(
             await notifications.UpdateAsync(notification, cancellationToken);
             await notifications.SaveChangesAsync(cancellationToken);
 
-            return new SendSmsResult
-            {
-                NotificationId = notification.Id.Value,
-                Status = notification.Status.ToString(),
-                ProviderMessageId = providerMessageId,
-                SentAtUtc = notification.SentAt!.Value
-            };
+            return new SendSmsResult(
+                notification.Id.Value,
+                notification.Status.ToString(),
+                providerMessageId,
+                notification.SentAt!.Value);
+
         }
         catch (Exception ex)
         {

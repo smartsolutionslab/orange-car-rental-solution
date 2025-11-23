@@ -17,7 +17,9 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new status.</returns>
     /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when vehicle is not found.</exception>
-    public async Task<UpdateVehicleStatusResult> HandleAsync(UpdateVehicleStatusCommand command, CancellationToken cancellationToken = default)
+    public async Task<UpdateVehicleStatusResult> HandleAsync(
+        UpdateVehicleStatusCommand command,
+        CancellationToken cancellationToken = default)
     {
         // Load vehicle (throws EntityNotFoundException if not found)
         var vehicle = await vehicles.GetByIdAsync(command.VehicleId, cancellationToken);
@@ -31,7 +33,6 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
         await vehicles.UpdateAsync(vehicle, cancellationToken);
         await vehicles.SaveChangesAsync(cancellationToken);
 
-        // Return result
         return new UpdateVehicleStatusResult(
             vehicle.Id.Value,
             oldStatus.ToString(),

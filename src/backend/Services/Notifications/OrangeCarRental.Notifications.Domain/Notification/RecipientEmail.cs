@@ -18,9 +18,7 @@ public readonly record struct RecipientEmail(string Value) : IValueObject
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace()
             .AndHasMaxLength(255)
-            .AndSatisfies(
-                v => v.Contains('@') && v.Contains('.'),
-                "Email must be in valid format (e.g. user@example.com)");
+            .AndSatisfies(v => v.Contains('@') && v.Contains('.'), "Email must be in valid format (e.g. user@example.com)");
 
         return new RecipientEmail(value.ToLowerInvariant().Trim());
     }

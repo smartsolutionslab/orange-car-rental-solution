@@ -32,13 +32,10 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 
-        // Return result
-        return new UpdateDriversLicenseResult
-        {
-            CustomerIdentifier = customer.Id.Value,
-            Success = true,
-            Message = "Driver's license updated successfully",
-            UpdatedAtUtc = customer.UpdatedAtUtc
-        };
+        return new UpdateDriversLicenseResult(
+            customer.Id.Value,
+            true,
+            "Driver's license updated successfully",
+            customer.UpdatedAtUtc);
     }
 }

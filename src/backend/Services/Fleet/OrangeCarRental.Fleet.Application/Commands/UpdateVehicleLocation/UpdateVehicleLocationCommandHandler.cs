@@ -18,7 +18,9 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
     /// <returns>Result with old and new location details.</returns>
     /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when vehicle is not found.</exception>
     /// <exception cref="InvalidOperationException">Thrown when vehicle cannot be moved.</exception>
-    public async Task<UpdateVehicleLocationResult> HandleAsync(UpdateVehicleLocationCommand command, CancellationToken cancellationToken = default)
+    public async Task<UpdateVehicleLocationResult> HandleAsync(
+        UpdateVehicleLocationCommand command,
+        CancellationToken cancellationToken = default)
     {
         var (vehicleId, newLocation) = command;
 

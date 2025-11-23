@@ -34,8 +34,13 @@ public static class CustomerEndpoints
                         Email.Of(request.Customer.Email),
                         PhoneNumber.Of(request.Customer.PhoneNumber),
                         BirthDate.Of(request.Customer.DateOfBirth),
-                        Address.Of(request.Address.Street, request.Address.City, request.Address.PostalCode, request.Address.Country),
-                        DriversLicense.Of(request.DriversLicense.LicenseNumber,
+                        Address.Of(
+                            request.Address.Street,
+                            request.Address.City,
+                            request.Address.PostalCode,
+                            request.Address.Country),
+                        DriversLicense.Of(
+                            request.DriversLicense.LicenseNumber,
                             request.DriversLicense.LicenseIssueCountry,
                             request.DriversLicense.LicenseIssueDate,
                             request.DriversLicense.LicenseExpiryDate));
@@ -77,7 +82,9 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    var result = await handler.HandleAsync(new GetCustomerQuery { CustomerIdentifier = CustomerIdentifier.From(id) }, cancellationToken);
+                    var result = await handler.HandleAsync(
+                        new GetCustomerQuery(CustomerIdentifier.From(id)),
+                        cancellationToken);
                     return Results.Ok(result);
                 }
                 catch (EntityNotFoundException ex)
@@ -113,7 +120,8 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    var result = await handler.HandleAsync(new GetCustomerByEmailQuery { Email = Email.Of(email) },
+                    var result = await handler.HandleAsync(
+                        new GetCustomerByEmailQuery(Email.Of(email)),
                         cancellationToken);
                     return Results.Ok(result);
                 }
@@ -188,7 +196,12 @@ public static class CustomerEndpoints
                         CustomerIdentifier.From(id),
                         CustomerName.Of(request.Profile.FirstName, request.Profile.LastName),
                         PhoneNumber.Of(request.Profile.PhoneNumber),
-                        Address.Of(request.Address.Street, request.Address.City, request.Address.PostalCode, request.Address.Country));
+                        Address.Of(
+                            request.Address.Street,
+                            request.Address.City,
+                            request.Address.PostalCode,
+                            request.Address.Country)
+                        );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
@@ -228,16 +241,14 @@ public static class CustomerEndpoints
             {
                 try
                 {
-                    // Map request DTO to command with value objects
-                    var command = new UpdateDriversLicenseCommand
-                    {
-                        CustomerIdentifier = CustomerIdentifier.From(id),
-                        DriversLicense = DriversLicense.Of(
+                    var command = new UpdateDriversLicenseCommand(
+                        CustomerIdentifier.From(id),
+                        DriversLicense.Of(
                             request.LicenseNumber,
                             request.IssueCountry,
                             request.IssueDate,
                             request.ExpiryDate)
-                    };
+                    );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);

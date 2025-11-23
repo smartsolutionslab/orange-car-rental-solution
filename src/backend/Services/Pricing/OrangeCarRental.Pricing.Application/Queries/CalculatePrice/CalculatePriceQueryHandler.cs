@@ -57,19 +57,17 @@ public sealed class CalculatePriceQueryHandler(IPricingPolicyRepository pricingP
 
         var totalPrice = pricingPolicy.CalculatePrice(rentalPeriod);
 
-        return new PriceCalculationResult
-        {
-            CategoryCode = query.CategoryCode.Value,
-            TotalDays = rentalPeriod.TotalDays,
-            DailyRateNet = pricingPolicy.DailyRate.NetAmount,
-            DailyRateGross = pricingPolicy.DailyRate.GrossAmount,
-            TotalPriceNet = totalPrice.NetAmount,
-            TotalPriceGross = totalPrice.GrossAmount,
-            VatAmount = totalPrice.VatAmount,
-            VatRate = totalPrice.VatRate,
-            Currency = totalPrice.Currency.Code,
-            PickupDate = query.PickupDate,
-            ReturnDate = query.ReturnDate
-        };
+        return new PriceCalculationResult(
+            query.CategoryCode.Value,
+            rentalPeriod.TotalDays,
+            pricingPolicy.DailyRate.NetAmount,
+            pricingPolicy.DailyRate.GrossAmount,
+            totalPrice.NetAmount,
+            totalPrice.GrossAmount,
+            totalPrice.VatAmount,
+            totalPrice.VatRate,
+            totalPrice.Currency.Code,
+            query.PickupDate,
+            query.ReturnDate);
     }
 }

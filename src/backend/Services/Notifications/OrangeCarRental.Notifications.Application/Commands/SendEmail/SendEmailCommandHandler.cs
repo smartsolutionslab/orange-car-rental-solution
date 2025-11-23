@@ -50,13 +50,11 @@ public sealed class SendEmailCommandHandler(
             await notifications.UpdateAsync(notification, cancellationToken);
             await notifications.SaveChangesAsync(cancellationToken);
 
-            return new SendEmailResult
-            {
-                NotificationId = notification.Id.Value,
-                Status = notification.Status.ToString(),
-                ProviderMessageId = providerMessageId,
-                SentAtUtc = notification.SentAt!.Value
-            };
+            return new SendEmailResult(
+                notification.Id.Value,
+                notification.Status.ToString(),
+                providerMessageId,
+                notification.SentAt!.Value);
         }
         catch (Exception ex)
         {
