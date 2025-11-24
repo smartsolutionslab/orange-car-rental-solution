@@ -20,6 +20,14 @@ public readonly record struct Manufacturer(string Value) : IValueObject
         return new Manufacturer(trimmed);
     }
 
+
+    public static Manufacturer? TryParse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return Of(value);
+    }
+
     public static implicit operator string(Manufacturer manufacturer) => manufacturer.Value;
 
     public override string ToString() => Value;

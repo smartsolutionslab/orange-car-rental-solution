@@ -27,6 +27,14 @@ public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnD
     public static SearchPeriod Of(DateTime pickupDate, DateTime returnDate) =>
         Of(DateOnly.FromDateTime(pickupDate), DateOnly.FromDateTime(returnDate));
 
+
+    public static SearchPeriod? TryParse(DateOnly? pickupDate, DateOnly? returnDate)
+    {
+        if (!pickupDate.HasValue || !returnDate.HasValue) return null;
+
+        return Of(pickupDate.Value, returnDate.Value);
+    }
+
     /// <summary>
     ///     Checks if this period overlaps with another period.
     /// </summary>

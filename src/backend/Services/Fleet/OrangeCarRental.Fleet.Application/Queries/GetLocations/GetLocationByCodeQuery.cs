@@ -1,5 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 

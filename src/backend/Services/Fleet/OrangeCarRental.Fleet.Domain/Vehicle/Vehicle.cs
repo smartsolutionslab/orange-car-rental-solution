@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
 
@@ -17,7 +18,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     {
         Name = default!;
         Category = default!;
-        CurrentLocation = default!;
+        CurrentLocationCode = default!;
         DailyRate = default;
         Seats = default!;
     }
@@ -26,7 +27,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         VehicleIdentifier id,
         VehicleName name,
         VehicleCategory category,
-        Location currentLocation,
+        LocationCode currentLocationCode,
         Money dailyRate,
         SeatingCapacity seats,
         FuelType fuelType,
@@ -35,7 +36,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     {
         Name = name;
         Category = category;
-        CurrentLocation = currentLocation;
+        CurrentLocationCode = currentLocationCode;
         DailyRate = dailyRate;
         Seats = seats;
         FuelType = fuelType;
@@ -48,7 +49,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
     public VehicleName Name { get; init; }
     public VehicleCategory Category { get; init; }
-    public Location CurrentLocation { get; init; }
+    public LocationCode CurrentLocationCode { get; init; }
     public Money DailyRate { get; init; }
     public SeatingCapacity Seats { get; init; }
     public FuelType FuelType { get; init; }
@@ -66,7 +67,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     public static Vehicle From(
         VehicleName name,
         VehicleCategory category,
-        Location currentLocation,
+        LocationCode currentLocationCode,
         Money dailyRate,
         SeatingCapacity seats,
         FuelType fuelType,
@@ -76,7 +77,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
             VehicleIdentifier.New(),
             name,
             category,
-            currentLocation,
+            currentLocationCode,
             dailyRate,
             seats,
             fuelType,
@@ -91,7 +92,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     private Vehicle CreateMutatedCopy(
         VehicleName? name = null,
         VehicleCategory? category = null,
-        Location? currentLocation = null,
+        LocationCode? currentLocationCode = null,
         Money? dailyRate = null,
         SeatingCapacity? seats = null,
         FuelType? fuelType = null,
@@ -108,7 +109,7 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
             Id = Id,
             Name = name ?? Name,
             Category = category ?? Category,
-            CurrentLocation = currentLocation ?? CurrentLocation,
+            CurrentLocationCode = currentLocationCode ?? CurrentLocationCode,
             DailyRate = dailyRate ?? DailyRate,
             Seats = seats ?? Seats,
             FuelType = fuelType ?? FuelType,
@@ -142,16 +143,16 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     ///     Move vehicle to a different location.
     ///     Returns a new instance with the updated location (immutable pattern).
     /// </summary>
-    public Vehicle MoveToLocation(Location newLocation)
+    public Vehicle MoveToLocation(LocationCode newLocationCode)
     {
-        if (newLocation == CurrentLocation) return this;
+        if (newLocationCode == CurrentLocationCode) return this;
 
         if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot move a rented vehicle");
 
-        var oldLocation = CurrentLocation;
-        var updated = CreateMutatedCopy(currentLocation: newLocation);
+        var oldLocationCode = CurrentLocationCode;
+        var updated = CreateMutatedCopy(currentLocationCode: newLocationCode);
 
-        updated.AddDomainEvent(new VehicleLocationChanged(Id, oldLocation, newLocation));
+        updated.AddDomainEvent(new VehicleLocationChanged(Id, oldLocationCode, newLocationCode));
 
         return updated;
     }

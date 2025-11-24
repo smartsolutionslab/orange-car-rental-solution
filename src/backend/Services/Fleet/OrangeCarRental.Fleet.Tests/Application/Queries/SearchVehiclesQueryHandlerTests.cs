@@ -3,6 +3,7 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
@@ -24,9 +25,9 @@ public class SearchVehiclesQueryHandlerTests
     {
         // Arrange
         var query = new SearchVehiclesQuery(
-            PickupDate: DateTime.UtcNow.AddDays(1),
-            ReturnDate: DateTime.UtcNow.AddDays(3),
-            LocationCode: "BER-HBF",
+            PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            ReturnDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
+            LocationCode:  "BER-HBF",
             CategoryCode: "SUV",
             MinSeats: 5,
             FuelType: "Diesel",
@@ -38,8 +39,8 @@ public class SearchVehiclesQueryHandlerTests
 
         var vehicles = new List<Vehicle>
         {
-            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Location.BerlinHauptbahnhof),
-            CreateTestVehicle("Audi Q7", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
+            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Locations.BerlinHauptbahnhof),
+            CreateTestVehicle("Audi Q7", VehicleCategory.SUV, Locations.BerlinHauptbahnhof)
         };
 
         var pagedResult = new PagedResult<Vehicle>
@@ -195,7 +196,7 @@ public class SearchVehiclesQueryHandlerTests
 
         var vehicles = new List<Vehicle>
         {
-            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
+            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Locations.BerlinHauptbahnhof)
         };
 
         var pagedResult = new PagedResult<Vehicle>
@@ -237,7 +238,7 @@ public class SearchVehiclesQueryHandlerTests
 
         var vehicles = new List<Vehicle>
         {
-            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Location.BerlinHauptbahnhof)
+            CreateTestVehicle("BMW X5", VehicleCategory.SUV, Locations.BerlinHauptbahnhof)
         };
 
         var pagedResult = new PagedResult<Vehicle>
@@ -265,10 +266,10 @@ public class SearchVehiclesQueryHandlerTests
     {
         // Arrange
         var query = new SearchVehiclesQuery(
-            PickupDate: DateTime.UtcNow.AddDays(1),
-            ReturnDate: DateTime.UtcNow.AddDays(3),
-            LocationCode: "BER-HBF",
-            CategoryCode: "SUV",
+            PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+            ReturnDate: DateOnly.FromDateTime(  DateTime.UtcNow.AddDays(3)),
+            LocationCode: Locations.BerlinHauptbahnhof.Value,
+            CategoryCode: VehicleCategory.SUV.Code,
             MinSeats: 5,
             FuelType: "Diesel",
             TransmissionType: "Automatic",
@@ -298,7 +299,7 @@ public class SearchVehiclesQueryHandlerTests
         capturedParameters.MaxDailyRateGross.ShouldBe(100.00m);
     }
 
-    private static Vehicle CreateTestVehicle(string name, VehicleCategory category, Location location)
+    private static Vehicle CreateTestVehicle(string name, VehicleCategory category, LocationCode location)
     {
         return VehicleBuilder.Default()
             .WithName(name)

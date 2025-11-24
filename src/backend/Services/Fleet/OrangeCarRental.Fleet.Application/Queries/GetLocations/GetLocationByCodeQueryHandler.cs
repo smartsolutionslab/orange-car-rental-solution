@@ -1,5 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 
@@ -7,7 +7,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocatio
 ///     Handler for GetLocationByCodeQuery.
 ///     Returns a specific location by its code.
 /// </summary>
-public sealed class GetLocationByCodeQueryHandler: IQueryHandler<GetLocationByCodeQuery, LocationDto>
+public sealed class GetLocationByCodeQueryHandler(ILocationRepository locations)
+    : IQueryHandler<GetLocationByCodeQuery, LocationDto>
 {
     /// <summary>
     ///     Handles the query to retrieve a specific location by code.
@@ -15,9 +16,14 @@ public sealed class GetLocationByCodeQueryHandler: IQueryHandler<GetLocationByCo
     /// <param name="query">The query containing the location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The location DTO.</returns>
-    public Task<LocationDto> HandleAsync(GetLocationByCodeQuery query, CancellationToken cancellationToken = default)
+    public async Task<LocationDto> HandleAsync(GetLocationByCodeQuery query, CancellationToken cancellationToken = default)
     {
-        var location = Location.FromCode(query.Code);
+        var location = await locations.GetByCodeAsync(query.Code, cancellationToken);
+
+        if (location == null)
+        {
+            throw new ArgumentException($"Location with code '{query.Code.Value}' not found.", nameof(query.Code));
+        }
 
         var dto = new LocationDto(
             location.Code.Value,
@@ -28,6 +34,6 @@ public sealed class GetLocationByCodeQueryHandler: IQueryHandler<GetLocationByCo
             location.Address.FullAddress
             );
 
-        return Task.FromResult(dto);
+        return dto;
     }
 }

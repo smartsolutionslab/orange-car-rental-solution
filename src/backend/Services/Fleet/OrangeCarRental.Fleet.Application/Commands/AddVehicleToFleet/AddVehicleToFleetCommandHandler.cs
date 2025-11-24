@@ -54,7 +54,7 @@ public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
             vehicle.Name.Value,
             vehicle.Category.Code,
             vehicle.Status.ToString(),
-            vehicle.CurrentLocation.Code.Value,
+            vehicle.CurrentLocationCode.Value,
             vehicle.DailyRate.NetAmount,
             vehicle.DailyRate.VatAmount,
             vehicle.DailyRate.GrossAmount

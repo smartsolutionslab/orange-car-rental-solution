@@ -4,6 +4,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application.Commands;
 
@@ -38,7 +39,7 @@ public class AddVehicleToFleetCommandHandlerTests
         result.Name.ShouldBe(command.Name.Value);
         result.Category.ShouldBe(command.Category.Code);
         result.Status.ShouldBe("Available");
-        result.LocationCode.ShouldBe(command.CurrentLocation.Code.Value);
+        result.LocationCode.ShouldBe(command.CurrentLocationCode.Value);
         result.DailyRateNet.ShouldBe(command.DailyRate.NetAmount);
         result.DailyRateVat.ShouldBe(command.DailyRate.VatAmount);
         result.DailyRateGross.ShouldBe(command.DailyRate.GrossAmount);
@@ -46,7 +47,7 @@ public class AddVehicleToFleetCommandHandlerTests
         addedVehicle.ShouldNotBeNull();
         addedVehicle.Name.ShouldBe(command.Name);
         addedVehicle.Category.ShouldBe(command.Category);
-        addedVehicle.CurrentLocation.ShouldBe(command.CurrentLocation);
+        addedVehicle.CurrentLocationCode.ShouldBe(command.CurrentLocationCode);
         addedVehicle.DailyRate.ShouldBe(command.DailyRate);
         addedVehicle.Seats.ShouldBe(command.Seats);
         addedVehicle.FuelType.ShouldBe(command.FuelType);
@@ -228,7 +229,7 @@ public class AddVehicleToFleetCommandHandlerTests
         return new AddVehicleToFleetCommand(
             VehicleName.Of("BMW X5"),
             VehicleCategory.SUV,
-            Location.BerlinHauptbahnhof,
+            Locations.BerlinHauptbahnhof,
             Money.Euro(89.99m),
             SeatingCapacity.Of(5),
             FuelType.Diesel,

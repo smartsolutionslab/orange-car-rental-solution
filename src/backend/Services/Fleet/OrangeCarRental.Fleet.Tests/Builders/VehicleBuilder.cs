@@ -1,8 +1,16 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
+
+public static class Locations
+{
+    public static LocationCode BerlinHauptbahnhof => LocationCode.Of("BER-HBF");
+    public static LocationCode MunichAirport => LocationCode.Of("MUC-FLG");
+}
+
 
 /// <summary>
 /// Test data builder for Vehicle aggregates.
@@ -12,7 +20,7 @@ public class VehicleBuilder
 {
     private VehicleName _name = VehicleName.Of("BMW X5");
     private VehicleCategory _category = VehicleCategory.SUV;
-    private Location _location = Location.BerlinHauptbahnhof;
+    private LocationCode _location = Locations.BerlinHauptbahnhof;
     private Money _dailyRate = Money.Euro(89.99m);
     private SeatingCapacity _seats = SeatingCapacity.Of(5);
     private FuelType _fuelType = FuelType.Diesel;
@@ -92,7 +100,7 @@ public class VehicleBuilder
     /// <summary>
     /// Sets the current location.
     /// </summary>
-    public VehicleBuilder AtLocation(Location location)
+    public VehicleBuilder AtLocation(LocationCode location)
     {
         _location = location;
         return this;

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -42,12 +43,12 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasMaxLength(20)
             .IsRequired();
 
-        // Location - stored as code
-        builder.Property(v => v.CurrentLocation)
+        // LocationCode - stored as string
+        builder.Property(v => v.CurrentLocationCode)
             .HasColumnName("LocationCode")
             .HasConversion(
-                location => location.Code.Value,
-                code => Location.FromCode(LocationCode.Of(code)))
+                code => code.Value,
+                value => LocationCode.Of(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -135,7 +136,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         // Indexes for common queries
         builder.HasIndex(v => v.Status);
-        builder.HasIndex(v => v.CurrentLocation);
+        builder.HasIndex(v => v.CurrentLocationCode);
         builder.HasIndex(v => v.Category);
     }
 }

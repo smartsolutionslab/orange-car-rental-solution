@@ -7,8 +7,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehi
 ///     Supports filtering by date range, location, category, and other criteria.
 /// </summary>
 public sealed record SearchVehiclesQuery(
-    DateTime? PickupDate,
-    DateTime? ReturnDate,
+    DateOnly? PickupDate,
+    DateOnly? ReturnDate,
     string? LocationCode,
     string? CategoryCode,
     int? MinSeats,

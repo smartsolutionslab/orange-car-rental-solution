@@ -20,6 +20,13 @@ public readonly record struct ManufacturingYear(int Value) : IValueObject
         return new ManufacturingYear(value);
     }
 
+    public static ManufacturingYear? TryParse(int? value)
+    {
+        if(value == null) return null;
+
+        return Of(value.Value);
+    }
+
     public static implicit operator int(ManufacturingYear year) => year.Value;
 
     public override string ToString() => Value.ToString();

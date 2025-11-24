@@ -1,0 +1,40 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
+
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLocation;
+
+/// <summary>
+///     Handler for UpdateLocationCommand.
+///     Updates location information.
+/// </summary>
+public sealed class UpdateLocationCommandHandler(ILocationRepository locations)
+    : ICommandHandler<UpdateLocationCommand, UpdateLocationResult>
+{
+    /// <summary>
+    ///     Handles the update location command.
+    /// </summary>
+    /// <param name="command">The command with location ID and new information.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Result with updated location details.</returns>
+    public async Task<UpdateLocationResult> HandleAsync(
+        UpdateLocationCommand command,
+        CancellationToken cancellationToken = default)
+    {
+        var (locationId, name, address) = command;
+
+        var location = await locations.GetByIdAsync(locationId, cancellationToken);
+
+        location = location.UpdateInformation(name, address);
+
+        await locations.UpdateAsync(location, cancellationToken);
+        await locations.SaveChangesAsync(cancellationToken);
+
+        return new UpdateLocationResult(
+            location.Id.Value,
+            location.Code.Value,
+            location.Name.Value,
+            location.Address.FullAddress,
+            "Location information updated successfully"
+        );
+    }
+}

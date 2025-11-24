@@ -3,6 +3,7 @@ using Moq;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
@@ -76,14 +77,14 @@ public class VehicleRepositoryTests : IAsyncLifetime
         // Arrange
         await SeedTestDataAsync();
         var parameters =
-            new VehicleSearchParameters(locationCode: LocationCode.Of("BER-HBF"), pageNumber: 1, pageSize: 20);
+            new VehicleSearchParameters(locationCode: Locations.BerlinHauptbahnhof, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Count.ShouldBe(3);
-        result.Items.ShouldAllBe(v => v.CurrentLocation.Code.Value == "BER-HBF");
+        result.Items.ShouldAllBe(v => v.CurrentLocationCode.Value == Locations.BerlinHauptbahnhof);
         result.TotalCount.ShouldBe(3);
     }
 
@@ -93,14 +94,14 @@ public class VehicleRepositoryTests : IAsyncLifetime
         // Arrange
         await SeedTestDataAsync();
         var parameters =
-            new VehicleSearchParameters(category: VehicleCategory.FromCode("KLEIN"), pageNumber: 1, pageSize: 20);
+            new VehicleSearchParameters(category: VehicleCategory.Kleinwagen, pageNumber: 1, pageSize: 20);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
 
         // Assert
         result.Items.Count.ShouldBe(2);
-        result.Items.ShouldAllBe(v => v.Category.Code == "KLEIN");
+        result.Items.ShouldAllBe(v => v.Category.Code == VehicleCategory.Kleinwagen.Code);
     }
 
     [Fact]
@@ -154,7 +155,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(locationCode: LocationCode.Of("BER-HBF"),
+        var parameters = new VehicleSearchParameters(locationCode: Locations.BerlinHauptbahnhof,
             fuelType: FuelType.Petrol, minSeats: 4, pageNumber: 1, pageSize: 20);
 
         // Act
@@ -164,7 +165,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         result.Items.Count.ShouldBe(2);
         foreach (var v in result.Items)
         {
-            v.CurrentLocation.Code.Value.ShouldBe("BER-HBF");
+            v.CurrentLocationCode.Value.ShouldBe(Locations.BerlinHauptbahnhof.Value);
             v.FuelType.ShouldBe(FuelType.Petrol);
             v.Seats.Value.ShouldBeGreaterThanOrEqualTo(4);
         }
@@ -215,7 +216,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     public async Task GetByIdAsync_WithExistingId_ReturnsVehicle()
     {
         // Arrange
-        var vehicle = CreateTestVehicle("VW Polo", "KLEIN", "BER-HBF", FuelType.Petrol, 4, 35.00m);
+        var vehicle = CreateTestVehicle("VW Polo", VehicleCategory.Kleinwagen.Code,Locations.BerlinHauptbahnhof, FuelType.Petrol, 4, 35.00m);
         await context.Vehicles.AddAsync(vehicle);
         await context.SaveChangesAsync();
 
@@ -243,11 +244,11 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         var vehicles = new[]
         {
-            CreateTestVehicle("VW Polo", "KLEIN", "BER-HBF", FuelType.Petrol, 4, 35.00m),
-            CreateTestVehicle("VW Golf", "MITTEL", "BER-HBF", FuelType.Petrol, 5, 55.00m),
-            CreateTestVehicle("Tesla Model 3", "LUXUS", "BER-HBF", FuelType.Electric, 5, 95.00m),
-            CreateTestVehicle("Ford Focus", "KLEIN", "MUC-FLG", FuelType.Diesel, 5, 45.00m),
-            CreateTestVehicle("BMW X5", "SUV", "MUC-FLG", FuelType.Diesel, 7, 120.00m)
+            CreateTestVehicle("VW Polo", VehicleCategory.Kleinwagen.Code, Locations.BerlinHauptbahnhof, FuelType.Petrol, 4, 35.00m),
+            CreateTestVehicle("VW Golf", VehicleCategory.Mittelklasse.Code, Locations.BerlinHauptbahnhof, FuelType.Petrol, 5, 55.00m),
+            CreateTestVehicle("Tesla Model 3", VehicleCategory.Luxus.Code, Locations.BerlinHauptbahnhof, FuelType.Electric, 5, 95.00m),
+            CreateTestVehicle("Ford Focus", VehicleCategory.Kleinwagen.Code, Locations.MunichAirport, FuelType.Diesel, 5, 45.00m),
+            CreateTestVehicle("BMW X5", VehicleCategory.SUV.Code, Locations.MunichAirport, FuelType.Diesel, 7, 120.00m)
         };
 
         await context.Vehicles.AddRangeAsync(vehicles);
@@ -263,7 +264,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
         decimal dailyRateGross)
     {
         var category = VehicleCategory.FromCode(categoryCode);
-        var location = Location.Of(locationCode, "Test City");
+        var location = LocationCode.Of(locationCode);
         var dailyRateNet = dailyRateGross / 1.19m; // Convert gross to net (19% VAT)
 
         return VehicleBuilder.Default()

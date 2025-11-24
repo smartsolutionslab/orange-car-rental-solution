@@ -1,12 +1,16 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Contracts;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLocationStatus;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -36,22 +40,23 @@ public static class FleetEndpoints
         // POST /api/vehicles - Add new vehicle to fleet
         fleet.MapPost("/", async (AddVehicleToFleetRequest request, AddVehicleToFleetCommandHandler handler, CancellationToken cancellationToken) =>
             {
+                var (basicInfo, specifications, locationAndPricing, registration) = request;
+
                 try
                 {
-                    // Map request DTO to command with value objects
                     var command = new AddVehicleToFleetCommand(
-                        VehicleName.Of(request.BasicInfo.Name),
-                        VehicleCategory.FromCode(request.Specifications.Category),
-                        Location.FromCode(LocationCode.Of(request.LocationAndPricing.LocationCode)),
-                        Money.Euro(request.LocationAndPricing.DailyRateNet),
-                        SeatingCapacity.Of(request.Specifications.Seats),
-                        request.Specifications.FuelType.ParseFuelType(),
-                        request.Specifications.TransmissionType.ParseTransmissionType(),
-                        request.Registration?.LicensePlate,
-                        request.BasicInfo.Manufacturer is not null ? Manufacturer.Of(request.BasicInfo.Manufacturer) : null,
-                        request.BasicInfo.Model is not null ? VehicleModel.Of(request.BasicInfo.Model) : null,
-                        request.BasicInfo.Year.HasValue ? ManufacturingYear.Of(request.BasicInfo.Year.Value) : null,
-                        request.BasicInfo.ImageUrl
+                        VehicleName.Of(basicInfo.Name),
+                        VehicleCategory.FromCode(specifications.Category),
+                        LocationCode.Of(locationAndPricing.LocationCode),
+                        Money.Euro(locationAndPricing.DailyRateNet),
+                        SeatingCapacity.Of(specifications.Seats),
+                        specifications.FuelType.ParseFuelType(),
+                        specifications.TransmissionType.ParseTransmissionType(),
+                        registration?.LicensePlate,
+                        Manufacturer.TryParse(basicInfo.Manufacturer),
+                        VehicleModel.TryParse(basicInfo.Model),
+                        ManufacturingYear.TryParse(basicInfo.Year),
+                        basicInfo.ImageUrl
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -82,10 +87,9 @@ public static class FleetEndpoints
             {
                 try
                 {
-                    if (!Enum.TryParse<VehicleStatus>(status, true, out var vehicleStatus))
-                        return Results.BadRequest(new { message = $"Invalid status: {status}" });
-
-                    var command = new UpdateVehicleStatusCommand(VehicleIdentifier.From(id), vehicleStatus);
+                    var command = new UpdateVehicleStatusCommand(
+                        VehicleIdentifier.From(id),
+                        status.Parse());
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -115,8 +119,9 @@ public static class FleetEndpoints
             {
                 try
                 {
-                    var location = Location.FromCode(LocationCode.Of(locationCode));
-                    var command = new UpdateVehicleLocationCommand(VehicleIdentifier.From(id), location);
+                    var command = new UpdateVehicleLocationCommand(
+                        VehicleIdentifier.From(id),
+                        LocationCode.Of(locationCode));
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -150,8 +155,10 @@ public static class FleetEndpoints
             {
                 try
                 {
-                    var newRate = Money.Euro(dailyRateNet);
-                    var command = new UpdateVehicleDailyRateCommand(VehicleIdentifier.From(id), newRate);
+                    var command = new UpdateVehicleDailyRateCommand(
+                        VehicleIdentifier.From(id),
+                        Money.Euro(dailyRateNet)
+                    );
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -205,8 +212,11 @@ public static class FleetEndpoints
             {
                 try
                 {
-                    var locationCode = LocationCode.Of(code);
-                    var result = await handler.HandleAsync(new GetLocationByCodeQuery(locationCode), cancellationToken);
+                    var result = await handler.HandleAsync(
+                        new GetLocationByCodeQuery(
+                            LocationCode.Of(code)
+                        ),
+                        cancellationToken);
                     return Results.Ok(result);
                 }
                 catch (EntityNotFoundException ex)
@@ -225,6 +235,124 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .AllowAnonymous();
+
+        // POST /api/locations - Add new location
+        locations.MapPost("/", async (
+                string code,
+                string name,
+                string street,
+                string city,
+                string postalCode,
+                AddLocationCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    var command = new AddLocationCommand(
+                        LocationCode.Of(code),
+                        LocationName.Of(name),
+                        Address.Of(
+                            Street.Of(street),
+                            City.Of(city),
+                            PostalCode.Of(postalCode))
+                    );
+
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Created($"/api/locations/{result.Code}", result);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Conflict(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+            })
+            .WithName("AddLocation")
+            .WithSummary("Add a new rental location")
+            .WithDescription("Creates a new rental location. Location code must be unique.")
+            .Produces<AddLocationResult>(StatusCodes.Status201Created)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status409Conflict)
+            .RequireAuthorization("AdminPolicy");
+
+        // PUT /api/locations/{id} - Update location information
+        locations.MapPut("/{id:guid}", async (
+                Guid id,
+                string name,
+                string street,
+                string city,
+                string postalCode,
+                UpdateLocationCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    var command = new UpdateLocationCommand(
+                        LocationIdentifier.From(id),
+                        LocationName.Of(name),
+                        Address.Of(
+                            Street.Of(street),
+                            City.Of(city),
+                            PostalCode.Of(postalCode))
+                    );
+
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+            })
+            .WithName("UpdateLocation")
+            .WithSummary("Update location information")
+            .WithDescription("Updates the name and address of a location.")
+            .Produces<UpdateLocationResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization("AdminPolicy");
+
+        // PATCH /api/locations/{id}/status - Change location status
+        locations.MapPatch("/{id:guid}/status", async (
+                Guid id,
+                string status,
+                string? reason,
+                ChangeLocationStatusCommandHandler handler,
+                CancellationToken cancellationToken) =>
+            {
+                try
+                {
+                    var command = new ChangeLocationStatusCommand(
+                        LocationIdentifier.From(id),
+                        status.ParseLocationStatus(),
+                        reason
+                    );
+
+                    var result = await handler.HandleAsync(command, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException ex)
+                {
+                    return Results.NotFound(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+            })
+            .WithName("ChangeLocationStatus")
+            .WithSummary("Change location status")
+            .WithDescription("Changes the status of a location (Active, Closed, UnderMaintenance, Inactive).")
+            .Produces<ChangeLocationStatusResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .RequireAuthorization("AdminPolicy");
 
         return app;
     }

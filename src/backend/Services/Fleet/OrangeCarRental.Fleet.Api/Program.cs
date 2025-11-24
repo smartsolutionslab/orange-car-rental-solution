@@ -3,13 +3,17 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLocationStatus;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Services;
@@ -64,17 +68,23 @@ builder.Services.AddHttpClient<IReservationService, ReservationService>(client =
 
 // Register repositories
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
 // Register application services - Query Handlers
 builder.Services.AddScoped<SearchVehiclesQueryHandler>();
 builder.Services.AddScoped<GetLocationsQueryHandler>();
 builder.Services.AddScoped<GetLocationByCodeQueryHandler>();
 
-// Register application services - Command Handlers
+// Register application services - Command Handlers (Vehicle)
 builder.Services.AddScoped<AddVehicleToFleetCommandHandler>();
 builder.Services.AddScoped<UpdateVehicleStatusCommandHandler>();
 builder.Services.AddScoped<UpdateVehicleLocationCommandHandler>();
 builder.Services.AddScoped<UpdateVehicleDailyRateCommandHandler>();
+
+// Register application services - Command Handlers (Location)
+builder.Services.AddScoped<AddLocationCommandHandler>();
+builder.Services.AddScoped<UpdateLocationCommandHandler>();
+builder.Services.AddScoped<ChangeLocationStatusCommandHandler>();
 
 var app = builder.Build();
 

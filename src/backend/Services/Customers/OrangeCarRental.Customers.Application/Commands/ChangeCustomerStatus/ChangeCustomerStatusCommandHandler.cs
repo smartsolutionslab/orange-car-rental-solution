@@ -31,7 +31,6 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
 
         customer = customer.ChangeStatus(newStatus, reason);
 
-        // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
         await customers.SaveChangesAsync(cancellationToken);
 

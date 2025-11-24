@@ -20,6 +20,13 @@ public readonly record struct VehicleModel(string Value) : IValueObject
         return new VehicleModel(trimmed);
     }
 
+    public static VehicleModel? TryParse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return Of(value);
+    }
+
     public static implicit operator string(VehicleModel model) => model.Value;
 
     public override string ToString() => Value;

@@ -1,7 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
-namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 /// <summary>
 ///     Location code value object.
@@ -19,6 +19,13 @@ public readonly record struct LocationCode(string Value) : IValueObject
             .AndHasMinLength(3);
 
         return new LocationCode(trimmed);
+    }
+
+    public static LocationCode? TryParse(string? value)
+    {
+        if(string.IsNullOrWhiteSpace(value)) return null;
+
+        return Of(value);
     }
 
     public static implicit operator string(LocationCode code) => code.Value;

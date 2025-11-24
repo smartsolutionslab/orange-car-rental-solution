@@ -89,7 +89,7 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
-        var newLocation = Location.MunichFlughafen;
+        var newLocation = Locations.MunichAirport;
 
         // Act
         var updatedVehicle = vehicle.MoveToLocation(newLocation);
@@ -97,14 +97,14 @@ public class VehicleTests
         // Assert
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance (immutable)
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
-        updatedVehicle.CurrentLocation.ShouldBe(newLocation);
+        updatedVehicle.CurrentLocationCode.ShouldBe(newLocation);
     }
 
     [Fact]
     public void MoveToLocation_WithSameLocation_ShouldReturnSameInstance()
     {
         // Arrange
-        var location = Location.BerlinHauptbahnhof;
+        var location = Locations.BerlinHauptbahnhof;
         var vehicle = VehicleBuilder.Default()
             .AtLocation(location)
             .Build();
@@ -124,7 +124,7 @@ public class VehicleTests
 
         // Act & Assert
         var ex = Should.Throw<InvalidOperationException>(() =>
-            rentedVehicle.MoveToLocation(Location.MunichFlughafen));
+            rentedVehicle.MoveToLocation(Locations.MunichAirport));
         ex.Message.ShouldContain("Cannot move a rented vehicle");
     }
 
@@ -134,7 +134,7 @@ public class VehicleTests
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
         vehicle.ClearDomainEvents(); // Clear creation event
-        var newLocation = Location.MunichFlughafen;
+        var newLocation = Locations.MunichAirport;
 
         // Act
         var updatedVehicle = vehicle.MoveToLocation(newLocation);

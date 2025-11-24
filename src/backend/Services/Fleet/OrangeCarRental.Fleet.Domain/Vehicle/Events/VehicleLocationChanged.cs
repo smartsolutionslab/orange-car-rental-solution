@@ -1,5 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
 
@@ -8,6 +8,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Events;
 /// </summary>
 public sealed record VehicleLocationChanged(
     VehicleIdentifier VehicleId,
-    Location OldLocation,
-    Location NewLocation
+    LocationCode OldLocationCode,
+    LocationCode NewLocationCode
 ) : DomainEvent;

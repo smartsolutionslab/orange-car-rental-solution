@@ -54,5 +54,12 @@ public readonly record struct VehicleCategory : IValueObject
         return category;
     }
 
+    public static VehicleCategory? TryParse(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return FromCode(value);
+    }
+
     public override string ToString() => $"{Name} ({Code})";
 }

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -6,91 +7,48 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehi
 
 public static class MappingExtensions
 {
-    public static VehicleDto ToDto(this Vehicle vehicle) => new()
-    {
-        Id = vehicle.Id.Value,
-        Name = vehicle.Name.Value,
-        CategoryCode = vehicle.Category.Code,
-        CategoryName = vehicle.Category.Name,
-        LocationCode = vehicle.CurrentLocation.Code.Value,
-        City = vehicle.CurrentLocation.Address.City.Value,
-        Seats = vehicle.Seats.Value,
-        FuelType = vehicle.FuelType.ToString(),
-        TransmissionType = vehicle.TransmissionType.ToString(),
-        DailyRateNet = vehicle.DailyRate.NetAmount,
-        DailyRateVat = vehicle.DailyRate.VatAmount,
-        DailyRateGross = vehicle.DailyRate.GrossAmount,
-        Currency = vehicle.DailyRate.Currency.Code,
-        Status = vehicle.Status.ToString(),
-        LicensePlate = vehicle.LicensePlate,
-        Manufacturer = vehicle.Manufacturer?.Value,
-        Model = vehicle.Model?.Value,
-        Year = vehicle.Year?.Value,
-        ImageUrl = vehicle.ImageUrl
-    };
+    public static VehicleDto ToDto(this Vehicle vehicle) => new(
+        vehicle.Id.Value,
+        vehicle.Name.Value,
+        vehicle.Category.Code,
+        vehicle.Category.Name,
+        vehicle.CurrentLocationCode.Value,
+        string.Empty, // City will be fetched separately if needed
+        vehicle.Seats.Value,
+        vehicle.FuelType.ToString(),
+        vehicle.TransmissionType.ToString(),
+        vehicle.DailyRate.NetAmount,
+        vehicle.DailyRate.VatAmount,
+        vehicle.DailyRate.GrossAmount,
+        vehicle.DailyRate.Currency.Code,
+        vehicle.Status.ToString(),
+        vehicle.LicensePlate,
+        vehicle.Manufacturer?.Value,
+        vehicle.Model?.Value,
+        vehicle.Year?.Value,
+        vehicle.ImageUrl);
 
     public static SearchVehiclesResult ToDto(this PagedResult<Vehicle> pagedResult)
     {
-        return new SearchVehiclesResult
-        {
-            Vehicles = pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
-            TotalCount = pagedResult.TotalCount,
-            PageNumber = pagedResult.PageNumber,
-            PageSize = pagedResult.PageSize,
-            TotalPages = pagedResult.TotalPages
-        };
+        return new SearchVehiclesResult(
+            pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
+            pagedResult.TotalCount,
+            pagedResult.PageNumber,
+            pagedResult.PageSize,
+            pagedResult.TotalPages);
     }
 
     public static VehicleSearchParameters ToVehicleSearchParameters(this SearchVehiclesQuery query)
     {
-        // Parse location code to value object if provided
-        LocationCode? locationCode = null;
-        if (!string.IsNullOrWhiteSpace(query.LocationCode))
-        {
-            try
-            {
-                locationCode = LocationCode.Of(query.LocationCode.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid location code format - leave as null to filter nothing
-            }
-        }
-
-        // Parse category code to value object if provided
-        VehicleCategory? category = null;
-        if (!string.IsNullOrWhiteSpace(query.CategoryCode))
-        {
-            try
-            {
-                category = VehicleCategory.FromCode(query.CategoryCode.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid category code - leave as null to filter nothing
-            }
-        }
-
-        // Create search period if both dates are provided
-        SearchPeriod? period = null;
-        if (query.PickupDate.HasValue && query.ReturnDate.HasValue)
-        {
-            try
-            {
-                period = SearchPeriod.Of(query.PickupDate.Value, query.ReturnDate.Value);
-            }
-            catch (ArgumentException)
-            {
-                // Invalid date range - leave as null to filter nothing
-            }
-        }
-
-        return new VehicleSearchParameters(locationCode, category, query.MinSeats,
+        return new VehicleSearchParameters(
+            LocationCode.TryParse(query.LocationCode),
+            VehicleCategory.TryParse(query.CategoryCode),
+            query.MinSeats,
             query.FuelType.TryParseFuelType(),
-            query.TransmissionType.TryParse(),
+            query.TransmissionType.TryParseTransmissionType(),
             query.MaxDailyRateGross,
             VehicleStatus.Available, // Always filter to available vehicles
-            period,
+            SearchPeriod.TryParse(query.PickupDate, query.ReturnDate),
             query.PageNumber ?? 1,
             query.PageSize ?? 20);
     }

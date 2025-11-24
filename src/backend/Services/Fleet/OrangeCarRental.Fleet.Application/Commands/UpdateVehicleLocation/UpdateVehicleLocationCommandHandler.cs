@@ -13,21 +13,21 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
     /// <summary>
     ///     Handles the update vehicle location command.
     /// </summary>
-    /// <param name="command">The command with vehicle ID and new location.</param>
+    /// <param name="command">The command with vehicle ID and new location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Result with old and new location details.</returns>
+    /// <returns>Result with old and new location codes.</returns>
     /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when vehicle is not found.</exception>
     /// <exception cref="InvalidOperationException">Thrown when vehicle cannot be moved.</exception>
     public async Task<UpdateVehicleLocationResult> HandleAsync(
         UpdateVehicleLocationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var (vehicleId, newLocation) = command;
+        var (vehicleId, newLocationCode) = command;
 
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
-        var oldLocation = vehicle.CurrentLocation;
+        var oldLocationCode = vehicle.CurrentLocationCode;
 
-        vehicle = vehicle.MoveToLocation(newLocation);
+        vehicle = vehicle.MoveToLocation(newLocationCode);
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
@@ -35,11 +35,11 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
 
         return new UpdateVehicleLocationResult(
             vehicle.Id.Value,
-            oldLocation.Code.Value,
-            oldLocation.Name.Value,
-            vehicle.CurrentLocation.Code.Value,
-            vehicle.CurrentLocation.Name.Value,
-            $"Vehicle moved from {oldLocation.Name.Value} to {vehicle.CurrentLocation.Name.Value}"
+            oldLocationCode.Value,
+            string.Empty, // Location name will be fetched by client if needed
+            vehicle.CurrentLocationCode.Value,
+            string.Empty, // Location name will be fetched by client if needed
+            $"Vehicle moved from {oldLocationCode.Value} to {vehicle.CurrentLocationCode.Value}"
         );
     }
 }

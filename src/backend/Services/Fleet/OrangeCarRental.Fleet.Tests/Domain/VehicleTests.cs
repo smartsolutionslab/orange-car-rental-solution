@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Domain;
 
@@ -11,8 +12,8 @@ public class VehicleTests
     {
         // Arrange
         var name = VehicleName.Of("VW Golf");
-        var category = VehicleCategory.FromCode("MITTEL");
-        var location = Location.Of("BER-HBF", "Berlin Hauptbahnhof");
+        var category = VehicleCategory.Mittelklasse;
+        var location = Locations.BerlinHauptbahnhof;
         var seats = SeatingCapacity.Of(5);
         var fuelType = FuelType.Petrol;
         var transmission = TransmissionType.Manual;
@@ -34,7 +35,7 @@ public class VehicleTests
         vehicle.ShouldNotBeNull();
         vehicle.Name.ShouldBe(name);
         vehicle.Category.ShouldBe(category);
-        vehicle.CurrentLocation.ShouldBe(location);
+        vehicle.CurrentLocationCode.ShouldBe(location);
         vehicle.Seats.ShouldBe(seats);
         vehicle.FuelType.ShouldBe(fuelType);
         vehicle.TransmissionType.ShouldBe(transmission);
@@ -78,13 +79,13 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = CreateTestVehicle();
-        var newLocation = Location.Of("MUC-FLG", "Munich Airport");
+        var newLocation = Locations.MunichAirport;
 
         // Act
         vehicle = vehicle.MoveToLocation(newLocation);
 
         // Assert
-        vehicle.CurrentLocation.ShouldBe(newLocation);
+        vehicle.CurrentLocationCode.ShouldBe(newLocation);
         vehicle.DomainEvents.Count.ShouldBe(1);
     }
 
@@ -94,7 +95,7 @@ public class VehicleTests
         // Arrange
         var vehicle = CreateTestVehicle();
         vehicle = vehicle.MarkAsRented();
-        var newLocation = Location.Of("MUC-FLG", "Munich Airport");
+        var newLocation = Locations.MunichAirport;
 
         // Act & Assert
         var act = () => vehicle.MoveToLocation(newLocation);
@@ -324,8 +325,8 @@ public class VehicleTests
     {
         var vehicle = Vehicle.From(
             VehicleName.Of("VW Golf"),
-            VehicleCategory.FromCode("MITTEL"),
-            Location.Of("BER-HBF", "Berlin Hauptbahnhof"),
+            VehicleCategory.Mittelklasse,
+            Locations.BerlinHauptbahnhof,
             Money.FromGross(50.00m, 0.19m, Currency.EUR),
             SeatingCapacity.Of(5),
             FuelType.Petrol,

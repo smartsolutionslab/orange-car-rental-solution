@@ -2,7 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
@@ -39,11 +38,10 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
 
         // Apply filters using value objects directly - no parsing in repository
 
-        // Location filter - use value object directly
+        // Location filter - use LocationCode directly
         if (parameters.LocationCode.HasValue)
         {
-            var location = Location.FromCode(parameters.LocationCode.Value);
-            query = query.Where(v => v.CurrentLocation == location);
+            query = query.Where(v => v.CurrentLocationCode == parameters.LocationCode.Value);
         }
 
         // Category filter - use value object directly
