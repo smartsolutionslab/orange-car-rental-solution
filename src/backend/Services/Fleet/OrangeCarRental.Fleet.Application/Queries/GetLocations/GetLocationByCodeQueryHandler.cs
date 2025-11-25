@@ -16,23 +16,23 @@ public sealed class GetLocationByCodeQueryHandler(ILocationRepository locations)
     /// <param name="query">The query containing the location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The location DTO.</returns>
-    public async Task<LocationDto> HandleAsync(GetLocationByCodeQuery query, CancellationToken cancellationToken = default)
+    public async Task<LocationDto> HandleAsync(
+        GetLocationByCodeQuery query,
+        CancellationToken cancellationToken = default)
     {
         var location = await locations.GetByCodeAsync(query.Code, cancellationToken);
 
-        if (location == null)
-        {
-            throw new ArgumentException($"Location with code '{query.Code.Value}' not found.", nameof(query.Code));
-        }
+        if (location == null) throw new ArgumentException($"Location with code '{query.Code.Value}' not found.", nameof(query.Code));
+
+        var (_, code, name, address, _) = location;
 
         var dto = new LocationDto(
-            location.Code.Value,
-            location.Name.Value,
-            location.Address.Street.Value,
-            location.Address.City.Value,
-            location.Address.PostalCode.Value,
-            location.Address.FullAddress
-            );
+            code.Value,
+            name.Value,
+            address.Street.Value,
+            address.City.Value,
+            address.PostalCode.Value,
+            address.FullAddress);
 
         return dto;
     }

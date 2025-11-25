@@ -34,6 +34,15 @@ public sealed class Location : AggregateRoot<LocationIdentifier>
         AddDomainEvent(new LocationAdded(Id, Code, Name));
     }
 
+    public void Deconstruct(out LocationIdentifier id, out LocationCode code, out LocationName name, out Address address, out LocationStatus status)
+    {
+        id = Id;
+        code = Code;
+        name = Name;
+        address = Address;
+        status = Status;
+    }
+
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
     public LocationCode Code { get; init; }
     public LocationName Name { get; init; }

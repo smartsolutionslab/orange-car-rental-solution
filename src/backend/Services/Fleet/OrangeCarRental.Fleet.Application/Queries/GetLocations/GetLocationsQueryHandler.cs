@@ -16,7 +16,9 @@ public sealed class GetLocationsQueryHandler(ILocationRepository locations)
     /// <param name="query">The query requesting all locations.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A read-only list of all available rental locations.</returns>
-    public async Task<IReadOnlyList<LocationDto>> HandleAsync(GetLocationsQuery query, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<LocationDto>> HandleAsync(
+        GetLocationsQuery query,
+        CancellationToken cancellationToken = default)
     {
         var allLocations = await locations.GetAllAsync(cancellationToken);
 

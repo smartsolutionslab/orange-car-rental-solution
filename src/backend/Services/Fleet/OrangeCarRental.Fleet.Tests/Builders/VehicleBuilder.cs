@@ -5,13 +5,6 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
-public static class Locations
-{
-    public static LocationCode BerlinHauptbahnhof => LocationCode.Of("BER-HBF");
-    public static LocationCode MunichAirport => LocationCode.Of("MUC-FLG");
-}
-
-
 /// <summary>
 /// Test data builder for Vehicle aggregates.
 /// Uses fluent API with sensible defaults.

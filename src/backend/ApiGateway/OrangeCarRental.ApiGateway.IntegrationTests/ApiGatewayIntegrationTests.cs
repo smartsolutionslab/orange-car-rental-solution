@@ -1,6 +1,6 @@
 using Aspire.Hosting;
 using Aspire.Hosting.Testing;
-using FluentAssertions;
+using Shouldly;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -46,11 +46,11 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var health = await response.Content.ReadFromJsonAsync<HealthResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        health.Should().NotBeNull();
-        health!.Service.Should().Be("API Gateway");
-        health.Status.Should().Be("Healthy");
-        health.Timestamp.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromMinutes(1));
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        health.ShouldNotBeNull();
+        health!.Service.ShouldBe("API Gateway");
+        health.Status.ShouldBe("Healthy");
+        health.Timestamp.ShouldBeInRange(DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(1));
     }
 
     [Fact]
@@ -61,12 +61,12 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<VehicleListResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
-        result!.Vehicles.Should().NotBeEmpty();
-        result.Vehicles.Should().HaveCountLessOrEqualTo(5);
-        result.TotalCount.Should().BeGreaterThan(0);
-        result.PageSize.Should().Be(5);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result!.Vehicles.ShouldNotBeEmpty();
+        result.Vehicles.Count.ShouldBeLessThanOrEqualTo(5);
+        result.TotalCount.ShouldBeGreaterThan(0);
+        result.PageSize.ShouldBe(5);
     }
 
     [Fact]
@@ -77,10 +77,10 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var health = await response.Content.ReadFromJsonAsync<HealthResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        health.Should().NotBeNull();
-        health!.Service.Should().Be("Fleet API");
-        health.Status.Should().Be("Healthy");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        health.ShouldNotBeNull();
+        health!.Service.ShouldBe("Fleet API");
+        health.Status.ShouldBe("Healthy");
     }
 
     [Fact]
@@ -91,10 +91,10 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var health = await response.Content.ReadFromJsonAsync<HealthResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        health.Should().NotBeNull();
-        health!.Service.Should().Be("Reservations API");
-        health.Status.Should().Be("Healthy");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        health.ShouldNotBeNull();
+        health!.Service.ShouldBe("Reservations API");
+        health.Status.ShouldBe("Healthy");
     }
 
     [Fact]
@@ -105,10 +105,10 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<VehicleListResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
-        result!.Vehicles.Should().NotBeEmpty();
-        result.Vehicles.Should().OnlyContain(v => v.CategoryCode == "SUV");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result!.Vehicles.ShouldNotBeEmpty();
+        result.Vehicles.ShouldAllBe(v => v.CategoryCode == "SUV");
     }
 
     [Fact]
@@ -118,7 +118,7 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var response = await _gatewayClient!.GetAsync("/api/invalid-route");
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
     }
 
     [Fact]
@@ -129,13 +129,13 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<VehicleListResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
-        result!.PageNumber.Should().Be(1);
-        result.PageSize.Should().Be(3);
-        result.Vehicles.Should().HaveCount(3);
-        result.HasNextPage.Should().BeTrue();
-        result.HasPreviousPage.Should().BeFalse();
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result!.PageNumber.ShouldBe(1);
+        result.PageSize.ShouldBe(3);
+        result.Vehicles.Count.ShouldBe(3);
+        result.HasNextPage.ShouldBeTrue();
+        result.HasPreviousPage.ShouldBeFalse();
     }
 
     [Fact]
@@ -156,11 +156,11 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<ReservationResponse>();
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-        result.Should().NotBeNull();
-        result!.Id.Should().NotBeEmpty();
-        result.Status.Should().Be("Pending");
-        result.TotalPriceNet.Should().Be(createRequest.totalPriceNet);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK);
+        result.ShouldNotBeNull();
+        result!.Id.ShouldNotBe(Guid.Empty);
+        result.Status.ShouldBe("Pending");
+        result.TotalPriceNet.ShouldBe(createRequest.totalPriceNet);
     }
 
     [Fact]
@@ -176,8 +176,8 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var reservationsResponse = await reservationsTask;
 
         // Assert
-        fleetResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-        reservationsResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        fleetResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
+        reservationsResponse.StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -212,24 +212,24 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var result = await response.Content.ReadFromJsonAsync<GuestReservationResponse>();
 
         // Assert - Verify the request was successfully routed and processed
-        response.StatusCode.Should().Be(HttpStatusCode.Created);
-        result.Should().NotBeNull();
+        response.StatusCode.ShouldBe(HttpStatusCode.Created);
+        result.ShouldNotBeNull();
 
         // Verify customer was created
-        result!.CustomerId.Should().NotBeEmpty("a new customer should be registered");
+        result!.CustomerId.ShouldNotBe(Guid.Empty);
 
         // Verify reservation was created
-        result.ReservationId.Should().NotBeEmpty("a reservation should be created");
+        result.ReservationId.ShouldNotBe(Guid.Empty);
 
         // Verify pricing was calculated (German VAT: 19%)
-        result.TotalPriceNet.Should().BeGreaterThan(0, "price should be calculated");
-        result.TotalPriceVat.Should().BeGreaterThan(0, "VAT should be included");
-        result.TotalPriceGross.Should().Be(result.TotalPriceNet + result.TotalPriceVat);
-        result.Currency.Should().Be("EUR", "German market uses Euro currency");
+        result.TotalPriceNet.ShouldBeGreaterThan(0);
+        result.TotalPriceVat.ShouldBeGreaterThan(0);
+        result.TotalPriceGross.ShouldBe(result.TotalPriceNet + result.TotalPriceVat);
+        result.Currency.ShouldBe("EUR");
 
         // Verify response location header points to the new reservation
-        response.Headers.Location.Should().NotBeNull();
-        response.Headers.Location!.ToString().Should().Contain($"/api/reservations/{result.ReservationId}");
+        response.Headers.Location.ShouldNotBeNull();
+        response.Headers.Location!.ToString().ShouldContain($"/api/reservations/{result.ReservationId}");
     }
 
     [Fact]
@@ -263,8 +263,7 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         var response = await _gatewayClient!.PostAsJsonAsync("/api/reservations/guest", invalidGuestRequest);
 
         // Assert
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest,
-            "pickup date in the past should be rejected");
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
     }
 
     // Response DTOs for deserialization
@@ -293,7 +292,12 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
         decimal DailyRateVat,
         decimal DailyRateGross,
         string Currency,
-        string Status);
+        string Status,
+        string? LicensePlate,
+        string? Manufacturer,
+        string? Model,
+        int? Year,
+        string? ImageUrl);
 
     private record ReservationResponse(
         Guid Id,
