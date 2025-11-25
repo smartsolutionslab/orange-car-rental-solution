@@ -134,7 +134,7 @@ describe('ForgotPasswordComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      let resolveReset: any;
+      let resolveReset: () => void;
       authService.resetPassword.and.returnValue(new Promise((resolve) => {
         resolveReset = resolve;
       }));

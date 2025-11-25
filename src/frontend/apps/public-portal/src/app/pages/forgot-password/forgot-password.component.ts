@@ -57,16 +57,17 @@ export class ForgotPasswordComponent {
       // Reset form
       this.forgotPasswordForm.reset();
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error);
 
-      if (error.status === 404) {
+      const httpError = error as { status?: number; message?: string };
+      if (httpError.status === 404) {
         // Don't reveal if email exists or not for security
         this.emailSent.set(true);
         this.successMessage.set(
           `Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.`
         );
-      } else if (error.message?.includes('Network')) {
+      } else if (httpError.message?.includes('Network')) {
         this.errorMessage.set('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
       } else {
         this.errorMessage.set(

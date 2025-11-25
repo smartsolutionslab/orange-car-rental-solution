@@ -119,8 +119,8 @@
 
 <!-- Location Details Modal -->
 @if (showDetails() && selectedLocation()) {
-  <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()">
+  <div class="modal-overlay" (click)="closeDetails()" (keydown.escape)="closeDetails()" tabindex="0" role="dialog" aria-modal="true">
+    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
       <div class="modal-header">
         <h2>Standortdetails</h2>
         <button class="btn-close" (click)="closeDetails()">

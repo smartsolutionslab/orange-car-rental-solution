@@ -79,8 +79,8 @@ export class VehicleService {
    * @param status New status
    * @returns Observable of void
    */
-  updateVehicleStatus(vehicleId: VehicleId, status: VehicleStatus): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${vehicleId}/status?status=${status}`, {});
+  updateVehicleStatus(vehicleId: VehicleId, status: VehicleStatus): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/status?status=${status}`, {});
   }
 
   /**
@@ -89,8 +89,8 @@ export class VehicleService {
    * @param locationCode New location code
    * @returns Observable of void
    */
-  updateVehicleLocation(vehicleId: VehicleId, locationCode: LocationCode): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`, {});
+  updateVehicleLocation(vehicleId: VehicleId, locationCode: LocationCode): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`, {});
   }
 
   /**
@@ -99,7 +99,7 @@ export class VehicleService {
    * @param dailyRateNet New daily rate (net amount in EUR, VAT will be calculated)
    * @returns Observable of void
    */
-  updateVehicleDailyRate(vehicleId: VehicleId, dailyRateNet: DailyRate): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`, {});
+  updateVehicleDailyRate(vehicleId: VehicleId, dailyRateNet: DailyRate): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`, {});
   }
 }

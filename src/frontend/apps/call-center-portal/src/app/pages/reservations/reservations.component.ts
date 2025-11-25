@@ -7,9 +7,7 @@ import { Reservation, ReservationSearchQuery } from '../../services/reservation.
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
 
-interface GroupedReservations {
-  [key: string]: Reservation[];
-}
+type GroupedReservations = Record<string, Reservation[]>;
 
 /**
  * Reservations management page for call center
@@ -162,8 +160,8 @@ export class ReservationsComponent implements OnInit {
       if (params['location']) this.searchLocation.set(params['location']);
       if (params['minPrice']) this.searchMinPrice.set(Number(params['minPrice']));
       if (params['maxPrice']) this.searchMaxPrice.set(Number(params['maxPrice']));
-      if (params['sortBy']) this.sortBy.set(params['sortBy'] as any);
-      if (params['sortOrder']) this.sortOrder.set(params['sortOrder'] as any);
+      if (params['sortBy']) this.sortBy.set(params['sortBy'] as 'PickupDate' | 'Price' | 'Status' | 'CreatedDate');
+      if (params['sortOrder']) this.sortOrder.set(params['sortOrder'] as 'asc' | 'desc');
       if (params['groupBy']) this.groupBy.set(params['groupBy'] as GroupBy);
       if (params['page']) this.currentPage.set(Number(params['page']));
       if (params['pageSize']) this.pageSize.set(Number(params['pageSize']));
@@ -174,7 +172,20 @@ export class ReservationsComponent implements OnInit {
    * Update URL with current filter values
    */
   private updateUrl(): void {
-    const queryParams: any = {};
+    const queryParams: {
+      status?: string;
+      customerId?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      location?: string;
+      minPrice?: number | null;
+      maxPrice?: number | null;
+      sortBy?: string;
+      sortOrder?: string;
+      groupBy?: string;
+      page?: number;
+      pageSize?: number;
+    } = {};
 
     if (this.searchStatus()) queryParams.status = this.searchStatus();
     if (this.searchCustomerId()) queryParams.customerId = this.searchCustomerId();

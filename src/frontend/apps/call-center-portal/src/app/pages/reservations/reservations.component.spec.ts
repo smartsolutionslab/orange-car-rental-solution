@@ -9,7 +9,7 @@ describe('ReservationsComponent', () => {
   let fixture: ComponentFixture<ReservationsComponent>;
   let mockReservationService: jasmine.SpyObj<ReservationService>;
   let mockRouter: jasmine.SpyObj<Router>;
-  let mockActivatedRoute: any;
+  let mockActivatedRoute: { queryParams: typeof of };
 
   const mockReservations = [
     {

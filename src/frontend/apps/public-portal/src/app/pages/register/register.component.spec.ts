@@ -327,7 +327,7 @@ describe('RegisterComponent', () => {
 
     it('should set loading state during submission', async () => {
       component.currentStep.set(3);
-      let resolveRegister: any;
+      let resolveRegister: () => void;
       authService.register.and.returnValue(new Promise((resolve) => {
         resolveRegister = resolve;
       }));

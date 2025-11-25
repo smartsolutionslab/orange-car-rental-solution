@@ -52,15 +52,16 @@ export class LoginComponent {
       // Redirect to intended page or home
       const returnUrl = this.getReturnUrl();
       this.router.navigate([returnUrl]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
 
       // Handle specific error cases
-      if (error.status === 401) {
+      const httpError = error as { status?: number; message?: string };
+      if (httpError.status === 401) {
         this.errorMessage.set('Ungültige E-Mail-Adresse oder Passwort');
-      } else if (error.status === 403) {
+      } else if (httpError.status === 403) {
         this.errorMessage.set('Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.');
-      } else if (error.message?.includes('Network')) {
+      } else if (httpError.message?.includes('Network')) {
         this.errorMessage.set('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
       } else {
         this.errorMessage.set('Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.');

@@ -10,7 +10,7 @@ describe('ConfirmationComponent', () => {
   let fixture: ComponentFixture<ConfirmationComponent>;
   let reservationService: jasmine.SpyObj<ReservationService>;
   let router: jasmine.SpyObj<Router>;
-  let activatedRoute: any;
+  let activatedRoute: { queryParams: typeof of };
 
   const mockReservation: Reservation = {
     id: '987e6543-e89b-12d3-a456-426614174000',

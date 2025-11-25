@@ -81,14 +81,15 @@ export class RegisterComponent {
         this.router.navigate(['/']);
       }, 2000);
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
 
-      if (error.status === 409) {
+      const httpError = error as { status?: number; message?: string };
+      if (httpError.status === 409) {
         this.errorMessage.set('Diese E-Mail-Adresse ist bereits registriert.');
-      } else if (error.message?.includes('password')) {
+      } else if (httpError.message?.includes('password')) {
         this.errorMessage.set('Das Passwort erfüllt nicht die Sicherheitsanforderungen.');
-      } else if (error.message?.includes('email')) {
+      } else if (httpError.message?.includes('email')) {
         this.errorMessage.set('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
       } else {
         this.errorMessage.set('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
@@ -170,7 +171,7 @@ export class RegisterComponent {
     const hasUpperCase = /[A-Z]/.test(value);
     const hasLowerCase = /[a-z]/.test(value);
     const hasNumeric = /[0-9]/.test(value);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(value);
+    const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value);
 
     const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial;
 

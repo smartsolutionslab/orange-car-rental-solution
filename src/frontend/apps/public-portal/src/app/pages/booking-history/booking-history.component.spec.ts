@@ -3,7 +3,6 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { of, throwError } from 'rxjs';
-import { signal } from '@angular/core';
 
 describe('BookingHistoryComponent', () => {
   let component: BookingHistoryComponent;

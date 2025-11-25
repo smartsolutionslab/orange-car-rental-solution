@@ -135,7 +135,7 @@ export interface UpdateVehicleDailyRateRequest {
 /**
  * Constants for vehicle categories
  */
-export const VEHICLE_CATEGORIES: ReadonlyArray<{code: CategoryCode, name: CategoryName}> = [
+export const VEHICLE_CATEGORIES: readonly {code: CategoryCode, name: CategoryName}[] = [
   { code: 'KLEIN', name: 'Kleinwagen' },
   { code: 'KOMPAKT', name: 'Kompaktklasse' },
   { code: 'MITTEL', name: 'Mittelklasse' },
@@ -147,17 +147,17 @@ export const VEHICLE_CATEGORIES: ReadonlyArray<{code: CategoryCode, name: Catego
 /**
  * Constants for fuel types
  */
-export const FUEL_TYPES: ReadonlyArray<FuelType> = ['Petrol', 'Diesel', 'Electric', 'Hybrid'] as const;
+export const FUEL_TYPES: readonly FuelType[] = ['Petrol', 'Diesel', 'Electric', 'Hybrid'] as const;
 
 /**
  * Constants for transmission types
  */
-export const TRANSMISSION_TYPES: ReadonlyArray<TransmissionType> = ['Manual', 'Automatic'] as const;
+export const TRANSMISSION_TYPES: readonly TransmissionType[] = ['Manual', 'Automatic'] as const;
 
 /**
  * Constants for vehicle statuses
  */
-export const VEHICLE_STATUSES: ReadonlyArray<{code: VehicleStatus, label: string}> = [
+export const VEHICLE_STATUSES: readonly {code: VehicleStatus, label: string}[] = [
   { code: 'Available', label: 'Verfügbar' },
   { code: 'Rented', label: 'Vermietet' },
   { code: 'Maintenance', label: 'Wartung' },

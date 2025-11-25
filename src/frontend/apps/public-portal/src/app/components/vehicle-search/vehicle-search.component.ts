@@ -34,7 +34,7 @@ export interface VehicleSearchQuery {
  * Emits search parameters when user clicks search button
  */
 @Component({
-  selector: 'ocr-vehicle-search',
+  selector: 'app-vehicle-search',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './vehicle-search.component.html',
@@ -45,7 +45,7 @@ export class VehicleSearchComponent implements OnInit {
   private readonly locationService = inject(LocationService);
 
   // Output event for search
-  search = output<VehicleSearchQuery>();
+  searchSubmit = output<VehicleSearchQuery>();
 
   // Form state
   protected readonly searchForm: FormGroup;
@@ -150,10 +150,10 @@ export class VehicleSearchComponent implements OnInit {
 
     // Remove undefined values
     const cleanQuery = Object.fromEntries(
-      Object.entries(query).filter(([_, value]) => value !== undefined)
+      Object.entries(query).filter(([, value]) => value !== undefined)
     ) as VehicleSearchQuery;
 
-    this.search.emit(cleanQuery);
+    this.searchSubmit.emit(cleanQuery);
   }
 
   /**

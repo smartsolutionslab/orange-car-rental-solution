@@ -13,6 +13,29 @@ import { CustomerService } from '../../services/customer.service';
 import { CustomerProfile, UpdateCustomerProfileRequest } from '../../services/customer.model';
 import { SimilarVehiclesComponent } from '../../components/similar-vehicles/similar-vehicles.component';
 
+interface BookingFormValue {
+  vehicleId: string;
+  categoryCode: string;
+  pickupDate: string;
+  returnDate: string;
+  pickupLocationCode: string;
+  dropoffLocationCode: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  street: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  licenseNumber: string;
+  licenseIssueCountry: string;
+  licenseIssueDate: string;
+  licenseExpiryDate: string;
+  updateMyProfile: boolean;
+}
+
 /**
  * Booking form component for creating guest and authenticated user reservations
  *
@@ -424,7 +447,7 @@ export class BookingComponent implements OnInit {
    * Update customer profile after successful booking
    * Called when updateMyProfile checkbox is checked
    */
-  private updateProfileAfterBooking(formValue: any): void {
+  private updateProfileAfterBooking(formValue: BookingFormValue): void {
     const profile = this.customerProfile();
     if (!profile) {
       return;

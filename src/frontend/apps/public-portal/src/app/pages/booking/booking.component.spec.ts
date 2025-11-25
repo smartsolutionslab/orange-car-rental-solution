@@ -22,7 +22,7 @@ describe('BookingComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let customerService: jasmine.SpyObj<CustomerService>;
   let router: jasmine.SpyObj<Router>;
-  let activatedRoute: any;
+  let activatedRoute: { queryParams: typeof of };
 
   const mockLocations: Location[] = [
     { code: 'BER-HBF', name: 'Berlin Hauptbahnhof', street: 'Europaplatz 1', city: 'Berlin', postalCode: '10557', fullAddress: 'Europaplatz 1, 10557 Berlin' },

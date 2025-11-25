@@ -14,7 +14,6 @@ describe('BookingHistoryComponent (Integration)', () => {
   let fixture: ComponentFixture<BookingHistoryComponent>;
   let httpMock: HttpTestingController;
   let authService: jasmine.SpyObj<AuthService>;
-  let configService: jasmine.SpyObj<ConfigService>;
 
   const apiUrl = 'http://localhost:5000/api';
 

@@ -236,7 +236,7 @@
               </div>
             </div>
             <div class="card-footer">
-              <button class="btn-secondary" (click)="printReservation(guestReservation()!)">Drucken</button>
+              <button class="btn-secondary" (click)="printReservation()">Drucken</button>
               @if (canCancel(guestReservation()!)) {
                 <button class="btn-danger" (click)="openCancelModal(guestReservation()!)">Stornieren</button>
               }
@@ -249,8 +249,8 @@
 
   <!-- Detail Modal -->
   @if (showDetailModal() && detailReservation()) {
-    <div class="modal-overlay" (click)="closeDetailModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-overlay" (click)="closeDetailModal()" (keydown.escape)="closeDetailModal()" tabindex="0" role="dialog" aria-modal="true">
+      <div class="modal-content" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
         <div class="modal-header">
           <h2>Buchungsdetails</h2>
           <button class="close-btn" (click)="closeDetailModal()">&times;</button>
@@ -305,7 +305,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" (click)="printReservation(detailReservation()!)">Drucken</button>
+          <button class="btn-secondary" (click)="printReservation()">Drucken</button>
           <button class="btn-primary" (click)="closeDetailModal()">Schließen</button>
         </div>
       </div>
@@ -314,8 +314,8 @@
 
   <!-- Cancel Modal -->
   @if (showCancelModal() && selectedReservation()) {
-    <div class="modal-overlay" (click)="closeCancelModal()">
-      <div class="modal-content cancel-modal" (click)="$event.stopPropagation()">
+    <div class="modal-overlay" (click)="closeCancelModal()" (keydown.escape)="closeCancelModal()" tabindex="0" role="dialog" aria-modal="true">
+      <div class="modal-content cancel-modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
         <div class="modal-header">
           <h2>Buchung stornieren</h2>
           <button class="close-btn" (click)="closeCancelModal()">&times;</button>

@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ConfigService } from '../services/config.service';
+import { ConfigService, AppConfig } from '../services/config.service';
 import { firstValueFrom } from 'rxjs';
 
 /**
@@ -9,8 +9,8 @@ import { firstValueFrom } from 'rxjs';
 export function initializeApp(http: HttpClient, configService: ConfigService): () => Promise<void> {
   return () => {
     return firstValueFrom(
-      http.get('/config.json')
-    ).then((config: any) => {
+      http.get<AppConfig>('/config.json')
+    ).then((config: AppConfig) => {
       console.log('Loaded configuration:', config);
       configService.setConfig(config);
     }).catch(error => {

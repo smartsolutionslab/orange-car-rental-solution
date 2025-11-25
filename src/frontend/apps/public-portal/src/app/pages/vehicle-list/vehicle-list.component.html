@@ -4,7 +4,7 @@
 </div>
 
 <!-- Reusable Vehicle Search Component -->
-<ocr-vehicle-search (search)="onSearch($event)" />
+<app-vehicle-search (searchSubmit)="onSearch($event)" />
 
 <!-- Loading State -->
 @if (loading()) {

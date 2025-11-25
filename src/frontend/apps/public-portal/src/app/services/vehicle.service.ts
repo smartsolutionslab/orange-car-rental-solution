@@ -65,7 +65,7 @@ export class VehicleService {
     currentVehicle: Vehicle,
     pickupDate?: string,
     returnDate?: string,
-    maxResults: number = 4
+    maxResults = 4
   ): Observable<Vehicle[]> {
     // Search for vehicles with similar criteria
     const query: VehicleSearchQuery = {

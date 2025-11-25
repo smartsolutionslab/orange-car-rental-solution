@@ -14,9 +14,9 @@ describe('ReservationsComponent (Integration)', () => {
   let component: ReservationsComponent;
   let fixture: ComponentFixture<ReservationsComponent>;
   let httpMock: HttpTestingController;
-  let router: jasmine.SpyObj<Router>;
-  let activatedRoute: ActivatedRoute;
-  let configService: jasmine.SpyObj<ConfigService>;
+  let _router: jasmine.SpyObj<Router>;
+  let _activatedRoute: ActivatedRoute;
+  let _configService: jasmine.SpyObj<ConfigService>;
 
   const apiUrl = 'http://localhost:5000/api';
 
@@ -108,9 +108,9 @@ describe('ReservationsComponent (Integration)', () => {
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-    activatedRoute = TestBed.inject(ActivatedRoute);
-    configService = TestBed.inject(ConfigService) as jasmine.SpyObj<ConfigService>;
+    _router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    _activatedRoute = TestBed.inject(ActivatedRoute);
+    _configService = TestBed.inject(ConfigService) as jasmine.SpyObj<ConfigService>;
 
     fixture = TestBed.createComponent(ReservationsComponent);
     component = fixture.componentInstance;
@@ -531,7 +531,7 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
       req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 1, pageSize: 25, totalPages: 4 });
       tick();
 
@@ -731,7 +731,7 @@ describe('ReservationsComponent (Integration)', () => {
     it('should handle empty search results', fakeAsync(() => {
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
       req.flush({ reservations: [], totalCount: 0, pageNumber: 1, pageSize: 25, totalPages: 0 });
       tick();
 

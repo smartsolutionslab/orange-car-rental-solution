@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -145,7 +144,7 @@ describe('LoginComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      let resolveLogin: any;
+      let resolveLogin: () => void;
       authService.login.and.returnValue(new Promise((resolve) => {
         resolveLogin = resolve;
       }));

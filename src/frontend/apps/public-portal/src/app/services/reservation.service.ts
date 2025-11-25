@@ -7,8 +7,7 @@ import {
   Reservation,
   ReservationSearchFilters,
   ReservationSearchResponse,
-  CancelReservationRequest,
-  GuestLookupRequest
+  CancelReservationRequest
 } from './reservation.model';
 import { ConfigService } from './config.service';
 

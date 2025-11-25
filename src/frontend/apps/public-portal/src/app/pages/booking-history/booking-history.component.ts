@@ -262,7 +262,7 @@ export class BookingHistoryComponent implements OnInit {
     return labelMap[status] || status;
   }
 
-  printReservation(reservation: Reservation) {
+  printReservation() {
     // TODO: Implement print functionality
     window.print();
   }

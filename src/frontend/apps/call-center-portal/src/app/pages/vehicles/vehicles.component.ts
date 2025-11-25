@@ -5,7 +5,6 @@ import { VehicleService } from '../../services/vehicle.service';
 import { LocationService } from '../../services/location.service';
 import {
   Vehicle,
-  VehicleId,
   VehicleStatus,
   LocationCode,
   DailyRate,
@@ -126,10 +125,10 @@ export class VehiclesComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const query: any = {};
+    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: string } = {};
 
     if (this.searchStatus()) {
-      query.status = this.searchStatus();
+      query.status = this.searchStatus() as VehicleStatus;
     }
     if (this.searchLocation()) {
       query.locationCode = this.searchLocation();

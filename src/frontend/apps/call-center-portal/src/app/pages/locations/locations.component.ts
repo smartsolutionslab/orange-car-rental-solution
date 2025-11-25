@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LocationService } from '../../services/location.service';
 import { VehicleService } from '../../services/vehicle.service';
 import { Location, LocationStatistics, VehicleDistribution } from '../../services/location.model';
-import { Vehicle, VehicleStatus } from '../../services/vehicle.model';
+import { Vehicle } from '../../services/vehicle.model';
 
 /**
  * Locations management page for call center

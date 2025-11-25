@@ -442,8 +442,8 @@
 
 <!-- Details Modal -->
 @if (showDetails() && selectedReservation()) {
-  <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal" (click)="$event.stopPropagation()">
+  <div class="modal-overlay" (click)="closeDetails()" (keydown.escape)="closeDetails()" tabindex="0" role="dialog" aria-modal="true">
+    <div class="modal" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
       <div class="modal-header">
         <h2>Reservierungsdetails</h2>
         <button class="btn-close" (click)="closeDetails()">&times;</button>
@@ -533,8 +533,8 @@
 
 <!-- Cancel Modal -->
 @if (showCancelModal() && selectedReservation()) {
-  <div class="modal-overlay" (click)="closeCancelModal()">
-    <div class="modal modal-sm" (click)="$event.stopPropagation()">
+  <div class="modal-overlay" (click)="closeCancelModal()" (keydown.escape)="closeCancelModal()" tabindex="0" role="dialog" aria-modal="true">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
       <div class="modal-header">
         <h2>Reservierung stornieren</h2>
         <button class="btn-close" (click)="closeCancelModal()">&times;</button>

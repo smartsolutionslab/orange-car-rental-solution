@@ -15,6 +15,13 @@ export interface RegisterData {
   acceptMarketing: boolean;
 }
 
+interface TokenResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -84,7 +91,7 @@ export class AuthService {
    * @param password User password
    * @param rememberMe Whether to remember the user
    */
-  async login(email: string, password: string, rememberMe: boolean = false): Promise<void> {
+  async login(email: string, password: string, _rememberMe = false): Promise<void> {
     try {
       const tokenUrl = `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`;
 
@@ -99,7 +106,7 @@ export class AuthService {
       });
 
       const response = await firstValueFrom(
-        this.http.post<any>(tokenUrl, body.toString(), { headers })
+        this.http.post<TokenResponse>(tokenUrl, body.toString(), { headers })
       );
 
       // Store tokens
@@ -118,7 +125,7 @@ export class AuthService {
           }
         });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Login error:', error);
       throw error;
     }
@@ -144,8 +151,6 @@ export class AuthService {
    */
   async register(userData: RegisterData): Promise<void> {
     try {
-      const registrationUrl = `${this.keycloakUrl}/realms/${this.realm}/users`;
-
       const userPayload = {
         username: userData.email,
         email: userData.email,
@@ -178,7 +183,7 @@ export class AuthService {
 
       // After successful registration, log the user in
       await this.login(userData.email, userData.password, false);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Registration error:', error);
       throw error;
     }
@@ -205,7 +210,7 @@ export class AuthService {
       await firstValueFrom(
         this.http.post(resetUrl, body.toString(), { headers })
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error);
       throw error;
     }
