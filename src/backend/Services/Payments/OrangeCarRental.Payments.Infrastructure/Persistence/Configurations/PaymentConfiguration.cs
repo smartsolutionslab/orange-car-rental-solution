@@ -46,7 +46,7 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

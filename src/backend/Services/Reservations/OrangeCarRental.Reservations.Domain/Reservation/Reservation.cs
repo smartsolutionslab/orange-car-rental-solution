@@ -42,7 +42,12 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         Status = ReservationStatus.Pending;
         CreatedAt = DateTime.UtcNow;
 
-        AddDomainEvent(new ReservationCreated(Id, VehicleIdentifier, CustomerIdentifier, Period, TotalPrice));
+        AddDomainEvent(new ReservationCreated(
+            Id,
+            VehicleIdentifier,
+            CustomerIdentifier,
+            Period,
+            TotalPrice));
     }
 
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.

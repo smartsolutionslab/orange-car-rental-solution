@@ -285,9 +285,9 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
-        var manufacturer = Manufacturer.Of("BMW");
-        var model = VehicleModel.Of("X5 xDrive40i");
-        var year = ManufacturingYear.Of(2024);
+        var manufacturer = Manufacturer.From("BMW");
+        var model = VehicleModel.From("X5 xDrive40i");
+        var year = ManufacturingYear.From(2024);
         var imageUrl = "https://example.com/bmw-x5.jpg";
 
         // Act

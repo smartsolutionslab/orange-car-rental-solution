@@ -28,7 +28,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("CategoryCode")
             .HasConversion(
                 code => code.Value,
-                value => CategoryCode.Of(value))
+                value => CategoryCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -37,7 +37,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("LocationCode")
             .HasConversion(
                 code => code!.Value.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired(false);
 
@@ -58,7 +58,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

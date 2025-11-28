@@ -34,7 +34,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
             .HasColumnName("RecipientEmail")
             .HasConversion(
                 email => email.HasValue ? email.Value.Value : null,
-                value => value != null ? RecipientEmail.Of(value) : null)
+                value => value != null ? RecipientEmail.From(value) : null)
             .HasMaxLength(255);
 
         // RecipientPhone value object (nullable - only for SMS notifications)
@@ -42,7 +42,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
             .HasColumnName("RecipientPhone")
             .HasConversion(
                 phone => phone.HasValue ? phone.Value.Value : null,
-                value => value != null ? RecipientPhone.Of(value) : null)
+                value => value != null ? RecipientPhone.From(value) : null)
             .HasMaxLength(20);
 
         // NotificationSubject value object
@@ -50,7 +50,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
             .HasColumnName("Subject")
             .HasConversion(
                 subject => subject.Value,
-                value => NotificationSubject.Of(value))
+                value => NotificationSubject.From(value))
             .HasMaxLength(200)
             .IsRequired();
 
@@ -59,7 +59,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
             .HasColumnName("Content")
             .HasConversion(
                 content => content.Value,
-                value => NotificationContent.Of(value))
+                value => NotificationContent.From(value))
             .HasMaxLength(10000)
             .IsRequired();
 

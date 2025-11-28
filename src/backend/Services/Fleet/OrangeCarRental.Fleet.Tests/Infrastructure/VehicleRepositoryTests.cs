@@ -263,8 +263,8 @@ public class VehicleRepositoryTests : IAsyncLifetime
         int seats,
         decimal dailyRateGross)
     {
-        var category = VehicleCategory.FromCode(categoryCode);
-        var location = LocationCode.Of(locationCode);
+        var category = VehicleCategory.From(categoryCode);
+        var location = LocationCode.From(locationCode);
         var dailyRateNet = dailyRateGross / 1.19m; // Convert gross to net (19% VAT)
 
         return VehicleBuilder.Default()

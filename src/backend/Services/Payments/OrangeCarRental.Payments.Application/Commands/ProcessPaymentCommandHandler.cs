@@ -21,7 +21,7 @@ public sealed class ProcessPaymentCommandHandler(
         }
 
         // Create payment aggregate
-        var currency = Currency.Of(command.Currency);
+        var currency = Currency.From(command.Currency);
         var amount = Money.FromGross(command.Amount, 0.19m, currency);
         var payment = Payment.Create(
             command.ReservationId,

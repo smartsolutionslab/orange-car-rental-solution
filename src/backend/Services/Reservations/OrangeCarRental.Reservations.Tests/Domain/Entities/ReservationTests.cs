@@ -12,8 +12,8 @@ public class ReservationTests
     private readonly BookingPeriod validPeriod = BookingPeriod.Of(
         DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
         DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)));
-    private readonly LocationCode validPickupLocation = LocationCode.Of("BER-HBF");
-    private readonly LocationCode validDropoffLocation = LocationCode.Of("MUC-FLG");
+    private readonly LocationCode validPickupLocation = LocationCode.From("BER-HBF");
+    private readonly LocationCode validDropoffLocation = LocationCode.From("MUC-FLG");
     private readonly Money validTotalPrice = Money.Euro(299.99m);
 
     [Fact]

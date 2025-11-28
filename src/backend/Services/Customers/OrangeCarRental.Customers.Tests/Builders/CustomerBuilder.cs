@@ -9,8 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Builders;
 public class CustomerBuilder
 {
     private CustomerName _name = CustomerName.Of("Max", "Mustermann", Salutation.Herr);
-    private Email _email = Email.Of("max.mustermann@example.com");
-    private PhoneNumber _phone = PhoneNumber.Of("0151 12345678");
+    private Email _email = Email.From("max.mustermann@example.com");
+    private PhoneNumber _phone = PhoneNumber.From("0151 12345678");
     private BirthDate _birthDate = BirthDate.Of(new DateOnly(1990, 1, 1)); // 35 years old
     private Address _address = Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland");
     private DriversLicense _license;
@@ -57,7 +57,7 @@ public class CustomerBuilder
     /// </summary>
     public CustomerBuilder WithEmail(string email)
     {
-        _email = Email.Of(email);
+        _email = Email.From(email);
         return this;
     }
 
@@ -66,7 +66,7 @@ public class CustomerBuilder
     /// </summary>
     public CustomerBuilder WithPhone(string phone)
     {
-        _phone = PhoneNumber.Of(phone);
+        _phone = PhoneNumber.From(phone);
         return this;
     }
 

@@ -58,7 +58,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
             .HasColumnName("PickupLocationCode")
             .HasConversion(
                 locationCode => locationCode.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -66,7 +66,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
             .HasColumnName("DropoffLocationCode")
             .HasConversion(
                 locationCode => locationCode.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -87,7 +87,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

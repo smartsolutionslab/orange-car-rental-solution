@@ -41,14 +41,14 @@ public static class MappingExtensions
     public static VehicleSearchParameters ToVehicleSearchParameters(this SearchVehiclesQuery query)
     {
         return new VehicleSearchParameters(
-            LocationCode.TryParse(query.LocationCode),
-            VehicleCategory.TryParse(query.CategoryCode),
+            LocationCode.FromNullable(query.LocationCode),
+            VehicleCategory.FromNullable(query.CategoryCode),
             query.MinSeats,
             query.FuelType.TryParseFuelType(),
             query.TransmissionType.TryParseTransmissionType(),
             query.MaxDailyRateGross,
             VehicleStatus.Available, // Always filter to available vehicles
-            SearchPeriod.TryParse(query.PickupDate, query.ReturnDate),
+            SearchPeriod.Of(query.PickupDate, query.ReturnDate),
             query.PageNumber ?? 1,
             query.PageSize ?? 20);
     }

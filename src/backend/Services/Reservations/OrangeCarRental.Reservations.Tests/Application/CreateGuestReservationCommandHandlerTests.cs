@@ -506,11 +506,11 @@ public class CreateGuestReservationCommandHandlerTests
                 DateTime.UtcNow.Date.AddDays(7),
                 DateTime.UtcNow.Date.AddDays(10)
             ),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             CustomerName.Of("Max", "Mustermann"),
-            Email.Of("max.mustermann@example.com"),
-            PhoneNumber.Of("+49 30 12345678"),
+            Email.From("max.mustermann@example.com"),
+            PhoneNumber.From("+49 30 12345678"),
             BirthDate.Of(1990, 1, 15),
             Address.Of("Musterstraße 123", "Berlin", "10115", "Germany"),
             DriversLicense.Of(

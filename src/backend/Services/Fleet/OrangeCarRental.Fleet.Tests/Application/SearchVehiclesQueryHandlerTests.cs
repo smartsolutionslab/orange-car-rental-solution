@@ -369,16 +369,16 @@ public class SearchVehiclesQueryHandlerTests
         int seats,
         decimal dailyRateGross)
     {
-        var category = VehicleCategory.FromCode(categoryCode);
-        var currency = Currency.Of("EUR");
+        var category = VehicleCategory.From(categoryCode);
+        var currency = Currency.From("EUR");
         var dailyRate = Money.FromGross(dailyRateGross, 0.19m, currency);
 
         var vehicle = Vehicle.From(
-            VehicleName.Of(name),
+            VehicleName.From(name),
             category,
             locationCode,
             dailyRate,
-            SeatingCapacity.Of(seats),
+            SeatingCapacity.From(seats),
             fuelType,
             TransmissionType.Manual
         );

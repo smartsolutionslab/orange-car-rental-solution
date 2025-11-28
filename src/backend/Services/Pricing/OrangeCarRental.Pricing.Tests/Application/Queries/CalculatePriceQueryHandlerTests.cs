@@ -23,7 +23,7 @@ public class CalculatePriceQueryHandlerTests
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(4));
 
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("KLEIN"),
+            CategoryCode.From("KLEIN"),
             pickupDate,
             returnDate, null);
 
@@ -62,10 +62,10 @@ public class CalculatePriceQueryHandlerTests
         // Arrange
         var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3));
-        var locationCode = LocationCode.Of("BER-HBF");
+        var locationCode = LocationCode.From("BER-HBF");
 
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("SUV"),
+            CategoryCode.From("SUV"),
             pickupDate,
             returnDate,
             locationCode);
@@ -111,10 +111,10 @@ public class CalculatePriceQueryHandlerTests
         // Arrange
         var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3));
-        var locationCode = LocationCode.Of("BER-HBF");
+        var locationCode = LocationCode.From("BER-HBF");
 
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("SUV"),
+            CategoryCode.From("SUV"),
             pickupDate,
             returnDate,
             locationCode);
@@ -165,7 +165,7 @@ public class CalculatePriceQueryHandlerTests
     {
         // Arrange
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("UNKNOWN"),
+            CategoryCode.From("UNKNOWN"),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
             null);
@@ -204,7 +204,7 @@ public class CalculatePriceQueryHandlerTests
         foreach (var (categoryCode, dailyRate) in categories)
         {
             var query = new CalculatePriceQuery(
-                CategoryCode.Of(categoryCode),
+                CategoryCode.From(categoryCode),
                 pickupDate,
                 returnDate, null);
 
@@ -215,7 +215,7 @@ public class CalculatePriceQueryHandlerTests
 
             pricingPolicyRepositoryMock
                 .Setup(x => x.GetActivePolicyByCategoryAsync(
-                    CategoryCode.Of(categoryCode),
+                    CategoryCode.From(categoryCode),
                     It.IsAny<CancellationToken>()))
                 .ReturnsAsync(policy);
 
@@ -234,7 +234,7 @@ public class CalculatePriceQueryHandlerTests
     {
         // Arrange
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("KLEIN"),
+            CategoryCode.From("KLEIN"),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(2)), // 2 days,
             null);
@@ -265,7 +265,7 @@ public class CalculatePriceQueryHandlerTests
     {
         // Arrange
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("KLEIN"),
+            CategoryCode.From("KLEIN"),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
             DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
             null);
@@ -292,7 +292,7 @@ public class CalculatePriceQueryHandlerTests
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)); // 7 days
 
         var query = new CalculatePriceQuery(
-            CategoryCode.Of("MITTEL"),
+            CategoryCode.From("MITTEL"),
             pickupDate,
             returnDate,
             null);

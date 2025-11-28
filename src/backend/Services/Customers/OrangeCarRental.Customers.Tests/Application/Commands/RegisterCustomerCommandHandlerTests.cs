@@ -157,8 +157,8 @@ public class RegisterCustomerCommandHandlerTests
 
         return new RegisterCustomerCommand(
             CustomerName.Of("Max", "Mustermann", Salutation.Herr),
-            Email.Of("max.mustermann@example.com"),
-            PhoneNumber.Of("0151 12345678"),
+            Email.From("max.mustermann@example.com"),
+            PhoneNumber.From("0151 12345678"),
             BirthDate.Of(new DateOnly(1990, 1, 1)),
             Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland"),
             DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate));

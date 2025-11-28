@@ -98,8 +98,8 @@ public class ReservationsDataSeeder(
             vehicleIdentifier,
             customerIdentifier,
             period,
-            pickupLocationCode ?? LocationCode.Of("BER-HBF"),
-            dropoffLocationCode ?? LocationCode.Of("BER-HBF"),
+            pickupLocationCode ?? LocationCode.From("BER-HBF"),
+            dropoffLocationCode ?? LocationCode.From("BER-HBF"),
             totalPrice);
     }
 }

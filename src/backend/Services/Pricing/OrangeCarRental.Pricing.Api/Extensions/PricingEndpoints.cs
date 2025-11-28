@@ -21,11 +21,11 @@ public static class PricingEndpoints
                 {
                     // Map request DTO to query with value objects
                     var query = new CalculatePriceQuery(
-                        CategoryCode.Of(request.CategoryCode),
+                        CategoryCode.From(request.CategoryCode),
                         request.PickupDate,
                         request.ReturnDate,
                         !string.IsNullOrWhiteSpace(request.LocationCode)
-                            ? LocationCode.Of(request.LocationCode)
+                            ? LocationCode.From(request.LocationCode)
                             : null);
 
                     var result = await handler.HandleAsync(query, cancellationToken);

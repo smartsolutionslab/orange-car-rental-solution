@@ -33,9 +33,9 @@ public static class ReservationEndpoints
                     CustomerIdentifier.From(customerId),
                     VehicleCategory.From(category),
                     BookingPeriod.Of(pickupDate, returnDate),
-                    LocationCode.Of(pickupLocation),
-                    LocationCode.Of(dropoffLocation),
-                    Money.TryEuro(totalPriceNet)
+                    LocationCode.From(pickupLocation),
+                    LocationCode.From(dropoffLocation),
+                    Money.Euro(totalPriceNet)
                 );
 
                 var result = await handler.HandleAsync(command);
@@ -80,11 +80,11 @@ public static class ReservationEndpoints
                     VehicleIdentifier.From(vehicleId),
                     VehicleCategory.From(category),
                     BookingPeriod.Of(pickupDate, returnDate),
-                    LocationCode.Of(pickupLocation),
-                    LocationCode.Of(dropoffLocation),
+                    LocationCode.From(pickupLocation),
+                    LocationCode.From(dropoffLocation),
                     CustomerName.Of(firstName, lastName, null),
-                    Email.Of(email),
-                    PhoneNumber.Of(phoneNumber),
+                    Email.From(email),
+                    PhoneNumber.From(phoneNumber),
                     BirthDate.Of(dateOfBirth),
                     Address.Of(street, city, postalCode, country),
                     DriversLicense.Of(driversLicenseNumber, driversLicenseIssueCountry, driversLicenseIssueDate, driversLicenseExpiryDate)

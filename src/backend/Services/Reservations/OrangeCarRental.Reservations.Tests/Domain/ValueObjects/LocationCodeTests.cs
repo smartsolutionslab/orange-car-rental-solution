@@ -14,7 +14,7 @@ public class LocationCodeTests
     public void Of_WithValidCode_ShouldCreateLocationCode(string validCode)
     {
         // Act
-        var locationCode = LocationCode.Of(validCode);
+        var locationCode = LocationCode.From(validCode);
 
         // Assert
         locationCode.Value.ShouldBe(validCode);
@@ -24,7 +24,7 @@ public class LocationCodeTests
     public void Of_ShouldConvertToUpperCase()
     {
         // Act
-        var locationCode = LocationCode.Of("ber-hbf");
+        var locationCode = LocationCode.From("ber-hbf");
 
         // Assert
         locationCode.Value.ShouldBe("BER-HBF");
@@ -34,7 +34,7 @@ public class LocationCodeTests
     public void Of_ShouldTrimWhitespace()
     {
         // Act
-        var locationCode = LocationCode.Of("  BER-HBF  ");
+        var locationCode = LocationCode.From("  BER-HBF  ");
 
         // Assert
         locationCode.Value.ShouldBe("BER-HBF");
@@ -46,14 +46,14 @@ public class LocationCodeTests
     public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string invalidCode)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => LocationCode.Of(invalidCode));
+        Should.Throw<ArgumentException>(() => LocationCode.From(invalidCode));
     }
 
     [Fact]
     public void Of_WithNull_ShouldThrowArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => LocationCode.Of(null!));
+        Should.Throw<ArgumentException>(() => LocationCode.From(null!));
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public class LocationCodeTests
         var shortCode = "AB";
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => LocationCode.Of(shortCode));
+        Should.Throw<ArgumentException>(() => LocationCode.From(shortCode));
     }
 
     [Fact]
@@ -73,7 +73,7 @@ public class LocationCodeTests
         var longCode = new string('A', 21);
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => LocationCode.Of(longCode));
+        Should.Throw<ArgumentException>(() => LocationCode.From(longCode));
     }
 
     [Fact]
@@ -83,7 +83,7 @@ public class LocationCodeTests
         var code = "BER";
 
         // Act
-        var locationCode = LocationCode.Of(code);
+        var locationCode = LocationCode.From(code);
 
         // Assert
         locationCode.Value.ShouldBe("BER");
@@ -96,7 +96,7 @@ public class LocationCodeTests
         var code = new string('A', 20);
 
         // Act
-        var locationCode = LocationCode.Of(code);
+        var locationCode = LocationCode.From(code);
 
         // Assert
         locationCode.Value.Length.ShouldBe(20);
@@ -106,7 +106,7 @@ public class LocationCodeTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var locationCode = LocationCode.Of("BER-HBF");
+        var locationCode = LocationCode.From("BER-HBF");
 
         // Act
         string codeString = locationCode;
@@ -119,7 +119,7 @@ public class LocationCodeTests
     public void ToString_ShouldReturnValue()
     {
         // Arrange
-        var locationCode = LocationCode.Of("BER-HBF");
+        var locationCode = LocationCode.From("BER-HBF");
 
         // Act
         var result = locationCode.ToString();
@@ -132,8 +132,8 @@ public class LocationCodeTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var code1 = LocationCode.Of("BER-HBF");
-        var code2 = LocationCode.Of("ber-hbf"); // Should be normalized to uppercase
+        var code1 = LocationCode.From("BER-HBF");
+        var code2 = LocationCode.From("ber-hbf"); // Should be normalized to uppercase
 
         // Act & Assert
         code1.ShouldBe(code2);
@@ -144,8 +144,8 @@ public class LocationCodeTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var code1 = LocationCode.Of("BER-HBF");
-        var code2 = LocationCode.Of("MUC-FLG");
+        var code1 = LocationCode.From("BER-HBF");
+        var code2 = LocationCode.From("MUC-FLG");
 
         // Act & Assert
         code1.ShouldNotBe(code2);

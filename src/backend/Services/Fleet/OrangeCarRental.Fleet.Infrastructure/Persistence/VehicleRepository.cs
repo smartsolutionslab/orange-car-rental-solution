@@ -49,7 +49,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
 
         // Minimum seats filter
         if (parameters.MinSeats.HasValue)
-            query = query.Where(v => v.Seats >= SeatingCapacity.Of(parameters.MinSeats.Value));
+            query = query.Where(v => v.Seats >= SeatingCapacity.From(parameters.MinSeats.Value));
 
         // Fuel type filter
         if (parameters.FuelType.HasValue) query = query.Where(v => v.FuelType == parameters.FuelType.Value);

@@ -32,8 +32,8 @@ public class CreateReservationCommandHandlerTests
                 DateTime.UtcNow.Date.AddDays(7),
                 DateTime.UtcNow.Date.AddDays(10)
             ),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(168.07m) // Net amount (200 gross with 19% VAT)
         );
 
@@ -66,8 +66,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -89,8 +89,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -112,8 +112,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -147,8 +147,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -166,8 +166,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.From(Guid.Empty),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -185,8 +185,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(-1), DateTime.UtcNow.Date.AddDays(3)), // Yesterday
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -204,8 +204,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(10), DateTime.UtcNow.Date.AddDays(5)), // Before pickup
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -226,8 +226,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(pickupDate, pickupDate), // Same as pickup
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -245,8 +245,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(100)), // 95 days
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(5000.00m)
         );
 
@@ -266,8 +266,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(pickupDate, returnDate),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(400.00m)
         );
 
@@ -298,8 +298,8 @@ public class CreateReservationCommandHandlerTests
             customerId,
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(250.00m)
         );
 
@@ -330,8 +330,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 
@@ -360,8 +360,8 @@ public class CreateReservationCommandHandlerTests
             customerId,
             VehicleCategory.From("KOMPAKT"),
             BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(5), DateTime.UtcNow.Date.AddDays(8)),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             Money.Euro(150.00m)
         );
 

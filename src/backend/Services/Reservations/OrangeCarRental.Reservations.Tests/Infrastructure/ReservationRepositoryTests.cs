@@ -56,8 +56,8 @@ public class ReservationRepositoryTests : IAsyncLifetime
             customerId,
             period,
 
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             totalPrice);
         reservation.ClearDomainEvents();
         return reservation;
@@ -201,15 +201,15 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var currency = Currency.Of("EUR");
+        var currency = Currency.From("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
             VehicleIdentifier.New(),
             CustomerIdentifier.New(),
             period,
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             totalPrice);
         await context.Reservations.AddAsync(reservation);
         await context.SaveChangesAsync();
@@ -320,15 +320,15 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var pickupDate = DateTime.UtcNow.Date;
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
-        var currency = Currency.Of("EUR");
+        var currency = Currency.From("EUR");
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
         var reservation = Reservation.Create(
             VehicleIdentifier.New(),
             CustomerIdentifier.New(),
             period,
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             totalPrice);
 
         // Act - Add

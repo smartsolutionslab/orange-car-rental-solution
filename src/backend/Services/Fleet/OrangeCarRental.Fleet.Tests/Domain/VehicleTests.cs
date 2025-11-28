@@ -11,13 +11,13 @@ public class VehicleTests
     public void Create_WithValidParameters_CreatesVehicle()
     {
         // Arrange
-        var name = VehicleName.Of("VW Golf");
+        var name = VehicleName.From("VW Golf");
         var category = VehicleCategory.Mittelklasse;
         var location = Locations.BerlinHauptbahnhof;
-        var seats = SeatingCapacity.Of(5);
+        var seats = SeatingCapacity.From(5);
         var fuelType = FuelType.Petrol;
         var transmission = TransmissionType.Manual;
-        var dailyRate = Money.FromGross(50.00m, 0.19m, Currency.Of("EUR"));
+        var dailyRate = Money.FromGross(50.00m, 0.19m, Currency.From("EUR"));
         var licensePlate = "B-XY-1234";
 
         // Act
@@ -50,7 +50,7 @@ public class VehicleTests
         // Arrange
         var vehicle = CreateTestVehicle();
         var oldRate = vehicle.DailyRate;
-        var newRate = Money.FromGross(75.00m, 0.19m, Currency.Of("EUR"));
+        var newRate = Money.FromGross(75.00m, 0.19m, Currency.From("EUR"));
 
         // Act
         vehicle = vehicle.UpdateDailyRate(newRate);
@@ -324,11 +324,11 @@ public class VehicleTests
     private Vehicle CreateTestVehicle()
     {
         var vehicle = Vehicle.From(
-            VehicleName.Of("VW Golf"),
+            VehicleName.From("VW Golf"),
             VehicleCategory.Mittelklasse,
             Locations.BerlinHauptbahnhof,
             Money.FromGross(50.00m, 0.19m, Currency.EUR),
-            SeatingCapacity.Of(5),
+            SeatingCapacity.From(5),
             FuelType.Petrol,
             TransmissionType.Manual
         );

@@ -33,8 +33,8 @@ public static class CustomerEndpoints
                     // Map request DTO to command with value objects
                     var command = new RegisterCustomerCommand(
                         CustomerName.Of(customer.FirstName, customer.LastName),
-                        Email.Of(customer.Email),
-                        PhoneNumber.Of(customer.PhoneNumber),
+                        Email.From(customer.Email),
+                        PhoneNumber.From(customer.PhoneNumber),
                         BirthDate.Of(customer.DateOfBirth),
                         Address.Of(
                             address.Street,
@@ -123,7 +123,7 @@ public static class CustomerEndpoints
                 try
                 {
                     var result = await handler.HandleAsync(
-                        new GetCustomerByEmailQuery(Email.Of(email)),
+                        new GetCustomerByEmailQuery(Email.From(email)),
                         cancellationToken);
                     return Results.Ok(result);
                 }
@@ -199,7 +199,7 @@ public static class CustomerEndpoints
                     var command = new UpdateCustomerProfileCommand(
                         CustomerIdentifier.From(id),
                         CustomerName.Of(profile.FirstName, profile.LastName),
-                        PhoneNumber.Of(profile.PhoneNumber),
+                        PhoneNumber.From(profile.PhoneNumber),
                         Address.Of(
                             address.Street,
                             address.City,

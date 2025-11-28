@@ -78,48 +78,48 @@ public class FleetDataSeeder(
         return
         [
             Location.Create(
-                LocationCode.Of("BER-HBF"),
-                LocationName.Of("Berlin Hauptbahnhof"),
+                LocationCode.From("BER-HBF"),
+                LocationName.From("Berlin Hauptbahnhof"),
                 Address.Of(
-                    Street.Of("Europaplatz 1"),
-                    City.Of("Berlin"),
-                    PostalCode.Of("10557")
+                    Street.From("Europaplatz 1"),
+                    City.From("Berlin"),
+                    PostalCode.From("10557")
                 )
             ),
             Location.Create(
-                LocationCode.Of("MUC-FLG"),
-                LocationName.Of("Munich Airport"),
+                LocationCode.From("MUC-FLG"),
+                LocationName.From("Munich Airport"),
                 Address.Of(
-                    Street.Of("Nordallee 25"),
-                    City.Of("Munich"),
-                    PostalCode.Of("85356")
+                    Street.From("Nordallee 25"),
+                    City.From("Munich"),
+                    PostalCode.From("85356")
                 )
             ),
             Location.Create(
-                LocationCode.Of("FRA-FLG"),
-                LocationName.Of("Frankfurt Airport"),
+                LocationCode.From("FRA-FLG"),
+                LocationName.From("Frankfurt Airport"),
                 Address.Of(
-                    Street.Of("Hugo-Eckener-Ring 1"),
-                    City.Of("Frankfurt am Main"),
-                    PostalCode.Of("60549")
+                    Street.From("Hugo-Eckener-Ring 1"),
+                    City.From("Frankfurt am Main"),
+                    PostalCode.From("60549")
                 )
             ),
             Location.Create(
-                LocationCode.Of("HAM-HBF"),
-                LocationName.Of("Hamburg Hauptbahnhof"),
+                LocationCode.From("HAM-HBF"),
+                LocationName.From("Hamburg Hauptbahnhof"),
                 Address.Of(
-                    Street.Of("Hachmannplatz 16"),
-                    City.Of("Hamburg"),
-                    PostalCode.Of("20099")
+                    Street.From("Hachmannplatz 16"),
+                    City.From("Hamburg"),
+                    PostalCode.From("20099")
                 )
             ),
             Location.Create(
-                LocationCode.Of("CGN-HBF"),
-                LocationName.Of("Cologne Central Station"),
+                LocationCode.From("CGN-HBF"),
+                LocationName.From("Cologne Central Station"),
                 Address.Of(
-                    Street.Of("Trankgasse 11"),
-                    City.Of("Cologne"),
-                    PostalCode.Of("50667")
+                    Street.From("Trankgasse 11"),
+                    City.From("Cologne"),
+                    PostalCode.From("50667")
                 )
             )
         ];
@@ -131,123 +131,123 @@ public class FleetDataSeeder(
 
         // Kleinwagen (Small Cars) - 29-45 EUR/day
         vehicles.AddRange([
-            CreateVehicle("VW Up!", VehicleCategory.Kleinwagen, LocationCode.Of("BER-HBF"),
+            CreateVehicle("VW Up!", VehicleCategory.Kleinwagen, LocationCode.From("BER-HBF"),
                 Money.Euro(29.99m), 4, FuelType.Petrol, TransmissionType.Manual,
                 "Volkswagen", "Up!", 2023),
-            CreateVehicle("Fiat 500", VehicleCategory.Kleinwagen, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("Fiat 500", VehicleCategory.Kleinwagen, LocationCode.From("MUC-FLG"),
                 Money.Euro(32.99m), 4, FuelType.Petrol, TransmissionType.Manual,
                 "Fiat", "500", 2024),
-            CreateVehicle("Smart ForTwo", VehicleCategory.Kleinwagen, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Smart ForTwo", VehicleCategory.Kleinwagen, LocationCode.From("FRA-FLG"),
                 Money.Euro(34.99m), 2, FuelType.Electric, TransmissionType.Automatic,
                 "Smart", "ForTwo EQ", 2023),
-            CreateVehicle("Renault Twingo", VehicleCategory.Kleinwagen, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("Renault Twingo", VehicleCategory.Kleinwagen, LocationCode.From("HAM-HBF"),
                 Money.Euro(28.99m), 4, FuelType.Petrol, TransmissionType.Manual,
                 "Renault", "Twingo", 2023),
-            CreateVehicle("Toyota Aygo", VehicleCategory.Kleinwagen, LocationCode.Of("CGN-HBF"),
+            CreateVehicle("Toyota Aygo", VehicleCategory.Kleinwagen, LocationCode.From("CGN-HBF"),
                 Money.Euro(30.99m), 4, FuelType.Hybrid, TransmissionType.Automatic,
                 "Toyota", "Aygo X", 2024)
         ]);
 
         // Kompaktklasse (Compact Cars) - 45-65 EUR/day
         vehicles.AddRange([
-            CreateVehicle("VW Golf", VehicleCategory.Kompaktklasse, LocationCode.Of("BER-HBF"),
+            CreateVehicle("VW Golf", VehicleCategory.Kompaktklasse, LocationCode.From("BER-HBF"),
                 Money.Euro(49.99m), 5, FuelType.Diesel, TransmissionType.Manual,
                 "Volkswagen", "Golf 8", 2024),
-            CreateVehicle("VW Golf Hybrid", VehicleCategory.Kompaktklasse, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("VW Golf Hybrid", VehicleCategory.Kompaktklasse, LocationCode.From("MUC-FLG"),
                 Money.Euro(59.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Volkswagen", "Golf 8 GTE", 2024),
-            CreateVehicle("Audi A3", VehicleCategory.Kompaktklasse, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Audi A3", VehicleCategory.Kompaktklasse, LocationCode.From("FRA-FLG"),
                 Money.Euro(62.99m), 5, FuelType.Petrol, TransmissionType.Automatic,
                 "Audi", "A3 Sportback", 2024),
-            CreateVehicle("BMW 1er", VehicleCategory.Kompaktklasse, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("BMW 1er", VehicleCategory.Kompaktklasse, LocationCode.From("HAM-HBF"),
                 Money.Euro(64.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "BMW", "118d", 2024),
-            CreateVehicle("Mercedes A-Klasse", VehicleCategory.Kompaktklasse, LocationCode.Of("CGN-HBF"),
+            CreateVehicle("Mercedes A-Klasse", VehicleCategory.Kompaktklasse, LocationCode.From("CGN-HBF"),
                 Money.Euro(63.99m), 5, FuelType.Petrol, TransmissionType.Automatic,
                 "Mercedes-Benz", "A 200", 2024),
-            CreateVehicle("Opel Astra", VehicleCategory.Kompaktklasse, LocationCode.Of("BER-HBF"),
+            CreateVehicle("Opel Astra", VehicleCategory.Kompaktklasse, LocationCode.From("BER-HBF"),
                 Money.Euro(47.99m), 5, FuelType.Diesel, TransmissionType.Manual,
                 "Opel", "Astra", 2023),
-            CreateVehicle("Ford Focus", VehicleCategory.Kompaktklasse, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("Ford Focus", VehicleCategory.Kompaktklasse, LocationCode.From("MUC-FLG"),
                 Money.Euro(46.99m), 5, FuelType.Petrol, TransmissionType.Manual,
                 "Ford", "Focus", 2023)
         ]);
 
         // Mittelklasse (Mid-Size Cars) - 65-95 EUR/day
         vehicles.AddRange([
-            CreateVehicle("VW Passat", VehicleCategory.Mittelklasse, LocationCode.Of("BER-HBF"),
+            CreateVehicle("VW Passat", VehicleCategory.Mittelklasse, LocationCode.From("BER-HBF"),
                 Money.Euro(69.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Volkswagen", "Passat", 2024),
-            CreateVehicle("BMW 3er", VehicleCategory.Mittelklasse, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("BMW 3er", VehicleCategory.Mittelklasse, LocationCode.From("MUC-FLG"),
                 Money.Euro(89.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "BMW", "320d", 2024),
-            CreateVehicle("Mercedes C-Klasse", VehicleCategory.Mittelklasse, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Mercedes C-Klasse", VehicleCategory.Mittelklasse, LocationCode.From("FRA-FLG"),
                 Money.Euro(92.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Mercedes-Benz", "C 300e", 2024),
-            CreateVehicle("Audi A4", VehicleCategory.Mittelklasse, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("Audi A4", VehicleCategory.Mittelklasse, LocationCode.From("HAM-HBF"),
                 Money.Euro(87.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Audi", "A4 40 TDI", 2024),
-            CreateVehicle("Tesla Model 3", VehicleCategory.Mittelklasse, LocationCode.Of("CGN-HBF"),
+            CreateVehicle("Tesla Model 3", VehicleCategory.Mittelklasse, LocationCode.From("CGN-HBF"),
                 Money.Euro(94.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Tesla", "Model 3", 2024)
         ]);
 
         // Oberklasse (Upper Class) - 95-150 EUR/day
         vehicles.AddRange([
-            CreateVehicle("BMW 5er", VehicleCategory.Oberklasse, LocationCode.Of("BER-HBF"),
+            CreateVehicle("BMW 5er", VehicleCategory.Oberklasse, LocationCode.From("BER-HBF"),
                 Money.Euro(119.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "BMW", "530d", 2024),
-            CreateVehicle("Mercedes E-Klasse", VehicleCategory.Oberklasse, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("Mercedes E-Klasse", VehicleCategory.Oberklasse, LocationCode.From("MUC-FLG"),
                 Money.Euro(129.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Mercedes-Benz", "E 300e", 2024),
-            CreateVehicle("Audi A6", VehicleCategory.Oberklasse, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Audi A6", VehicleCategory.Oberklasse, LocationCode.From("FRA-FLG"),
                 Money.Euro(124.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Audi", "A6 50 TDI", 2024),
-            CreateVehicle("BMW i4", VehicleCategory.Oberklasse, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("BMW i4", VehicleCategory.Oberklasse, LocationCode.From("HAM-HBF"),
                 Money.Euro(139.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "BMW", "i4 eDrive40", 2024)
         ]);
 
         // SUVs - 75-135 EUR/day
         vehicles.AddRange([
-            CreateVehicle("VW Tiguan", VehicleCategory.SUV, LocationCode.Of("BER-HBF"),
+            CreateVehicle("VW Tiguan", VehicleCategory.SUV, LocationCode.From("BER-HBF"),
                 Money.Euro(79.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Volkswagen", "Tiguan", 2024),
-            CreateVehicle("BMW X3", VehicleCategory.SUV, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("BMW X3", VehicleCategory.SUV, LocationCode.From("MUC-FLG"),
                 Money.Euro(109.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "BMW", "X3 xDrive30d", 2024),
-            CreateVehicle("Mercedes GLC", VehicleCategory.SUV, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Mercedes GLC", VehicleCategory.SUV, LocationCode.From("FRA-FLG"),
                 Money.Euro(114.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Mercedes-Benz", "GLC 300e", 2024),
-            CreateVehicle("Audi Q5", VehicleCategory.SUV, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("Audi Q5", VehicleCategory.SUV, LocationCode.From("HAM-HBF"),
                 Money.Euro(112.99m), 5, FuelType.Diesel, TransmissionType.Automatic,
                 "Audi", "Q5 45 TDI", 2024),
-            CreateVehicle("Tesla Model Y", VehicleCategory.SUV, LocationCode.Of("CGN-HBF"),
+            CreateVehicle("Tesla Model Y", VehicleCategory.SUV, LocationCode.From("CGN-HBF"),
                 Money.Euro(129.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Tesla", "Model Y", 2024),
-            CreateVehicle("Volvo XC60", VehicleCategory.SUV, LocationCode.Of("BER-HBF"),
+            CreateVehicle("Volvo XC60", VehicleCategory.SUV, LocationCode.From("BER-HBF"),
                 Money.Euro(119.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Volvo", "XC60 Recharge", 2024),
-            CreateVehicle("Mazda CX-5", VehicleCategory.SUV, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("Mazda CX-5", VehicleCategory.SUV, LocationCode.From("MUC-FLG"),
                 Money.Euro(84.99m), 5, FuelType.Petrol, TransmissionType.Automatic,
                 "Mazda", "CX-5", 2023),
-            CreateVehicle("Kia Sportage", VehicleCategory.SUV, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Kia Sportage", VehicleCategory.SUV, LocationCode.From("FRA-FLG"),
                 Money.Euro(77.99m), 5, FuelType.Hybrid, TransmissionType.Automatic,
                 "Kia", "Sportage", 2024)
         ]);
 
         // Additional vehicles with varied statuses
         vehicles.AddRange([
-            CreateVehicle("VW ID.3", VehicleCategory.Kompaktklasse, LocationCode.Of("BER-HBF"),
+            CreateVehicle("VW ID.3", VehicleCategory.Kompaktklasse, LocationCode.From("BER-HBF"),
                 Money.Euro(54.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Volkswagen", "ID.3", 2024),
-            CreateVehicle("VW ID.4", VehicleCategory.SUV, LocationCode.Of("MUC-FLG"),
+            CreateVehicle("VW ID.4", VehicleCategory.SUV, LocationCode.From("MUC-FLG"),
                 Money.Euro(89.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Volkswagen", "ID.4", 2024),
-            CreateVehicle("Hyundai Ioniq 5", VehicleCategory.SUV, LocationCode.Of("FRA-FLG"),
+            CreateVehicle("Hyundai Ioniq 5", VehicleCategory.SUV, LocationCode.From("FRA-FLG"),
                 Money.Euro(94.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Hyundai", "Ioniq 5", 2024),
-            CreateVehicle("Polestar 2", VehicleCategory.Mittelklasse, LocationCode.Of("HAM-HBF"),
+            CreateVehicle("Polestar 2", VehicleCategory.Mittelklasse, LocationCode.From("HAM-HBF"),
                 Money.Euro(99.99m), 5, FuelType.Electric, TransmissionType.Automatic,
                 "Polestar", "2", 2024)
         ]);
@@ -273,11 +273,11 @@ public class FleetDataSeeder(
         int? year = null)
     {
         var vehicle = Vehicle.From(
-            VehicleName.Of(name),
+            VehicleName.From(name),
             category,
             locationCode,
             dailyRate,
-            SeatingCapacity.Of(seats),
+            SeatingCapacity.From(seats),
             fuelType,
             transmissionType
         );
@@ -286,9 +286,9 @@ public class FleetDataSeeder(
         if (manufacturer != null || model != null || year != null)
         {
             vehicle.SetDetails(
-                manufacturer != null ? Manufacturer.Of(manufacturer) : null,
-                model != null ? VehicleModel.Of(model) : null,
-                year != null ? ManufacturingYear.Of(year.Value) : null,
+                manufacturer != null ? Manufacturer.From(manufacturer) : null,
+                model != null ? VehicleModel.From(model) : null,
+                year != null ? ManufacturingYear.From(year.Value) : null,
                 null // No image URLs for now
             );
         }

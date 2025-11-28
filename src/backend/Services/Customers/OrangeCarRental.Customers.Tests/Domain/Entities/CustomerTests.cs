@@ -124,7 +124,7 @@ public class CustomerTests
         // Arrange
         var customer = CustomerBuilder.MaxMustermann().Build();
         var newName = CustomerName.Of("Anna", "Schmidt", Salutation.Frau);
-        var newPhone = PhoneNumber.Of("0160 98765432");
+        var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act
@@ -164,7 +164,7 @@ public class CustomerTests
         customer.ClearDomainEvents(); // Clear registration event
 
         var newName = CustomerName.Of("Anna", "Schmidt");
-        var newPhone = PhoneNumber.Of("0160 98765432");
+        var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act

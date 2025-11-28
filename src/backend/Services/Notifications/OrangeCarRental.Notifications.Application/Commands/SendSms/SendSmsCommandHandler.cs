@@ -24,8 +24,8 @@ public sealed class SendSmsCommandHandler(
         CancellationToken cancellationToken = default)
     {
         // Create value objects
-        var recipientPhone = RecipientPhone.Of(command.RecipientPhone);
-        var content = NotificationContent.Of(command.Message);
+        var recipientPhone = RecipientPhone.From(command.RecipientPhone);
+        var content = NotificationContent.From(command.Message);
 
         // Create notification aggregate
         var notification = Notification.CreateSms(recipientPhone, content);

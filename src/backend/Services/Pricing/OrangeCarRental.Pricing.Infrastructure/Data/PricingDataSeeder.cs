@@ -46,56 +46,56 @@ public class PricingDataSeeder(
 
         // Kleinwagen (Small Car) - €29.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KLEIN"),
+            CategoryCode.From("KLEIN"),
             Money.Euro(29.99m),
             DateTime.UtcNow,
             null));
 
         // Kompaktklasse (Compact) - €39.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KOMPAKT"),
+            CategoryCode.From("KOMPAKT"),
             Money.Euro(39.99m),
             DateTime.UtcNow,
             null));
 
         // Mittelklasse (Mid-size) - €54.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("MITTEL"),
+            CategoryCode.From("MITTEL"),
             Money.Euro(54.99m),
             DateTime.UtcNow,
             null));
 
         // Oberklasse (Upper Class) - €89.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("OBER"),
+            CategoryCode.From("OBER"),
             Money.Euro(89.99m),
             DateTime.UtcNow,
             null));
 
         // SUV - €69.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("SUV"),
+            CategoryCode.From("SUV"),
             Money.Euro(69.99m),
             DateTime.UtcNow,
             null));
 
         // Kombi (Station Wagon) - €49.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KOMBI"),
+            CategoryCode.From("KOMBI"),
             Money.Euro(49.99m),
             DateTime.UtcNow,
             null));
 
         // Transporter (Van) - €79.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("TRANS"),
+            CategoryCode.From("TRANS"),
             Money.Euro(79.99m),
             DateTime.UtcNow,
             null));
 
         // Luxusklasse (Luxury) - €149.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("LUXUS"),
+            CategoryCode.From("LUXUS"),
             Money.Euro(149.99m),
             DateTime.UtcNow,
             null));

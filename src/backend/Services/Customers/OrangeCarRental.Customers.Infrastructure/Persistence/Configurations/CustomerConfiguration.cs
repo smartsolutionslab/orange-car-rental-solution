@@ -53,7 +53,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasColumnName("Email")
             .HasConversion(
                 email => email.Value,
-                value => Email.Of(value))
+                value => Email.From(value))
             .HasMaxLength(254)
             .IsRequired();
 
@@ -62,7 +62,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasColumnName("PhoneNumber")
             .HasConversion(
                 phone => phone.Value,
-                value => PhoneNumber.Of(value))
+                value => PhoneNumber.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -87,7 +87,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
                 .HasColumnName("Address_City")
                 .HasConversion(
                     city => city.Value,
-                    value => City.Of(value))
+                    value => City.From(value))
                 .HasMaxLength(100)
                 .IsRequired();
 
@@ -95,7 +95,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
                 .HasColumnName("Address_PostalCode")
                 .HasConversion(
                     pc => pc.Value,
-                    value => PostalCode.Of(value))
+                    value => PostalCode.From(value))
                 .HasMaxLength(10)
                 .IsRequired();
 

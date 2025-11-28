@@ -11,11 +11,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 /// </summary>
 public class VehicleBuilder
 {
-    private VehicleName _name = VehicleName.Of("BMW X5");
+    private VehicleName _name = VehicleName.From("BMW X5");
     private VehicleCategory _category = VehicleCategory.SUV;
     private LocationCode _location = Locations.BerlinHauptbahnhof;
     private Money _dailyRate = Money.Euro(89.99m);
-    private SeatingCapacity _seats = SeatingCapacity.Of(5);
+    private SeatingCapacity _seats = SeatingCapacity.From(5);
     private FuelType _fuelType = FuelType.Diesel;
     private TransmissionType _transmission = TransmissionType.Automatic;
     private string? _licensePlate;
@@ -29,7 +29,7 @@ public class VehicleBuilder
     /// </summary>
     public VehicleBuilder WithName(string name)
     {
-        _name = VehicleName.Of(name);
+        _name = VehicleName.From(name);
         return this;
     }
 
@@ -48,8 +48,8 @@ public class VehicleBuilder
     public VehicleBuilder AsCompact()
     {
         _category = VehicleCategory.Kompaktklasse;
-        _name = VehicleName.Of("VW Golf");
-        _seats = SeatingCapacity.Of(5);
+        _name = VehicleName.From("VW Golf");
+        _seats = SeatingCapacity.From(5);
         _dailyRate = Money.Euro(49.99m);
         return this;
     }
@@ -60,8 +60,8 @@ public class VehicleBuilder
     public VehicleBuilder AsMidSize()
     {
         _category = VehicleCategory.Mittelklasse;
-        _name = VehicleName.Of("VW Passat");
-        _seats = SeatingCapacity.Of(5);
+        _name = VehicleName.From("VW Passat");
+        _seats = SeatingCapacity.From(5);
         _dailyRate = Money.Euro(69.99m);
         return this;
     }
@@ -72,8 +72,8 @@ public class VehicleBuilder
     public VehicleBuilder AsSuv()
     {
         _category = VehicleCategory.SUV;
-        _name = VehicleName.Of("BMW X5");
-        _seats = SeatingCapacity.Of(5);
+        _name = VehicleName.From("BMW X5");
+        _seats = SeatingCapacity.From(5);
         _dailyRate = Money.Euro(89.99m);
         return this;
     }
@@ -84,8 +84,8 @@ public class VehicleBuilder
     public VehicleBuilder AsLuxury()
     {
         _category = VehicleCategory.Luxus;
-        _name = VehicleName.Of("Mercedes S-Class");
-        _seats = SeatingCapacity.Of(5);
+        _name = VehicleName.From("Mercedes S-Class");
+        _seats = SeatingCapacity.From(5);
         _dailyRate = Money.Euro(149.99m);
         return this;
     }
@@ -113,7 +113,7 @@ public class VehicleBuilder
     /// </summary>
     public VehicleBuilder WithSeats(int seats)
     {
-        _seats = SeatingCapacity.Of(seats);
+        _seats = SeatingCapacity.From(seats);
         return this;
     }
 
@@ -176,9 +176,9 @@ public class VehicleBuilder
     /// </summary>
     public VehicleBuilder WithDetails(string manufacturer, string model, int year, string? imageUrl = null)
     {
-        _manufacturer = Manufacturer.Of(manufacturer);
-        _model = VehicleModel.Of(model);
-        _year = ManufacturingYear.Of(year);
+        _manufacturer = Manufacturer.From(manufacturer);
+        _model = VehicleModel.From(model);
+        _year = ManufacturingYear.From(year);
         _imageUrl = imageUrl;
         return this;
     }

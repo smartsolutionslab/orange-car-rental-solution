@@ -224,8 +224,8 @@ public class CreateReservationCommandHandlerTests
     public async Task HandleAsync_WithDifferentLocations_ShouldCreateCorrectly()
     {
         // Arrange
-        var pickupLocation = LocationCode.Of("BER-HBF");
-        var dropoffLocation = LocationCode.Of("MUC-FLG");
+        var pickupLocation = LocationCode.From("BER-HBF");
+        var dropoffLocation = LocationCode.From("MUC-FLG");
 
         var command = CreateValidCommand() with
         {
@@ -275,8 +275,8 @@ public class CreateReservationCommandHandlerTests
             CustomerIdentifier.New(),
             VehicleCategory.SUV,
             BookingPeriod.Of(pickupDate, returnDate),
-            LocationCode.Of("BER-HBF"),
-            LocationCode.Of("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
             null // TotalPrice will be calculated
         );
     }

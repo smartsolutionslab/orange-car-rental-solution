@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
 /// </summary>
 public class PricingPolicyBuilder
 {
-    private CategoryCode _categoryCode = CategoryCode.Of("KLEIN");
+    private CategoryCode _categoryCode = CategoryCode.From("KLEIN");
     private Money _dailyRate = Money.Euro(49.99m);
     private DateTime? _effectiveFrom;
     private DateTime? _effectiveUntil;
@@ -20,7 +20,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder WithCategory(string categoryCode)
     {
-        _categoryCode = CategoryCode.Of(categoryCode);
+        _categoryCode = CategoryCode.From(categoryCode);
         return this;
     }
 
@@ -29,7 +29,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsCompact()
     {
-        _categoryCode = CategoryCode.Of("KLEIN");
+        _categoryCode = CategoryCode.From("KLEIN");
         _dailyRate = Money.Euro(40.00m);
         return this;
     }
@@ -39,7 +39,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsCompactClass()
     {
-        _categoryCode = CategoryCode.Of("KOMPAKT");
+        _categoryCode = CategoryCode.From("KOMPAKT");
         _dailyRate = Money.Euro(50.00m);
         return this;
     }
@@ -49,7 +49,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsMidSize()
     {
-        _categoryCode = CategoryCode.Of("MITTEL");
+        _categoryCode = CategoryCode.From("MITTEL");
         _dailyRate = Money.Euro(60.00m);
         return this;
     }
@@ -59,7 +59,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsSuv()
     {
-        _categoryCode = CategoryCode.Of("SUV");
+        _categoryCode = CategoryCode.From("SUV");
         _dailyRate = Money.Euro(90.00m);
         return this;
     }
@@ -69,7 +69,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsUpperClass()
     {
-        _categoryCode = CategoryCode.Of("OBER");
+        _categoryCode = CategoryCode.From("OBER");
         _dailyRate = Money.Euro(80.00m);
         return this;
     }
@@ -79,7 +79,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsLuxury()
     {
-        _categoryCode = CategoryCode.Of("LUXUS");
+        _categoryCode = CategoryCode.From("LUXUS");
         _dailyRate = Money.Euro(150.00m);
         return this;
     }
@@ -156,7 +156,7 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder ForLocation(string locationCode)
     {
-        _locationCode = LocationCode.Of(locationCode);
+        _locationCode = LocationCode.From(locationCode);
         return this;
     }
 

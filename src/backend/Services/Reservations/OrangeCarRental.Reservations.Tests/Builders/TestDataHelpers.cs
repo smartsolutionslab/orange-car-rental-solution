@@ -15,10 +15,10 @@ public static class TestDataHelpers
     public static VehicleIdentifier DefaultVehicleId => VehicleIdentifier.New();
 
     // Common test locations
-    public static LocationCode BerlinHbf => LocationCode.Of("BER-HBF");
-    public static LocationCode MunichAirport => LocationCode.Of("MUC-FLG");
-    public static LocationCode FrankfurtAirport => LocationCode.Of("FRA-FLG");
-    public static LocationCode HamburgHbf => LocationCode.Of("HAM-HBF");
+    public static LocationCode BerlinHbf => LocationCode.From("BER-HBF");
+    public static LocationCode MunichAirport => LocationCode.From("MUC-FLG");
+    public static LocationCode FrankfurtAirport => LocationCode.From("FRA-FLG");
+    public static LocationCode HamburgHbf => LocationCode.From("HAM-HBF");
 
     // Common test categories
     public static VehicleCategory Compact => VehicleCategory.From("KOMPAKT");
@@ -55,7 +55,7 @@ public static class TestDataHelpers
     /// </summary>
     public static Money EuroFromGross(decimal grossAmount)
     {
-        return Money.FromGross(grossAmount, 0.19m, Currency.Of("EUR"));
+        return Money.FromGross(grossAmount, 0.19m, Currency.From("EUR"));
     }
 
     /// <summary>
@@ -64,11 +64,11 @@ public static class TestDataHelpers
     public static Money EuroFromNet(decimal netAmount)
     {
         var grossAmount = netAmount * 1.19m;
-        return Money.FromGross(grossAmount, 0.19m, Currency.Of("EUR"));
+        return Money.FromGross(grossAmount, 0.19m, Currency.From("EUR"));
     }
 
     /// <summary>
     /// Creates a default EUR currency.
     /// </summary>
-    public static Currency Euro => Currency.Of("EUR");
+    public static Currency Euro => Currency.From("EUR");
 }

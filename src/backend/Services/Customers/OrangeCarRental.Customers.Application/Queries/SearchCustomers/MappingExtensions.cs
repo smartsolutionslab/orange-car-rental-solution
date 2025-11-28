@@ -69,12 +69,12 @@ public static class MappingExtensions
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
-        var searchTerm = SearchTerm.TryParse(query.SearchTerm);
+        var searchTerm = SearchTerm.FromNullable(query.SearchTerm);
         var status = query.Status.TryParse();
-        var email = Email.TryParse(query.Email);
-        var phoneNumber = PhoneNumber.TryParse(query.PhoneNumber);
-        var city =  City.TryParse(query.City);
-        var postalCode =  PostalCode.TryParse(query.PostalCode);
+        var email = Email.FromNullable(query.Email);
+        var phoneNumber = PhoneNumber.FromNullable(query.PhoneNumber);
+        var city =  City.FromNullable(query.City);
+        var postalCode =  PostalCode.FromNullable(query.PostalCode);
 
         return new CustomerSearchParameters(
             searchTerm,

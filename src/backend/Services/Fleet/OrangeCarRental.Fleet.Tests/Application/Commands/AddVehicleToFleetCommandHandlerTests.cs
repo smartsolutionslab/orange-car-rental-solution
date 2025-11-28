@@ -61,9 +61,9 @@ public class AddVehicleToFleetCommandHandlerTests
     public async Task HandleAsync_WithOptionalDetails_ShouldSetDetailsCorrectly()
     {
         // Arrange
-        var manufacturer = Manufacturer.Of("BMW");
-        var model = VehicleModel.Of("X5 xDrive40i");
-        var year = ManufacturingYear.Of(2024);
+        var manufacturer = Manufacturer.From("BMW");
+        var model = VehicleModel.From("X5 xDrive40i");
+        var year = ManufacturingYear.From(2024);
         var imageUrl = "https://example.com/bmw-x5.jpg";
         var licensePlate = "B-AB 1234";
 
@@ -227,11 +227,11 @@ public class AddVehicleToFleetCommandHandlerTests
     private static AddVehicleToFleetCommand CreateValidCommand()
     {
         return new AddVehicleToFleetCommand(
-            VehicleName.Of("BMW X5"),
+            VehicleName.From("BMW X5"),
             VehicleCategory.SUV,
             Locations.BerlinHauptbahnhof,
             Money.Euro(89.99m),
-            SeatingCapacity.Of(5),
+            SeatingCapacity.From(5),
             FuelType.Diesel,
             TransmissionType.Automatic,
             null, // LicensePlate

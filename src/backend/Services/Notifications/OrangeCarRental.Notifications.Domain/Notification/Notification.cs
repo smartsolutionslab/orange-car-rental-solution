@@ -60,7 +60,7 @@ public sealed class Notification : AggregateRoot<NotificationIdentifier>
             Id = NotificationIdentifier.New(),
             Type = NotificationType.Sms,
             RecipientPhone = recipientPhone,
-            Subject = NotificationSubject.Of("SMS"), // SMS doesn't have subject
+            Subject = NotificationSubject.From("SMS"), // SMS doesn't have subject
             Content = content,
             Status = NotificationStatus.Pending,
             CreatedAt = DateTime.UtcNow

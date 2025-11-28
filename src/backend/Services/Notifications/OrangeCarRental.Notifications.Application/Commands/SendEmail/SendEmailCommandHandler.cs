@@ -24,9 +24,9 @@ public sealed class SendEmailCommandHandler(
         CancellationToken cancellationToken = default)
     {
         // Create value objects
-        var recipientEmail = RecipientEmail.Of(command.RecipientEmail);
-        var subject = NotificationSubject.Of(command.Subject);
-        var content = NotificationContent.Of(command.Body);
+        var recipientEmail = RecipientEmail.From(command.RecipientEmail);
+        var subject = NotificationSubject.From(command.Subject);
+        var content = NotificationContent.From(command.Body);
 
         // Create notification aggregate
         var notification = Notification.CreateEmail(recipientEmail, subject, content);
