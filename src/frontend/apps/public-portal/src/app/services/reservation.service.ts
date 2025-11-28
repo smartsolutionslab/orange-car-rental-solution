@@ -5,9 +5,11 @@ import {
   GuestReservationRequest,
   GuestReservationResponse,
   Reservation,
+  ReservationId,
   ReservationSearchFilters,
   ReservationSearchResponse,
-  CancelReservationRequest
+  CancelReservationRequest,
+  EmailAddress
 } from './reservation.model';
 import { ConfigService } from './config.service';
 
@@ -40,7 +42,7 @@ export class ReservationService {
    * @param id Reservation ID
    * @returns Observable of reservation details
    */
-  getReservation(id: string): Observable<Reservation> {
+  getReservation(id: ReservationId): Observable<Reservation> {
     return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
   }
 
@@ -70,7 +72,7 @@ export class ReservationService {
    * @param reason Cancellation reason
    * @returns Observable of void (success/failure)
    */
-  cancelReservation(reservationId: string, reason: string): Observable<void> {
+  cancelReservation(reservationId: ReservationId, reason: string): Observable<void> {
     const request: CancelReservationRequest = { reason };
     return this.http.put<void>(`${this.apiUrl}/${reservationId}/cancel`, request);
   }
@@ -81,7 +83,7 @@ export class ReservationService {
    * @param email Email address used during booking
    * @returns Observable of reservation details
    */
-  lookupGuestReservation(reservationId: string, email: string): Observable<Reservation> {
+  lookupGuestReservation(reservationId: ReservationId, email: EmailAddress): Observable<Reservation> {
     const params = new HttpParams()
       .set('reservationId', reservationId)
       .set('email', email);

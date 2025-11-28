@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Location } from './location.model';
+import { LocationCode } from './vehicle.model';
 import { ConfigService } from './config.service';
 
 /**
@@ -32,7 +33,7 @@ export class LocationService {
    * @param code Location code (e.g., "BER-HBF")
    * @returns Observable of location or null if not found
    */
-  getLocationByCode(code: string): Observable<Location> {
+  getLocationByCode(code: LocationCode): Observable<Location> {
     return this.http.get<Location>(`${this.apiUrl}/${code}`);
   }
 }

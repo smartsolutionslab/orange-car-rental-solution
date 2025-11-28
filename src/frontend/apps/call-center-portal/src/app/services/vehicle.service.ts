@@ -60,7 +60,7 @@ export class VehicleService {
    * @param id Vehicle ID
    * @returns Observable of vehicle details
    */
-  getVehicleById(id: string): Observable<Vehicle> {
+  getVehicleById(id: VehicleId): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
   }
 

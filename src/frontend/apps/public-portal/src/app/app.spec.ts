@@ -1,12 +1,39 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { KeycloakService } from 'keycloak-angular';
 import { App } from './app';
+import { AuthService } from './services/auth.service';
 
 describe('App', () => {
   beforeEach(async () => {
+    const keycloakServiceSpy = jasmine.createSpyObj('KeycloakService', [
+      'isLoggedIn',
+      'login',
+      'logout',
+      'getUsername',
+      'loadUserProfile',
+      'getToken',
+      'getUserRoles',
+      'isUserInRole'
+    ]);
+    keycloakServiceSpy.isLoggedIn.and.returnValue(false);
+
+    const authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'isAuthenticated',
+      'getUsername',
+      'loginRedirect',
+      'logout'
+    ]);
+    authServiceSpy.isAuthenticated.and.returnValue(false);
+    authServiceSpy.getUsername.and.returnValue('');
+
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])]
+      providers: [
+        provideRouter([]),
+        { provide: KeycloakService, useValue: keycloakServiceSpy },
+        { provide: AuthService, useValue: authServiceSpy }
+      ]
     }).compileComponents();
   });
 

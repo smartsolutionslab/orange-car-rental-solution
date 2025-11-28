@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Vehicle, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import { ISODateString } from './reservation.model';
 import { ConfigService } from './config.service';
 
 /**
@@ -49,7 +50,7 @@ export class VehicleService {
    * @param id Vehicle ID
    * @returns Observable of vehicle details
    */
-  getVehicleById(id: string): Observable<Vehicle> {
+  getVehicleById(id: VehicleId): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
   }
 
@@ -63,8 +64,8 @@ export class VehicleService {
    */
   getSimilarVehicles(
     currentVehicle: Vehicle,
-    pickupDate?: string,
-    returnDate?: string,
+    pickupDate?: ISODateString,
+    returnDate?: ISODateString,
     maxResults = 4
   ): Observable<Vehicle[]> {
     // Search for vehicles with similar criteria

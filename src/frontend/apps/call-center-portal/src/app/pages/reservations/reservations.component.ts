@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation, ReservationSearchQuery } from '../../services/reservation.model';
+import { Reservation, ReservationSearchQuery, ReservationStatus } from '../../services/reservation.model';
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
 
@@ -215,7 +215,7 @@ export class ReservationsComponent implements OnInit {
     this.error.set(null);
 
     const query: ReservationSearchQuery = {
-      status: this.searchStatus() || undefined,
+      status: (this.searchStatus() || undefined) as ReservationStatus | undefined,
       customerId: this.searchCustomerId() || undefined,
       pickupDateFrom: this.searchPickupDateFrom() || undefined,
       pickupDateTo: this.searchPickupDateTo() || undefined,

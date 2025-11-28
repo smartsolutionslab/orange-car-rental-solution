@@ -2,23 +2,11 @@ import { Component, output, signal, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { LocationService } from '../../services/location.service';
 import { Location } from '../../services/location.model';
+import { VehicleSearchQuery, FuelType, TransmissionType } from '../../services/vehicle.model';
 import { CommonModule } from '@angular/common';
 
-/**
- * Vehicle search query interface
- */
-export interface VehicleSearchQuery {
-  pickupDate?: string;
-  returnDate?: string;
-  locationCode?: string;
-  categoryCode?: string;
-  minSeats?: number;
-  fuelType?: string;
-  transmissionType?: string;
-  maxDailyRateGross?: number;
-  pageNumber?: number;
-  pageSize?: number;
-}
+// Re-export for consumers
+export type { VehicleSearchQuery };
 
 /**
  * Reusable vehicle search component with date range picker
@@ -138,13 +126,14 @@ export class VehicleSearchComponent implements OnInit {
     const formValue = this.searchForm.value;
 
     // Build search query with dates only (YYYY-MM-DD format)
+    // Cast string values to their union types when they have valid values
     const query: VehicleSearchQuery = {
       pickupDate: formValue.pickupDate || undefined,
       returnDate: formValue.returnDate || undefined,
       locationCode: formValue.locationCode || undefined,
       categoryCode: formValue.categoryCode || undefined,
-      fuelType: formValue.fuelType || undefined,
-      transmissionType: formValue.transmissionType || undefined,
+      fuelType: (formValue.fuelType || undefined) as FuelType | undefined,
+      transmissionType: (formValue.transmissionType || undefined) as TransmissionType | undefined,
       minSeats: formValue.minSeats || undefined
     };
 

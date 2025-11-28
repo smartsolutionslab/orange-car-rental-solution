@@ -1,50 +1,69 @@
+import { VehicleId, CategoryCode, LocationCode, Currency } from './vehicle.model';
+
+// Branded types for reservation domain
+export type ReservationId = string;
+export type CustomerId = string;
+export type ISODateString = string;
+export type Price = number;
+export type RentalDays = number;
+export type EmailAddress = string;
+export type PhoneNumber = string;
+export type LicenseNumber = string;
+export type CountryCode = string;
+export type PostalCode = string;
+
+// Union types for constrained values
+export type ReservationStatus = 'Pending' | 'Confirmed' | 'Active' | 'Completed' | 'Cancelled';
+export type SortField = 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
+export type SortOrder = 'asc' | 'desc';
+
 /**
  * Reservation details
  */
 export interface Reservation {
-  reservationId: string;
-  vehicleId: string;
-  customerId: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
-  rentalDays: number;
-  totalPriceNet: number;
-  totalPriceVat: number;
-  totalPriceGross: number;
-  currency: string;
-  status: string;
-  cancellationReason?: string;
-  createdAt: string;
-  confirmedAt?: string;
-  cancelledAt?: string;
-  completedAt?: string;
+  readonly reservationId: ReservationId;
+  readonly vehicleId: VehicleId;
+  readonly customerId: CustomerId;
+  readonly pickupDate: ISODateString;
+  readonly returnDate: ISODateString;
+  readonly pickupLocationCode: LocationCode;
+  readonly dropoffLocationCode: LocationCode;
+  readonly rentalDays: RentalDays;
+  readonly totalPriceNet: Price;
+  readonly totalPriceVat: Price;
+  readonly totalPriceGross: Price;
+  readonly currency: Currency;
+  readonly status: ReservationStatus;
+  readonly cancellationReason?: string;
+  readonly createdAt: ISODateString;
+  readonly confirmedAt?: ISODateString;
+  readonly cancelledAt?: ISODateString;
+  readonly completedAt?: ISODateString;
 }
 
 /**
  * Create reservation request for registered customers
  */
 export interface CreateReservationRequest {
-  vehicleId: string;
-  customerId: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
-  totalPriceNet?: number; // Optional, will be calculated if not provided
+  readonly vehicleId: VehicleId;
+  readonly customerId: CustomerId;
+  readonly pickupDate: ISODateString;
+  readonly returnDate: ISODateString;
+  readonly pickupLocationCode: LocationCode;
+  readonly dropoffLocationCode: LocationCode;
+  readonly totalPriceNet?: Price;
 }
 
 /**
  * Create reservation response
  */
 export interface CreateReservationResponse {
-  reservationId: string;
-  status: string;
-  totalPriceNet: number;
-  totalPriceVat: number;
-  totalPriceGross: number;
-  currency: string;
+  readonly reservationId: ReservationId;
+  readonly status: ReservationStatus;
+  readonly totalPriceNet: Price;
+  readonly totalPriceVat: Price;
+  readonly totalPriceGross: Price;
+  readonly currency: Currency;
 }
 
 /**
@@ -52,73 +71,103 @@ export interface CreateReservationResponse {
  */
 export interface GuestReservationRequest {
   // Vehicle and booking details
-  vehicleId: string;
-  categoryCode: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
+  readonly vehicleId: VehicleId;
+  readonly categoryCode: CategoryCode;
+  readonly pickupDate: ISODateString;
+  readonly returnDate: ISODateString;
+  readonly pickupLocationCode: LocationCode;
+  readonly dropoffLocationCode: LocationCode;
 
   // Customer details
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly email: EmailAddress;
+  readonly phoneNumber: PhoneNumber;
+  readonly dateOfBirth: ISODateString;
 
   // Address details
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
+  readonly street: string;
+  readonly city: string;
+  readonly postalCode: PostalCode;
+  readonly country: CountryCode;
 
   // Driver's license details
-  licenseNumber: string;
-  licenseIssueCountry: string;
-  licenseIssueDate: string;
-  licenseExpiryDate: string;
+  readonly licenseNumber: LicenseNumber;
+  readonly licenseIssueCountry: CountryCode;
+  readonly licenseIssueDate: ISODateString;
+  readonly licenseExpiryDate: ISODateString;
 }
 
 /**
  * Guest reservation response
  */
 export interface GuestReservationResponse {
-  customerId: string;
-  reservationId: string;
-  totalPriceNet: number;
-  totalPriceVat: number;
-  totalPriceGross: number;
-  currency: string;
+  readonly customerId: CustomerId;
+  readonly reservationId: ReservationId;
+  readonly totalPriceNet: Price;
+  readonly totalPriceVat: Price;
+  readonly totalPriceGross: Price;
+  readonly currency: Currency;
 }
 
 /**
  * Reservation search query
  */
 export interface ReservationSearchQuery {
-  customerId?: string;
-  vehicleId?: string;
-  status?: string;
-  pickupDateFrom?: string;
-  pickupDateTo?: string;
-  locationCode?: string;
-  categoryCode?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  sortBy?: 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
-  sortOrder?: 'asc' | 'desc';
-  pageNumber?: number;
-  pageSize?: number;
+  readonly customerId?: CustomerId;
+  readonly vehicleId?: VehicleId;
+  readonly status?: ReservationStatus;
+  readonly pickupDateFrom?: ISODateString;
+  readonly pickupDateTo?: ISODateString;
+  readonly locationCode?: LocationCode;
+  readonly categoryCode?: CategoryCode;
+  readonly minPrice?: Price;
+  readonly maxPrice?: Price;
+  readonly sortBy?: SortField;
+  readonly sortOrder?: SortOrder;
+  readonly pageNumber?: number;
+  readonly pageSize?: number;
 }
 
 /**
  * Reservation search result
  */
 export interface ReservationSearchResult {
-  reservations: Reservation[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
-  hasPreviousPage?: boolean;
-  hasNextPage?: boolean;
+  readonly reservations: Reservation[];
+  readonly totalCount: number;
+  readonly pageNumber: number;
+  readonly pageSize: number;
+  readonly totalPages: number;
+  readonly hasPreviousPage?: boolean;
+  readonly hasNextPage?: boolean;
 }
+
+/**
+ * Cancel reservation request
+ */
+export interface CancelReservationRequest {
+  readonly reason: string;
+}
+
+/**
+ * Confirm reservation request
+ */
+export interface ConfirmReservationRequest {
+  readonly reservationId: ReservationId;
+}
+
+/**
+ * Constants for reservation statuses with German labels
+ */
+export const RESERVATION_STATUSES = [
+  { code: 'Pending', label: 'Ausstehend' },
+  { code: 'Confirmed', label: 'Bestätigt' },
+  { code: 'Active', label: 'Aktiv' },
+  { code: 'Completed', label: 'Abgeschlossen' },
+  { code: 'Cancelled', label: 'Storniert' }
+] as const satisfies readonly { code: ReservationStatus; label: string }[];
+
+/**
+ * Constants for sort fields
+ */
+export const SORT_FIELDS = ['PickupDate', 'Price', 'Status', 'CreatedDate'] as const satisfies readonly SortField[];

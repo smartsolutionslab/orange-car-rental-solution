@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
   Reservation,
+  ReservationId,
   CreateReservationRequest,
   CreateReservationResponse,
   GuestReservationRequest,
@@ -50,7 +51,7 @@ export class ReservationService {
    * @param id Reservation ID
    * @returns Observable of reservation details
    */
-  getReservation(id: string): Observable<Reservation> {
+  getReservation(id: ReservationId): Observable<Reservation> {
     return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
   }
 
@@ -81,7 +82,7 @@ export class ReservationService {
    * @param reason Cancellation reason
    * @returns Observable of void
    */
-  cancelReservation(id: string, reason: string): Observable<void> {
+  cancelReservation(id: ReservationId, reason: string): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/cancel`, { cancellationReason: reason });
   }
 
@@ -90,7 +91,7 @@ export class ReservationService {
    * @param id Reservation ID
    * @returns Observable of void
    */
-  confirmReservation(id: string): Observable<void> {
+  confirmReservation(id: ReservationId): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}/confirm`, {});
   }
 }

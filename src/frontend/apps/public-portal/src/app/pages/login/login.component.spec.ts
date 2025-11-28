@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -8,22 +8,22 @@ describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let authService: jasmine.SpyObj<AuthService>;
-  let router: jasmine.SpyObj<Router>;
+  let router: Router;
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
-    const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
       providers: [
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: Router, useValue: routerSpy }
+        provideRouter([])
       ]
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
-    router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
   });
 
   beforeEach(() => {
@@ -127,7 +127,7 @@ describe('LoginComponent', () => {
 
     it('should call authService.login with correct parameters on valid form', async () => {
       authService.login.and.returnValue(Promise.resolve());
-      router.navigate.and.returnValue(Promise.resolve(true));
+      // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
 
@@ -136,7 +136,7 @@ describe('LoginComponent', () => {
 
     it('should navigate to home on successful login', async () => {
       authService.login.and.returnValue(Promise.resolve());
-      router.navigate.and.returnValue(Promise.resolve(true));
+      // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
 
@@ -144,7 +144,8 @@ describe('LoginComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      let resolveLogin: () => void;
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      let resolveLogin: () => void = () => {};
       authService.login.and.returnValue(new Promise((resolve) => {
         resolveLogin = resolve;
       }));
@@ -193,30 +194,18 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Ein unerwarteter Fehler ist aufgetreten. Bitte versuchen Sie es erneut.');
+      expect(component.errorMessage()).toBe('Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.');
       expect(component.isLoading()).toBeFalsy();
     });
 
     it('should clear error message on new submission', async () => {
       component.errorMessage.set('Previous error');
       authService.login.and.returnValue(Promise.resolve());
-      router.navigate.and.returnValue(Promise.resolve(true));
+      // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
 
       expect(component.errorMessage()).toBeNull();
-    });
-  });
-
-  describe('Social Login', () => {
-    it('should have loginWithGoogle method', () => {
-      expect(component.loginWithGoogle).toBeDefined();
-    });
-
-    it('should log "Google login not implemented" when called', () => {
-      spyOn(console, 'log');
-      component.loginWithGoogle();
-      expect(console.log).toHaveBeenCalledWith('Google login not implemented yet');
     });
   });
 

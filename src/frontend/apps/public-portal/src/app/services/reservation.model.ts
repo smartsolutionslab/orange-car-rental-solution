@@ -1,44 +1,62 @@
+import { VehicleId, CategoryCode, LocationCode, Currency } from './vehicle.model';
+
+// Branded types for reservation domain
+export type ReservationId = string;
+export type CustomerId = string;
+export type ISODateString = string;
+export type Price = number;
+export type EmailAddress = string;
+export type PhoneNumber = string;
+export type LicenseNumber = string;
+export type CountryCode = string;
+export type PostalCode = string;
+
+// Union types for constrained values
+export type ReservationStatus = 'Pending' | 'Confirmed' | 'Active' | 'Completed' | 'Cancelled';
+export type SortField = 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
+export type SortOrder = 'asc' | 'desc';
+
 /**
  * Vehicle and reservation details
  */
 export interface ReservationDetails {
-  vehicleId: string;
-  categoryCode: string;
-  pickupDate: string;  // ISO date string
-  returnDate: string;  // ISO date string
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
+  readonly vehicleId: VehicleId;
+  readonly categoryCode: CategoryCode;
+  readonly pickupDate: ISODateString;
+  readonly returnDate: ISODateString;
+  readonly pickupLocationCode: LocationCode;
+  readonly dropoffLocationCode: LocationCode;
 }
 
 /**
  * Customer details
  */
 export interface CustomerDetails {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;  // ISO date string
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly email: EmailAddress;
+  readonly phoneNumber: PhoneNumber;
+  readonly dateOfBirth: ISODateString;
 }
 
 /**
  * Address details
  */
 export interface AddressDetails {
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
+  readonly street: string;
+  readonly city: string;
+  readonly postalCode: PostalCode;
+  readonly country: CountryCode;
 }
 
 /**
  * Driver's license details
  */
 export interface DriversLicenseDetails {
-  licenseNumber: string;
-  licenseIssueCountry: string;
-  licenseIssueDate: string;  // ISO date string
-  licenseExpiryDate: string;  // ISO date string
+  readonly licenseNumber: LicenseNumber;
+  readonly licenseIssueCountry: CountryCode;
+  readonly licenseIssueDate: ISODateString;
+  readonly licenseExpiryDate: ISODateString;
 }
 
 /**
@@ -46,10 +64,10 @@ export interface DriversLicenseDetails {
  * Used for creating reservations for users who haven't registered yet
  */
 export interface GuestReservationRequest {
-  reservation: ReservationDetails;
-  customer: CustomerDetails;
-  address: AddressDetails;
-  driversLicense: DriversLicenseDetails;
+  readonly reservation: ReservationDetails;
+  readonly customer: CustomerDetails;
+  readonly address: AddressDetails;
+  readonly driversLicense: DriversLicenseDetails;
 }
 
 /**
@@ -57,69 +75,85 @@ export interface GuestReservationRequest {
  * Includes both customer and reservation IDs along with pricing breakdown
  */
 export interface GuestReservationResponse {
-  customerId: string;
-  reservationId: string;
-  totalPriceNet: number;
-  totalPriceVat: number;
-  totalPriceGross: number;
-  currency: string;
+  readonly customerId: CustomerId;
+  readonly reservationId: ReservationId;
+  readonly totalPriceNet: Price;
+  readonly totalPriceVat: Price;
+  readonly totalPriceGross: Price;
+  readonly currency: Currency;
 }
 
 /**
  * Reservation details
  */
 export interface Reservation {
-  id: string;
-  vehicleId: string;
-  customerId: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
-  totalPriceNet: number;
-  totalPriceVat: number;
-  totalPriceGross: number;
-  currency: string;
-  status: string;
-  createdAt?: string;
+  readonly id: ReservationId;
+  readonly vehicleId: VehicleId;
+  readonly customerId: CustomerId;
+  readonly pickupDate: ISODateString;
+  readonly returnDate: ISODateString;
+  readonly pickupLocationCode: LocationCode;
+  readonly dropoffLocationCode: LocationCode;
+  readonly totalPriceNet: Price;
+  readonly totalPriceVat: Price;
+  readonly totalPriceGross: Price;
+  readonly currency: Currency;
+  readonly status: ReservationStatus;
+  readonly createdAt?: ISODateString;
 }
 
 /**
  * Reservation search filters
  */
 export interface ReservationSearchFilters {
-  customerId?: string;
-  status?: string;
-  pickupDateFrom?: string;
-  pickupDateTo?: string;
-  sortBy?: 'PickupDate' | 'Price' | 'Status' | 'CreatedDate';
-  sortOrder?: 'asc' | 'desc';
-  pageNumber?: number;
-  pageSize?: number;
+  readonly customerId?: CustomerId;
+  readonly status?: ReservationStatus;
+  readonly pickupDateFrom?: ISODateString;
+  readonly pickupDateTo?: ISODateString;
+  readonly sortBy?: SortField;
+  readonly sortOrder?: SortOrder;
+  readonly pageNumber?: number;
+  readonly pageSize?: number;
 }
 
 /**
  * Paginated search results
  */
 export interface ReservationSearchResponse {
-  items: Reservation[];
-  totalCount: number;
-  pageNumber: number;
-  pageSize: number;
-  totalPages: number;
+  readonly items: Reservation[];
+  readonly totalCount: number;
+  readonly pageNumber: number;
+  readonly pageSize: number;
+  readonly totalPages: number;
 }
 
 /**
  * Cancel reservation request
  */
 export interface CancelReservationRequest {
-  reason: string;
+  readonly reason: string;
 }
 
 /**
  * Guest lookup request
  */
 export interface GuestLookupRequest {
-  reservationId: string;
-  email: string;
+  readonly reservationId: ReservationId;
+  readonly email: EmailAddress;
 }
+
+/**
+ * Constants for reservation statuses with German labels
+ */
+export const RESERVATION_STATUSES = [
+  { code: 'Pending', label: 'Ausstehend' },
+  { code: 'Confirmed', label: 'Bestätigt' },
+  { code: 'Active', label: 'Aktiv' },
+  { code: 'Completed', label: 'Abgeschlossen' },
+  { code: 'Cancelled', label: 'Storniert' }
+] as const satisfies readonly { code: ReservationStatus; label: string }[];
+
+/**
+ * Constants for sort fields
+ */
+export const SORT_FIELDS = ['PickupDate', 'Price', 'Status', 'CreatedDate'] as const satisfies readonly SortField[];

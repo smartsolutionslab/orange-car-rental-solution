@@ -1,50 +1,50 @@
+import {
+  CustomerId,
+  EmailAddress,
+  PhoneNumber,
+  ISODateString,
+  LicenseNumber,
+  CountryCode,
+  PostalCode,
+  AddressDetails,
+  DriversLicenseDetails
+} from './reservation.model';
+
 /**
  * Complete customer profile
  * Used for getting and updating customer information
  */
 export interface CustomerProfile {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  address: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
-  driversLicense?: {
-    licenseNumber: string;
-    licenseIssueCountry: string;
-    licenseIssueDate: string;
-    licenseExpiryDate: string;
-  };
-  createdAt?: string;
-  updatedAt?: string;
+  readonly id: CustomerId;
+  readonly firstName: string;
+  readonly lastName: string;
+  readonly email: EmailAddress;
+  readonly phoneNumber: PhoneNumber;
+  readonly dateOfBirth: ISODateString;
+  readonly address: AddressDetails;
+  readonly driversLicense?: DriversLicenseDetails;
+  readonly createdAt?: ISODateString;
+  readonly updatedAt?: ISODateString;
 }
 
 /**
  * Customer profile update request
- * Same structure as profile but without ID
+ * Uses Omit to exclude read-only fields from CustomerProfile
  */
-export interface UpdateCustomerProfileRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  address: {
-    street: string;
-    city: string;
-    postalCode: string;
-    country: string;
-  };
-  driversLicense?: {
-    licenseNumber: string;
-    licenseIssueCountry: string;
-    licenseIssueDate: string;
-    licenseExpiryDate: string;
-  };
-}
+export type UpdateCustomerProfileRequest = Omit<CustomerProfile, 'id' | 'createdAt' | 'updatedAt'>;
+
+/**
+ * Partial customer update - allows updating individual fields
+ */
+export type PartialCustomerUpdate = Partial<UpdateCustomerProfileRequest>;
+
+/**
+ * Customer display name helper type
+ */
+export type CustomerDisplayName = `${string} ${string}`;
+
+/**
+ * Helper function to create display name
+ */
+export const getCustomerDisplayName = (customer: Pick<CustomerProfile, 'firstName' | 'lastName'>): CustomerDisplayName =>
+  `${customer.firstName} ${customer.lastName}`;

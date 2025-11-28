@@ -1,4 +1,8 @@
 // @ts-check
+// NOTE: This configuration is shared across all frontend apps.
+// When updating rules here, apply the same changes to:
+// - apps/call-center-portal/eslint.config.js
+// - apps/shell/eslint.config.js
 const eslint = require("@eslint/js");
 const { defineConfig } = require("eslint/config");
 const tseslint = require("typescript-eslint");

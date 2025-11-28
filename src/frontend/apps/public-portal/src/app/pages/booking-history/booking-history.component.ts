@@ -1,9 +1,10 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import { Reservation, ReservationSearchFilters } from '../../services/reservation.model';
+import { Reservation, ReservationSearchFilters, ReservationStatus } from '../../services/reservation.model';
 
 interface GroupedReservations {
   upcoming: Reservation[];
@@ -57,15 +58,15 @@ export class BookingHistoryComponent implements OnInit {
   detailReservation = signal<Reservation | null>(null);
 
   ngOnInit() {
-    this.checkAuthAndLoadReservations();
+    return this.checkAuthAndLoadReservations();
   }
 
   private async checkAuthAndLoadReservations() {
-    const authenticated = await this.authService.isAuthenticated();
+    const authenticated = this.authService.isAuthenticated();
     this.isAuthenticated.set(authenticated);
 
     if (authenticated) {
-      this.loadCustomerReservations();
+      await this.loadCustomerReservations();
     }
   }
 
@@ -87,17 +88,15 @@ export class BookingHistoryComponent implements OnInit {
       pageSize: 100
     };
 
-    this.reservationService.searchReservations(filters).subscribe({
-      next: (response) => {
-        this.groupReservations(response.items);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading reservations:', err);
-        this.error.set('Failed to load your booking history. Please try again later.');
-        this.isLoading.set(false);
-      }
-    });
+    try {
+      const response = await firstValueFrom(this.reservationService.searchReservations(filters));
+      this.groupReservations(response.items);
+      this.isLoading.set(false);
+    } catch (err) {
+      console.error('Error loading reservations:', err);
+      this.error.set('Failed to load your booking history. Please try again later.');
+      this.isLoading.set(false);
+    }
   }
 
   private groupReservations(reservations: Reservation[]) {
@@ -129,7 +128,10 @@ export class BookingHistoryComponent implements OnInit {
 
   // Guest lookup
   onGuestLookup() {
-    if (!this.guestLookupForm.reservationId || !this.guestLookupForm.email) {
+    const reservationId = this.guestLookupForm.reservationId?.trim();
+    const email = this.guestLookupForm.email?.trim();
+
+    if (!reservationId || !email) {
       this.guestLookupError.set('Please enter both Reservation ID and Email');
       return;
     }
@@ -139,8 +141,8 @@ export class BookingHistoryComponent implements OnInit {
     this.guestReservation.set(null);
 
     this.reservationService.lookupGuestReservation(
-      this.guestLookupForm.reservationId,
-      this.guestLookupForm.email
+      reservationId,
+      email
     ).subscribe({
       next: (reservation) => {
         this.guestReservation.set(reservation);
@@ -209,7 +211,7 @@ export class BookingHistoryComponent implements OnInit {
           this.loadCustomerReservations();
         } else {
           // For guest, just update the status locally
-          const updated = { ...reservation, status: 'Cancelled' };
+          const updated: Reservation = { ...reservation, status: 'Cancelled' as ReservationStatus };
           this.guestReservation.set(updated);
         }
 

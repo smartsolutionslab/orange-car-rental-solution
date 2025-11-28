@@ -1,7 +1,7 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Observable } from 'rxjs';
 import { BookingComponent } from './booking.component';
 import { LocationService } from '../../services/location.service';
 import { VehicleService } from '../../services/vehicle.service';
@@ -22,7 +22,7 @@ describe('BookingComponent', () => {
   let authService: jasmine.SpyObj<AuthService>;
   let customerService: jasmine.SpyObj<CustomerService>;
   let router: jasmine.SpyObj<Router>;
-  let activatedRoute: { queryParams: typeof of };
+  let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
   const mockLocations: Location[] = [
     { code: 'BER-HBF', name: 'Berlin Hauptbahnhof', street: 'Europaplatz 1', city: 'Berlin', postalCode: '10557', fullAddress: 'Europaplatz 1, 10557 Berlin' },
@@ -581,7 +581,7 @@ describe('BookingComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/confirmation'], jasmine.any(Object));
     });
 
-    it('should update customerProfile signal after successful profile update', () => {
+    it('should update customerProfile signal after successful profile update', fakeAsync(() => {
       const updatedProfile = { ...mockCustomerProfile, firstName: 'Updated' };
       customerService.updateMyProfile.and.returnValue(of(updatedProfile));
 
@@ -597,11 +597,10 @@ describe('BookingComponent', () => {
       });
 
       component['onSubmit']();
+      tick(100);
 
       // After booking completes, profile should be updated
-      setTimeout(() => {
-        expect(component['customerProfile']()?.firstName).toBe('Updated');
-      }, 100);
-    });
+      expect(component['customerProfile']()?.firstName).toBe('Updated');
+    }));
   });
 });

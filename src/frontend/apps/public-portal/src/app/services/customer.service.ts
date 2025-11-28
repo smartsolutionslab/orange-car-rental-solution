@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 import { CustomerProfile, UpdateCustomerProfileRequest } from './customer.model';
+import { CustomerId } from './reservation.model';
+import { ConfigService } from './config.service';
 
 /**
  * Customer Service
@@ -12,17 +13,20 @@ import { CustomerProfile, UpdateCustomerProfileRequest } from './customer.model'
   providedIn: 'root'
 })
 export class CustomerService {
-  private readonly apiUrl = environment.apiUrl || 'http://localhost:5000';
+  private readonly http = inject(HttpClient);
+  private readonly configService = inject(ConfigService);
 
-  constructor(private http: HttpClient) {}
+  private get apiUrl(): string {
+    return `${this.configService.apiUrl}/api/customers`;
+  }
 
   /**
    * Get customer profile by ID
    * @param customerId Customer ID
    * @returns Observable of customer profile
    */
-  getCustomerProfile(customerId: string): Observable<CustomerProfile> {
-    return this.http.get<CustomerProfile>(`${this.apiUrl}/api/customers/${customerId}`);
+  getCustomerProfile(customerId: CustomerId): Observable<CustomerProfile> {
+    return this.http.get<CustomerProfile>(`${this.apiUrl}/${customerId}`);
   }
 
   /**
@@ -31,7 +35,7 @@ export class CustomerService {
    * @returns Observable of customer profile
    */
   getMyProfile(): Observable<CustomerProfile> {
-    return this.http.get<CustomerProfile>(`${this.apiUrl}/api/customers/profile`);
+    return this.http.get<CustomerProfile>(`${this.apiUrl}/profile`);
   }
 
   /**
@@ -40,8 +44,8 @@ export class CustomerService {
    * @param profile Updated profile data
    * @returns Observable of updated customer profile
    */
-  updateCustomerProfile(customerId: string, profile: UpdateCustomerProfileRequest): Observable<CustomerProfile> {
-    return this.http.put<CustomerProfile>(`${this.apiUrl}/api/customers/${customerId}/profile`, profile);
+  updateCustomerProfile(customerId: CustomerId, profile: UpdateCustomerProfileRequest): Observable<CustomerProfile> {
+    return this.http.put<CustomerProfile>(`${this.apiUrl}/${customerId}/profile`, profile);
   }
 
   /**
@@ -50,6 +54,6 @@ export class CustomerService {
    * @returns Observable of updated customer profile
    */
   updateMyProfile(profile: UpdateCustomerProfileRequest): Observable<CustomerProfile> {
-    return this.http.put<CustomerProfile>(`${this.apiUrl}/api/customers/profile`, profile);
+    return this.http.put<CustomerProfile>(`${this.apiUrl}/profile`, profile);
   }
 }

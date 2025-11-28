@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
+import { provideRouter } from '@angular/router';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -14,7 +15,8 @@ describe('ForgotPasswordComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ForgotPasswordComponent, ReactiveFormsModule],
       providers: [
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        provideRouter([])
       ]
     }).compileComponents();
 
@@ -134,7 +136,8 @@ describe('ForgotPasswordComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      let resolveReset: () => void;
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      let resolveReset: () => void = () => {};
       authService.resetPassword.and.returnValue(new Promise((resolve) => {
         resolveReset = resolve;
       }));

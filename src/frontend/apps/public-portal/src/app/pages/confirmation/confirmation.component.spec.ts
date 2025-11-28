@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, ActivatedRoute } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { of, throwError, Observable } from 'rxjs';
 import { ConfirmationComponent } from './confirmation.component';
 import { ReservationService } from '../../services/reservation.service';
 import { Reservation } from '../../services/reservation.model';
@@ -10,7 +10,7 @@ describe('ConfirmationComponent', () => {
   let fixture: ComponentFixture<ConfirmationComponent>;
   let reservationService: jasmine.SpyObj<ReservationService>;
   let router: jasmine.SpyObj<Router>;
-  let activatedRoute: { queryParams: typeof of };
+  let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
   const mockReservation: Reservation = {
     id: '987e6543-e89b-12d3-a456-426614174000',
