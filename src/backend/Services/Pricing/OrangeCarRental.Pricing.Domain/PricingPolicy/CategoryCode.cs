@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 /// <param name="Value">The category code value.</param>
 public readonly record struct CategoryCode(string Value) : IValueObject
 {
-    public static CategoryCode Of(string value)
+    public static CategoryCode From(string value)
     {
         var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;
 

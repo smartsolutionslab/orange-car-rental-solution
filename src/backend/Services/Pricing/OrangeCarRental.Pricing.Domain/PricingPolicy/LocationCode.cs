@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 /// <param name="Value">The location code value.</param>
 public readonly record struct LocationCode(string Value) : IValueObject
 {
-    public static LocationCode Of(string value)
+    public static LocationCode From(string value)
     {
         var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;
 

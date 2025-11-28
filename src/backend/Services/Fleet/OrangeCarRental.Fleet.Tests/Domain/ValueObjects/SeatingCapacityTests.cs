@@ -14,7 +14,7 @@ public class SeatingCapacityTests
     public void Of_WithValidCapacity_ShouldCreateSeatingCapacity(int validCapacity)
     {
         // Act
-        var capacity = SeatingCapacity.Of(validCapacity);
+        var capacity = SeatingCapacity.From(validCapacity);
 
         // Assert
         capacity.Value.ShouldBe(validCapacity);
@@ -24,7 +24,7 @@ public class SeatingCapacityTests
     public void Of_WithCapacityLessThan2_ShouldThrowArgumentException()
     {
         // Act & Assert
-        var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.Of(1));
+        var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.From(1));
         ex.Message.ShouldContain("at least 2");
     }
 
@@ -32,7 +32,7 @@ public class SeatingCapacityTests
     public void Of_WithCapacityGreaterThan9_ShouldThrowArgumentException()
     {
         // Act & Assert
-        var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.Of(10));
+        var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.From(10));
         ex.Message.ShouldContain("cannot exceed 9");
     }
 
@@ -40,7 +40,7 @@ public class SeatingCapacityTests
     public void Of_WithExactly2Seats_ShouldSucceed()
     {
         // Act
-        var capacity = SeatingCapacity.Of(2);
+        var capacity = SeatingCapacity.From(2);
 
         // Assert
         capacity.Value.ShouldBe(2);
@@ -50,7 +50,7 @@ public class SeatingCapacityTests
     public void Of_WithExactly9Seats_ShouldSucceed()
     {
         // Act
-        var capacity = SeatingCapacity.Of(9);
+        var capacity = SeatingCapacity.From(9);
 
         // Assert
         capacity.Value.ShouldBe(9);
@@ -60,7 +60,7 @@ public class SeatingCapacityTests
     public void ImplicitOperator_ShouldConvertToInt()
     {
         // Arrange
-        var capacity = SeatingCapacity.Of(5);
+        var capacity = SeatingCapacity.From(5);
 
         // Act
         int capacityInt = capacity;
@@ -73,7 +73,7 @@ public class SeatingCapacityTests
     public void ToString_ShouldReturnValue()
     {
         // Arrange
-        var capacity = SeatingCapacity.Of(5);
+        var capacity = SeatingCapacity.From(5);
 
         // Act
         var result = capacity.ToString();
@@ -86,10 +86,10 @@ public class SeatingCapacityTests
     public void ComparisonOperators_ShouldWorkCorrectly()
     {
         // Arrange
-        var small = SeatingCapacity.Of(2);
-        var medium = SeatingCapacity.Of(5);
-        var mediumCopy = SeatingCapacity.Of(5);
-        var large = SeatingCapacity.Of(9);
+        var small = SeatingCapacity.From(2);
+        var medium = SeatingCapacity.From(5);
+        var mediumCopy = SeatingCapacity.From(5);
+        var large = SeatingCapacity.From(9);
 
         // Act & Assert
         (small < medium).ShouldBeTrue();
@@ -104,8 +104,8 @@ public class SeatingCapacityTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var capacity1 = SeatingCapacity.Of(5);
-        var capacity2 = SeatingCapacity.Of(5);
+        var capacity1 = SeatingCapacity.From(5);
+        var capacity2 = SeatingCapacity.From(5);
 
         // Act & Assert
         capacity1.ShouldBe(capacity2);
@@ -116,8 +116,8 @@ public class SeatingCapacityTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var capacity1 = SeatingCapacity.Of(5);
-        var capacity2 = SeatingCapacity.Of(7);
+        var capacity1 = SeatingCapacity.From(5);
+        var capacity2 = SeatingCapacity.From(7);
 
         // Act & Assert
         capacity1.ShouldNotBe(capacity2);

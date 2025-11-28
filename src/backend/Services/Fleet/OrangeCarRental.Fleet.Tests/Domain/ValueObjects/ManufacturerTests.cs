@@ -15,7 +15,7 @@ public class ManufacturerTests
     public void Of_WithValidManufacturer_ShouldCreateManufacturer(string validManufacturer)
     {
         // Act
-        var manufacturer = Manufacturer.Of(validManufacturer);
+        var manufacturer = Manufacturer.From(validManufacturer);
 
         // Assert
         manufacturer.Value.ShouldBe(validManufacturer);
@@ -25,7 +25,7 @@ public class ManufacturerTests
     public void Of_WithLeadingAndTrailingWhitespace_ShouldTrim()
     {
         // Act
-        var manufacturer = Manufacturer.Of("  BMW  ");
+        var manufacturer = Manufacturer.From("  BMW  ");
 
         // Assert
         manufacturer.Value.ShouldBe("BMW");
@@ -37,14 +37,14 @@ public class ManufacturerTests
     public void Of_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidManufacturer)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Manufacturer.Of(invalidManufacturer));
+        Should.Throw<ArgumentException>(() => Manufacturer.From(invalidManufacturer));
     }
 
     [Fact]
     public void Of_WithNull_ShouldThrowArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Manufacturer.Of(null!));
+        Should.Throw<ArgumentException>(() => Manufacturer.From(null!));
     }
 
     [Fact]
@@ -54,7 +54,7 @@ public class ManufacturerTests
         var longName = new string('A', 101);
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Manufacturer.Of(longName));
+        Should.Throw<ArgumentException>(() => Manufacturer.From(longName));
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class ManufacturerTests
         var name = new string('A', 100);
 
         // Act
-        var manufacturer = Manufacturer.Of(name);
+        var manufacturer = Manufacturer.From(name);
 
         // Assert
         manufacturer.Value.Length.ShouldBe(100);
@@ -74,7 +74,7 @@ public class ManufacturerTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var manufacturer = Manufacturer.Of("BMW");
+        var manufacturer = Manufacturer.From("BMW");
 
         // Act
         string manufacturerString = manufacturer;
@@ -87,7 +87,7 @@ public class ManufacturerTests
     public void ToString_ShouldReturnValue()
     {
         // Arrange
-        var manufacturer = Manufacturer.Of("BMW");
+        var manufacturer = Manufacturer.From("BMW");
 
         // Act
         var result = manufacturer.ToString();
@@ -100,8 +100,8 @@ public class ManufacturerTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var manufacturer1 = Manufacturer.Of("BMW");
-        var manufacturer2 = Manufacturer.Of("BMW");
+        var manufacturer1 = Manufacturer.From("BMW");
+        var manufacturer2 = Manufacturer.From("BMW");
 
         // Act & Assert
         manufacturer1.ShouldBe(manufacturer2);
@@ -112,8 +112,8 @@ public class ManufacturerTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var manufacturer1 = Manufacturer.Of("BMW");
-        var manufacturer2 = Manufacturer.Of("Audi");
+        var manufacturer1 = Manufacturer.From("BMW");
+        var manufacturer2 = Manufacturer.From("Audi");
 
         // Act & Assert
         manufacturer1.ShouldNotBe(manufacturer2);

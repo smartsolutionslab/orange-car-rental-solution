@@ -13,7 +13,7 @@ public class VehicleNameTests
     public void Of_WithValidName_ShouldCreateVehicleName(string validName)
     {
         // Act
-        var vehicleName = VehicleName.Of(validName);
+        var vehicleName = VehicleName.From(validName);
 
         // Assert
         vehicleName.Value.ShouldBe(validName);
@@ -23,7 +23,7 @@ public class VehicleNameTests
     public void Of_WithLeadingAndTrailingWhitespace_ShouldTrim()
     {
         // Act
-        var vehicleName = VehicleName.Of("  BMW X5  ");
+        var vehicleName = VehicleName.From("  BMW X5  ");
 
         // Assert
         vehicleName.Value.ShouldBe("BMW X5");
@@ -35,14 +35,14 @@ public class VehicleNameTests
     public void Of_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidName)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => VehicleName.Of(invalidName));
+        Should.Throw<ArgumentException>(() => VehicleName.From(invalidName));
     }
 
     [Fact]
     public void Of_WithNull_ShouldThrowArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => VehicleName.Of(null!));
+        Should.Throw<ArgumentException>(() => VehicleName.From(null!));
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public class VehicleNameTests
         var longName = new string('A', 101);
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => VehicleName.Of(longName));
+        Should.Throw<ArgumentException>(() => VehicleName.From(longName));
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class VehicleNameTests
         var name = new string('A', 100);
 
         // Act
-        var vehicleName = VehicleName.Of(name);
+        var vehicleName = VehicleName.From(name);
 
         // Assert
         vehicleName.Value.Length.ShouldBe(100);
@@ -72,7 +72,7 @@ public class VehicleNameTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var vehicleName = VehicleName.Of("BMW X5");
+        var vehicleName = VehicleName.From("BMW X5");
 
         // Act
         string nameString = vehicleName;
@@ -85,7 +85,7 @@ public class VehicleNameTests
     public void ToString_ShouldReturnValue()
     {
         // Arrange
-        var vehicleName = VehicleName.Of("BMW X5");
+        var vehicleName = VehicleName.From("BMW X5");
 
         // Act
         var result = vehicleName.ToString();
@@ -98,8 +98,8 @@ public class VehicleNameTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var name1 = VehicleName.Of("BMW X5");
-        var name2 = VehicleName.Of("BMW X5");
+        var name1 = VehicleName.From("BMW X5");
+        var name2 = VehicleName.From("BMW X5");
 
         // Act & Assert
         name1.ShouldBe(name2);
@@ -110,8 +110,8 @@ public class VehicleNameTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var name1 = VehicleName.Of("BMW X5");
-        var name2 = VehicleName.Of("Audi Q7");
+        var name1 = VehicleName.From("BMW X5");
+        var name2 = VehicleName.From("Audi Q7");
 
         // Act & Assert
         name1.ShouldNotBe(name2);

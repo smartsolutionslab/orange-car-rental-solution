@@ -14,7 +14,7 @@ public class PhoneNumberTests
     public void Of_WithValidInternationalFormat_ShouldNormalize(string input, string expected)
     {
         // Act
-        var phoneNumber = PhoneNumber.Of(input);
+        var phoneNumber = PhoneNumber.From(input);
 
         // Assert
         phoneNumber.Value.ShouldBe(expected);
@@ -28,7 +28,7 @@ public class PhoneNumberTests
     public void Of_WithGermanDomesticFormat_ShouldConvertToInternational(string input, string expected)
     {
         // Act
-        var phoneNumber = PhoneNumber.Of(input);
+        var phoneNumber = PhoneNumber.From(input);
 
         // Assert
         phoneNumber.Value.ShouldBe(expected);
@@ -40,7 +40,7 @@ public class PhoneNumberTests
     public void Of_WithDoubleZeroPrefix_ShouldConvertToPlus(string input, string expected)
     {
         // Act
-        var phoneNumber = PhoneNumber.Of(input);
+        var phoneNumber = PhoneNumber.From(input);
 
         // Assert
         phoneNumber.Value.ShouldBe(expected);
@@ -53,7 +53,7 @@ public class PhoneNumberTests
     public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidPhone)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone!));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(invalidPhone!));
     }
 
     [Theory]
@@ -64,7 +64,7 @@ public class PhoneNumberTests
     public void Of_WithNonGermanNumber_ShouldThrowArgumentException(string invalidPhone)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(invalidPhone));
     }
 
     [Fact]
@@ -74,7 +74,7 @@ public class PhoneNumberTests
         var shortNumber = "+4915"; // Less than minimum length
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(shortNumber));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(shortNumber));
     }
 
     [Fact]
@@ -84,7 +84,7 @@ public class PhoneNumberTests
         var longNumber = "+4912345678901234567"; // More than 16 characters
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(longNumber));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(longNumber));
     }
 
     [Theory]
@@ -93,7 +93,7 @@ public class PhoneNumberTests
     public void Of_WithZeroAfterCountryCode_ShouldThrowArgumentException(string invalidPhone)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(invalidPhone));
     }
 
     [Theory]
@@ -102,7 +102,7 @@ public class PhoneNumberTests
     public void Of_WithNonDigits_ShouldThrowArgumentException(string invalidPhone)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => PhoneNumber.Of(invalidPhone));
+        Should.Throw<ArgumentException>(() => PhoneNumber.From(invalidPhone));
     }
 
     [Theory]
@@ -112,7 +112,7 @@ public class PhoneNumberTests
     public void FormattedValue_ShouldFormatForDisplay(string input, string expectedFormat)
     {
         // Act
-        var phoneNumber = PhoneNumber.Of(input);
+        var phoneNumber = PhoneNumber.From(input);
 
         // Assert
         phoneNumber.FormattedValue.ShouldBe(expectedFormat);
@@ -132,7 +132,7 @@ public class PhoneNumberTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var phoneNumber = PhoneNumber.Of("+491512345678");
+        var phoneNumber = PhoneNumber.From("+491512345678");
 
         // Act
         string phoneString = phoneNumber;
@@ -145,7 +145,7 @@ public class PhoneNumberTests
     public void ToString_ShouldReturnFormattedValue()
     {
         // Arrange
-        var phoneNumber = PhoneNumber.Of("+491512345678");
+        var phoneNumber = PhoneNumber.From("+491512345678");
 
         // Act
         var result = phoneNumber.ToString();
@@ -158,8 +158,8 @@ public class PhoneNumberTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var phone1 = PhoneNumber.Of("0151 2345678");
-        var phone2 = PhoneNumber.Of("+49 151 2345678");
+        var phone1 = PhoneNumber.From("0151 2345678");
+        var phone2 = PhoneNumber.From("+49 151 2345678");
 
         // Act & Assert
         phone1.ShouldBe(phone2);
@@ -170,8 +170,8 @@ public class PhoneNumberTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var phone1 = PhoneNumber.Of("+491512345678");
-        var phone2 = PhoneNumber.Of("+491612345678");
+        var phone1 = PhoneNumber.From("+491512345678");
+        var phone2 = PhoneNumber.From("+491612345678");
 
         // Act & Assert
         phone1.ShouldNotBe(phone2);
@@ -189,7 +189,7 @@ public class PhoneNumberTests
     public void Of_WithRealGermanNumbers_ShouldSucceed(string germanPhone)
     {
         // Act
-        var phoneNumber = PhoneNumber.Of(germanPhone);
+        var phoneNumber = PhoneNumber.From(germanPhone);
 
         // Assert
         phoneNumber.Value.ShouldStartWith("+49");

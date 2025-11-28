@@ -13,7 +13,7 @@ public readonly record struct Address(Street Street, City City, PostalCode Posta
     /// </summary>
     public static Address Empty => new(
         Street.Empty,
-        City.Of("Unknown"),
+        City.From("Unknown"),
         PostalCode.Empty
     );
 
@@ -43,9 +43,9 @@ public readonly record struct Address(Street Street, City City, PostalCode Posta
     public static Address Of(string street, string city, string postalCode)
     {
         return new Address(
-            Street.Of(street),
-            City.Of(city),
-            PostalCode.Of(postalCode)
+            Street.From(street),
+            City.From(city),
+            PostalCode.From(postalCode)
         );
     }
 

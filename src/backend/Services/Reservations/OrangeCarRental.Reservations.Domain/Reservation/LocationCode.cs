@@ -16,7 +16,7 @@ public readonly record struct LocationCode(string Value) : IValueObject
     /// <param name="code">The location code (3-20 characters, uppercase)</param>
     /// <returns>A new LocationCode instance</returns>
     /// <exception cref="ArgumentException">Thrown when code is invalid</exception>
-    public static LocationCode Of(string code)
+    public static LocationCode From(string code)
     {
         Ensure.That(code, nameof(code))
             .IsNotNullOrWhiteSpace();

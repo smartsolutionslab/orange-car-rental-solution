@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <param name="Value">The vehicle name value.</param>
 public readonly record struct VehicleName(string Value) : IValueObject
 {
-    public static VehicleName Of(string value)
+    public static VehicleName From(string value)
     {
         var trimmed = value?.Trim() ?? string.Empty;
 

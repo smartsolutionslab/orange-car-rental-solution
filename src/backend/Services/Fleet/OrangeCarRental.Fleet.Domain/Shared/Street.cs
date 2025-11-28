@@ -13,7 +13,7 @@ public readonly record struct Street(string Value) : IValueObject
 
     public bool IsEmpty => string.IsNullOrWhiteSpace(Value);
 
-    public static Street Of(string street)
+    public static Street From(string street)
     {
         // Street can be empty/optional
         var trimmed = street?.Trim() ?? string.Empty;

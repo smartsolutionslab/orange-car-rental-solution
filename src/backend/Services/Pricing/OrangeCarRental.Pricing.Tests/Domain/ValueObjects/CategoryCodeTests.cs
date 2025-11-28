@@ -17,7 +17,7 @@ public class CategoryCodeTests
     public void Of_WithValidCode_ShouldCreateCategoryCode(string validCode)
     {
         // Act
-        var categoryCode = CategoryCode.Of(validCode);
+        var categoryCode = CategoryCode.From(validCode);
 
         // Assert
         categoryCode.Value.ShouldBe(validCode);
@@ -27,7 +27,7 @@ public class CategoryCodeTests
     public void Of_ShouldConvertToUpperCase()
     {
         // Act
-        var categoryCode = CategoryCode.Of("klein");
+        var categoryCode = CategoryCode.From("klein");
 
         // Assert
         categoryCode.Value.ShouldBe("KLEIN");
@@ -37,7 +37,7 @@ public class CategoryCodeTests
     public void Of_ShouldTrimWhitespace()
     {
         // Act
-        var categoryCode = CategoryCode.Of("  KLEIN  ");
+        var categoryCode = CategoryCode.From("  KLEIN  ");
 
         // Assert
         categoryCode.Value.ShouldBe("KLEIN");
@@ -50,7 +50,7 @@ public class CategoryCodeTests
     public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidCode)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => CategoryCode.Of(invalidCode!));
+        Should.Throw<ArgumentException>(() => CategoryCode.From(invalidCode!));
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class CategoryCodeTests
         var longCode = new string('A', 21);
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => CategoryCode.Of(longCode));
+        Should.Throw<ArgumentException>(() => CategoryCode.From(longCode));
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public class CategoryCodeTests
         var code = new string('A', 20);
 
         // Act
-        var categoryCode = CategoryCode.Of(code);
+        var categoryCode = CategoryCode.From(code);
 
         // Assert
         categoryCode.Value.Length.ShouldBe(20);
@@ -80,7 +80,7 @@ public class CategoryCodeTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var categoryCode = CategoryCode.Of("KLEIN");
+        var categoryCode = CategoryCode.From("KLEIN");
 
         // Act
         string codeString = categoryCode;
@@ -93,7 +93,7 @@ public class CategoryCodeTests
     public void ToString_ShouldReturnValue()
     {
         // Arrange
-        var categoryCode = CategoryCode.Of("KLEIN");
+        var categoryCode = CategoryCode.From("KLEIN");
 
         // Act
         var result = categoryCode.ToString();
@@ -106,8 +106,8 @@ public class CategoryCodeTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var code1 = CategoryCode.Of("KLEIN");
-        var code2 = CategoryCode.Of("klein"); // Should be normalized to uppercase
+        var code1 = CategoryCode.From("KLEIN");
+        var code2 = CategoryCode.From("klein"); // Should be normalized to uppercase
 
         // Act & Assert
         code1.ShouldBe(code2);
@@ -118,8 +118,8 @@ public class CategoryCodeTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var code1 = CategoryCode.Of("KLEIN");
-        var code2 = CategoryCode.Of("MITTEL");
+        var code1 = CategoryCode.From("KLEIN");
+        var code2 = CategoryCode.From("MITTEL");
 
         // Act & Assert
         code1.ShouldNotBe(code2);

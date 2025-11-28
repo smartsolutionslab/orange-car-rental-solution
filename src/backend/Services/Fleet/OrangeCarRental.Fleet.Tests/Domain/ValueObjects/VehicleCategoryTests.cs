@@ -81,7 +81,7 @@ public class VehicleCategoryTests
     public void FromCode_WithValidCode_ShouldReturnCategory(string code)
     {
         // Act
-        var category = VehicleCategory.FromCode(code);
+        var category = VehicleCategory.From(code);
 
         // Assert
         category.Code.ShouldBe(code);
@@ -94,7 +94,7 @@ public class VehicleCategoryTests
     public void FromCode_ShouldBeCaseInsensitive(string code)
     {
         // Act
-        var category = VehicleCategory.FromCode(code);
+        var category = VehicleCategory.From(code);
 
         // Assert
         category.ShouldBe(VehicleCategory.Kleinwagen);
@@ -104,7 +104,7 @@ public class VehicleCategoryTests
     public void FromCode_WithInvalidCode_ShouldThrowArgumentException()
     {
         // Act & Assert
-        var ex = Should.Throw<ArgumentException>(() => VehicleCategory.FromCode("INVALID"));
+        var ex = Should.Throw<ArgumentException>(() => VehicleCategory.From("INVALID"));
         ex.Message.ShouldContain("Unknown vehicle category code");
     }
 
@@ -114,14 +114,14 @@ public class VehicleCategoryTests
     public void FromCode_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidCode)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => VehicleCategory.FromCode(invalidCode));
+        Should.Throw<ArgumentException>(() => VehicleCategory.From(invalidCode));
     }
 
     [Fact]
     public void FromCode_WithNull_ShouldThrowArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => VehicleCategory.FromCode(null!));
+        Should.Throw<ArgumentException>(() => VehicleCategory.From(null!));
     }
 
     [Fact]
@@ -156,7 +156,7 @@ public class VehicleCategoryTests
     public void Equals_WithSameCategory_ShouldBeEqual()
     {
         // Arrange
-        var category1 = VehicleCategory.FromCode("KLEIN");
+        var category1 = VehicleCategory.From("KLEIN");
         var category2 = VehicleCategory.Kleinwagen;
 
         // Act & Assert

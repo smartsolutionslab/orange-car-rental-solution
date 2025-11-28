@@ -12,7 +12,7 @@ public readonly record struct PostalCode(string Value) : IValueObject
 
     public bool IsEmpty => string.IsNullOrWhiteSpace(Value);
 
-    public static PostalCode Of(string postalCode)
+    public static PostalCode From(string postalCode)
     {
         // Postal code can be empty/optional
         var trimmed = postalCode?.Trim() ?? string.Empty;

@@ -15,7 +15,7 @@ public readonly record struct SearchTerm(string Value) : IValueObject
     /// <param name="searchTerm">The search term string.</param>
     /// <returns>A validated SearchTerm value object.</returns>
     /// <exception cref="ArgumentException">Thrown when the search term is invalid.</exception>
-    public static SearchTerm Of(string searchTerm)
+    public static SearchTerm From(string searchTerm)
     {
         var trimmed = searchTerm?.Trim() ?? string.Empty;
 
@@ -27,11 +27,11 @@ public readonly record struct SearchTerm(string Value) : IValueObject
         return new SearchTerm(trimmed);
     }
 
-    public static SearchTerm? TryParse(string? searchTerm)
+    public static SearchTerm? FromNullable(string? searchTerm)
     {
         if (string.IsNullOrWhiteSpace(searchTerm)) return null;
 
-        return Of(searchTerm);
+        return From(searchTerm);
     }
 
     /// <summary>

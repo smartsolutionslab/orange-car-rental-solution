@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// <param name="Value">The postal code value.</param>
 public readonly record struct PostalCode(string Value) : IValueObject
 {
-    public static PostalCode Of(string postalCode)
+    public static PostalCode From(string postalCode)
     {
         var trimmed = postalCode?.Trim() ?? string.Empty;
 
@@ -21,11 +21,11 @@ public readonly record struct PostalCode(string Value) : IValueObject
         return new PostalCode(trimmed);
     }
 
-    public static PostalCode? TryParse(string? postalCode)
+    public static PostalCode? FromNullable(string? postalCode)
     {
         if (string.IsNullOrWhiteSpace(postalCode)) return null;
 
-        return Of(postalCode);
+        return From(postalCode);
     }
 
     public static implicit operator string(PostalCode postalCode) => postalCode.Value;

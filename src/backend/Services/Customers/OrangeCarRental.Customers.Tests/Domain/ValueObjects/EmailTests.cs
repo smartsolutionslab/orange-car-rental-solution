@@ -14,7 +14,7 @@ public class EmailTests
     public void Of_WithValidEmail_ShouldCreateEmail(string validEmail)
     {
         // Act
-        var email = Email.Of(validEmail);
+        var email = Email.From(validEmail);
 
         // Assert
         email.Value.ShouldBe(validEmail.ToLowerInvariant());
@@ -27,7 +27,7 @@ public class EmailTests
     public void Of_ShouldNormalizeEmail_ToLowercaseAndTrim(string input, string expected)
     {
         // Act
-        var email = Email.Of(input);
+        var email = Email.From(input);
 
         // Assert
         email.Value.ShouldBe(expected);
@@ -40,7 +40,7 @@ public class EmailTests
     public void Of_WithNullOrWhitespace_ShouldThrowArgumentException(string? invalidEmail)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Email.Of(invalidEmail!));
+        Should.Throw<ArgumentException>(() => Email.From(invalidEmail!));
     }
 
     [Theory]
@@ -52,7 +52,7 @@ public class EmailTests
     public void Of_WithInvalidEmailFormat_ShouldThrowArgumentException(string invalidEmail)
     {
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Email.Of(invalidEmail));
+        Should.Throw<ArgumentException>(() => Email.From(invalidEmail));
     }
 
     [Fact]
@@ -62,7 +62,7 @@ public class EmailTests
         var longEmail = new string('a', 250) + "@test.com"; // > 254 characters
 
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Email.Of(longEmail));
+        Should.Throw<ArgumentException>(() => Email.From(longEmail));
     }
 
     [Fact]
@@ -91,7 +91,7 @@ public class EmailTests
     public void ImplicitOperator_ShouldConvertToString()
     {
         // Arrange
-        var email = Email.Of("test@example.com");
+        var email = Email.From("test@example.com");
 
         // Act
         string emailString = email;
@@ -104,7 +104,7 @@ public class EmailTests
     public void ToString_ShouldReturnEmailValue()
     {
         // Arrange
-        var email = Email.Of("test@example.com");
+        var email = Email.From("test@example.com");
 
         // Act
         var result = email.ToString();
@@ -117,8 +117,8 @@ public class EmailTests
     public void Equals_WithSameValue_ShouldBeEqual()
     {
         // Arrange
-        var email1 = Email.Of("test@example.com");
-        var email2 = Email.Of("test@example.com");
+        var email1 = Email.From("test@example.com");
+        var email2 = Email.From("test@example.com");
 
         // Act & Assert
         email1.ShouldBe(email2);
@@ -129,8 +129,8 @@ public class EmailTests
     public void Equals_WithDifferentValues_ShouldNotBeEqual()
     {
         // Arrange
-        var email1 = Email.Of("test1@example.com");
-        var email2 = Email.Of("test2@example.com");
+        var email1 = Email.From("test1@example.com");
+        var email2 = Email.From("test2@example.com");
 
         // Act & Assert
         email1.ShouldNotBe(email2);
@@ -141,8 +141,8 @@ public class EmailTests
     public void Equals_IsCaseInsensitive()
     {
         // Arrange
-        var email1 = Email.Of("Test@Example.COM");
-        var email2 = Email.Of("test@example.com");
+        var email1 = Email.From("Test@Example.COM");
+        var email2 = Email.From("test@example.com");
 
         // Act & Assert
         email1.ShouldBe(email2);

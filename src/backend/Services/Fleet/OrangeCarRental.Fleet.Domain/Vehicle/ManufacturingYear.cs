@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// </summary>
 public readonly record struct ManufacturingYear(int Value) : IValueObject
 {
-    public static ManufacturingYear Of(int value)
+    public static ManufacturingYear From(int value)
     {
         if (value < 1990)
             throw new ArgumentException("Manufacturing year must be 1990 or later for rental vehicles", nameof(value));
@@ -20,11 +20,11 @@ public readonly record struct ManufacturingYear(int Value) : IValueObject
         return new ManufacturingYear(value);
     }
 
-    public static ManufacturingYear? TryParse(int? value)
+    public static ManufacturingYear? FromNullable(int? value)
     {
-        if(value == null) return null;
+        if (value == null) return null;
 
-        return Of(value.Value);
+        return From(value.Value);
     }
 
     public static implicit operator int(ManufacturingYear year) => year.Value;

@@ -13,7 +13,7 @@ public readonly record struct NotificationSubject(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The subject text.</param>
     /// <exception cref="ArgumentException">Thrown when subject is invalid.</exception>
-    public static NotificationSubject Of(string value)
+    public static NotificationSubject From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace()

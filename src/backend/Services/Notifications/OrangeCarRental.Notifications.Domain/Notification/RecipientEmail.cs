@@ -13,7 +13,7 @@ public readonly record struct RecipientEmail(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The email address.</param>
     /// <exception cref="ArgumentException">Thrown when email is invalid.</exception>
-    public static RecipientEmail Of(string value)
+    public static RecipientEmail From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace()
@@ -22,6 +22,15 @@ public readonly record struct RecipientEmail(string Value) : IValueObject
 
         return new RecipientEmail(value.ToLowerInvariant().Trim());
     }
+
+    public static RecipientEmail? FromNullable(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return From(value);
+    }
+
+    public static implicit operator string?(RecipientEmail? email) => email?.Value;
 
     public static implicit operator string(RecipientEmail email) => email.Value;
 

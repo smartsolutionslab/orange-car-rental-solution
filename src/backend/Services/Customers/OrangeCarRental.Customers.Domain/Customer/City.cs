@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// <param name="Value">The city name value.</param>
 public readonly record struct City(string Value) : IValueObject
 {
-    public static City Of(string city)
+    public static City From(string city)
     {
         var trimmed = city?.Trim() ?? string.Empty;
 
@@ -21,11 +21,11 @@ public readonly record struct City(string Value) : IValueObject
         return new City(trimmed);
     }
 
-    public static City? TryParse(string? city)
+    public static City? FromNullable(string? city)
     {
         if (string.IsNullOrWhiteSpace(city)) return null;
 
-        return Of(city);
+        return From(city);
     }
 
     public static implicit operator string(City city) => city.Value;

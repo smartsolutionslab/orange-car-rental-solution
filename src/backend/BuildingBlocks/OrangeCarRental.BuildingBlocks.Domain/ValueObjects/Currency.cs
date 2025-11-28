@@ -28,7 +28,7 @@ public readonly record struct Currency(string Code) : IValueObject
     /// </summary>
     public static readonly Currency CHF = new("CHF");
 
-    public static Currency Of(string code)
+    public static Currency From(string code)
     {
         Ensure.That(code, nameof(code))
             .IsNotNullOrWhiteSpace()

@@ -42,7 +42,7 @@ public readonly record struct VehicleCategory : IValueObject
 
     public static IReadOnlyCollection<VehicleCategory> All => categories.Values.ToList();
 
-    public static VehicleCategory FromCode(string code)
+    public static VehicleCategory From(string code)
     {
         Ensure.That(code, nameof(code))
             .IsNotNullOrWhiteSpace();
@@ -54,11 +54,11 @@ public readonly record struct VehicleCategory : IValueObject
         return category;
     }
 
-    public static VehicleCategory? TryParse(string? value)
+    public static VehicleCategory? FromNullable(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return FromCode(value);
+        return From(value);
     }
 
     public override string ToString() => $"{Name} ({Code})";

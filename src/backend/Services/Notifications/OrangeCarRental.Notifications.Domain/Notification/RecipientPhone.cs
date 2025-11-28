@@ -14,7 +14,7 @@ public readonly record struct RecipientPhone(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The phone number.</param>
     /// <exception cref="ArgumentException">Thrown when phone is invalid.</exception>
-    public static RecipientPhone Of(string value)
+    public static RecipientPhone From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace();

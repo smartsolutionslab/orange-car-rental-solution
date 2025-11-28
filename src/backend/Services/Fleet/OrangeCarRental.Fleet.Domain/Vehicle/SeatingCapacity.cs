@@ -15,7 +15,7 @@ public readonly record struct SeatingCapacity : IValueObject
 
     public int Value { get; }
 
-    public static SeatingCapacity Of(int value)
+    public static SeatingCapacity From(int value)
     {
         if (value < 2)
             throw new ArgumentException("Seating capacity must be at least 2", nameof(value));
@@ -24,6 +24,13 @@ public readonly record struct SeatingCapacity : IValueObject
             throw new ArgumentException("Seating capacity cannot exceed 9 for rental vehicles", nameof(value));
 
         return new SeatingCapacity(value);
+    }
+
+    public static SeatingCapacity? From(int? value)
+    {
+        if (value == null) return null;
+
+        return From(value.Value);
     }
 
     public static implicit operator int(SeatingCapacity capacity) => capacity.Value;

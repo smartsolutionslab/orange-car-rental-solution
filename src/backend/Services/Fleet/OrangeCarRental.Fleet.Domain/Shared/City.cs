@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 /// <param name="Value">The city name value.</param>
 public readonly record struct City(string Value) : IValueObject
 {
-    public static City Of(string city)
+    public static City From(string city)
     {
         var trimmed = city?.Trim() ?? string.Empty;
 

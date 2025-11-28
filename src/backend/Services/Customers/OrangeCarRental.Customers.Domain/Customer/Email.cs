@@ -15,7 +15,7 @@ public readonly record struct Email(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The email address.</param>
     /// <exception cref="ArgumentException">Thrown when the email is invalid.</exception>
-    public static Email Of(string value)
+    public static Email From(string value)
     {
         var normalized = value?.Trim().ToLowerInvariant() ?? string.Empty;
 
@@ -27,11 +27,11 @@ public readonly record struct Email(string Value) : IValueObject
         return new Email(normalized);
     }
 
-    public static Email? TryParse(string? value)
+    public static Email? FromNullable(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return Of(value);
+        return From(value);
     }
 
     /// <summary>

@@ -13,7 +13,7 @@ public readonly record struct NotificationContent(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The content text.</param>
     /// <exception cref="ArgumentException">Thrown when content is invalid.</exception>
-    public static NotificationContent Of(string value)
+    public static NotificationContent From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace()

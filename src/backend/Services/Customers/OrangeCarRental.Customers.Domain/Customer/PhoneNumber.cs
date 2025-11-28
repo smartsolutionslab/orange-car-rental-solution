@@ -41,7 +41,7 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
     /// </summary>
     /// <param name="value">The phone number in various formats.</param>
     /// <exception cref="ArgumentException">Thrown when the phone number is invalid.</exception>
-    public static PhoneNumber Of(string value)
+    public static PhoneNumber From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace();
@@ -70,11 +70,11 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
         return new PhoneNumber(normalized);
     }
 
-    public static PhoneNumber? TryParse(string? value)
+    public static PhoneNumber? FromNullable(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return Of(value);
+        return From(value);
     }
 
     private static bool IsValidGermanPhone(string phone)

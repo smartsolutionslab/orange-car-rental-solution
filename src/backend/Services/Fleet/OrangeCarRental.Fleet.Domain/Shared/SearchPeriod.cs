@@ -28,7 +28,7 @@ public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnD
         Of(DateOnly.FromDateTime(pickupDate), DateOnly.FromDateTime(returnDate));
 
 
-    public static SearchPeriod? TryParse(DateOnly? pickupDate, DateOnly? returnDate)
+    public static SearchPeriod? Of(DateOnly? pickupDate, DateOnly? returnDate)
     {
         if (!pickupDate.HasValue || !returnDate.HasValue) return null;
 

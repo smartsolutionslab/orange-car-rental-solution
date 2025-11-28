@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 /// <param name="Value">The vehicle model value.</param>
 public readonly record struct VehicleModel(string Value) : IValueObject
 {
-    public static VehicleModel Of(string value)
+    public static VehicleModel From(string value)
     {
         var trimmed = value?.Trim() ?? string.Empty;
 
@@ -20,11 +20,11 @@ public readonly record struct VehicleModel(string Value) : IValueObject
         return new VehicleModel(trimmed);
     }
 
-    public static VehicleModel? TryParse(string? value)
+    public static VehicleModel? FromNullable(string? value)
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return Of(value);
+        return From(value);
     }
 
     public static implicit operator string(VehicleModel model) => model.Value;

@@ -41,8 +41,8 @@ public readonly record struct Address(string Street, City City, PostalCode Posta
             .AndHasMaxLength(100);
 
         // Create value objects (they handle their own validation)
-        var cityValueObject = City.Of(city);
-        var postalCodeValueObject = PostalCode.Of(postalCode);
+        var cityValueObject = City.From(city);
+        var postalCodeValueObject = PostalCode.From(postalCode);
 
         return new Address(normalizedStreet, cityValueObject, postalCodeValueObject, normalizedCountry);
     }
