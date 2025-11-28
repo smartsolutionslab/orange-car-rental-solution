@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -17,39 +18,32 @@ public sealed class SearchReservationsQueryHandler(IReservationRepository reserv
         SearchReservationsQuery query,
         CancellationToken cancellationToken = default)
     {
+        var parameters = new ReservationSearchParameters(
+            Status: query.Status.TryParseReservationStatus(),
+            CustomerId: CustomerIdentifier.From(query.CustomerId),
+            CustomerName: query.CustomerName,
+            VehicleId: VehicleIdentifier.From(query.VehicleId),
+            CategoryCode: query.CategoryCode,
+            PickupLocationCode: query.PickupLocationCode,
+            PickupDateFrom: query.PickupDateFrom,
+            PickupDateTo: query.PickupDateTo,
+            PriceMin: query.PriceMin,
+            PriceMax: query.PriceMax,
+            SortBy: query.SortBy,
+            SortDescending: query.SortDescending,
+            PageNumber: query.PageNumber,
+            PageSize: query.PageSize
+        );
 
-        var status = query.Status.TryParseReservationStatus();
-        var pickupDateFrom = query.PickupDateFrom;
-        var pickupDateTo = query.PickupDateTo;
-        var customerId = CustomerIdentifier.From(query.CustomerId);
-        var vehicleId = VehicleIdentifier.From(query.VehicleId);
+        // Search reservations using the unified search parameters
+        var pagedResult = await reservations.SearchAsync(parameters, cancellationToken);
 
-        // Search reservations
-        var (reservationsList, totalCount) = await reservations.SearchAsync(
-            status,
-            customerId,
-            query.CustomerName,
-            vehicleId,
-            query.CategoryCode,
-            query.PickupLocationCode,
-            pickupDateFrom,
-            pickupDateTo,
-            query.PriceMin,
-            query.PriceMax,
-            query.SortBy,
-            query.SortDescending,
-            query.PageNumber,
-            query.PageSize,
-            cancellationToken);
-
-        // Map to DTOs
-        var reservationDtos = reservationsList.Select(MapToDto).ToList();
-
+        // Map to DTOs using the PagedResult.Map extension
         return new SearchReservationsResult(
-            reservationDtos,
-            totalCount,
-            query.PageNumber,
-            query.PageSize
+            pagedResult.Items.Select(MapToDto).ToList(),
+            pagedResult.TotalCount,
+            pagedResult.PageNumber,
+            pagedResult.PageSize
         );
     }
 

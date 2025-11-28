@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -26,68 +27,61 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
-        ReservationStatus? status = null,
-        CustomerIdentifier? customerId = null,
-        string? customerName = null,
-        VehicleIdentifier? vehicleId = null,
-        string? categoryCode = null,
-        string? pickupLocationCode = null,
-        DateOnly? pickupDateFrom = null,
-        DateOnly? pickupDateTo = null,
-        decimal? priceMin = null,
-        decimal? priceMax = null,
-        string? sortBy = null,
-        bool sortDescending = false,
-        int pageNumber = 1,
-        int pageSize = 50,
+    public async Task<PagedResult<Reservation>> SearchAsync(
+        ReservationSearchParameters parameters,
         CancellationToken cancellationToken = default)
     {
         var query = context.Reservations.AsNoTracking();
 
         // Apply filters
-        if (status != null)
-            query = query.Where(r => r.Status == status);
+        if (parameters.Status != null)
+            query = query.Where(r => r.Status == parameters.Status);
 
-        if (customerId.HasValue)
-            query = query.Where(r => r.CustomerIdentifier == customerId.Value);
+        if (parameters.CustomerId.HasValue)
+            query = query.Where(r => r.CustomerIdentifier == parameters.CustomerId.Value);
 
         // Note: customerName filter requires denormalized customer data (not yet implemented)
 
-        if (vehicleId.HasValue)
-            query = query.Where(r => r.VehicleIdentifier == vehicleId.Value);
+        if (parameters.VehicleId.HasValue)
+            query = query.Where(r => r.VehicleIdentifier == parameters.VehicleId.Value);
 
         // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
 
-        if (!string.IsNullOrWhiteSpace(pickupLocationCode))
-            query = query.Where(r => r.PickupLocationCode.Value == pickupLocationCode);
+        if (!string.IsNullOrWhiteSpace(parameters.PickupLocationCode))
+            query = query.Where(r => r.PickupLocationCode.Value == parameters.PickupLocationCode);
 
-        if (pickupDateFrom.HasValue)
-            query = query.Where(r => r.Period.PickupDate >= pickupDateFrom.Value);
+        if (parameters.PickupDateFrom.HasValue)
+            query = query.Where(r => r.Period.PickupDate >= parameters.PickupDateFrom.Value);
 
-        if (pickupDateTo.HasValue)
-            query = query.Where(r => r.Period.PickupDate <= pickupDateTo.Value);
+        if (parameters.PickupDateTo.HasValue)
+            query = query.Where(r => r.Period.PickupDate <= parameters.PickupDateTo.Value);
 
         // Price range filters - access GrossAmount from Money complex property
-        if (priceMin.HasValue)
-            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= priceMin.Value);
+        if (parameters.PriceMin.HasValue)
+            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceMin.Value);
 
-        if (priceMax.HasValue)
-            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= priceMax.Value);
+        if (parameters.PriceMax.HasValue)
+            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceMax.Value);
 
-        // Get total count before pagination
+        // Get total count before pagination (executed at database level)
         var totalCount = await query.CountAsync(cancellationToken);
 
         // Apply sorting
-        query = ApplySorting(query, sortBy, sortDescending);
+        query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
 
-        // Apply pagination
-        var reservations = await query
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
+        // Apply pagination (uses Skip/Take properties from SearchParameters)
+        var items = await query
+            .Skip(parameters.Skip)
+            .Take(parameters.Take)
             .ToListAsync(cancellationToken);
 
-        return (reservations, totalCount);
+        return new PagedResult<Reservation>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = parameters.PageNumber,
+            PageSize = parameters.PageSize
+        };
     }
 
     private static IQueryable<Reservation> ApplySorting(

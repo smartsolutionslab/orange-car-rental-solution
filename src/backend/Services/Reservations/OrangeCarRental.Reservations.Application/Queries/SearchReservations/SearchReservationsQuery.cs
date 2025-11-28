@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -34,7 +35,7 @@ public sealed record SearchReservationsQuery(
     string? SortBy = null, // Options: "PickupDate", "Price", "Status", "CreatedDate"
     bool SortDescending = false,
 
-    // Pagination
+    // Pagination - uses standardized defaults from PagedResult
     int PageNumber = 1,
-    int PageSize = 50
+    int PageSize = PagedResult<object>.DefaultPageSize
 ) : IQuery<SearchReservationsResult>;

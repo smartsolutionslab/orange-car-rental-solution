@@ -22,6 +22,6 @@ public abstract record SearchParameters(int PageNumber, int PageSize, string? So
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(PageNumber, 1, nameof(PageNumber));
         ArgumentOutOfRangeException.ThrowIfLessThan(PageSize, 1, nameof(PageSize));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(PageSize, 100, nameof(PageSize));
+        ArgumentOutOfRangeException.ThrowIfGreaterThan(PageSize, PagedResult<object>.MaxPageSize, nameof(PageSize));
     }
 }

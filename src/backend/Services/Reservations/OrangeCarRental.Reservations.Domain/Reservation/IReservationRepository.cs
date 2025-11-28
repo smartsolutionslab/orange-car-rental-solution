@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -18,21 +19,14 @@ public interface IReservationRepository
 
     Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
 
-    Task<(List<Reservation> Reservations, int TotalCount)> SearchAsync(
-        ReservationStatus? status = null,
-        CustomerIdentifier? customerId = null,
-        string? customerName = null,
-        VehicleIdentifier? vehicleId = null,
-        string? categoryCode = null,
-        string? pickupLocationCode = null,
-        DateOnly? pickupDateFrom = null,
-        DateOnly? pickupDateTo = null,
-        decimal? priceMin = null,
-        decimal? priceMax = null,
-        string? sortBy = null,
-        bool sortDescending = false,
-        int pageNumber = 1,
-        int pageSize = 50,
+    /// <summary>
+    ///     Searches reservations with filters, sorting, and pagination.
+    /// </summary>
+    /// <param name="parameters">Search parameters including filters, sorting, and pagination.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A paged result containing reservations and pagination metadata.</returns>
+    Task<PagedResult<Reservation>> SearchAsync(
+        ReservationSearchParameters parameters,
         CancellationToken cancellationToken = default);
 
     Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default);
