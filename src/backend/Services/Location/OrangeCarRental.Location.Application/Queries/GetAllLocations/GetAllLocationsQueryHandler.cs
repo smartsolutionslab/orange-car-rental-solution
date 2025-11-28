@@ -14,7 +14,6 @@ public sealed class GetAllLocationsQueryHandler(ILocationRepository locations)
 
         var dtos = allLocations.Select(l => new LocationDto
         {
-            Id = l.Id.Value,
             Code = l.Code.Value,
             Name = l.Name.Value,
             Address = l.Address.ToString(),

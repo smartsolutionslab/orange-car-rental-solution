@@ -10,30 +10,25 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Domain.Lo
     {
         builder.ToTable("Locations");
 
-        // Primary key
+        // Primary key - LocationCode (natural key)
         builder.HasKey(l => l.Id);
         builder.Property(l => l.Id)
-            .HasColumnName("LocationId")
-            .HasConversion(
-                id => id.Value,
-                value => LocationIdentifier.From(value))
-            .IsRequired();
-
-        // LocationCode value object
-        builder.Property(l => l.Code)
             .HasColumnName("Code")
             .HasConversion(
                 code => code.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
+
+        // Code is an alias for Id, so we ignore it to avoid duplicate mapping
+        builder.Ignore(l => l.Code);
 
         // LocationName value object
         builder.Property(l => l.Name)
             .HasColumnName("Name")
             .HasConversion(
                 name => name.Value,
-                value => LocationName.Of(value))
+                value => LocationName.From(value))
             .HasMaxLength(100)
             .IsRequired();
 
@@ -69,7 +64,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Domain.Lo
             .HasColumnName("OpeningHours")
             .HasConversion(
                 hours => hours.Value,
-                value => OpeningHours.Of(value))
+                value => OpeningHours.From(value))
             .HasMaxLength(500)
             .IsRequired();
 
@@ -105,8 +100,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Domain.Lo
         // Ignore domain events
         builder.Ignore(l => l.DomainEvents);
 
-        // Indexes
-        builder.HasIndex(l => l.Code).IsUnique();
+        // Index for status queries
         builder.HasIndex(l => l.Status);
     }
 }

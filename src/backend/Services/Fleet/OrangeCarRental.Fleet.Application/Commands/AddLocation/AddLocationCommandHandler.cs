@@ -15,7 +15,7 @@ public sealed class AddLocationCommandHandler(ILocationRepository locations)
     /// </summary>
     /// <param name="command">The command with location data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>Result with the new location ID and details.</returns>
+    /// <returns>Result with the new location code and details.</returns>
     public async Task<AddLocationResult> HandleAsync(
         AddLocationCommand command,
         CancellationToken cancellationToken = default)
@@ -23,7 +23,7 @@ public sealed class AddLocationCommandHandler(ILocationRepository locations)
         var (code, name, address) = command;
 
         // Check if location code already exists
-        var existingLocation = await locations.GetByCodeAsync(code, cancellationToken);
+        var existingLocation = await locations.FindByCodeAsync(code, cancellationToken);
         if (existingLocation != null)
         {
             throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
@@ -37,7 +37,6 @@ public sealed class AddLocationCommandHandler(ILocationRepository locations)
         await locations.SaveChangesAsync(cancellationToken);
 
         return new AddLocationResult(
-            location.Id.Value,
             location.Code.Value,
             location.Name.Value,
             location.Address.FullAddress,

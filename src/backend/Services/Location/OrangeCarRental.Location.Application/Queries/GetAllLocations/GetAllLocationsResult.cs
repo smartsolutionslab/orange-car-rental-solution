@@ -2,7 +2,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Application.Queries.GetAllL
 
 public sealed record LocationDto
 {
-    public required Guid Id { get; init; }
     public required string Code { get; init; }
     public required string Name { get; init; }
     public required string Address { get; init; }

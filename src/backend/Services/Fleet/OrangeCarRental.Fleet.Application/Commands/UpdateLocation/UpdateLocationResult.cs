@@ -4,7 +4,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLoc
 ///     Result of updating a location.
 /// </summary>
 public sealed record UpdateLocationResult(
-    Guid LocationId,
     string Code,
     string Name,
     string FullAddress,

@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 /// </summary>
 public readonly record struct OpeningHours(string Value) : IValueObject
 {
-    public static OpeningHours Of(string value)
+    public static OpeningHours From(string value)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
@@ -21,12 +21,12 @@ public readonly record struct OpeningHours(string Value) : IValueObject
     /// <summary>
     ///     Standard German business hours.
     /// </summary>
-    public static OpeningHours Standard => Of("Mo-Fr: 08:00-18:00, Sa: 09:00-14:00");
+    public static OpeningHours Standard => From("Mo-Fr: 08:00-18:00, Sa: 09:00-14:00");
 
     /// <summary>
     ///     24/7 operation.
     /// </summary>
-    public static OpeningHours TwentyFourSeven => Of("24/7");
+    public static OpeningHours TwentyFourSeven => From("24/7");
 
     public override string ToString() => Value;
 }

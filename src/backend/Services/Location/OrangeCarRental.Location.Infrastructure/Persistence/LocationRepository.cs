@@ -7,21 +7,21 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 public sealed class LocationRepository(LocationsDbContext context) : ILocationRepository
 {
     public async Task<Domain.Location.Location> GetByIdAsync(
-        LocationIdentifier id,
+        LocationCode code,
         CancellationToken cancellationToken = default)
     {
         var location = await context.Locations
-            .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
 
-        return location ?? throw new EntityNotFoundException(typeof(Domain.Location.Location), id);
+        return location ?? throw new EntityNotFoundException(typeof(Domain.Location.Location), code.Value);
     }
 
-    public async Task<Domain.Location.Location?> GetByCodeAsync(
+    public async Task<Domain.Location.Location?> FindByCodeAsync(
         LocationCode code,
         CancellationToken cancellationToken = default)
     {
         return await context.Locations
-            .FirstOrDefaultAsync(l => l.Code == code, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
     }
 
     public async Task<List<Domain.Location.Location>> GetAllActiveAsync(

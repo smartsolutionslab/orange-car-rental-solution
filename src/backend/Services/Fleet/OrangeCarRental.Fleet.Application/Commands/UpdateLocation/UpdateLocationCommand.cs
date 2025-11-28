@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLoc
 ///     Command to update location information.
 /// </summary>
 public sealed record UpdateLocationCommand(
-    LocationIdentifier LocationId,
+    LocationCode Code,
     LocationName Name,
     Address Address
 ) : ICommand<UpdateLocationResult>;

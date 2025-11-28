@@ -5,21 +5,25 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 /// <summary>
 ///     Location aggregate root.
 ///     Represents a rental station where vehicles can be picked up or returned.
+///     Uses LocationCode as the natural key/identity.
 /// </summary>
-public sealed class Location : AggregateRoot<LocationIdentifier>
+public sealed class Location : AggregateRoot<LocationCode>
 {
     // For EF Core
     private Location()
     {
-        Code = default;
         Name = default;
         Address = default;
         OpeningHours = default;
         Contact = default;
     }
 
+    /// <summary>
+    ///     The location code (natural key/identity). Alias for Id.
+    /// </summary>
+    public LocationCode Code => Id;
+
     // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public LocationCode Code { get; init; }
     public LocationName Name { get; init; }
     public LocationAddress Address { get; init; }
     public GeoCoordinates? Coordinates { get; init; }
@@ -42,8 +46,7 @@ public sealed class Location : AggregateRoot<LocationIdentifier>
     {
         return new Location
         {
-            Id = LocationIdentifier.New(),
-            Code = code,
+            Id = code,
             Name = name,
             Address = address,
             Coordinates = coordinates,
@@ -68,7 +71,6 @@ public sealed class Location : AggregateRoot<LocationIdentifier>
         return new Location
         {
             Id = Id,
-            Code = Code,
             Name = name ?? Name,
             Address = address ?? Address,
             Coordinates = coordinates ?? Coordinates,

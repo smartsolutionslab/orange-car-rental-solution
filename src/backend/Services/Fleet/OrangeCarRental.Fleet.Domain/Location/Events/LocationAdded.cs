@@ -6,7 +6,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location.Events;
 ///     Domain event raised when a new location is added.
 /// </summary>
 public sealed record LocationAdded(
-    LocationIdentifier LocationId,
     LocationCode Code,
     LocationName Name
 ) : DomainEvent;

@@ -8,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 /// </summary>
 public readonly record struct LocationCode(string Value) : IValueObject
 {
-    public static LocationCode Of(string value)
+    public static LocationCode From(string value)
     {
         Ensure.That(value, nameof(value))
             .IsNotNullOrWhiteSpace()

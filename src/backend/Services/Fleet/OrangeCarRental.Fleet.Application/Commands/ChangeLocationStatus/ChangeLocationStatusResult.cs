@@ -4,7 +4,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLoc
 ///     Result of changing location status.
 /// </summary>
 public sealed record ChangeLocationStatusResult(
-    Guid LocationId,
     string Code,
     string OldStatus,
     string NewStatus,

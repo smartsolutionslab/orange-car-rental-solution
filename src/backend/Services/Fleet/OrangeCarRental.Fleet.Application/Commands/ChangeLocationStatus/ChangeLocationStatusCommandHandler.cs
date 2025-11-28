@@ -13,25 +13,25 @@ public sealed class ChangeLocationStatusCommandHandler(ILocationRepository locat
     /// <summary>
     ///     Handles the change location status command.
     /// </summary>
-    /// <param name="command">The command with location ID and new status.</param>
+    /// <param name="command">The command with location code and new status.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with old and new status.</returns>
     public async Task<ChangeLocationStatusResult> HandleAsync(
         ChangeLocationStatusCommand command,
         CancellationToken cancellationToken = default)
     {
-        var (locationId, newStatus, reason) = command;
+        var (code, newStatus, reason) = command;
 
-        var location = await locations.GetByIdAsync(locationId, cancellationToken);
+        var location = await locations.GetByCodeAsync(code, cancellationToken);
         var oldStatus = location.Status;
 
-        location = location.ChangeStatus(newStatus, reason);
+        var statusChangeReason = StatusChangeReason.FromNullable(reason);
+        location = location.ChangeStatus(newStatus, statusChangeReason);
 
         await locations.UpdateAsync(location, cancellationToken);
         await locations.SaveChangesAsync(cancellationToken);
 
         return new ChangeLocationStatusResult(
-            location.Id.Value,
             location.Code.Value,
             oldStatus.ToString(),
             newStatus.ToString(),

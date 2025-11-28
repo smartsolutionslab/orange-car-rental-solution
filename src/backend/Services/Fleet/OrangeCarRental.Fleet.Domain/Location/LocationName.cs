@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 /// <param name="Value">The location name value.</param>
 public readonly record struct LocationName(string Value) : IValueObject
 {
-    public static LocationName Of(string name)
+    public static LocationName From(string name)
     {
         var trimmed = name?.Trim() ?? string.Empty;
 
@@ -19,6 +19,13 @@ public readonly record struct LocationName(string Value) : IValueObject
             .AndHasMaxLength(100);
 
         return new LocationName(trimmed);
+    }
+
+    public static LocationName? FromNullable(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return From(value);
     }
 
     public static implicit operator string(LocationName name) => name.Value;

@@ -9,18 +9,18 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 /// </summary>
 public sealed class LocationRepository(FleetDbContext context) : ILocationRepository
 {
-    public async Task<Location> GetByIdAsync(LocationIdentifier id, CancellationToken cancellationToken = default)
+    public async Task<Location> GetByCodeAsync(LocationCode code, CancellationToken cancellationToken = default)
     {
         var location = await context.Locations
-            .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
 
-        return location ?? throw new EntityNotFoundException(typeof(Location), id);
+        return location ?? throw new EntityNotFoundException(typeof(Location), code.Value);
     }
 
-    public async Task<Location?> GetByCodeAsync(LocationCode code, CancellationToken cancellationToken = default)
+    public async Task<Location?> FindByCodeAsync(LocationCode code, CancellationToken cancellationToken = default)
     {
         return await context.Locations
-            .FirstOrDefaultAsync(l => l.Code == code, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
     }
 
     public async Task<List<Location>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -38,10 +38,10 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<bool> ExistsWithCodeAsync(LocationCode code, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsAsync(LocationCode code, CancellationToken cancellationToken = default)
     {
         return await context.Locations
-            .AnyAsync(l => l.Code == code, cancellationToken);
+            .AnyAsync(l => l.Id == code, cancellationToken);
     }
 
     public async Task AddAsync(Location location, CancellationToken cancellationToken = default)
@@ -55,10 +55,10 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
         return Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(LocationIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(LocationCode code, CancellationToken cancellationToken = default)
     {
         var location = await context.Locations
-            .FirstOrDefaultAsync(l => l.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
 
         if (location != null)
         {

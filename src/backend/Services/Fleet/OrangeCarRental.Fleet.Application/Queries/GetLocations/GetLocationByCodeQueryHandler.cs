@@ -22,9 +22,7 @@ public sealed class GetLocationByCodeQueryHandler(ILocationRepository locations)
     {
         var location = await locations.GetByCodeAsync(query.Code, cancellationToken);
 
-        if (location == null) throw new ArgumentException($"Location with code '{query.Code.Value}' not found.", nameof(query.Code));
-
-        var (_, code, name, address, _) = location;
+        var (code, name, address, _) = location;
 
         var dto = new LocationDto(
             code.Value,

@@ -45,17 +45,17 @@ public static class FleetEndpoints
                 try
                 {
                     var command = new AddVehicleToFleetCommand(
-                        VehicleName.Of(basicInfo.Name),
-                        VehicleCategory.FromCode(specifications.Category),
-                        LocationCode.Of(locationAndPricing.LocationCode),
+                        VehicleName.From(basicInfo.Name),
+                        VehicleCategory.From(specifications.Category),
+                        LocationCode.From(locationAndPricing.LocationCode),
                         Money.Euro(locationAndPricing.DailyRateNet),
-                        SeatingCapacity.Of(specifications.Seats),
+                        SeatingCapacity.From(specifications.Seats),
                         specifications.FuelType.ParseFuelType(),
                         specifications.TransmissionType.ParseTransmissionType(),
                         registration?.LicensePlate,
-                        Manufacturer.TryParse(basicInfo.Manufacturer),
-                        VehicleModel.TryParse(basicInfo.Model),
-                        ManufacturingYear.TryParse(basicInfo.Year),
+                        Manufacturer.FromNullable(basicInfo.Manufacturer),
+                        VehicleModel.FromNullable(basicInfo.Model),
+                        ManufacturingYear.FromNullable(basicInfo.Year),
                         basicInfo.ImageUrl
                     );
 
@@ -121,7 +121,7 @@ public static class FleetEndpoints
                 {
                     var command = new UpdateVehicleLocationCommand(
                         VehicleIdentifier.From(id),
-                        LocationCode.Of(locationCode));
+                        LocationCode.From(locationCode));
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -214,7 +214,7 @@ public static class FleetEndpoints
                 {
                     var result = await handler.HandleAsync(
                         new GetLocationByCodeQuery(
-                            LocationCode.Of(code)
+                            LocationCode.From(code)
                         ),
                         cancellationToken);
                     return Results.Ok(result);
@@ -249,12 +249,12 @@ public static class FleetEndpoints
                 try
                 {
                     var command = new AddLocationCommand(
-                        LocationCode.Of(code),
-                        LocationName.Of(name),
+                        LocationCode.From(code),
+                        LocationName.From(name),
                         Address.Of(
-                            Street.Of(street),
-                            City.Of(city),
-                            PostalCode.Of(postalCode))
+                            Street.From(street),
+                            City.From(city),
+                            PostalCode.From(postalCode))
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -277,9 +277,9 @@ public static class FleetEndpoints
             .ProducesProblem(StatusCodes.Status409Conflict)
             .RequireAuthorization("AdminPolicy");
 
-        // PUT /api/locations/{id} - Update location information
-        locations.MapPut("/{id:guid}", async (
-                Guid id,
+        // PUT /api/locations/{code} - Update location information
+        locations.MapPut("/{code}", async (
+                string code,
                 string name,
                 string street,
                 string city,
@@ -290,12 +290,12 @@ public static class FleetEndpoints
                 try
                 {
                     var command = new UpdateLocationCommand(
-                        LocationIdentifier.From(id),
-                        LocationName.Of(name),
+                        LocationCode.From(code),
+                        LocationName.From(name),
                         Address.Of(
-                            Street.Of(street),
-                            City.Of(city),
-                            PostalCode.Of(postalCode))
+                            Street.From(street),
+                            City.From(city),
+                            PostalCode.From(postalCode))
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -312,15 +312,15 @@ public static class FleetEndpoints
             })
             .WithName("UpdateLocation")
             .WithSummary("Update location information")
-            .WithDescription("Updates the name and address of a location.")
+            .WithDescription("Updates the name and address of a location by its code.")
             .Produces<UpdateLocationResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization("AdminPolicy");
 
-        // PATCH /api/locations/{id}/status - Change location status
-        locations.MapPatch("/{id:guid}/status", async (
-                Guid id,
+        // PATCH /api/locations/{code}/status - Change location status
+        locations.MapPatch("/{code}/status", async (
+                string code,
                 string status,
                 string? reason,
                 ChangeLocationStatusCommandHandler handler,
@@ -329,7 +329,7 @@ public static class FleetEndpoints
                 try
                 {
                     var command = new ChangeLocationStatusCommand(
-                        LocationIdentifier.From(id),
+                        LocationCode.From(code),
                         status.ParseLocationStatus(),
                         reason
                     );
@@ -348,7 +348,7 @@ public static class FleetEndpoints
             })
             .WithName("ChangeLocationStatus")
             .WithSummary("Change location status")
-            .WithDescription("Changes the status of a location (Active, Closed, UnderMaintenance, Inactive).")
+            .WithDescription("Changes the status of a location by its code (Active, Closed, UnderMaintenance, Inactive).")
             .Produces<ChangeLocationStatusResult>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)

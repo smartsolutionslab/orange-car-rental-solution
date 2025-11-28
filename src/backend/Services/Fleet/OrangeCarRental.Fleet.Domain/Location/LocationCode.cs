@@ -10,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 /// <param name="Value">The location code value.</param>
 public readonly record struct LocationCode(string Value) : IValueObject
 {
-    public static LocationCode Of(string code)
+    public static LocationCode From(string code)
     {
         var trimmed = code?.Trim().ToUpperInvariant() ?? string.Empty;
 
@@ -21,11 +21,11 @@ public readonly record struct LocationCode(string Value) : IValueObject
         return new LocationCode(trimmed);
     }
 
-    public static LocationCode? TryParse(string? value)
+    public static LocationCode? FromNullable(string? value)
     {
-        if(string.IsNullOrWhiteSpace(value)) return null;
+        if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return Of(value);
+        return From(value);
     }
 
     public static implicit operator string(LocationCode code) => code.Value;

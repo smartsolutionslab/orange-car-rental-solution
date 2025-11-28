@@ -8,21 +8,21 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 public interface ILocationRepository
 {
     /// <summary>
-    ///     Gets a location by its identifier.
+    ///     Gets a location by its code (the natural key/identity).
     /// </summary>
-    /// <param name="id">The location identifier.</param>
+    /// <param name="code">The location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The location.</returns>
     /// <exception cref="EntityNotFoundException">Thrown when the location is not found.</exception>
-    Task<Location> GetByIdAsync(LocationIdentifier id, CancellationToken cancellationToken = default);
+    Task<Location> GetByCodeAsync(LocationCode code, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Gets a location by its code.
+    ///     Tries to get a location by its code.
     /// </summary>
     /// <param name="code">The location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The location if found, otherwise null.</returns>
-    Task<Location?> GetByCodeAsync(LocationCode code, CancellationToken cancellationToken = default);
+    Task<Location?> FindByCodeAsync(LocationCode code, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets all locations.
@@ -44,7 +44,7 @@ public interface ILocationRepository
     /// <param name="code">The location code to check.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>True if location exists, otherwise false.</returns>
-    Task<bool> ExistsWithCodeAsync(LocationCode code, CancellationToken cancellationToken = default);
+    Task<bool> ExistsAsync(LocationCode code, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Adds a new location.
@@ -61,11 +61,11 @@ public interface ILocationRepository
     Task UpdateAsync(Location location, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Deletes a location.
+    ///     Deletes a location by its code.
     /// </summary>
-    /// <param name="id">The location identifier.</param>
+    /// <param name="code">The location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    Task DeleteAsync(LocationIdentifier id, CancellationToken cancellationToken = default);
+    Task DeleteAsync(LocationCode code, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Saves all pending changes.

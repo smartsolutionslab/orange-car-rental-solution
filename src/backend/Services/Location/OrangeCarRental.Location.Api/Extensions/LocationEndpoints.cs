@@ -34,7 +34,7 @@ public static class LocationEndpoints
                 try
                 {
                     var result = await handler.HandleAsync(command, cancellationToken);
-                    return Results.Created($"/api/locations/{result.LocationId}", result);
+                    return Results.Created($"/api/locations/{result.Code}", result);
                 }
                 catch (ArgumentException ex)
                 {

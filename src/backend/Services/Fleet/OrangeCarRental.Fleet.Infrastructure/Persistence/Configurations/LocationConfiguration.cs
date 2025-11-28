@@ -14,30 +14,25 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
     {
         builder.ToTable("Locations");
 
-        // Primary key - LocationIdentifier struct with Guid value
+        // Primary key - LocationCode (natural key)
         builder.HasKey(l => l.Id);
         builder.Property(l => l.Id)
-            .HasColumnName("LocationId")
-            .HasConversion(
-                id => id.Value,
-                value => LocationIdentifier.From(value))
-            .IsRequired();
-
-        // LocationCode value object - unique identifier
-        builder.Property(l => l.Code)
             .HasColumnName("Code")
             .HasConversion(
                 code => code.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
+
+        // Code is an alias for Id, so we ignore it to avoid duplicate mapping
+        builder.Ignore(l => l.Code);
 
         // LocationName value object
         builder.Property(l => l.Name)
             .HasColumnName("Name")
             .HasConversion(
                 name => name.Value,
-                value => LocationName.Of(value))
+                value => LocationName.From(value))
             .HasMaxLength(100)
             .IsRequired();
 
@@ -48,7 +43,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
                 .HasColumnName("Street")
                 .HasConversion(
                     street => street.Value,
-                    value => Street.Of(value))
+                    value => Street.From(value))
                 .HasMaxLength(200)
                 .IsRequired();
 
@@ -56,7 +51,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
                 .HasColumnName("City")
                 .HasConversion(
                     city => city.Value,
-                    value => City.Of(value))
+                    value => City.From(value))
                 .HasMaxLength(100)
                 .IsRequired();
 
@@ -64,7 +59,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
                 .HasColumnName("PostalCode")
                 .HasConversion(
                     postalCode => postalCode.Value,
-                    value => PostalCode.Of(value))
+                    value => PostalCode.From(value))
                 .HasMaxLength(20)
                 .IsRequired();
         });
@@ -79,10 +74,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
         // Ignore domain events (not persisted)
         builder.Ignore(l => l.DomainEvents);
 
-        // Indexes for common queries
-        builder.HasIndex(l => l.Code)
-            .IsUnique(); // Location code must be unique
-
+        // Index for status queries
         builder.HasIndex(l => l.Status);
     }
 }

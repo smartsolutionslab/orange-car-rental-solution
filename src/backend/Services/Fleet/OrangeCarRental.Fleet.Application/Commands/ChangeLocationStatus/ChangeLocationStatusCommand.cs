@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLoc
 ///     Command to change location status.
 /// </summary>
 public sealed record ChangeLocationStatusCommand(
-    LocationIdentifier LocationId,
+    LocationCode Code,
     LocationStatus NewStatus,
     string? Reason = null
 ) : ICommand<ChangeLocationStatusResult>;

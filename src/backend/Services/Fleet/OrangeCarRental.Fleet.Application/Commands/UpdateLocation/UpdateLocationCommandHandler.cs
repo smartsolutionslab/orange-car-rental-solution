@@ -13,16 +13,16 @@ public sealed class UpdateLocationCommandHandler(ILocationRepository locations)
     /// <summary>
     ///     Handles the update location command.
     /// </summary>
-    /// <param name="command">The command with location ID and new information.</param>
+    /// <param name="command">The command with location code and new information.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Result with updated location details.</returns>
     public async Task<UpdateLocationResult> HandleAsync(
         UpdateLocationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var (locationId, name, address) = command;
+        var (code, name, address) = command;
 
-        var location = await locations.GetByIdAsync(locationId, cancellationToken);
+        var location = await locations.GetByCodeAsync(code, cancellationToken);
 
         location = location.UpdateInformation(name, address);
 
@@ -30,7 +30,6 @@ public sealed class UpdateLocationCommandHandler(ILocationRepository locations)
         await locations.SaveChangesAsync(cancellationToken);
 
         return new UpdateLocationResult(
-            location.Id.Value,
             location.Code.Value,
             location.Name.Value,
             location.Address.FullAddress,
