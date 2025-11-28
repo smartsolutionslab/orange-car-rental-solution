@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ConfigService } from '../../services/config.service';
+import { Reservation } from '../../services/reservation.model';
 import { of } from 'rxjs';
 
 /**
@@ -25,7 +26,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
   const apiUrl = 'http://localhost:5000';
 
-  const mockReservations = [
+  const mockReservations: Reservation[] = [
     {
       reservationId: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',

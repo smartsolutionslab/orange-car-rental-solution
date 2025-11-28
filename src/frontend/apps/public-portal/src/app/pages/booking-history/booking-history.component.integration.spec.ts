@@ -4,6 +4,7 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
+import { Reservation } from '../../services/reservation.model';
 
 /**
  * Integration Tests for Booking History Component
@@ -17,7 +18,7 @@ describe('BookingHistoryComponent (Integration)', () => {
 
   const apiUrl = 'http://localhost:5000';
 
-  const mockReservations = [
+  const mockReservations: Reservation[] = [
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',

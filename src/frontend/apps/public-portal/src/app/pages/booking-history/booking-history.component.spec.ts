@@ -1,7 +1,8 @@
-import { ComponentFixture, TestBed, fakeAsync, tick, flush } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
+import { Reservation } from '../../services/reservation.model';
 import { of, throwError } from 'rxjs';
 
 describe('BookingHistoryComponent', () => {
@@ -10,7 +11,7 @@ describe('BookingHistoryComponent', () => {
   let mockReservationService: jasmine.SpyObj<ReservationService>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
-  const mockReservations = [
+  const mockReservations: Reservation[] = [
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
@@ -237,7 +238,7 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should check if reservation can be cancelled', () => {
-      const futureReservation = {
+      const futureReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
         status: 'Confirmed'
@@ -247,7 +248,7 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should not allow cancellation within 48 hours', () => {
-      const soonReservation = {
+      const soonReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
         status: 'Confirmed'
@@ -257,7 +258,7 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should not allow cancellation of completed reservations', () => {
-      const completedReservation = {
+      const completedReservation: Reservation = {
         ...mockReservations[2],
         status: 'Completed'
       };
@@ -393,7 +394,7 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should handle reservations with missing dates', () => {
-      const invalidReservation = {
+      const invalidReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: '',
         returnDate: ''

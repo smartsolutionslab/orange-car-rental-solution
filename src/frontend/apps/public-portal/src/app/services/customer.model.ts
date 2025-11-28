@@ -3,9 +3,6 @@ import {
   EmailAddress,
   PhoneNumber,
   ISODateString,
-  LicenseNumber,
-  CountryCode,
-  PostalCode,
   AddressDetails,
   DriversLicenseDetails
 } from './reservation.model';
