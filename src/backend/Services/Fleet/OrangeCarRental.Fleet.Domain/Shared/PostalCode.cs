@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -20,8 +21,8 @@ public readonly record struct PostalCode(string Value) : IValueObject
         if (!string.IsNullOrEmpty(trimmed))
         {
             // German postal codes are 5 digits
-            if (trimmed.Length != 5 || !trimmed.All(char.IsDigit))
-                throw new ArgumentException("German postal code must be exactly 5 digits", nameof(postalCode));
+            Ensure.That(trimmed, nameof(postalCode))
+                .ThrowIf(trimmed.Length != 5 || !trimmed.All(char.IsDigit), "German postal code must be exactly 5 digits");
         }
 
         return new PostalCode(trimmed);

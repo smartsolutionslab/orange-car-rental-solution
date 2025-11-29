@@ -1,9 +1,11 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Location.Domain;
 using SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Location.Application.Commands.CreateLocation;
 
-public sealed class CreateLocationCommandHandler(ILocationRepository locations)
+public sealed class CreateLocationCommandHandler(
+    ILocationsUnitOfWork unitOfWork)
     : ICommandHandler<CreateLocationCommand, CreateLocationResult>
 {
     public async Task<CreateLocationResult> HandleAsync(
@@ -23,6 +25,8 @@ public sealed class CreateLocationCommandHandler(ILocationRepository locations)
             coordinates = GeoCoordinates.Of(command.Latitude.Value, command.Longitude.Value);
         }
 
+        var locations = unitOfWork.Locations;
+
         // Check if location with same code already exists
         var existingLocation = await locations.FindByCodeAsync(code, cancellationToken);
         if (existingLocation != null)
@@ -36,7 +40,7 @@ public sealed class CreateLocationCommandHandler(ILocationRepository locations)
 
         // Persist
         await locations.AddAsync(location, cancellationToken);
-        await locations.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateLocationResult
         {

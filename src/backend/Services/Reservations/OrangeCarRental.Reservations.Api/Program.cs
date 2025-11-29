@@ -10,6 +10,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Create
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
@@ -77,7 +78,8 @@ builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
 
 Log.Information("Customers API: Using Aspire Service Discovery (http://customers-api)");
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IReservationsUnitOfWork, ReservationsUnitOfWork>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register application handlers

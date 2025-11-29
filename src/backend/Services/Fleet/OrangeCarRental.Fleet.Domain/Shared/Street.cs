@@ -18,8 +18,8 @@ public readonly record struct Street(string Value) : IValueObject
         // Street can be empty/optional
         var trimmed = street?.Trim() ?? string.Empty;
 
-        if (trimmed.Length > 200)
-            throw new ArgumentException("Street address cannot exceed 200 characters", nameof(street));
+        Ensure.That(trimmed, nameof(street))
+            .ThrowIf(trimmed.Length > 200, "Street address cannot exceed 200 characters");
 
         return new Street(trimmed);
     }

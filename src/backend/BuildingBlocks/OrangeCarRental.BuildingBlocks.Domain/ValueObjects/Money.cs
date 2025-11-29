@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
@@ -7,7 +9,10 @@ namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 /// <param name="NetAmount">Net amount (before VAT).</param>
 /// <param name="VatAmount">VAT amount.</param>
 /// <param name="Currency">Currency code (ISO 4217).</param>
-public readonly record struct Money(decimal NetAmount, decimal VatAmount, Currency Currency) : IValueObject
+public readonly record struct Money(
+    decimal NetAmount,
+    decimal VatAmount,
+    Currency Currency) : IValueObject
 {
     /// <summary>
     ///     Gross amount (net + VAT).
@@ -27,8 +32,7 @@ public readonly record struct Money(decimal NetAmount, decimal VatAmount, Curren
     /// <param name="currency">Currency.</param>
     public static Money Of(decimal netAmount, decimal vatRate, Currency currency)
     {
-        if (netAmount < 0)
-            throw new ArgumentException("Net amount cannot be negative", nameof(netAmount));
+        Ensure.That(netAmount, nameof(netAmount)).IsNotNegative();
 
         var roundedNetAmount = Math.Round(netAmount, 2);
         var vatAmount = Math.Round(roundedNetAmount * vatRate, 2);
@@ -44,8 +48,7 @@ public readonly record struct Money(decimal NetAmount, decimal VatAmount, Curren
     /// <param name="currency">Currency.</param>
     public static Money FromGross(decimal grossAmount, decimal vatRate, Currency currency)
     {
-        if (grossAmount < 0)
-            throw new ArgumentException("Gross amount cannot be negative", nameof(grossAmount));
+        Ensure.That(grossAmount, nameof(grossAmount)).IsNotNegative();
 
         var netAmount = Math.Round(grossAmount / (1 + vatRate), 2);
         var vatAmount = Math.Round(grossAmount - netAmount, 2);

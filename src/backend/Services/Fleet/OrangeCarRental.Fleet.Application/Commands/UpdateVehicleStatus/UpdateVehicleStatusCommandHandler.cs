@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Handler for UpdateVehicleStatusCommand.
 ///     Updates a vehicle's operational status.
 /// </summary>
-public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicles)
+public sealed class UpdateVehicleStatusCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<UpdateVehicleStatusCommand, UpdateVehicleStatusResult>
 {
     /// <summary>
@@ -23,6 +24,7 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
     {
         var (vehicleId, newStatus) = command;
 
+        var vehicles = unitOfWork.Vehicles;
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
         var oldStatus = vehicle.Status;
 
@@ -30,7 +32,7 @@ public sealed class UpdateVehicleStatusCommandHandler(IVehicleRepository vehicle
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
-        await vehicles.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateVehicleStatusResult(
             vehicle.Id.Value,

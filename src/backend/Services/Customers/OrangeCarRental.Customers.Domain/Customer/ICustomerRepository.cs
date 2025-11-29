@@ -52,8 +52,8 @@ public interface ICustomerRepository
     ///     Gets all customers (use with caution - prefer SearchAsync for large datasets).
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>List of all customers.</returns>
-    Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken = default);
+    /// <returns>An immutable read-only list of all customers.</returns>
+    Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Searches customers with database-level filtering, sorting, and pagination.
@@ -86,10 +86,4 @@ public interface ICustomerRepository
     /// <param name="id">The customer ID to delete.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Saves all pending changes to the database.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -20,7 +21,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         return reservation ?? throw new EntityNotFoundException(typeof(Reservation), id);
     }
 
-    public async Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Reservation>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Reservations
             .AsNoTracking()
@@ -47,40 +48,47 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
         // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
 
-        if (!string.IsNullOrWhiteSpace(parameters.PickupLocationCode))
-            query = query.Where(r => r.PickupLocationCode.Value == parameters.PickupLocationCode);
+        if (parameters.PickupLocationCode.HasValue)
+            query = query.Where(r => r.PickupLocationCode == parameters.PickupLocationCode.Value);
 
-        if (parameters.PickupDateFrom.HasValue)
-            query = query.Where(r => r.Period.PickupDate >= parameters.PickupDateFrom.Value);
+        // Pickup date range filtering
+        if (parameters.PickupDateRange is { HasFilter: true })
+        {
+            if (parameters.PickupDateRange.From.HasValue)
+                query = query.Where(r => r.Period.PickupDate >= parameters.PickupDateRange.From.Value);
 
-        if (parameters.PickupDateTo.HasValue)
-            query = query.Where(r => r.Period.PickupDate <= parameters.PickupDateTo.Value);
+            if (parameters.PickupDateRange.To.HasValue)
+                query = query.Where(r => r.Period.PickupDate <= parameters.PickupDateRange.To.Value);
+        }
 
         // Price range filters - access GrossAmount from Money complex property
-        if (parameters.PriceMin.HasValue)
-            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceMin.Value);
+        if (parameters.PriceRange is { HasFilter: true })
+        {
+            if (parameters.PriceRange.Min.HasValue)
+                query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceRange.Min.Value);
 
-        if (parameters.PriceMax.HasValue)
-            query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceMax.Value);
+            if (parameters.PriceRange.Max.HasValue)
+                query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceRange.Max.Value);
+        }
 
         // Get total count before pagination (executed at database level)
         var totalCount = await query.CountAsync(cancellationToken);
 
         // Apply sorting
-        query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
+        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
 
         // Apply pagination (uses Skip/Take properties from SearchParameters)
         var items = await query
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
+            .Skip(parameters.Paging.Skip)
+            .Take(parameters.Paging.Take)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Reservation>
         {
             Items = items,
             TotalCount = totalCount,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
+            PageNumber = parameters.Paging.PageNumber,
+            PageSize = parameters.Paging.PageSize
         };
     }
 
@@ -135,9 +143,6 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
             context.Reservations.Remove(reservation);
         }
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
 
     public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
        BookingPeriod period,

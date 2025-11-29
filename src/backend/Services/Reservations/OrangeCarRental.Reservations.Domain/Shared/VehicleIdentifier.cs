@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -20,8 +21,7 @@ public readonly record struct VehicleIdentifier(Guid Value) : IValueObject
     /// <returns>A new ReservationVehicleId instance.</returns>
     public static VehicleIdentifier From(Guid value)
     {
-        if (value == Guid.Empty)
-            throw new ArgumentException("Vehicle ID cannot be empty", nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
 
         return new(value);
     }

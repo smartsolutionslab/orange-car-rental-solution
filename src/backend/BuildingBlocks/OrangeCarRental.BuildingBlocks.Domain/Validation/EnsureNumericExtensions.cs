@@ -94,6 +94,20 @@ public static class EnsureNumericExtensions
     }
 
     /// <summary>
+    ///     Ensures the value is not negative (greater than or equal to zero).
+    /// </summary>
+    public static Ensurer<T> IsNotNegative<T>(this Ensurer<T> ensurer) where T : IComparable<T>
+    {
+        dynamic value = ensurer.Value;
+        dynamic zero = default(T)!;
+
+        if (value < zero)
+            throw new ArgumentException($"Value cannot be negative but is {ensurer.Value}.", ensurer.ParameterName);
+
+        return ensurer;
+    }
+
+    /// <summary>
     ///     Ensures the value is zero.
     /// </summary>
     public static Ensurer<T> IsZero<T>(this Ensurer<T> ensurer) where T : IComparable<T>
@@ -137,4 +151,16 @@ public static class EnsureNumericExtensions
     /// </summary>
     public static Ensurer<T> AndIsGreaterThan<T>(this Ensurer<T> ensurer, T minimum) where T : IComparable<T> =>
         ensurer.IsGreaterThan(minimum);
+
+    /// <summary>
+    ///     Ensures the value is less than or equal to the specified maximum (alias for fluent readability).
+    /// </summary>
+    public static Ensurer<T> AndIsLessThanOrEqual<T>(this Ensurer<T> ensurer, T maximum) where T : IComparable<T> =>
+        ensurer.IsLessThanOrEqual(maximum);
+
+    /// <summary>
+    ///     Ensures the value is greater than or equal to the specified minimum (alias for fluent readability).
+    /// </summary>
+    public static Ensurer<T> AndIsGreaterThanOrEqual<T>(this Ensurer<T> ensurer, T minimum) where T : IComparable<T> =>
+        ensurer.IsGreaterThanOrEqual(minimum);
 }

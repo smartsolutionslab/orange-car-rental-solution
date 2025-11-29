@@ -1,11 +1,12 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
 public sealed class RefundPaymentCommandHandler(
-    IPaymentRepository payments,
+    IPaymentsUnitOfWork unitOfWork,
     IPaymentService paymentService)
     : ICommandHandler<RefundPaymentCommand, RefundPaymentResult>
 {
@@ -13,6 +14,7 @@ public sealed class RefundPaymentCommandHandler(
         RefundPaymentCommand command,
         CancellationToken cancellationToken = default)
     {
+        var payments = unitOfWork.Payments;
         var paymentId = PaymentIdentifier.From(command.PaymentId);
         var payment = await payments.GetByIdAsync(paymentId, cancellationToken);
 
@@ -46,7 +48,7 @@ public sealed class RefundPaymentCommandHandler(
                 // Mark as refunded
                 payment = payment.MarkAsRefunded();
                 await payments.UpdateAsync(payment, cancellationToken);
-                await payments.SaveChangesAsync(cancellationToken);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
 
                 return new RefundPaymentResult
                 {

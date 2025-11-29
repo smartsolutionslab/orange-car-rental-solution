@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
@@ -17,30 +18,6 @@ public sealed class GetReservationQueryHandler(IReservationRepository reservatio
     {
         var reservation = await reservations.GetByIdAsync(query.ReservationId, cancellationToken);
 
-        return MapToDto(reservation);
-    }
-
-    private static ReservationDto MapToDto(Reservation reservation)
-    {
-        return new ReservationDto(
-            reservation.Id.Value,
-            reservation.VehicleIdentifier.Value,
-            reservation.CustomerIdentifier.Value,
-            reservation.Period.PickupDate,
-            reservation.Period.ReturnDate,
-            reservation.PickupLocationCode.Value,
-            reservation.DropoffLocationCode.Value,
-            reservation.Period.Days,
-            reservation.TotalPrice.NetAmount,
-            reservation.TotalPrice.VatAmount,
-            reservation.TotalPrice.GrossAmount,
-            reservation.TotalPrice.Currency.Code,
-            reservation.Status.ToString(),
-            reservation.CancellationReason,
-            reservation.CreatedAt,
-            reservation.ConfirmedAt,
-            reservation.CancelledAt,
-            reservation.CompletedAt
-        );
+        return reservation.ToDto();
     }
 }

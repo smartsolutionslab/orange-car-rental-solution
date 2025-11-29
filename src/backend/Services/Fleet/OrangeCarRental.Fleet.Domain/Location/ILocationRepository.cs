@@ -28,15 +28,15 @@ public interface ILocationRepository
     ///     Gets all locations.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>List of all locations.</returns>
-    Task<List<Location>> GetAllAsync(CancellationToken cancellationToken = default);
+    /// <returns>An immutable read-only list of all locations.</returns>
+    Task<IReadOnlyList<Location>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets all active locations.
     /// </summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>List of active locations.</returns>
-    Task<List<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+    /// <returns>An immutable read-only list of active locations.</returns>
+    Task<IReadOnlyList<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Checks if a location with the given code exists.
@@ -66,10 +66,4 @@ public interface ILocationRepository
     /// <param name="code">The location code.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     Task DeleteAsync(LocationCode code, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Saves all pending changes.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

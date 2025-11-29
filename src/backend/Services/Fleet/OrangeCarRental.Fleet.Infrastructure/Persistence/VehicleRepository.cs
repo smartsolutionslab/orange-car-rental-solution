@@ -22,7 +22,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
         return vehicle ?? throw new EntityNotFoundException(typeof(Vehicle), id);
     }
 
-    public async Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Vehicles
             .AsNoTracking()
@@ -51,7 +51,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
 
         // Minimum seats filter
         if (parameters.MinSeats.HasValue)
-            query = query.Where(v => v.Seats >= SeatingCapacity.From(parameters.MinSeats.Value));
+            query = query.Where(v => v.Seats >= parameters.MinSeats.Value);
 
         // Fuel type filter
         if (parameters.FuelType.HasValue) query = query.Where(v => v.FuelType == parameters.FuelType.Value);
@@ -61,10 +61,11 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
             query = query.Where(v => v.TransmissionType == parameters.TransmissionType.Value);
 
         // Max daily rate filter
-        if (parameters.MaxDailyRateGross.HasValue)
+        if (parameters.MaxDailyRate.HasValue)
         {
+            var maxRate = parameters.MaxDailyRate.Value;
             query = query.Where(v =>
-                v.DailyRate.NetAmount + v.DailyRate.VatAmount <= parameters.MaxDailyRateGross.Value);
+                v.DailyRate.NetAmount + v.DailyRate.VatAmount <= maxRate.NetAmount + maxRate.VatAmount);
         }
 
         // Status filter
@@ -88,19 +89,22 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
             }
         }
 
+        // Apply sorting
+        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
+
         // Get total count and apply pagination at database level for all queries
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
+            .Skip(parameters.Paging.Skip)
+            .Take(parameters.Paging.Take)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Vehicle>
         {
             Items = items,
             TotalCount = totalCount,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
+            PageNumber = parameters.Paging.PageNumber,
+            PageSize = parameters.Paging.PageSize
         };
     }
 
@@ -130,6 +134,56 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
         }
     }
 
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
+    /// <summary>
+    ///     Applies sorting to the query based on the specified field and direction.
+    /// </summary>
+    private static IQueryable<Vehicle> ApplySorting(
+        IQueryable<Vehicle> query,
+        string? sortBy,
+        bool sortDescending)
+    {
+        if (string.IsNullOrWhiteSpace(sortBy))
+        {
+            // Default sorting: by name ascending
+            return query.OrderBy(v => v.Name);
+        }
+
+        var sortField = sortBy.Trim().ToLowerInvariant();
+
+        return sortField switch
+        {
+            "name" =>
+                sortDescending ? query.OrderByDescending(v => v.Name) : query.OrderBy(v => v.Name),
+
+            "category" or "categorycode" =>
+                sortDescending ? query.OrderByDescending(v => v.Category) : query.OrderBy(v => v.Category),
+
+            "location" or "locationcode" =>
+                sortDescending
+                    ? query.OrderByDescending(v => v.CurrentLocationCode)
+                    : query.OrderBy(v => v.CurrentLocationCode),
+
+            "seats" =>
+                sortDescending ? query.OrderByDescending(v => v.Seats) : query.OrderBy(v => v.Seats),
+
+            "fueltype" or "fuel" =>
+                sortDescending ? query.OrderByDescending(v => v.FuelType) : query.OrderBy(v => v.FuelType),
+
+            "transmissiontype" or "transmission" =>
+                sortDescending
+                    ? query.OrderByDescending(v => v.TransmissionType)
+                    : query.OrderBy(v => v.TransmissionType),
+
+            "dailyrate" or "price" or "rate" =>
+                sortDescending
+                    ? query.OrderByDescending(v => v.DailyRate.NetAmount + v.DailyRate.VatAmount)
+                    : query.OrderBy(v => v.DailyRate.NetAmount + v.DailyRate.VatAmount),
+
+            "status" =>
+                sortDescending ? query.OrderByDescending(v => v.Status) : query.OrderBy(v => v.Status),
+
+            // Default: sort by name
+            _ => query.OrderBy(v => v.Name)
+        };
+    }
 }

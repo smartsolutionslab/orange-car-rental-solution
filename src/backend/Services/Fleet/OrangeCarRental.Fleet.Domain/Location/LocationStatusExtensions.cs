@@ -1,16 +1,16 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 public static class LocationStatusExtensions
 {
     public static LocationStatus ParseLocationStatus(this string value)
     {
-        if (!Enum.TryParse<LocationStatus>(value, true, out var newStatus))
-        {
-            throw new ArgumentException($"Invalid customer status: '{value}'. Valid values are: Active, Closed, UnderMaintenance, Inactive.",
-                nameof(value));
-        }
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Enum.TryParse<LocationStatus>(value, true, out var newStatus),
+                $"Invalid location status: '{value}'. Valid values are: Active, Closed, UnderMaintenance, Inactive.");
 
-        return newStatus;
+        return Enum.Parse<LocationStatus>(value, true);
     }
 
     public static LocationStatus? TryParseLocationStatus(this string? value)

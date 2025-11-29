@@ -69,29 +69,25 @@ public static class MappingExtensions
     /// </summary>
     public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
     {
-        var searchTerm = SearchTerm.FromNullable(query.SearchTerm);
-        var status = query.Status.TryParse();
-        var email = Email.FromNullable(query.Email);
-        var phoneNumber = PhoneNumber.FromNullable(query.PhoneNumber);
-        var city =  City.FromNullable(query.City);
-        var postalCode =  PostalCode.FromNullable(query.PostalCode);
-
         return new CustomerSearchParameters(
-            searchTerm,
-            email,
-            phoneNumber,
-            status,
-            city,
-            postalCode,
-            query.MinAge,
-            query.MaxAge,
-            query.LicenseExpiringWithinDays,
-            query.RegisteredFrom,
-            query.RegisteredTo,
-            query.SortBy,
-            query.SortDescending,
-            query.PageNumber ?? 1,
-            query.PageSize ?? 20);
+            SearchTerm.FromNullable(query.SearchTerm),
+            Email.FromNullable(query.Email),
+            PhoneNumber.FromNullable(query.PhoneNumber),
+            query.Status.TryParse(),
+            City.FromNullable(query.City),
+            PostalCode.FromNullable(query.PostalCode),
+            IntRange.TryCreate(query.MinAge, query.MaxAge, out var ageRange)
+                ? ageRange
+                : null,
+            query.LicenseExpiringWithinDays.HasValue
+                ? IntRange.UpTo(query.LicenseExpiringWithinDays.Value)
+                : null,
+            DateRange.Create(
+                query.RegisteredFrom.HasValue ? DateOnly.FromDateTime(query.RegisteredFrom.Value) : null,
+                query.RegisteredTo.HasValue ? DateOnly.FromDateTime(query.RegisteredTo.Value) : null),
+            PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
+            SortingInfo.Create(query.SortBy, query.SortDescending)
+        );
     }
 
 

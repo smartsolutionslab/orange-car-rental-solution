@@ -5,6 +5,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Services;
@@ -47,7 +48,8 @@ builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextO
         sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IPaymentsUnitOfWork, PaymentsUnitOfWork>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 // Register infrastructure services
@@ -58,16 +60,6 @@ builder.Services.AddScoped<ProcessPaymentCommandHandler>();
 builder.Services.AddScoped<RefundPaymentCommandHandler>();
 
 var app = builder.Build();
-
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<PaymentsDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations
-await app.MigrateDatabaseAsync<PaymentsDbContext>();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

@@ -43,7 +43,7 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
             .AnyAsync(c => c.Email == email && c.Id != excludeCustomerIdentifier, cancellationToken);
     }
 
-    public async Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Customers
             .AsNoTracking()
@@ -90,50 +90,62 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         // Age range filtering - calculated from DateOfBirth
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        if (parameters.MinAge.HasValue)
+        if (parameters.AgeRange is { HasFilter: true })
         {
-            var maxDateOfBirth = today.AddYears(-parameters.MinAge.Value);
-            query = query.Where(c => c.DateOfBirth <= maxDateOfBirth);
-        }
+            if (parameters.AgeRange.Min.HasValue)
+            {
+                var maxDateOfBirth = today.AddYears(-parameters.AgeRange.Min.Value);
+                query = query.Where(c => c.DateOfBirth <= maxDateOfBirth);
+            }
 
-        if (parameters.MaxAge.HasValue)
-        {
-            var minDateOfBirth = today.AddYears(-(parameters.MaxAge.Value + 1));
-            query = query.Where(c => c.DateOfBirth >= minDateOfBirth);
+            if (parameters.AgeRange.Max.HasValue)
+            {
+                var minDateOfBirth = today.AddYears(-(parameters.AgeRange.Max.Value + 1));
+                query = query.Where(c => c.DateOfBirth >= minDateOfBirth);
+            }
         }
 
         // License expiry filtering
-        if (parameters.LicenseExpiringWithinDays.HasValue)
+        if (parameters.LicenseExpiringDays is { HasFilter: true } && parameters.LicenseExpiringDays.Max.HasValue)
         {
-            var expiryThreshold = today.AddDays(parameters.LicenseExpiringWithinDays.Value);
+            var expiryThreshold = today.AddDays(parameters.LicenseExpiringDays.Max.Value);
             query = query.Where(c =>
                 c.DriversLicense.ExpiryDate >= today &&
                 c.DriversLicense.ExpiryDate <= expiryThreshold);
         }
 
         // Registration date range filtering
-        if (parameters.RegisteredFrom.HasValue)
-            query = query.Where(c => c.RegisteredAtUtc >= parameters.RegisteredFrom.Value);
+        if (parameters.RegisteredDateRange is { HasFilter: true })
+        {
+            if (parameters.RegisteredDateRange.From.HasValue)
+            {
+                var fromDate = parameters.RegisteredDateRange.From.Value.ToDateTime(TimeOnly.MinValue);
+                query = query.Where(c => c.RegisteredAtUtc >= fromDate);
+            }
 
-        if (parameters.RegisteredTo.HasValue)
-            query = query.Where(c => c.RegisteredAtUtc <= parameters.RegisteredTo.Value);
+            if (parameters.RegisteredDateRange.To.HasValue)
+            {
+                var toDate = parameters.RegisteredDateRange.To.Value.ToDateTime(TimeOnly.MaxValue);
+                query = query.Where(c => c.RegisteredAtUtc <= toDate);
+            }
+        }
 
         // Apply sorting
-        query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
+        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
 
         // Get total count and apply pagination
         var totalCount = await query.CountAsync(cancellationToken);
         var items = await query
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
+            .Skip(parameters.Paging.Skip)
+            .Take(parameters.Paging.Take)
             .ToListAsync(cancellationToken);
 
         return new PagedResult<Customer>
         {
             Items = items,
             TotalCount = totalCount,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
+            PageNumber = parameters.Paging.PageNumber,
+            PageSize = parameters.Paging.PageSize
         };
     }
 
@@ -151,9 +163,6 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         var customer = await GetByIdAsync(id, cancellationToken);
         context.Customers.Remove(customer);
     }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
 
     /// <summary>
     ///     Applies sorting to the query based on the specified field and direction.

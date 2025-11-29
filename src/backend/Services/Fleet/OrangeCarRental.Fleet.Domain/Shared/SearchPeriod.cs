@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -15,8 +16,8 @@ public readonly record struct SearchPeriod(DateOnly PickupDate, DateOnly ReturnD
     /// </summary>
     public static SearchPeriod Of(DateOnly pickupDate, DateOnly returnDate)
     {
-        if (returnDate < pickupDate)
-            throw new ArgumentException("Return date must be on or after pickup date", nameof(returnDate));
+        Ensure.That(returnDate, nameof(returnDate))
+            .ThrowIf(returnDate < pickupDate, "Return date must be on or after pickup date");
 
         return new SearchPeriod(pickupDate, returnDate);
     }

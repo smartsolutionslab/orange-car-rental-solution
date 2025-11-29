@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendEmail;
@@ -9,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.S
 ///     Sends an email notification and tracks its status.
 /// </summary>
 public sealed class SendEmailCommandHandler(
-    INotificationRepository notifications,
+    INotificationsUnitOfWork unitOfWork,
     IEmailService emailService)
     : ICommandHandler<SendEmailCommand, SendEmailResult>
 {
@@ -32,6 +33,7 @@ public sealed class SendEmailCommandHandler(
         var notification = Notification.CreateEmail(recipientEmail, subject, content);
 
         // Persist to repository
+        var notifications = unitOfWork.Notifications;
         await notifications.AddAsync(notification, cancellationToken);
 
         try
@@ -48,7 +50,7 @@ public sealed class SendEmailCommandHandler(
 
             // Update in repository
             await notifications.UpdateAsync(notification, cancellationToken);
-            await notifications.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SendEmailResult(
                 notification.Id.Value,
@@ -61,7 +63,7 @@ public sealed class SendEmailCommandHandler(
             // Mark as failed
             notification = notification.MarkAsFailed(ex.Message);
             await notifications.UpdateAsync(notification, cancellationToken);
-            await notifications.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             throw new InvalidOperationException($"Failed to send email: {ex.Message}", ex);
         }

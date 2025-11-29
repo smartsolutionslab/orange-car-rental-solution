@@ -13,5 +13,5 @@ public sealed record LocationDto
 
 public sealed record GetAllLocationsResult
 {
-    public required List<LocationDto> Locations { get; init; }
+    public required IReadOnlyList<LocationDto> Locations { get; init; }
 }

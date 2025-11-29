@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Location.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands.CreateLocation;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries.GetAllLocations;
+using SmartSolutionsLab.OrangeCarRental.Location.Domain;
 using SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 
@@ -46,7 +46,8 @@ builder.AddSqlServerDbContext<LocationsDbContext>("locations", configureDbContex
         sqlOptions.MigrationsAssembly("OrangeCarRental.Location.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<ILocationsUnitOfWork, LocationsUnitOfWork>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
 // Register command handlers
@@ -56,16 +57,6 @@ builder.Services.AddScoped<CreateLocationCommandHandler>();
 builder.Services.AddScoped<GetAllLocationsQueryHandler>();
 
 var app = builder.Build();
-
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<LocationsDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<LocationsDbContext>();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

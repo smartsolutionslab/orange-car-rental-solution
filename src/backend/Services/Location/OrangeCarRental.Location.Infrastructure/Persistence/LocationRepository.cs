@@ -24,7 +24,7 @@ public sealed class LocationRepository(LocationsDbContext context) : ILocationRe
             .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
     }
 
-    public async Task<List<Domain.Location.Location>> GetAllActiveAsync(
+    public async Task<IReadOnlyList<Domain.Location.Location>> GetAllActiveAsync(
         CancellationToken cancellationToken = default)
     {
         return await context.Locations
@@ -54,10 +54,5 @@ public sealed class LocationRepository(LocationsDbContext context) : ILocationRe
     {
         context.Locations.Remove(location);
         return Task.CompletedTask;
-    }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        return await context.SaveChangesAsync(cancellationToken);
     }
 }

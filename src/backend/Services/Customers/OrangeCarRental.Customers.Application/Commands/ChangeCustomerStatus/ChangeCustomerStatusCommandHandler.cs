@@ -1,4 +1,5 @@
 ﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Chang
 ///     Handler for ChangeCustomerStatusCommand.
 ///     Loads the customer, changes account status, and persists changes.
 /// </summary>
-public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository customers)
+public sealed class ChangeCustomerStatusCommandHandler(ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
@@ -24,6 +25,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
     {
         var (customerId, newStatusValue, reason) = command;
 
+        var customers = unitOfWork.Customers;
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
         var newStatus = newStatusValue.Parse();
 
@@ -32,7 +34,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         customer = customer.ChangeStatus(newStatus, reason);
 
         await customers.UpdateAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new ChangeCustomerStatusResult(
             customer.Id,

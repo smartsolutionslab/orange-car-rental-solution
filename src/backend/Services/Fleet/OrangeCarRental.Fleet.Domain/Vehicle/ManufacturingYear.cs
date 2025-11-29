@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -10,12 +11,12 @@ public readonly record struct ManufacturingYear(int Value) : IValueObject
 {
     public static ManufacturingYear From(int value)
     {
-        if (value < 1990)
-            throw new ArgumentException("Manufacturing year must be 1990 or later for rental vehicles", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsGreaterThanOrEqual(1990);
 
         var currentYear = DateTime.UtcNow.Year;
-        if (value > currentYear + 1)
-            throw new ArgumentException($"Manufacturing year cannot be later than {currentYear + 1}", nameof(value));
+        Ensure.That(value, nameof(value))
+            .ThrowIf(value > currentYear + 1, $"Manufacturing year cannot be later than {currentYear + 1}");
 
         return new ManufacturingYear(value);
     }

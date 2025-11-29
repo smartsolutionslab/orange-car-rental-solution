@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
@@ -17,10 +18,10 @@ public readonly record struct NotificationIdentifier(Guid Value) : IValueObject
     ///     Creates a notification identifier from an existing GUID.
     /// </summary>
     /// <param name="value">The GUID value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when value is empty GUID.</exception>
+    /// <exception cref="ArgumentException">Thrown when value is empty GUID.</exception>
     public static NotificationIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new NotificationIdentifier(value);
     }
 
@@ -31,10 +32,10 @@ public readonly record struct NotificationIdentifier(Guid Value) : IValueObject
     /// <exception cref="ArgumentException">Thrown when value is not a valid GUID.</exception>
     public static NotificationIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-            throw new ArgumentException($"Invalid notification ID format: {value}", nameof(value));
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid notification ID format: {value}");
 
-        return From(guid);
+        return From(Guid.Parse(value));
     }
 
     public static implicit operator Guid(NotificationIdentifier id) => id.Value;

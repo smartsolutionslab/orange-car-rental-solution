@@ -16,7 +16,11 @@ public sealed class PagedResult<TItem>
     /// </summary>
     public const int MaxPageSize = 100;
 
-    public List<TItem> Items { get; init; } = [];
+    /// <summary>
+    ///     The items in the current page. This collection is read-only to prevent modification.
+    /// </summary>
+    public IReadOnlyList<TItem> Items { get; init; } = [];
+
     public int TotalCount { get; init; }
     public int PageNumber { get; init; }
     public int PageSize { get; init; }

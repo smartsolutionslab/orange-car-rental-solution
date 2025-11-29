@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
@@ -20,12 +21,12 @@ public readonly record struct RentalPeriod : IValueObject
 
     public static RentalPeriod Of(DateOnly pickupDate, DateOnly returnDate)
     {
-        if (pickupDate >= returnDate)
-            throw new ArgumentException("Return date must be after pickup date");
+        Ensure.That(returnDate, nameof(returnDate))
+            .ThrowIf(pickupDate >= returnDate, "Return date must be after pickup date");
 
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
-        if (pickupDate < today)
-            throw new ArgumentException("Pickup date cannot be in the past");
+        Ensure.That(pickupDate, nameof(pickupDate))
+            .ThrowIf(pickupDate < today, "Pickup date cannot be in the past");
 
         return new RentalPeriod(pickupDate, returnDate);
     }

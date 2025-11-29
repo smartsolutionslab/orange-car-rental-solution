@@ -2,6 +2,7 @@ using Moq;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -13,12 +14,14 @@ public class CreateGuestReservationCommandHandlerTests
     private readonly CreateGuestReservationCommandHandler handler;
     private readonly Mock<IPricingService> pricingServiceMock = new();
     private readonly Mock<IReservationRepository> repositoryMock = new();
+    private readonly Mock<IReservationsUnitOfWork> unitOfWorkMock = new();
 
     public CreateGuestReservationCommandHandlerTests()
     {
+        unitOfWorkMock.Setup(u => u.Reservations).Returns(repositoryMock.Object);
         handler = new CreateGuestReservationCommandHandler(
+            unitOfWorkMock.Object,
             customersServiceMock.Object,
-            repositoryMock.Object,
             pricingServiceMock.Object);
     }
 
@@ -56,9 +59,9 @@ public class CreateGuestReservationCommandHandlerTests
             .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        repositoryMock
-            .Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+        unitOfWorkMock
+            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await handler.HandleAsync(command, CancellationToken.None);
@@ -151,8 +154,8 @@ public class CreateGuestReservationCommandHandlerTests
         await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        repositoryMock.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        unitOfWorkMock.Verify(
+            u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -191,10 +194,10 @@ public class CreateGuestReservationCommandHandlerTests
             .Callback(() => callOrder.Add("Add"))
             .Returns(Task.CompletedTask);
 
-        repositoryMock
-            .Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()))
+        unitOfWorkMock
+            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
             .Callback(() => callOrder.Add("Save"))
-            .Returns(Task.CompletedTask);
+            .ReturnsAsync(1);
 
         // Act
         await handler.HandleAsync(command, CancellationToken.None);
@@ -418,8 +421,8 @@ public class CreateGuestReservationCommandHandlerTests
             r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()),
             Times.Never);
 
-        repositoryMock.Verify(
-            r => r.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        unitOfWorkMock.Verify(
+            u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -431,7 +434,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("Vehicle ID cannot be empty");
+        ex.Message.ShouldContain("GUID cannot be empty");
     }
 
     [Fact]
@@ -549,9 +552,9 @@ public class CreateGuestReservationCommandHandlerTests
             .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
-        repositoryMock
-            .Setup(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+        unitOfWorkMock
+            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(1);
     }
 
     #endregion

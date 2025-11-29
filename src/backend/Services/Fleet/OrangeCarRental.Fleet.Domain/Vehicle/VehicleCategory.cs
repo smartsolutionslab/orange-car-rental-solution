@@ -48,10 +48,10 @@ public readonly record struct VehicleCategory : IValueObject
             .IsNotNullOrWhiteSpace();
 
         var upperCode = code.ToUpperInvariant();
-        if (!categories.TryGetValue(upperCode, out var category))
-            throw new ArgumentException($"Unknown vehicle category code: {code}", nameof(code));
+        Ensure.That(code, nameof(code))
+            .ThrowIf(!categories.TryGetValue(upperCode, out var category), $"Unknown vehicle category code: {code}");
 
-        return category;
+        return categories[upperCode];
     }
 
     public static VehicleCategory? FromNullable(string? value)

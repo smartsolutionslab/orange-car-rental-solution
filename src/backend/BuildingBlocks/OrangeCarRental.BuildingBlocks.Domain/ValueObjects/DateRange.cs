@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
@@ -29,8 +31,8 @@ public sealed record DateRange
     /// <exception cref="ArgumentException">Thrown when from is after to.</exception>
     public static DateRange Create(DateOnly? from = null, DateOnly? to = null)
     {
-        if (from.HasValue && to.HasValue && from > to)
-            throw new ArgumentException("From date cannot be after To date");
+        Ensure.That(from, nameof(from))
+            .ThrowIf(from.HasValue && to.HasValue && from > to, "From date cannot be after To date");
 
         return new DateRange(from, to);
     }

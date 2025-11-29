@@ -3,6 +3,7 @@ using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -12,11 +13,13 @@ public class CreateReservationCommandHandlerTests
 {
     private readonly Mock<IReservationRepository> reservationRepositoryMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
+    private readonly Mock<IReservationsUnitOfWork> unitOfWorkMock = new();
     private readonly CreateReservationCommandHandler handler;
 
     public CreateReservationCommandHandlerTests()
     {
-        handler = new CreateReservationCommandHandler(reservationRepositoryMock.Object, pricingServiceMock.Object);
+        unitOfWorkMock.Setup(u => u.Reservations).Returns(reservationRepositoryMock.Object);
+        handler = new CreateReservationCommandHandler(unitOfWorkMock.Object, pricingServiceMock.Object);
     }
 
     [Fact]
@@ -70,7 +73,7 @@ public class CreateReservationCommandHandlerTests
         reservationRepositoryMock.Verify(
             x => x.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()),
             Times.Once);
-        reservationRepositoryMock.Verify(
+        unitOfWorkMock.Verify(
             x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         pricingServiceMock.Verify(
@@ -194,7 +197,7 @@ public class CreateReservationCommandHandlerTests
         await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        reservationRepositoryMock.Verify(
+        unitOfWorkMock.Verify(
             x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
     }

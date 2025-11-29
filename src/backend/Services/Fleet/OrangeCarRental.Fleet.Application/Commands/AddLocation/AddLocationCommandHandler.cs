@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocation;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocati
 ///     Handler for AddLocationCommand.
 ///     Creates a new rental location.
 /// </summary>
-public sealed class AddLocationCommandHandler(ILocationRepository locations)
+public sealed class AddLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<AddLocationCommand, AddLocationResult>
 {
     /// <summary>
@@ -22,6 +23,8 @@ public sealed class AddLocationCommandHandler(ILocationRepository locations)
     {
         var (code, name, address) = command;
 
+        var locations = unitOfWork.Locations;
+
         // Check if location code already exists
         var existingLocation = await locations.FindByCodeAsync(code, cancellationToken);
         if (existingLocation != null)
@@ -29,12 +32,10 @@ public sealed class AddLocationCommandHandler(ILocationRepository locations)
             throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
         }
 
-        // Create new location
         var location = Location.Create(code, name, address);
-
-        // Persist location
         await locations.AddAsync(location, cancellationToken);
-        await locations.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new AddLocationResult(
             location.Code.Value,

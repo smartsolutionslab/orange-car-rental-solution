@@ -18,7 +18,12 @@ public interface IVehicleRepository
         VehicleIdentifier id,
         CancellationToken cancellationToken = default);
 
-    Task<List<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
+    /// <summary>
+    ///     Gets all vehicles (use with caution - prefer SearchAsync for large datasets).
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An immutable read-only list of all vehicles.</returns>
+    Task<IReadOnlyList<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
 
     Task<PagedResult<Vehicle>> SearchAsync(
         VehicleSearchParameters parameters,
@@ -35,6 +40,4 @@ public interface IVehicleRepository
     Task DeleteAsync(
         VehicleIdentifier id,
         CancellationToken cancellationToken = default);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 }

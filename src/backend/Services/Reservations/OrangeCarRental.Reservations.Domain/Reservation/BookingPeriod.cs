@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -17,12 +18,15 @@ public readonly record struct BookingPeriod(DateOnly PickupDate, DateOnly Return
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        if (pickupDate < today) throw new ArgumentException("Pickup date cannot be in the past", nameof(pickupDate));
-        if (returnDate <= pickupDate)
-            throw new ArgumentException("Return date must be after pickup date", nameof(returnDate));
+        Ensure.That(pickupDate, nameof(pickupDate))
+            .ThrowIf(pickupDate < today, "Pickup date cannot be in the past");
+
+        Ensure.That(returnDate, nameof(returnDate))
+            .ThrowIf(returnDate <= pickupDate, "Return date must be after pickup date");
 
         var days = returnDate.DayNumber - pickupDate.DayNumber + 1;
-        if (days > 90) throw new ArgumentException("Rental period cannot exceed 90 days", nameof(returnDate));
+        Ensure.That(returnDate, nameof(returnDate))
+            .ThrowIf(days > 90, "Rental period cannot exceed 90 days");
 
         return new BookingPeriod(pickupDate, returnDate);
     }

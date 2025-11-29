@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
@@ -10,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Creates a new pending reservation and returns the reservation details.
 /// </summary>
 public sealed class CreateReservationCommandHandler(
-    IReservationRepository reservations,
+    IReservationsUnitOfWork unitOfWork,
     IPricingService pricingService)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
@@ -51,8 +52,9 @@ public sealed class CreateReservationCommandHandler(
         );
 
         // Save to repository
+        var reservations = unitOfWork.Reservations;
         await reservations.AddAsync(reservation, cancellationToken);
-        await reservations.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateReservationResult(
             reservation.Id.Value,

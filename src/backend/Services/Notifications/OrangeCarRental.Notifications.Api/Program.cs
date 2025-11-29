@@ -6,6 +6,7 @@ using SmartSolutionsLab.OrangeCarRental.Notifications.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendEmail;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendSms;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Infrastructure.Services;
@@ -48,7 +49,8 @@ builder.AddSqlServerDbContext<NotificationsDbContext>("notifications", configure
         sqlOptions.MigrationsAssembly("OrangeCarRental.Notifications.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<INotificationsUnitOfWork, NotificationsUnitOfWork>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 // Register infrastructure services (stub implementations for now)
@@ -60,16 +62,6 @@ builder.Services.AddScoped<SendEmailCommandHandler>();
 builder.Services.AddScoped<SendSmsCommandHandler>();
 
 var app = builder.Build();
-
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<NotificationsDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<NotificationsDbContext>();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

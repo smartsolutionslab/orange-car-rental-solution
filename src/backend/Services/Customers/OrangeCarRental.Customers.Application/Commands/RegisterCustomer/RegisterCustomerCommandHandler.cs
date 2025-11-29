@@ -1,4 +1,5 @@
 ﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 ///     Handler for RegisterCustomerCommand.
 ///     Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
 /// </summary>
-public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers)
+public sealed class RegisterCustomerCommandHandler(ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
@@ -24,6 +25,7 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
     {
         var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
 
+        var customers = unitOfWork.Customers;
 
         // Check email uniqueness
         var emailExists = await customers.ExistsWithEmailAsync(email, cancellationToken);
@@ -39,10 +41,9 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
             dateOfBirth,
             address,
             driversLicense);
-
-        // Persist to repository
         await customers.AddAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new RegisterCustomerResult(
             customer.Id.Value,

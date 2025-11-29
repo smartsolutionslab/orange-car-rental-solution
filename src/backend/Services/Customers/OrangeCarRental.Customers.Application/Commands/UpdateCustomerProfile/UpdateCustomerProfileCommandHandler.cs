@@ -1,4 +1,5 @@
 ﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Handler for UpdateCustomerProfileCommand.
 ///     Loads the customer, updates profile information, and persists changes.
 /// </summary>
-public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository customers)
+public sealed class UpdateCustomerProfileCommandHandler(ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
@@ -24,12 +25,13 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerRepository cust
     {
         var (customerId, name, phoneNumber, address) = command;
 
+        var customers = unitOfWork.Customers;
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
         customer = customer.UpdateProfile(name, phoneNumber, address);
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateCustomerProfileResult(
             customer.Id.Value,

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Handler for UpdateVehicleLocationCommand.
 ///     Moves a vehicle to a different rental location.
 /// </summary>
-public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehicles)
+public sealed class UpdateVehicleLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<UpdateVehicleLocationCommand, UpdateVehicleLocationResult>
 {
     /// <summary>
@@ -24,14 +25,14 @@ public sealed class UpdateVehicleLocationCommandHandler(IVehicleRepository vehic
     {
         var (vehicleId, newLocationCode) = command;
 
+        var vehicles = unitOfWork.Vehicles;
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
         var oldLocationCode = vehicle.CurrentLocationCode;
 
         vehicle = vehicle.MoveToLocation(newLocationCode);
-
-        // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
-        await vehicles.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateVehicleLocationResult(
             vehicle.Id.Value,

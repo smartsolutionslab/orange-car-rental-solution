@@ -1,16 +1,16 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 public static class CustomerStatusExtensions
 {
     public static CustomerStatus Parse(this string value)
     {
-        if (!Enum.TryParse<CustomerStatus>(value, true, out var newStatus))
-        {
-            throw new ArgumentException($"Invalid customer status: '{value}'. Valid values are: Active, Suspended, Blocked.",
-                nameof(value));
-        }
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Enum.TryParse<CustomerStatus>(value, true, out var newStatus),
+                $"Invalid customer status: '{value}'. Valid values are: Active, Suspended, Blocked.");
 
-        return newStatus;
+        return Enum.Parse<CustomerStatus>(value, true);
     }
 
     public static CustomerStatus? TryParse(this string? value)

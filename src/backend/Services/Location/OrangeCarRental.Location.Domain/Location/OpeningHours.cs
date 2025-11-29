@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
@@ -10,10 +11,9 @@ public readonly record struct OpeningHours(string Value) : IValueObject
 {
     public static OpeningHours From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
-
-        if (value.Length > 500)
-            throw new ArgumentException("Opening hours text cannot exceed 500 characters", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(500);
 
         return new OpeningHours(value.Trim());
     }

@@ -21,5 +21,6 @@ public interface ILocationRepository : IRepository<Location, LocationCode>
     /// <summary>
     ///     Gets all active locations.
     /// </summary>
-    Task<List<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default);
+    /// <returns>An immutable read-only list of all active locations.</returns>
+    Task<IReadOnlyList<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 }

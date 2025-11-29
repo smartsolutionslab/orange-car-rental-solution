@@ -12,19 +12,21 @@ public static class EnumerableExtensions
         this IEnumerable<TItem> source,
         SearchParameters parameters)
     {
+        var paging = parameters.Paging;
+
         var items = source as IList<TItem> ?? source.ToList();
 
         var pagedItems = items
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
+            .Skip(paging.Skip)
+            .Take(paging.Take)
             .ToList();
 
         return new PagedResult<TItem>
         {
             Items = pagedItems,
             TotalCount = items.Count,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
+            PageNumber = paging.PageNumber,
+            PageSize = paging.PageSize
         };
     }
 }

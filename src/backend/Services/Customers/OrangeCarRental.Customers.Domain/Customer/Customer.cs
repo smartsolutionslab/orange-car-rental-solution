@@ -353,28 +353,16 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         if (dateOfBirth.AddYears(age) > today)
             age--;
 
-        if (age < MinimumAgeYears)
-        {
-            throw new ArgumentException(
-                $"Customer must be at least {MinimumAgeYears} years old. Current age: {age}",
-                nameof(dateOfBirth));
-        }
+        Ensure.That(dateOfBirth, nameof(dateOfBirth))
+            .ThrowIf(age < MinimumAgeYears, $"Customer must be at least {MinimumAgeYears} years old. Current age: {age}");
 
         // Sanity check - no one over 150 years old
-        if (age > 150)
-        {
-            throw new ArgumentException(
-                "Invalid date of birth - age cannot exceed 150 years",
-                nameof(dateOfBirth));
-        }
+        Ensure.That(dateOfBirth, nameof(dateOfBirth))
+            .ThrowIf(age > 150, "Invalid date of birth - age cannot exceed 150 years");
 
         // Date of birth cannot be in the future
-        if (dateOfBirth > today)
-        {
-            throw new ArgumentException(
-                "Date of birth cannot be in the future",
-                nameof(dateOfBirth));
-        }
+        Ensure.That(dateOfBirth, nameof(dateOfBirth))
+            .ThrowIf(dateOfBirth > today, "Date of birth cannot be in the future");
     }
 
     /// <summary>
@@ -383,30 +371,18 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     private static void ValidateDriversLicense(DriversLicense license, DateOnly dateOfBirth)
     {
         // License must be currently valid
-        if (!license.IsValid())
-        {
-            throw new ArgumentException(
-                $"Driver's license is expired. Expiry date: {license.ExpiryDate}",
-                nameof(license));
-        }
+        Ensure.That(license, nameof(license))
+            .ThrowIf(!license.IsValid(), $"Driver's license is expired. Expiry date: {license.ExpiryDate}");
 
         // License must have minimum validity remaining
-        if (license.DaysUntilExpiry() < MinimumLicenseValidityDays)
-        {
-            throw new ArgumentException(
-                $"Driver's license must be valid for at least {MinimumLicenseValidityDays} days. " +
-                $"Days remaining: {license.DaysUntilExpiry()}",
-                nameof(license));
-        }
+        Ensure.That(license, nameof(license))
+            .ThrowIf(license.DaysUntilExpiry() < MinimumLicenseValidityDays,
+                $"Driver's license must be valid for at least {MinimumLicenseValidityDays} days. Days remaining: {license.DaysUntilExpiry()}");
 
         // License issue date must be after 18th birthday (with some tolerance)
         var minimumLicenseIssueDate = dateOfBirth.AddYears(MinimumAgeYears - 1);
-        if (license.IssueDate < minimumLicenseIssueDate)
-        {
-            throw new ArgumentException(
-                $"Driver's license issue date seems inconsistent with date of birth. " +
-                $"License issued: {license.IssueDate}, Date of birth: {dateOfBirth}",
-                nameof(license));
-        }
+        Ensure.That(license, nameof(license))
+            .ThrowIf(license.IssueDate < minimumLicenseIssueDate,
+                $"Driver's license issue date seems inconsistent with date of birth. License issued: {license.IssueDate}, Date of birth: {dateOfBirth}");
     }
 }

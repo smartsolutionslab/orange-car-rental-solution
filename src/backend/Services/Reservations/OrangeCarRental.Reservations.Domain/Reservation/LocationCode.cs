@@ -29,6 +29,13 @@ public readonly record struct LocationCode(string Value) : IValueObject
         return new LocationCode(trimmed);
     }
 
+    public static LocationCode? FromNullable(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+
+        return From(code);
+    }
+
     /// <summary>
     ///     Implicit conversion from LocationCode to string for convenience.
     /// </summary>

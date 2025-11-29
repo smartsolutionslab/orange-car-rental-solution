@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 ///     Handler for UpdateVehicleDailyRateCommand.
 ///     Updates a vehicle's daily rental rate with German VAT.
 /// </summary>
-public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehicles)
+public sealed class UpdateVehicleDailyRateCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<UpdateVehicleDailyRateCommand, UpdateVehicleDailyRateResult>
 {
     /// <summary>
@@ -23,6 +24,7 @@ public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehi
     {
         var (vehicleId, newDailyRate) = command;
 
+        var vehicles = unitOfWork.Vehicles;
         var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
         var oldRate = vehicle.DailyRate;
 
@@ -30,7 +32,7 @@ public sealed class UpdateVehicleDailyRateCommandHandler(IVehicleRepository vehi
 
         // Persist changes
         await vehicles.UpdateAsync(vehicle, cancellationToken);
-        await vehicles.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateVehicleDailyRateResult(
             vehicle.Id.Value,

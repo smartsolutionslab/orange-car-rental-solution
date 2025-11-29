@@ -4,7 +4,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehi
 ///     Result of vehicle search query with pagination information.
 /// </summary>
 public sealed record SearchVehiclesResult(
-    List<VehicleDto> Vehicles,
+    IReadOnlyList<VehicleDto> Vehicles,
     int TotalCount,
     int PageNumber,
     int PageSize,

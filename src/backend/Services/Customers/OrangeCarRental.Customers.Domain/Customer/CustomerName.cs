@@ -6,7 +6,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 ///     Customer name value object with optional salutation.
 ///     Represents a complete customer name with German market conventions.
 /// </summary>
-public readonly record struct CustomerName(FirstName FirstName, LastName LastName, Salutation? Salutation) : IValueObject
+public readonly record struct CustomerName(
+    FirstName FirstName,
+    LastName LastName,
+    Salutation? Salutation) : IValueObject
 {
     /// <summary>
     ///     Gets the full name without salutation.

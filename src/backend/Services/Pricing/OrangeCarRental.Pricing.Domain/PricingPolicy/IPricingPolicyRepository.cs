@@ -51,9 +51,4 @@ public interface IPricingPolicyRepository
     ///     Updates an existing pricing policy.
     /// </summary>
     Task UpdateAsync(PricingPolicy policy, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Saves all changes.
-    /// </summary>
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

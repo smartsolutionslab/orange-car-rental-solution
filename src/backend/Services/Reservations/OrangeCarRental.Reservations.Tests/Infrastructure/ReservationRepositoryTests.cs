@@ -138,7 +138,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act
         await repository.AddAsync(reservation, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var saved = await context.Reservations.FindAsync(reservation.Id);
@@ -156,7 +156,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Act
         await repository.AddAsync(reservation1, CancellationToken.None);
         await repository.AddAsync(reservation2, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var all = await context.Reservations.ToListAsync();
@@ -185,7 +185,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act
         await repository.UpdateAsync(loaded, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var updated = await context.Reservations.FindAsync(loaded.Id);
@@ -225,7 +225,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act
         await repository.UpdateAsync(loaded, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var updated = await context.Reservations.FindAsync(loaded.Id);
@@ -247,7 +247,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act
         await repository.DeleteAsync(reservation.Id, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var deleted = await context.Reservations.FindAsync(reservation.Id);
@@ -264,7 +264,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         await Should.NotThrowAsync(async () =>
         {
             await repository.DeleteAsync(nonExistingId, CancellationToken.None);
-            await repository.SaveChangesAsync(CancellationToken.None);
+            await context.SaveChangesAsync(CancellationToken.None);
         });
     }
 
@@ -280,7 +280,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         await repository.AddAsync(reservation, CancellationToken.None);
 
         // Act
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var saved = await context.Reservations.FindAsync(reservation.Id);
@@ -302,7 +302,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         await repository.UpdateAsync(loaded, CancellationToken.None);
 
         // Act
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var updated = await context.Reservations.FindAsync(loaded.Id);
@@ -333,7 +333,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act - Add
         await repository.AddAsync(reservation, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Pending state
         var pending = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
@@ -346,7 +346,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         context.Entry(toConfirm!).State = EntityState.Detached;
         toConfirm = toConfirm!.Confirm();
         await repository.UpdateAsync(toConfirm, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Confirmed state
         var confirmed = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
@@ -358,7 +358,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         context.Entry(toActivate!).State = EntityState.Detached;
         toActivate = toActivate!.MarkAsActive();
         await repository.UpdateAsync(toActivate, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Active state
         var active = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
@@ -370,7 +370,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         context.Entry(toComplete!).State = EntityState.Detached;
         toComplete = toComplete!.Complete();
         await repository.UpdateAsync(toComplete, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Completed state
         var completed = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
@@ -386,7 +386,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
 
         // Act - Add
         await repository.AddAsync(reservation, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Act - Cancel
         context.Entry(reservation).State = EntityState.Detached;
@@ -394,7 +394,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         context.Entry(toCancel!).State = EntityState.Detached;
         toCancel = toCancel!.Cancel("Customer changed plans");
         await repository.UpdateAsync(toCancel, CancellationToken.None);
-        await repository.SaveChangesAsync(CancellationToken.None);
+        await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
         var cancelled = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);

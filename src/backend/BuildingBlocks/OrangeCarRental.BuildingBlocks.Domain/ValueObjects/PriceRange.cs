@@ -1,43 +1,30 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
 ///     Value object representing a price range for filtering.
 /// </summary>
-public sealed record PriceRange
+public sealed record PriceRange(
+    decimal? Min,
+    decimal? Max)
 {
-    /// <summary>
-    ///     The minimum price (inclusive).
-    /// </summary>
-    public decimal? Min { get; }
-
-    /// <summary>
-    ///     The maximum price (inclusive).
-    /// </summary>
-    public decimal? Max { get; }
-
-    private PriceRange(decimal? min, decimal? max)
-    {
-        Min = min;
-        Max = max;
-    }
-
     /// <summary>
     ///     Creates a new PriceRange instance.
     /// </summary>
     /// <param name="min">Minimum price (inclusive).</param>
     /// <param name="max">Maximum price (inclusive).</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when prices are negative.</exception>
-    /// <exception cref="ArgumentException">Thrown when min is greater than max.</exception>
+    /// <exception cref="ArgumentException">Thrown when prices are negative or min is greater than max.</exception>
     public static PriceRange Create(decimal? min = null, decimal? max = null)
     {
-        if (min.HasValue && min < 0)
-            throw new ArgumentOutOfRangeException(nameof(min), "Minimum price cannot be negative");
+        Ensure.That(min, nameof(min))
+            .ThrowIf(min.HasValue && min < 0, "Minimum price cannot be negative");
 
-        if (max.HasValue && max < 0)
-            throw new ArgumentOutOfRangeException(nameof(max), "Maximum price cannot be negative");
+        Ensure.That(max, nameof(max))
+            .ThrowIf(max.HasValue && max < 0, "Maximum price cannot be negative");
 
-        if (min.HasValue && max.HasValue && min > max)
-            throw new ArgumentException("Minimum price cannot be greater than maximum price");
+        Ensure.That(min, nameof(min))
+            .ThrowIf(min.HasValue && max.HasValue && min > max, "Minimum price cannot be greater than maximum price");
 
         return new PriceRange(min, max);
     }

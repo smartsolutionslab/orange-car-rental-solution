@@ -331,7 +331,7 @@ public static class FleetEndpoints
                     var command = new ChangeLocationStatusCommand(
                         LocationCode.From(code),
                         status.ParseLocationStatus(),
-                        reason
+                        StatusChangeReason.FromNullable(reason)
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);

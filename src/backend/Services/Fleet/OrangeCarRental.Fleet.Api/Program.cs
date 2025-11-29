@@ -13,6 +13,7 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicle
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
@@ -66,7 +67,8 @@ builder.Services.AddHttpClient<IReservationService, ReservationService>(client =
     client.BaseAddress = new Uri(reservationsApiUrl);
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IFleetUnitOfWork, FleetUnitOfWork>();
 builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 

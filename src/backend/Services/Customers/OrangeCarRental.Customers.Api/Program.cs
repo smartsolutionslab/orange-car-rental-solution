@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
@@ -10,6 +11,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDri
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
@@ -53,7 +55,8 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
         sqlOptions.MigrationsAssembly("OrangeCarRental.Customers.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<ICustomersUnitOfWork, CustomersUnitOfWork>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // Register command handlers
@@ -73,7 +76,7 @@ builder.Services.AddScoped<CustomerDataSeeder>();
 var app = builder.Build();
 
 // Seed database with sample data (development only)
-await app.SeedCustomersDataAsync();
+await app.Services.SeedCustomersDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

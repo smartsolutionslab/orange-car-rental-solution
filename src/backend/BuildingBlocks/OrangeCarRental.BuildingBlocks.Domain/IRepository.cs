@@ -1,48 +1,15 @@
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
-///     Base repository interface for aggregate roots.
-///     Repositories provide access to aggregates.
+///     Full repository interface combining read and write operations for aggregate roots.
+///     Use this when both read and write access is needed.
 /// </summary>
 /// <typeparam name="TAggregate">The aggregate root type.</typeparam>
 /// <typeparam name="TIdentifier">The identifier type.</typeparam>
-public interface IRepository<TAggregate, in TIdentifier>
+public interface IRepository<TAggregate, TIdentifier>
+    : IReadRepository<TAggregate, TIdentifier>,
+      IWriteRepository<TAggregate, TIdentifier>
     where TAggregate : AggregateRoot<TIdentifier>
     where TIdentifier : notnull
 {
-    /// <summary>
-    ///     Gets an aggregate by its identifier.
-    /// </summary>
-    /// <param name="id">The aggregate identifier.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The aggregate.</returns>
-    /// <exception cref="Exceptions.EntityNotFoundException">Thrown when the aggregate is not found.</exception>
-    Task<TAggregate> GetByIdAsync(TIdentifier id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Adds a new aggregate.
-    /// </summary>
-    /// <param name="aggregate">The aggregate to add.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task AddAsync(TAggregate aggregate, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Updates an existing aggregate.
-    /// </summary>
-    /// <param name="aggregate">The aggregate to update.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task UpdateAsync(TAggregate aggregate, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Removes an aggregate.
-    /// </summary>
-    /// <param name="aggregate">The aggregate to remove.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task RemoveAsync(TAggregate aggregate, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Saves all changes to the underlying data store.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

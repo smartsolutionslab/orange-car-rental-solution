@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
@@ -9,11 +10,13 @@ public readonly record struct GeoCoordinates(decimal Latitude, decimal Longitude
 {
     public static GeoCoordinates Of(decimal latitude, decimal longitude)
     {
-        if (latitude < -90 || latitude > 90)
-            throw new ArgumentException("Latitude must be between -90 and 90", nameof(latitude));
+        Ensure.That(latitude, nameof(latitude))
+            .IsGreaterThanOrEqual(-90m)
+            .AndIsLessThanOrEqual(90m);
 
-        if (longitude < -180 || longitude > 180)
-            throw new ArgumentException("Longitude must be between -180 and 180", nameof(longitude));
+        Ensure.That(longitude, nameof(longitude))
+            .IsGreaterThanOrEqual(-180m)
+            .AndIsLessThanOrEqual(180m);
 
         return new GeoCoordinates(latitude, longitude);
     }

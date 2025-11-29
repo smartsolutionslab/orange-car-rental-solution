@@ -1,4 +1,5 @@
 ﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 ///     Handler for UpdateDriversLicenseCommand.
 ///     Loads the customer, updates driver's license information, and persists changes.
 /// </summary>
-public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository customers)
+public sealed class UpdateDriversLicenseCommandHandler(ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>
 {
     /// <summary>
@@ -23,6 +24,8 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
         CancellationToken cancellationToken = default)
     {
         var (customerId, driversLicense) = command;
+
+        var customers = unitOfWork.Customers;
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
 
         // Update driver's license (domain method handles validation and returns new instance)
@@ -30,7 +33,7 @@ public sealed class UpdateDriversLicenseCommandHandler(ICustomerRepository custo
 
         // Persist changes (repository updates with the new immutable instance)
         await customers.UpdateAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateDriversLicenseResult(
             customer.Id.Value,

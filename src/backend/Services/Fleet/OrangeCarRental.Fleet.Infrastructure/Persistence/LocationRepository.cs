@@ -23,14 +23,14 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
             .FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
     }
 
-    public async Task<List<Location>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Location>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return await context.Locations
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         return await context.Locations
             .AsNoTracking()
@@ -64,10 +64,5 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
         {
             context.Locations.Remove(location);
         }
-    }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await context.SaveChangesAsync(cancellationToken);
     }
 }

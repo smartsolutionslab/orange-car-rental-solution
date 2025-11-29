@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.Search
 ///     Contains matching customers and pagination metadata.
 /// </summary>
 public sealed record SearchCustomersResult(
-    List<CustomerDto> Customers,
+    IReadOnlyList<CustomerDto> Customers,
     int TotalCount,
     int PageNumber,
     int PageSize,

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -43,13 +44,15 @@ public static class MappingExtensions
         return new VehicleSearchParameters(
             LocationCode.FromNullable(query.LocationCode),
             VehicleCategory.FromNullable(query.CategoryCode),
-            query.MinSeats,
+            query.MinSeats.HasValue ? SeatingCapacity.From(query.MinSeats.Value) : null,
             query.FuelType.TryParseFuelType(),
             query.TransmissionType.TryParseTransmissionType(),
-            query.MaxDailyRateGross,
+            query.MaxDailyRateGross.HasValue
+                ? Money.EuroGross(query.MaxDailyRateGross.Value)
+                : null,
             VehicleStatus.Available, // Always filter to available vehicles
             SearchPeriod.Of(query.PickupDate, query.ReturnDate),
-            query.PageNumber ?? 1,
-            query.PageSize ?? 20);
+            PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
+            SortingInfo.Create());
     }
 }

@@ -1,0 +1,68 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
+
+namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
+
+/// <summary>
+///     Extension methods for mapping between domain objects and DTOs.
+/// </summary>
+public static class MappingExtensions
+{
+    /// <summary>
+    ///     Maps a Reservation aggregate to a ReservationDto.
+    /// </summary>
+    public static ReservationDto ToDto(this Reservation reservation) => new(
+        reservation.Id.Value,
+        reservation.VehicleIdentifier.Value,
+        reservation.CustomerIdentifier.Value,
+        reservation.Period.PickupDate,
+        reservation.Period.ReturnDate,
+        reservation.PickupLocationCode.Value,
+        reservation.DropoffLocationCode.Value,
+        reservation.Period.Days,
+        reservation.TotalPrice.NetAmount,
+        reservation.TotalPrice.VatAmount,
+        reservation.TotalPrice.GrossAmount,
+        reservation.TotalPrice.Currency.Code,
+        reservation.Status.ToString(),
+        reservation.CancellationReason,
+        reservation.CreatedAt,
+        reservation.ConfirmedAt,
+        reservation.CancelledAt,
+        reservation.CompletedAt);
+
+    /// <summary>
+    ///     Maps a PagedResult of Reservation aggregates to a SearchReservationsResult.
+    /// </summary>
+    public static SearchReservationsResult ToDto(this PagedResult<Reservation> pagedResult) => new(
+        pagedResult.Items.Select(r => r.ToDto()).ToList(),
+        pagedResult.TotalCount,
+        pagedResult.PageNumber,
+        pagedResult.PageSize,
+        pagedResult.TotalPages);
+
+    /// <summary>
+    ///     Maps a SearchReservationsQuery to ReservationSearchParameters.
+    ///     Handles parsing of primitive types to value objects.
+    /// </summary>
+    public static ReservationSearchParameters ToSearchParameters(this SearchReservationsQuery query)
+    {
+        var (status, customerId, customerName, vehicleId, categoryCode, pickupLocationCode, dateFrom, dateTo, priceMin,
+            priceMax, sortBy, sortDescending, pageNumber, pageSize) = query;
+
+        return new ReservationSearchParameters(
+            status.TryParseReservationStatus(),
+            CustomerIdentifier.From(customerId),
+            SearchTerm.FromNullable(customerName),
+            VehicleIdentifier.From(vehicleId),
+            VehicleCategory.FromNullable(categoryCode),
+            LocationCode.FromNullable(pickupLocationCode),
+            DateRange.Create(dateFrom, dateTo),
+            PriceRange.Create(priceMin, priceMax),
+            PagingInfo.Create(pageNumber, pageSize),
+            SortingInfo.Create(sortBy, sortDescending));
+    }
+}

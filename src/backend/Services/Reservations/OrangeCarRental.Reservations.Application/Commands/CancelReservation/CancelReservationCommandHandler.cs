@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
@@ -8,22 +9,21 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Ca
 ///     Cancels a reservation with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IReservationRepository reservations)
+    IReservationsUnitOfWork unitOfWork)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
+    private IReservationRepository? reservations;
+    private IReservationRepository Reservations => reservations ??= unitOfWork.Reservations;
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Get existing reservation (throws EntityNotFoundException if not found)
-        var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken);
+        var reservation = await Reservations.GetByIdAsync(command.ReservationId, cancellationToken);
 
-        // Cancel the reservation (returns new instance due to immutability)
         var cancelledReservation = reservation.Cancel(command.CancellationReason);
+        await Reservations.UpdateAsync(cancelledReservation, cancellationToken);
 
-        // Update in repository
-        await reservations.UpdateAsync(cancelledReservation, cancellationToken);
-        await reservations.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CancelReservationResult(
             cancelledReservation.Id.Value,

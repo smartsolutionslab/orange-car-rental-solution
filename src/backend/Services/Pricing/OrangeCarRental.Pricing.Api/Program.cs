@@ -3,7 +3,9 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
@@ -47,7 +49,8 @@ builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOpt
         sqlOptions.MigrationsAssembly("OrangeCarRental.Pricing.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IPricingUnitOfWork, PricingUnitOfWork>();
 builder.Services.AddScoped<IPricingPolicyRepository, PricingPolicyRepository>();
 
 // Register application services
@@ -59,7 +62,7 @@ builder.Services.AddScoped<PricingDataSeeder>();
 var app = builder.Build();
 
 // Seed database with sample data (development only)
-await app.SeedPricingDataAsync();
+await app.Services.SeedPricingDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())

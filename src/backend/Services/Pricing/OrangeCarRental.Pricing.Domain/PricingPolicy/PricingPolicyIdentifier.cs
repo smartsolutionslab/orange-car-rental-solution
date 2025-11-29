@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
@@ -17,10 +18,10 @@ public readonly record struct PricingPolicyIdentifier(Guid Value) : IValueObject
     ///     Creates a pricing policy identifier from an existing GUID.
     /// </summary>
     /// <param name="value">The GUID value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the GUID is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when the GUID is empty.</exception>
     public static PricingPolicyIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new PricingPolicyIdentifier(value);
     }
 
@@ -31,9 +32,9 @@ public readonly record struct PricingPolicyIdentifier(Guid Value) : IValueObject
     /// <exception cref="ArgumentException">Thrown when the string is not a valid GUID.</exception>
     public static PricingPolicyIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-            throw new ArgumentException($"Invalid pricing policy ID format: {value}", nameof(value));
-        return From(guid);
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid pricing policy ID format: {value}");
+        return From(Guid.Parse(value));
     }
 
     /// <summary>

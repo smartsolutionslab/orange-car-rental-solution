@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.SendSms;
@@ -9,7 +10,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands.S
 ///     Sends an SMS notification and tracks its status.
 /// </summary>
 public sealed class SendSmsCommandHandler(
-    INotificationRepository notifications,
+    INotificationsUnitOfWork unitOfWork,
     ISmsService smsService)
     : ICommandHandler<SendSmsCommand, SendSmsResult>
 {
@@ -31,6 +32,7 @@ public sealed class SendSmsCommandHandler(
         var notification = Notification.CreateSms(recipientPhone, content);
 
         // Persist to repository
+        var notifications = unitOfWork.Notifications;
         await notifications.AddAsync(notification, cancellationToken);
 
         try
@@ -46,7 +48,7 @@ public sealed class SendSmsCommandHandler(
 
             // Update in repository
             await notifications.UpdateAsync(notification, cancellationToken);
-            await notifications.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SendSmsResult(
                 notification.Id.Value,
@@ -60,7 +62,7 @@ public sealed class SendSmsCommandHandler(
             // Mark as failed
             notification = notification.MarkAsFailed(ex.Message);
             await notifications.UpdateAsync(notification, cancellationToken);
-            await notifications.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
 
             throw new InvalidOperationException($"Failed to send SMS: {ex.Message}", ex);
         }

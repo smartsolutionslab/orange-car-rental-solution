@@ -216,13 +216,13 @@ public class SearchVehiclesQueryHandlerTests
                 It.Is<VehicleSearchParameters>(p =>
                     p.LocationCode.HasValue && p.LocationCode.Value == Locations.BerlinHauptbahnhof &&
                     p.Category.HasValue && p.Category.Value.Code == VehicleCategory.Mittelklasse.Code &&
-                    p.MinSeats == 5 &&
+                    p.MinSeats.HasValue && p.MinSeats.Value.Value == 5 &&
                     p.FuelType == FuelType.Petrol &&
                     p.TransmissionType == TransmissionType.Manual &&
-                    p.MaxDailyRateGross == 75.00m &&
+                    p.MaxDailyRate.HasValue && p.MaxDailyRate.Value.GrossAmount == 75.00m &&
                     p.Status == VehicleStatus.Available &&
-                    p.PageNumber == 2 &&
-                    p.PageSize == 10),
+                    p.Paging.PageNumber == 2 &&
+                    p.Paging.PageSize == 10),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -307,8 +307,8 @@ public class SearchVehiclesQueryHandlerTests
         // Assert
         repositoryMock.Verify(r => r.SearchAsync(
                 It.Is<VehicleSearchParameters>(p =>
-                    p.PageNumber == 1 &&
-                    p.PageSize == 20),
+                    p.Paging.PageNumber == 1 &&
+                    p.Paging.PageSize == 20),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }

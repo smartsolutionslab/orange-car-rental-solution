@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
@@ -8,13 +9,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Co
 ///     Confirms a pending reservation after payment has been received.
 /// </summary>
 public sealed class ConfirmReservationCommandHandler(
-    IReservationRepository reservations)
+    IReservationsUnitOfWork unitOfWork)
     : ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult>
 {
     public async Task<ConfirmReservationResult> HandleAsync(
         ConfirmReservationCommand command,
         CancellationToken cancellationToken = default)
     {
+        var reservations = unitOfWork.Reservations;
+
         // Get existing reservation (throws EntityNotFoundException if not found)
         var reservation = await reservations.GetByIdAsync(command.ReservationId, cancellationToken);
 
@@ -23,7 +26,7 @@ public sealed class ConfirmReservationCommandHandler(
 
         // Update in repository
         await reservations.UpdateAsync(confirmedReservation, cancellationToken);
-        await reservations.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new ConfirmReservationResult(
             confirmedReservation.Id.Value,

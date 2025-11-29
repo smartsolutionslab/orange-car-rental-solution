@@ -31,7 +31,4 @@ public sealed class NotificationRepository(NotificationsDbContext context) : INo
         context.Notifications.Remove(notification);
         return Task.CompletedTask;
     }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
 }

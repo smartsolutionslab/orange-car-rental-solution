@@ -144,8 +144,8 @@ public class SearchVehiclesQueryHandlerTests
 
         // Assert
         capturedParameters.ShouldNotBeNull();
-        capturedParameters.PageNumber.ShouldBe(2);
-        capturedParameters.PageSize.ShouldBe(20);
+        capturedParameters.Paging.PageNumber.ShouldBe(2);
+        capturedParameters.Paging.PageSize.ShouldBe(20);
     }
 
     [Fact]
@@ -295,8 +295,8 @@ public class SearchVehiclesQueryHandlerTests
 
         // Assert
         capturedParameters.ShouldNotBeNull();
-        capturedParameters.MinSeats.ShouldBe(5);
-        capturedParameters.MaxDailyRateGross.ShouldBe(100.00m);
+        capturedParameters.MinSeats!.Value.Value.ShouldBe(5);
+        capturedParameters.MaxDailyRate!.Value.GrossAmount.ShouldBe(100.00m);
     }
 
     private static Vehicle CreateTestVehicle(string name, VehicleCategory category, LocationCode location)

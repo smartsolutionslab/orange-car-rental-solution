@@ -66,7 +66,4 @@ public sealed class PricingPolicyRepository(PricingDbContext context) : IPricing
         context.PricingPolicies.Update(policy);
         return Task.CompletedTask;
     }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
 }

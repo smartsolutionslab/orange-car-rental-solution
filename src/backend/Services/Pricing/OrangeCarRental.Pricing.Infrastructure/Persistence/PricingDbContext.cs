@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Configurations;
 
@@ -7,8 +8,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 /// <summary>
 ///     Database context for the Pricing service.
 ///     Manages pricing policies and rate calculations.
+///     Implements IUnitOfWork for transaction management.
 /// </summary>
-public sealed class PricingDbContext : DbContext
+public sealed class PricingDbContext : DbContext, IUnitOfWork
 {
     public PricingDbContext(DbContextOptions<PricingDbContext> options) : base(options)
     {

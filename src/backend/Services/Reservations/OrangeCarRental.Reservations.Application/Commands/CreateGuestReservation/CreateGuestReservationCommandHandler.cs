@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -14,8 +15,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     3. Creating the reservation with the new customer ID
 /// </summary>
 public sealed class CreateGuestReservationCommandHandler(
+    IReservationsUnitOfWork unitOfWork,
     ICustomersService customersService,
-    IReservationRepository reservations,
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
 {
@@ -64,8 +65,9 @@ public sealed class CreateGuestReservationCommandHandler(
         );
 
         // Step 5: Save to repository
+        var reservations = unitOfWork.Reservations;
         await reservations.AddAsync(reservation, cancellationToken);
-        await reservations.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         // Step 6: Return result with both customer and reservation IDs
         return new CreateGuestReservationResult(

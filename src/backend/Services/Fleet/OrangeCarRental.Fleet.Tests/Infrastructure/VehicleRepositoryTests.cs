@@ -57,7 +57,10 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -76,8 +79,11 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters =
-            new VehicleSearchParameters(locationCode: Locations.BerlinHauptbahnhof, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            LocationCode.From(Locations.BerlinHauptbahnhof),
+            default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -93,8 +99,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters =
-            new VehicleSearchParameters(category: VehicleCategory.Kleinwagen, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default,
+            VehicleCategory.Kleinwagen,
+            default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -109,7 +119,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(fuelType: FuelType.Electric, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default, default, default,
+            FuelType.Electric,
+            default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -124,7 +139,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(minSeats: 5, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default, default,
+            SeatingCapacity.From(5),
+            default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -140,7 +160,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(maxDailyRateGross: 50.00m, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default,
+            Money.EuroGross(50.00m),
+            default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -155,8 +180,14 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(locationCode: Locations.BerlinHauptbahnhof,
-            fuelType: FuelType.Petrol, minSeats: 4, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            LocationCode.From(Locations.BerlinHauptbahnhof),
+            default,
+            SeatingCapacity.From(4),
+            FuelType.Petrol,
+            default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -176,7 +207,10 @@ public class VehicleRepositoryTests : IAsyncLifetime
     {
         // Arrange
         await SeedTestDataAsync();
-        var parameters = new VehicleSearchParameters(pageNumber: 2, pageSize: 2);
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(2, 2),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -202,7 +236,12 @@ public class VehicleRepositoryTests : IAsyncLifetime
         context.Vehicles.Update(vehicle);
         await context.SaveChangesAsync();
 
-        var parameters = new VehicleSearchParameters(status: VehicleStatus.Available, pageNumber: 1, pageSize: 20);
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default,
+            VehicleStatus.Available,
+            default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
 
         // Act
         var result = await repository.SearchAsync(parameters, CancellationToken.None);
@@ -238,6 +277,95 @@ public class VehicleRepositoryTests : IAsyncLifetime
         // Act & Assert
         await Should.ThrowAsync<EntityNotFoundException>(async () =>
             await repository.GetByIdAsync(nonExistingId, CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithDefaultSorting_ReturnsSortedByNameAscending()
+    {
+        // Arrange
+        await SeedTestDataAsync();
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.None);
+
+        // Act
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
+
+        // Assert
+        result.Items.Count.ShouldBe(5);
+        // Default sorting is by name ascending: BMW X5, Ford Focus, Tesla Model 3, VW Golf, VW Polo
+        result.Items[0].Name.Value.ShouldBe("BMW X5");
+        result.Items[1].Name.Value.ShouldBe("Ford Focus");
+        result.Items[2].Name.Value.ShouldBe("Tesla Model 3");
+        result.Items[3].Name.Value.ShouldBe("VW Golf");
+        result.Items[4].Name.Value.ShouldBe("VW Polo");
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithNameDescending_ReturnsSortedByNameDescending()
+    {
+        // Arrange
+        await SeedTestDataAsync();
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.DescendingBy("name"));
+
+        // Act
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
+
+        // Assert
+        result.Items.Count.ShouldBe(5);
+        // Name descending: VW Polo, VW Golf, Tesla Model 3, Ford Focus, BMW X5
+        result.Items[0].Name.Value.ShouldBe("VW Polo");
+        result.Items[1].Name.Value.ShouldBe("VW Golf");
+        result.Items[4].Name.Value.ShouldBe("BMW X5");
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithPriceAscending_ReturnsSortedByPriceAscending()
+    {
+        // Arrange
+        await SeedTestDataAsync();
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.AscendingBy("dailyrate"));
+
+        // Act
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
+
+        // Assert
+        result.Items.Count.ShouldBe(5);
+        // Price ascending: VW Polo (35), Ford Focus (45), VW Golf (55), Tesla (95), BMW X5 (120)
+        result.Items[0].Name.Value.ShouldBe("VW Polo");
+        result.Items[1].Name.Value.ShouldBe("Ford Focus");
+        result.Items[2].Name.Value.ShouldBe("VW Golf");
+        result.Items[3].Name.Value.ShouldBe("Tesla Model 3");
+        result.Items[4].Name.Value.ShouldBe("BMW X5");
+    }
+
+    [Fact]
+    public async Task SearchAsync_WithSeatsDescending_ReturnsSortedBySeatsDescending()
+    {
+        // Arrange
+        await SeedTestDataAsync();
+        var parameters = new VehicleSearchParameters(
+            default, default, default, default, default, default, default, default,
+            PagingInfo.Create(1, 20),
+            SortingInfo.DescendingBy("seats"));
+
+        // Act
+        var result = await repository.SearchAsync(parameters, CancellationToken.None);
+
+        // Assert
+        result.Items.Count.ShouldBe(5);
+        // Seats descending: BMW X5 (7), then any with 5 seats, VW Polo (4)
+        result.Items[0].Name.Value.ShouldBe("BMW X5");
+        result.Items[0].Seats.Value.ShouldBe(7);
+        result.Items[4].Name.Value.ShouldBe("VW Polo");
+        result.Items[4].Seats.Value.ShouldBe(4);
     }
 
     private async Task SeedTestDataAsync()

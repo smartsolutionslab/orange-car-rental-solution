@@ -39,12 +39,12 @@ public sealed record SortingInfo
     /// <summary>
     ///     Creates ascending sort by the specified field.
     /// </summary>
-    public static SortingInfo Ascending(string sortBy) => new(sortBy, false);
+    public static SortingInfo AscendingBy(string sortBy) => new(sortBy, false);
 
     /// <summary>
     ///     Creates descending sort by the specified field.
     /// </summary>
-    public static SortingInfo Descending(string sortBy) => new(sortBy, true);
+    public static SortingInfo DescendingBy(string sortBy) => new(sortBy, true);
 
     /// <summary>
     ///     Whether sorting is specified.

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -20,7 +21,7 @@ public readonly record struct CustomerIdentifier(Guid Value) : IValueObject
     /// <exception cref="ArgumentException">Thrown when the GUID is empty.</exception>
     public static CustomerIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new CustomerIdentifier(value);
     }
 
@@ -31,10 +32,10 @@ public readonly record struct CustomerIdentifier(Guid Value) : IValueObject
     /// <exception cref="ArgumentException">Thrown when the string is not a valid GUID.</exception>
     public static CustomerIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-            throw new ArgumentException($"Invalid customer ID format: {value}", nameof(value));
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid customer ID format: {value}");
 
-        return From(guid);
+        return From(Guid.Parse(value));
     }
 
     public static implicit operator Guid(CustomerIdentifier customerIdentifier) => customerIdentifier.Value;

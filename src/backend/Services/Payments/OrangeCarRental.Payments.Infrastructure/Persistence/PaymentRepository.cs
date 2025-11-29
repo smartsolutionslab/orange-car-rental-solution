@@ -34,7 +34,4 @@ public sealed class PaymentRepository(PaymentsDbContext context) : IPaymentRepos
         context.Payments.Remove(payment);
         return Task.CompletedTask;
     }
-
-    public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        await context.SaveChangesAsync(cancellationToken);
 }

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -17,11 +18,9 @@ public readonly record struct SeatingCapacity : IValueObject
 
     public static SeatingCapacity From(int value)
     {
-        if (value < 2)
-            throw new ArgumentException("Seating capacity must be at least 2", nameof(value));
-
-        if (value > 9)
-            throw new ArgumentException("Seating capacity cannot exceed 9 for rental vehicles", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsGreaterThanOrEqual(2)
+            .AndIsLessThanOrEqual(9);
 
         return new SeatingCapacity(value);
     }

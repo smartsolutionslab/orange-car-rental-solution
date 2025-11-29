@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -62,32 +63,20 @@ public readonly record struct BirthDate(DateOnly Value) : IValueObject
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Date of birth cannot be in the future
-        if (value > today)
-        {
-            throw new ArgumentException(
-                "Date of birth cannot be in the future",
-                nameof(value));
-        }
+        Ensure.That(value, nameof(value))
+            .ThrowIf(value > today, "Date of birth cannot be in the future");
 
         // Sanity check - no one over 150 years old
         var age = today.Year - value.Year;
         if (value.AddYears(age) > today)
             age--;
 
-        if (age > 150)
-        {
-            throw new ArgumentException(
-                "Invalid date of birth - age cannot exceed 150 years",
-                nameof(value));
-        }
+        Ensure.That(value, nameof(value))
+            .ThrowIf(age > 150, "Invalid date of birth - age cannot exceed 150 years");
 
         // Sanity check - minimum age of 0 (just born)
-        if (age < 0)
-        {
-            throw new ArgumentException(
-                "Invalid date of birth - age cannot be negative",
-                nameof(value));
-        }
+        Ensure.That(value, nameof(value))
+            .ThrowIf(age < 0, "Invalid date of birth - age cannot be negative");
     }
 
     public static implicit operator DateOnly(BirthDate birthDate) => birthDate.Value;

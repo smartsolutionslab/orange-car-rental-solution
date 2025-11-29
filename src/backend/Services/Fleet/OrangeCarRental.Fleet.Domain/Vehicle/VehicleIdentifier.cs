@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -17,10 +18,10 @@ public readonly record struct VehicleIdentifier(Guid Value) : IValueObject
     ///     Creates a vehicle identifier from an existing GUID.
     /// </summary>
     /// <param name="value">The GUID value.</param>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when the GUID is empty.</exception>
+    /// <exception cref="ArgumentException">Thrown when the GUID is empty.</exception>
     public static VehicleIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new VehicleIdentifier(value);
     }
 
@@ -31,10 +32,10 @@ public readonly record struct VehicleIdentifier(Guid Value) : IValueObject
     /// <exception cref="ArgumentException">Thrown when the string is not a valid GUID.</exception>
     public static VehicleIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-            throw new ArgumentException($"Invalid vehicle ID format: {value}", nameof(value));
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid vehicle ID format: {value}");
 
-        return From(guid);
+        return From(Guid.Parse(value));
     }
 
     /// <summary>

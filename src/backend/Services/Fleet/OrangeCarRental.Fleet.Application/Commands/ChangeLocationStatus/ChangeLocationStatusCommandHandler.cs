@@ -1,5 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLocationStatus;
 
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLoc
 ///     Handler for ChangeLocationStatusCommand.
 ///     Changes the status of a location.
 /// </summary>
-public sealed class ChangeLocationStatusCommandHandler(ILocationRepository locations)
+public sealed class ChangeLocationStatusCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<ChangeLocationStatusCommand, ChangeLocationStatusResult>
 {
     /// <summary>
@@ -22,14 +22,14 @@ public sealed class ChangeLocationStatusCommandHandler(ILocationRepository locat
     {
         var (code, newStatus, reason) = command;
 
+        var locations = unitOfWork.Locations;
         var location = await locations.GetByCodeAsync(code, cancellationToken);
         var oldStatus = location.Status;
 
-        var statusChangeReason = StatusChangeReason.FromNullable(reason);
-        location = location.ChangeStatus(newStatus, statusChangeReason);
-
+        location = location.ChangeStatus(newStatus, reason);
         await locations.UpdateAsync(location, cancellationToken);
-        await locations.SaveChangesAsync(cancellationToken);
+
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new ChangeLocationStatusResult(
             location.Code.Value,

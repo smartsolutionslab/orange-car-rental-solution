@@ -25,7 +25,7 @@ public class SeatingCapacityTests
     {
         // Act & Assert
         var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.From(1));
-        ex.Message.ShouldContain("at least 2");
+        ex.Message.ShouldContain("greater than or equal to 2");
     }
 
     [Fact]
@@ -33,7 +33,7 @@ public class SeatingCapacityTests
     {
         // Act & Assert
         var ex = Should.Throw<ArgumentException>(() => SeatingCapacity.From(10));
-        ex.Message.ShouldContain("cannot exceed 9");
+        ex.Message.ShouldContain("less than or equal to 9");
     }
 
     [Fact]

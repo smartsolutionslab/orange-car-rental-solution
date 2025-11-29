@@ -17,7 +17,12 @@ public interface IReservationRepository
     /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when the reservation is not found.</exception>
     Task<Reservation> GetByIdAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
 
-    Task<List<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
+    /// <summary>
+    ///     Gets all reservations (use with caution - prefer SearchAsync for large datasets).
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An immutable read-only list of all reservations.</returns>
+    Task<IReadOnlyList<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Searches reservations with filters, sorting, and pagination.
@@ -34,8 +39,6 @@ public interface IReservationRepository
     Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default);
 
     Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default);
-
-    Task SaveChangesAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets list of vehicle IDs that are booked (unavailable) during the specified period.

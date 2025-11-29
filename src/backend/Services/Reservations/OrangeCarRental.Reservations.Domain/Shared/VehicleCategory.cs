@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -15,15 +16,20 @@ public readonly record struct VehicleCategory(string Code) : IValueObject
     /// <returns>A new ReservationVehicleCategory instance.</returns>
     public static VehicleCategory From(string code)
     {
-        if (string.IsNullOrWhiteSpace(code))
-            throw new ArgumentException("Category code cannot be empty", nameof(code));
-
-        if (code.Length > 20)
-            throw new ArgumentException("Category code cannot exceed 20 characters", nameof(code));
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(20);
 
         var value = code.ToUpperInvariant();
 
         return new VehicleCategory(value);
+    }
+
+    public static VehicleCategory? FromNullable(string? code)
+    {
+        if (string.IsNullOrWhiteSpace(code)) return null;
+
+        return From(code);
     }
 
     // Predefined categories (matching Fleet service but owned by Reservations context)

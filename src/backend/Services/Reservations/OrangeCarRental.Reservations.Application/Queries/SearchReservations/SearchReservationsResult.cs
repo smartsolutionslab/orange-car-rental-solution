@@ -6,12 +6,19 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Sea
 ///     Paginated result for reservation search.
 /// </summary>
 public sealed record SearchReservationsResult(
-    List<ReservationDto> Reservations,
+    IReadOnlyList<ReservationDto> Reservations,
     int TotalCount,
     int PageNumber,
-    int PageSize)
+    int PageSize,
+    int TotalPages)
 {
-    public int TotalPages => (int)Math.Ceiling(TotalCount / (double)PageSize);
+    /// <summary>
+    ///     Indicates if there is a previous page.
+    /// </summary>
     public bool HasPreviousPage => PageNumber > 1;
+
+    /// <summary>
+    ///     Indicates if there is a next page.
+    /// </summary>
     public bool HasNextPage => PageNumber < TotalPages;
 }

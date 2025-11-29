@@ -9,5 +9,5 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLoc
 public sealed record ChangeLocationStatusCommand(
     LocationCode Code,
     LocationStatus NewStatus,
-    string? Reason = null
+    StatusChangeReason? Reason = null
 ) : ICommand<ChangeLocationStatusResult>;

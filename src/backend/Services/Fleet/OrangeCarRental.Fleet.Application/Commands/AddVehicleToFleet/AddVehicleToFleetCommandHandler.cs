@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
@@ -7,7 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicl
 ///     Handler for AddVehicleToFleetCommand.
 ///     Creates a new vehicle and adds it to the fleet.
 /// </summary>
-public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
+public sealed class AddVehicleToFleetCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<AddVehicleToFleetCommand, AddVehicleToFleetResult>
 {
     /// <summary>
@@ -46,8 +47,9 @@ public sealed class AddVehicleToFleetCommandHandler(IVehicleRepository vehicles)
         }
 
         // Persist vehicle
+        var vehicles = unitOfWork.Vehicles;
         await vehicles.AddAsync(vehicle, cancellationToken);
-        await vehicles.SaveChangesAsync(cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new AddVehicleToFleetResult(
             vehicle.Id.Value,

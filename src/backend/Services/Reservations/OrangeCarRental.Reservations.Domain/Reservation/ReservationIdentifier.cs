@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -11,15 +12,15 @@ public readonly record struct ReservationIdentifier(Guid Value) : IValueObject
 
     public static ReservationIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new ReservationIdentifier(value);
     }
 
     public static ReservationIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-            throw new ArgumentException($"Invalid reservation ID format: {value}", nameof(value));
-        return From(guid);
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid reservation ID format: {value}");
+        return From(Guid.Parse(value));
     }
 
     public override string ToString() => Value.ToString();
