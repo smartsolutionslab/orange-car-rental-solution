@@ -1,9 +1,7 @@
 using Moq;
-using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
@@ -11,14 +9,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Application.Commands;
 
 public class AddVehicleToFleetCommandHandlerTests
 {
-    private readonly Mock<IFleetUnitOfWork> _unitOfWorkMock = new();
-    private readonly Mock<IVehicleRepository> _vehicleRepositoryMock = new();
+    private readonly Mock<IFleetUnitOfWork> unitOfWorkMock = new();
+    private readonly Mock<IVehicleRepository> vehicleRepositoryMock = new();
     private readonly AddVehicleToFleetCommandHandler handler;
 
     public AddVehicleToFleetCommandHandlerTests()
     {
-        _unitOfWorkMock.Setup(u => u.Vehicles).Returns(_vehicleRepositoryMock.Object);
-        handler = new AddVehicleToFleetCommandHandler(_unitOfWorkMock.Object);
+        unitOfWorkMock.Setup(u => u.Vehicles).Returns(vehicleRepositoryMock.Object);
+        handler = new AddVehicleToFleetCommandHandler(unitOfWorkMock.Object);
     }
 
     [Fact]
@@ -28,7 +26,7 @@ public class AddVehicleToFleetCommandHandlerTests
         var command = CreateValidCommand();
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
@@ -56,8 +54,8 @@ public class AddVehicleToFleetCommandHandlerTests
         addedVehicle.FuelType.ShouldBe(command.FuelType);
         addedVehicle.TransmissionType.ShouldBe(command.TransmissionType);
 
-        _vehicleRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()), Times.Once);
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        vehicleRepositoryMock.Verify(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()), Times.Once);
+        unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -67,8 +65,8 @@ public class AddVehicleToFleetCommandHandlerTests
         var manufacturer = Manufacturer.From("BMW");
         var model = VehicleModel.From("X5 xDrive40i");
         var year = ManufacturingYear.From(2024);
-        var imageUrl = "https://example.com/bmw-x5.jpg";
-        var licensePlate = "B-AB 1234";
+        var imageUrl = ImageUrl.From("https://example.com/bmw-x5.jpg");
+        var licensePlate = LicensePlate.From("B-AB 1234");
 
         var command = CreateValidCommand() with
         {
@@ -80,7 +78,7 @@ public class AddVehicleToFleetCommandHandlerTests
         };
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
@@ -111,7 +109,7 @@ public class AddVehicleToFleetCommandHandlerTests
         };
 
         Vehicle? addedVehicle = null;
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
             .Returns(Task.CompletedTask);
@@ -138,7 +136,7 @@ public class AddVehicleToFleetCommandHandlerTests
         await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        _unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        unitOfWorkMock.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -149,7 +147,7 @@ public class AddVehicleToFleetCommandHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _vehicleRepositoryMock
+        vehicleRepositoryMock
             .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 
@@ -179,7 +177,7 @@ public class AddVehicleToFleetCommandHandlerTests
             var command = CreateValidCommand() with { Category = category };
 
             Vehicle? addedVehicle = null;
-            _vehicleRepositoryMock
+            vehicleRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
                 .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
                 .Returns(Task.CompletedTask);
@@ -213,7 +211,7 @@ public class AddVehicleToFleetCommandHandlerTests
             var command = CreateValidCommand() with { FuelType = fuelType };
 
             Vehicle? addedVehicle = null;
-            _vehicleRepositoryMock
+            vehicleRepositoryMock
                 .Setup(x => x.AddAsync(It.IsAny<Vehicle>(), It.IsAny<CancellationToken>()))
                 .Callback<Vehicle, CancellationToken>((vehicle, _) => addedVehicle = vehicle)
                 .Returns(Task.CompletedTask);

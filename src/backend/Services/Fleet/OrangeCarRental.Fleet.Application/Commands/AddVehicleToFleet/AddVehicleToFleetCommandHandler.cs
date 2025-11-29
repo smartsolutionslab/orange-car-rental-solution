@@ -11,6 +11,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicl
 public sealed class AddVehicleToFleetCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<AddVehicleToFleetCommand, AddVehicleToFleetResult>
 {
+    private IVehicleRepository Vehicles => unitOfWork.Vehicles;
+
     /// <summary>
     ///     Handles the add vehicle to fleet command.
     /// </summary>
@@ -33,22 +35,18 @@ public sealed class AddVehicleToFleetCommandHandler(IFleetUnitOfWork unitOfWork)
             fuelType,
             transmissionType
         );
-
         // Set optional details if provided
-        if (licensePlate is not null || manufacturer is not null ||
-            vehicleModel is not null || year is not null || imageUrl is not null)
+        if (manufacturer is not null || vehicleModel is not null || year is not null || imageUrl is not null)
         {
             vehicle = vehicle.SetDetails(manufacturer, vehicleModel, year, imageUrl);
         }
 
-        if (licensePlate is not null)
+        if (licensePlate.HasValue)
         {
-            vehicle = vehicle.SetLicensePlate(licensePlate);
+            vehicle = vehicle.SetLicensePlate(licensePlate.Value);
         }
+        await Vehicles.AddAsync(vehicle, cancellationToken);
 
-        // Persist vehicle
-        var vehicles = unitOfWork.Vehicles;
-        await vehicles.AddAsync(vehicle, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new AddVehicleToFleetResult(

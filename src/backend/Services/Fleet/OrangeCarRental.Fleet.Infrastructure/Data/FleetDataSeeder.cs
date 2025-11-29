@@ -294,7 +294,7 @@ public class FleetDataSeeder(
         }
 
         // Generate realistic German license plates
-        vehicle.SetLicensePlate(GenerateLicensePlate(locationCode));
+        vehicle = vehicle.SetLicensePlate(LicensePlate.From(GenerateLicensePlate(locationCode)));
 
         return vehicle;
     }

@@ -1,5 +1,4 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Builders;
 
@@ -18,7 +17,7 @@ public class VehicleTests
         var fuelType = FuelType.Petrol;
         var transmission = TransmissionType.Manual;
         var dailyRate = Money.FromGross(50.00m, 0.19m, Currency.From("EUR"));
-        var licensePlate = "B-XY-1234";
+        var licensePlate = LicensePlate.From("B-XY-1234");
 
         // Act
         var vehicle = Vehicle.From(
@@ -40,7 +39,7 @@ public class VehicleTests
         vehicle.FuelType.ShouldBe(fuelType);
         vehicle.TransmissionType.ShouldBe(transmission);
         vehicle.DailyRate.ShouldBe(dailyRate);
-        vehicle.LicensePlate.ShouldBe("B-XY-1234");
+        vehicle.LicensePlate.ShouldBe(licensePlate);
         vehicle.Status.ShouldBe(VehicleStatus.Available);
     }
 
@@ -237,10 +236,10 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle = vehicle.SetLicensePlate("B-AB-9999");
+        vehicle = vehicle.SetLicensePlate(LicensePlate.From("B-AB-9999"));
 
         // Assert
-        vehicle.LicensePlate.ShouldBe("B-AB-9999");
+        vehicle.LicensePlate.ShouldBe(LicensePlate.From("B-AB-9999"));
     }
 
     [Fact]
@@ -250,7 +249,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act & Assert
-        var act = () => vehicle.SetLicensePlate("  ");
+        var act = () => vehicle.SetLicensePlate(LicensePlate.From("  "));
         var ex = Should.Throw<ArgumentException>(act);
         ex.Message.ShouldContain("String cannot be null, empty, or whitespace");
     }
@@ -262,7 +261,7 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act & Assert
-        var act = () => vehicle.SetLicensePlate("");
+        var act = () => vehicle.SetLicensePlate(LicensePlate.From(""));
         var ex = Should.Throw<ArgumentException>(act);
         ex.Message.ShouldContain("String cannot be null, empty, or whitespace");
     }
@@ -274,10 +273,10 @@ public class VehicleTests
         var vehicle = CreateTestVehicle();
 
         // Act
-        vehicle = vehicle.SetLicensePlate("b-xy-1234");
+        vehicle = vehicle.SetLicensePlate(LicensePlate.From("b-xy-1234"));
 
         // Assert
-        vehicle.LicensePlate.ShouldBe("B-XY-1234");
+        vehicle.LicensePlate.ShouldBe(LicensePlate.From("B-XY-1234"));
     }
 
     [Fact]
@@ -332,7 +331,7 @@ public class VehicleTests
             FuelType.Petrol,
             TransmissionType.Manual
         );
-        vehicle = vehicle.SetLicensePlate("B-XY-1234");
+        vehicle = vehicle.SetLicensePlate(LicensePlate.From("B XY 1234"));
         vehicle.ClearDomainEvents();
         return vehicle;
     }

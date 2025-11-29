@@ -101,9 +101,12 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasMaxLength(20)
             .IsRequired();
 
-        // Simple properties
+        // LicensePlate value object
         builder.Property(v => v.LicensePlate)
             .HasColumnName("LicensePlate")
+            .HasConversion(
+                licensePlate => licensePlate.HasValue ? licensePlate.Value.Value : null,
+                value => value != null ? LicensePlate.From(value) : null)
             .HasMaxLength(20);
 
         // Nullable value objects - Manufacturer, Model, Year
@@ -127,8 +130,12 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
                 year => year.HasValue ? year.Value.Value : (int?)null,
                 value => value.HasValue ? ManufacturingYear.From(value.Value) : null);
 
+        // ImageUrl value object
         builder.Property(v => v.ImageUrl)
             .HasColumnName("ImageUrl")
+            .HasConversion(
+                imageUrl => imageUrl.HasValue ? imageUrl.Value.Value : null,
+                value => value != null ? ImageUrl.From(value) : null)
             .HasMaxLength(500);
 
         // Ignore domain events (not persisted)

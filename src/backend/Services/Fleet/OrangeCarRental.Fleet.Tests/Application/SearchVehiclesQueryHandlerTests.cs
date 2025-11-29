@@ -382,7 +382,10 @@ public class SearchVehiclesQueryHandlerTests
             fuelType,
             TransmissionType.Manual
         );
-        vehicle.SetLicensePlate($"B-TEST-{Guid.NewGuid().ToString()[..6]}");
+        // Generate valid German license plate: B AB 1234 format
+        var random = new Random();
+        var plate = $"B AB {random.Next(1000, 9999)}";
+        vehicle = vehicle.SetLicensePlate(LicensePlate.From(plate));
         return vehicle;
     }
 }

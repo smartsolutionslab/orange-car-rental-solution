@@ -1,5 +1,4 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -55,11 +54,11 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     public FuelType FuelType { get; init; }
     public TransmissionType TransmissionType { get; init; }
     public VehicleStatus Status { get; init; }
-    public string? LicensePlate { get; init; }
+    public LicensePlate? LicensePlate { get; init; }
     public Manufacturer? Manufacturer { get; init; }
     public VehicleModel? Model { get; init; }
     public ManufacturingYear? Year { get; init; }
-    public string? ImageUrl { get; init; }
+    public ImageUrl? ImageUrl { get; init; }
 
     /// <summary>
     ///     Create a new vehicle with German VAT-inclusive pricing.
@@ -98,11 +97,11 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
         FuelType? fuelType = null,
         TransmissionType? transmissionType = null,
         VehicleStatus? status = null,
-        string? licensePlate = null,
+        LicensePlate? licensePlate = null,
         Manufacturer? manufacturer = null,
         VehicleModel? model = null,
         ManufacturingYear? year = null,
-        string? imageUrl = null)
+        ImageUrl? imageUrl = null)
     {
         return new Vehicle
         {
@@ -211,25 +210,22 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     ///     Returns a new instance with the updated details (immutable pattern).
     /// </summary>
     public Vehicle SetDetails(Manufacturer? manufacturer, VehicleModel? model, ManufacturingYear? year,
-        string? imageUrl)
+        ImageUrl? imageUrl)
     {
         return CreateMutatedCopy(
             manufacturer: manufacturer,
             model: model,
             year: year,
-            imageUrl: imageUrl?.Trim());
+            imageUrl: imageUrl);
     }
 
     /// <summary>
     ///     Set license plate.
     ///     Returns a new instance with the updated license plate (immutable pattern).
     /// </summary>
-    public Vehicle SetLicensePlate(string licensePlate)
+    public Vehicle SetLicensePlate(LicensePlate licensePlate)
     {
-        Ensure.That(licensePlate, nameof(licensePlate))
-            .IsNotNullOrWhiteSpace();
-
-        return CreateMutatedCopy(licensePlate: licensePlate.ToUpperInvariant().Trim());
+        return CreateMutatedCopy(licensePlate: licensePlate);
     }
 
     /// <summary>

@@ -403,7 +403,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
             .WithSeats(seats)
             .WithFuelType(fuelType)
             .WithTransmission(TransmissionType.Manual)
-            .WithLicensePlate($"B-{Guid.NewGuid().ToString()[..6].ToUpper()}")
+            .WithLicensePlate($"B AB {new Random().Next(1000, 9999)}")
             .Build();
     }
 }

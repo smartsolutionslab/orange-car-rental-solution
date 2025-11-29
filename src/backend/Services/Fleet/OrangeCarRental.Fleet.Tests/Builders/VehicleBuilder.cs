@@ -18,11 +18,11 @@ public class VehicleBuilder
     private SeatingCapacity _seats = SeatingCapacity.From(5);
     private FuelType _fuelType = FuelType.Diesel;
     private TransmissionType _transmission = TransmissionType.Automatic;
-    private string? _licensePlate;
+    private LicensePlate? _licensePlate;
     private Manufacturer? _manufacturer;
     private VehicleModel? _model;
     private ManufacturingYear? _year;
-    private string? _imageUrl;
+    private ImageUrl? _imageUrl;
 
     /// <summary>
     /// Sets the vehicle name.
@@ -167,7 +167,7 @@ public class VehicleBuilder
     /// </summary>
     public VehicleBuilder WithLicensePlate(string licensePlate)
     {
-        _licensePlate = licensePlate;
+        _licensePlate = LicensePlate.From(licensePlate);
         return this;
     }
 
@@ -179,7 +179,7 @@ public class VehicleBuilder
         _manufacturer = Manufacturer.From(manufacturer);
         _model = VehicleModel.From(model);
         _year = ManufacturingYear.From(year);
-        _imageUrl = imageUrl;
+        _imageUrl = imageUrl != null ? ImageUrl.From(imageUrl) : null;
         return this;
     }
 
@@ -197,9 +197,9 @@ public class VehicleBuilder
             _fuelType,
             _transmission);
 
-        if (_licensePlate != null)
+        if (_licensePlate.HasValue)
         {
-            vehicle = vehicle.SetLicensePlate(_licensePlate);
+            vehicle = vehicle.SetLicensePlate(_licensePlate.Value);
         }
 
         if (_manufacturer != null && _model != null && _year != null)

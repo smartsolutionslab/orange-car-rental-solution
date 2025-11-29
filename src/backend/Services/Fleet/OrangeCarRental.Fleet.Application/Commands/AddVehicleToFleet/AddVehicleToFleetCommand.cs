@@ -1,7 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
@@ -18,8 +17,8 @@ public sealed record AddVehicleToFleetCommand(
     SeatingCapacity Seats,
     FuelType FuelType,
     TransmissionType TransmissionType,
-    string? LicensePlate,
+    LicensePlate? LicensePlate,
     Manufacturer? Manufacturer,
     VehicleModel? Model,
     ManufacturingYear? Year,
-    string? ImageUrl) : ICommand<AddVehicleToFleetResult>;
+    ImageUrl? ImageUrl) : ICommand<AddVehicleToFleetResult>;
