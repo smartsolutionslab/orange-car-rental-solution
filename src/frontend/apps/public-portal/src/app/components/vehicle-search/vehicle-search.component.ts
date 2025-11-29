@@ -1,12 +1,10 @@
-import { Component, output, signal, OnInit, inject } from '@angular/core';
+import { Component, output, signal, inject } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { LocationService } from '../../services/location.service';
-import { Location } from '../../services/location.model';
-import { VehicleSearchQuery, FuelType, TransmissionType } from '../../services/vehicle.model';
 import { CommonModule } from '@angular/common';
-
-// Re-export for consumers
-export type { VehicleSearchQuery };
+import type { Location, VehicleSearchQuery, FuelType, TransmissionType } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
+import { LocationService } from '../../services/location.service';
 
 /**
  * Reusable vehicle search component with date range picker
@@ -107,8 +105,8 @@ export class VehicleSearchComponent implements OnInit {
         this.locations.set(locations);
         this.locationsLoading.set(false);
       },
-      error: (error) => {
-        console.error('Error loading locations:', error);
+      error: (err) => {
+        logError('VehicleSearchComponent', 'Error loading locations', err);
         this.locationsError.set('Failed to load locations');
         this.locationsLoading.set(false);
       }
@@ -126,23 +124,18 @@ export class VehicleSearchComponent implements OnInit {
     const formValue = this.searchForm.value;
 
     // Build search query with dates only (YYYY-MM-DD format)
-    // Cast string values to their union types when they have valid values
+    // Only include properties that have truthy values
     const query: VehicleSearchQuery = {
-      pickupDate: formValue.pickupDate || undefined,
-      returnDate: formValue.returnDate || undefined,
-      locationCode: formValue.locationCode || undefined,
-      categoryCode: formValue.categoryCode || undefined,
-      fuelType: (formValue.fuelType || undefined) as FuelType | undefined,
-      transmissionType: (formValue.transmissionType || undefined) as TransmissionType | undefined,
-      minSeats: formValue.minSeats || undefined
+      ...(formValue.pickupDate && { pickupDate: formValue.pickupDate }),
+      ...(formValue.returnDate && { returnDate: formValue.returnDate }),
+      ...(formValue.locationCode && { locationCode: formValue.locationCode }),
+      ...(formValue.categoryCode && { categoryCode: formValue.categoryCode }),
+      ...(formValue.fuelType && { fuelType: formValue.fuelType as FuelType }),
+      ...(formValue.transmissionType && { transmissionType: formValue.transmissionType as TransmissionType }),
+      ...(formValue.minSeats && { minSeats: formValue.minSeats })
     };
 
-    // Remove undefined values
-    const cleanQuery = Object.fromEntries(
-      Object.entries(query).filter(([, value]) => value !== undefined)
-    ) as VehicleSearchQuery;
-
-    this.searchSubmit.emit(cleanQuery);
+    this.searchSubmit.emit(query);
   }
 
   /**

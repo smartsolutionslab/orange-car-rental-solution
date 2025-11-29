@@ -7,12 +7,12 @@
   </div>
 
   <ul class="nav__menu">
-    @for (item of navItems; track item.path) {
+    @for (item of navItems(); track item.path) {
       <li class="nav__item">
         <a
           [routerLink]="item.path"
           routerLinkActive="nav__link--active"
-          [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+          [routerLinkActiveOptions]="{ exact: item.exactMatch ?? false }"
           class="nav__link"
         >
           <svg class="nav__link-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="item.icon"></svg>
@@ -23,14 +23,16 @@
   </ul>
 
   <div class="nav__auth">
-    @if (isAuthenticated) {
-      <span class="nav__username">{{ username }}</span>
+    @if (isAuthenticated()) {
+      <span class="nav__username">{{ username() }}</span>
       <button (click)="logout()" class="nav__auth-button nav__auth-button--logout">
-        Abmelden
+        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.logout"></svg>
+        <span>Abmelden</span>
       </button>
     } @else {
       <button (click)="login()" class="nav__auth-button nav__auth-button--login">
-        Anmelden
+        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.login"></svg>
+        <span>Anmelden</span>
       </button>
     }
   </div>

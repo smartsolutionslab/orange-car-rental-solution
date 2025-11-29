@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { logError } from '@orange-car-rental/util';
 
 /**
  * Login Component
@@ -53,7 +54,7 @@ export class LoginComponent {
       const returnUrl = this.getReturnUrl();
       this.router.navigate([returnUrl]);
     } catch (error: unknown) {
-      console.error('Login error:', error);
+      logError('LoginComponent', 'Login error', error);
 
       // Handle specific error cases
       const httpError = error as { status?: number; message?: string };

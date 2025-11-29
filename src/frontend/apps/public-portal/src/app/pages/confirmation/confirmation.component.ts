@@ -1,8 +1,10 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import type { Reservation } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation } from '../../services/reservation.model';
 
 /**
  * Confirmation page component
@@ -57,7 +59,7 @@ export class ConfirmationComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error loading reservation:', err);
+        logError('ConfirmationComponent', 'Error loading reservation', err);
         this.error.set('Fehler beim Laden der Reservierung');
         this.loading.set(false);
       }

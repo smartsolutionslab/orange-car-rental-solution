@@ -2,8 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { Customer, CustomerSearchQuery, CustomerSearchResult, UpdateCustomerRequest } from './customer.model';
 import { ConfigService } from './config.service';
+import type { Customer, CustomerSearchQuery, CustomerSearchResult, UpdateCustomerRequest } from '../types';
 
 /**
  * Service for accessing the Customers API

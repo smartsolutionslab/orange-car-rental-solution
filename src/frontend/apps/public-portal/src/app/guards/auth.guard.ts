@@ -1,6 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import type { CanActivateFn } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
+import { logError } from '@orange-car-rental/util';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +27,7 @@ export class AuthGuardService {
 
       return true;
     } catch (error) {
-      console.error('Auth guard error:', error);
+      logError('AuthGuard', 'Auth guard error', error);
       // If Keycloak is not available, redirect to login page
       this.router.navigate(['/login']);
       return false;

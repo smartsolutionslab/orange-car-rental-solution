@@ -144,11 +144,10 @@ describe('LoginComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      let resolveLogin: () => void = () => {};
-      authService.login.and.returnValue(new Promise((resolve) => {
-        resolveLogin = resolve;
-      }));
+      // Create a deferred promise to control resolution timing
+      let resolveLogin!: () => void;
+      const deferredPromise = new Promise<void>(resolve => { resolveLogin = resolve; });
+      authService.login.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
       expect(component.isLoading()).toBeTruthy();

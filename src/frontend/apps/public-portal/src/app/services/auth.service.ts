@@ -1,26 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { KeycloakService } from 'keycloak-angular';
-import { KeycloakProfile } from 'keycloak-js';
+import type { KeycloakProfile } from 'keycloak-js';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-export interface RegisterData {
-  email: string;
-  password: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  acceptMarketing: boolean;
-}
-
-interface TokenResponse {
-  access_token: string;
-  refresh_token: string;
-  expires_in: number;
-  token_type: string;
-}
+import { logError } from '@orange-car-rental/util';
+import type { RegisterData, TokenResponse } from '../types';
+export type { RegisterData } from '../types';
 
 @Injectable({
   providedIn: 'root'
@@ -52,7 +38,7 @@ export class AuthService {
       }
       return null;
     } catch (error) {
-      console.error('Error loading user profile', error);
+      logError('AuthService', 'Error loading user profile', error);
       return null;
     }
   }
@@ -126,7 +112,7 @@ export class AuthService {
         });
       }
     } catch (error: unknown) {
-      console.error('Login error:', error);
+      logError('AuthService', 'Login error', error);
       throw error;
     }
   }
@@ -184,7 +170,7 @@ export class AuthService {
       // After successful registration, log the user in
       await this.login(userData.email, userData.password, false);
     } catch (error: unknown) {
-      console.error('Registration error:', error);
+      logError('AuthService', 'Registration error', error);
       throw error;
     }
   }
@@ -211,7 +197,7 @@ export class AuthService {
         this.http.post(resetUrl, body.toString(), { headers })
       );
     } catch (error: unknown) {
-      console.error('Password reset error:', error);
+      logError('AuthService', 'Password reset error', error);
       throw error;
     }
   }

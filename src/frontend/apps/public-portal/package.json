@@ -1,5 +1,5 @@
 {
-  "name": "public-portal",
+  "name": "@orange-car-rental/public-portal",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -69,7 +69,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "puppeteer": "^24.30.0",
-    "typescript": "~5.9.2",
+    "typescript": "^5.9.3",
     "typescript-eslint": "8.46.4"
   }
 }

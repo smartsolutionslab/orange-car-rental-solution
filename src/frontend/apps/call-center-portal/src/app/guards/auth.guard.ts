@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import type { CanActivateFn } from '@angular/router';
 import { KeycloakService } from 'keycloak-angular';
 
 @Injectable({
@@ -7,8 +7,7 @@ import { KeycloakService } from 'keycloak-angular';
 })
 export class AuthGuardService {
   constructor(
-    private keycloakService: KeycloakService,
-    private router: Router
+    private keycloakService: KeycloakService
   ) {}
 
   async canActivate(): Promise<boolean> {

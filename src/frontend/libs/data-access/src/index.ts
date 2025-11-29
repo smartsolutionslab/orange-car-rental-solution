@@ -1,5 +1,4 @@
 // Data Access Layer
-// API services, state management, and data models
+// Shared types and models for the frontend applications
 
-export * from './lib/services';
 export * from './lib/models';

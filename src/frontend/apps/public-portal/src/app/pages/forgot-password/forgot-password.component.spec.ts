@@ -136,11 +136,10 @@ describe('ForgotPasswordComponent', () => {
     });
 
     it('should set loading state during submission', async () => {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      let resolveReset: () => void = () => {};
-      authService.resetPassword.and.returnValue(new Promise((resolve) => {
-        resolveReset = resolve;
-      }));
+      // Create a deferred promise to control resolution timing
+      let resolveReset!: () => void;
+      const deferredPromise = new Promise<void>(resolve => { resolveReset = resolve; });
+      authService.resetPassword.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
       expect(component.isLoading()).toBeTruthy();
@@ -207,7 +206,7 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(console.error).toHaveBeenCalledWith('Password reset error:', error);
+      expect(console.error).toHaveBeenCalledWith('[ForgotPasswordComponent] Password reset error', error);
     });
   });
 

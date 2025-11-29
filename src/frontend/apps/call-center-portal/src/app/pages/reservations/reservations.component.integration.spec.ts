@@ -4,7 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ConfigService } from '../../services/config.service';
-import { Reservation } from '../../services/reservation.model';
+import type { CustomerId } from '@orange-car-rental/data-access';
+import type { Reservation } from '../../types';
 import { of } from 'rxjs';
 
 /**
@@ -20,9 +21,6 @@ xdescribe('ReservationsComponent (Integration)', () => {
   let component: ReservationsComponent;
   let fixture: ComponentFixture<ReservationsComponent>;
   let httpMock: HttpTestingController;
-  let _router: jasmine.SpyObj<Router>;
-  let _activatedRoute: ActivatedRoute;
-  let _configService: jasmine.SpyObj<ConfigService>;
 
   const apiUrl = 'http://localhost:5000';
 
@@ -30,7 +28,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
     {
       reservationId: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-12-01T10:00:00Z',
       returnDate: '2025-12-05T10:00:00Z',
       pickupLocationCode: 'MUC',
@@ -46,7 +44,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
     {
       reservationId: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
-      customerId: 'cust-002',
+      customerId: '22222222-2222-2222-2222-222222222222' as CustomerId,
       pickupDate: '2025-11-25T10:00:00Z',
       returnDate: '2025-11-27T10:00:00Z',
       pickupLocationCode: 'BER',
@@ -62,7 +60,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
     {
       reservationId: '323e4567-e89b-12d3-a456-426614174002',
       vehicleId: 'veh-003',
-      customerId: 'cust-003',
+      customerId: '33333333-3333-3333-3333-333333333333' as CustomerId,
       pickupDate: '2025-12-10T10:00:00Z',
       returnDate: '2025-12-15T10:00:00Z',
       pickupLocationCode: 'FRA',
@@ -78,7 +76,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
     {
       reservationId: '423e4567-e89b-12d3-a456-426614174003',
       vehicleId: 'veh-004',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-10-15T10:00:00Z',
       returnDate: '2025-10-20T10:00:00Z',
       pickupLocationCode: 'MUC',
@@ -118,9 +116,6 @@ xdescribe('ReservationsComponent (Integration)', () => {
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
-    _router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
-    _activatedRoute = TestBed.inject(ActivatedRoute);
-    _configService = TestBed.inject(ConfigService) as jasmine.SpyObj<ConfigService>;
 
     fixture = TestBed.createComponent(ReservationsComponent);
     component = fixture.componentInstance;
@@ -212,7 +207,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
       // Verify filtered results
       expect(component['reservations']().length).toBe(1);
-      expect(component['reservations']()[0].status).toBe('Pending');
+      expect(component['reservations']()[0]!.status).toBe('Pending');
     }));
 
     it('should clear status filter', fakeAsync(() => {
@@ -227,7 +222,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
       component['applyFilters']();
       tick();
       req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: [mockReservations[0]], totalCount: 1, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req.flush({ reservations: [mockReservations[0]!], totalCount: 1, pageNumber: 1, pageSize: 25, totalPages: 1 });
       tick();
 
       // Act - Clear filters
@@ -287,7 +282,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
       // Verify filtered results
       expect(component['reservations']().length).toBe(1);
-      expect(component['reservations']()[0].pickupDate).toContain('2025-11-25');
+      expect(component['reservations']()[0]!.pickupDate).toContain('2025-11-25');
     }));
   });
 
@@ -566,7 +561,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
     it('should confirm pending reservation', fakeAsync(() => {
       // Arrange
-      const pendingReservation = mockReservations[1]; // Status: Pending
+      const pendingReservation = mockReservations[1]!; // Status: Pending
       spyOn(window, 'confirm').and.returnValue(true);
 
       // Act
@@ -591,7 +586,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
     it('should cancel reservation with reason', fakeAsync(() => {
       // Arrange
-      const confirmedReservation = mockReservations[0]; // Status: Confirmed
+      const confirmedReservation = mockReservations[0]!; // Status: Confirmed
       component['selectedReservation'].set(confirmedReservation);
       component['cancelReason'].set('Customer request');
 
@@ -619,7 +614,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
 
     it('should handle confirmation error', fakeAsync(() => {
       // Arrange
-      const pendingReservation = mockReservations[1];
+      const pendingReservation = mockReservations[1]!;
       spyOn(window, 'confirm').and.returnValue(true);
 
       // Act

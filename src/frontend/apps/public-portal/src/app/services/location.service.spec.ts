@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { LocationService } from './location.service';
 import { ConfigService } from './config.service';
-import { Location } from './location.model';
+import type { Location } from '@orange-car-rental/data-access';
 
 describe('LocationService', () => {
   let service: LocationService;

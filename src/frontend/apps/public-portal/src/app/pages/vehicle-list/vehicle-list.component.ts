@@ -1,9 +1,11 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
+import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { VehicleService } from '../../services/vehicle.service';
-import { Vehicle } from '../../services/vehicle.model';
-import { VehicleSearchComponent, VehicleSearchQuery } from '../../components/vehicle-search/vehicle-search.component';
+import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-search.component';
 
 /**
  * Vehicle list page component
@@ -46,7 +48,7 @@ export class VehicleListComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error loading vehicles:', err);
+        logError('VehicleListComponent', 'Error loading vehicles', err);
         this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
         this.loading.set(false);
       }

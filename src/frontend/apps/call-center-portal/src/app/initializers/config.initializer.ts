@@ -1,32 +1,25 @@
 import { HttpClient } from '@angular/common/http';
-import { ConfigService, AppConfig } from '../services/config.service';
-import { firstValueFrom } from 'rxjs';
-import { catchError, of } from 'rxjs';
+import { ConfigService } from '../services/config.service';
+import type { AppConfig } from '../services/config.service';
+import { firstValueFrom, catchError, of } from 'rxjs';
+
+const DEFAULT_API_URL = 'http://localhost:5002';
 
 /**
  * Factory function for APP_INITIALIZER
  * Loads configuration from config.json before app starts
  */
 export function initializeApp(http: HttpClient, configService: ConfigService): () => Promise<void> {
-  return () => {
-    console.log('[APP_INITIALIZER] Starting configuration load...');
-    return firstValueFrom(
-      http.get<AppConfig>('/config.json').pipe(
-        catchError(error => {
-          console.error('[APP_INITIALIZER] Failed to load config.json:', error);
-          console.log('[APP_INITIALIZER] Using default configuration');
-          return of({ apiUrl: 'http://localhost:5002' });
-        })
-      )
-    ).then((config: AppConfig) => {
-      console.log('[APP_INITIALIZER] Configuration loaded successfully:', config);
+  return async () => {
+    try {
+      const config = await firstValueFrom(
+        http.get<AppConfig>('/config.json').pipe(
+          catchError(() => of({ apiUrl: DEFAULT_API_URL }))
+        )
+      );
       configService.setConfig(config);
-      console.log('[APP_INITIALIZER] Configuration applied to service');
-    }).catch(error => {
-      console.error('[APP_INITIALIZER] Unexpected error:', error);
-      // Set default config even if something unexpected happens
-      configService.setConfig({ apiUrl: 'http://localhost:5002' });
-      console.log('[APP_INITIALIZER] Applied default configuration due to error');
-    });
+    } catch {
+      configService.setConfig({ apiUrl: DEFAULT_API_URL });
+    }
   };
 }

@@ -1,8 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
+import type { ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { logError } from '@orange-car-rental/util';
 
 /**
  * Register Component
@@ -82,7 +84,7 @@ export class RegisterComponent {
       }, 2000);
 
     } catch (error: unknown) {
-      console.error('Registration error:', error);
+      logError('RegisterComponent', 'Registration error', error);
 
       const httpError = error as { status?: number; message?: string };
       if (httpError.status === 409) {

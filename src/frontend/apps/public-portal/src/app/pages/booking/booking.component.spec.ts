@@ -8,10 +8,7 @@ import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { CustomerService } from '../../services/customer.service';
-import { Location } from '../../services/location.model';
-import { Vehicle } from '../../services/vehicle.model';
-import { GuestReservationResponse } from '../../services/reservation.model';
-import { CustomerProfile } from '../../services/customer.model';
+import type { Location, Vehicle, GuestReservationResponse, CustomerProfile, CustomerId } from '@orange-car-rental/data-access';
 
 describe('BookingComponent', () => {
   let component: BookingComponent;
@@ -53,7 +50,7 @@ describe('BookingComponent', () => {
 
   const mockReservationResponse: GuestReservationResponse = {
     reservationId: '987e6543-e89b-12d3-a456-426614174000',
-    customerId: '111e2222-e89b-12d3-a456-426614174000',
+    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
     totalPriceNet: 250.00,
     totalPriceVat: 47.50,
     totalPriceGross: 297.50,
@@ -61,7 +58,7 @@ describe('BookingComponent', () => {
   };
 
   const mockCustomerProfile: CustomerProfile = {
-    id: '111e2222-e89b-12d3-a456-426614174000',
+    id: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
     firstName: 'Max',
     lastName: 'Mustermann',
     email: 'max.mustermann@example.com',

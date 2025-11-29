@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Location, LocationCode } from './location.model';
+import type { Location, LocationCode } from '@orange-car-rental/data-access';
 import { ConfigService } from './config.service';
 
 /**

@@ -1,9 +1,12 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ReservationStatus, isCustomerId } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation, ReservationSearchQuery, ReservationStatus } from '../../services/reservation.model';
+import type { Reservation, ReservationSearchQuery } from '../../types';
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
 
@@ -214,9 +217,10 @@ export class ReservationsComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
+    const customerIdValue = this.searchCustomerId();
     const query: ReservationSearchQuery = {
       status: (this.searchStatus() || undefined) as ReservationStatus | undefined,
-      customerId: this.searchCustomerId() || undefined,
+      customerId: customerIdValue && isCustomerId(customerIdValue) ? customerIdValue : undefined,
       pickupDateFrom: this.searchPickupDateFrom() || undefined,
       pickupDateTo: this.searchPickupDateTo() || undefined,
       locationCode: this.searchLocation() || undefined,
@@ -237,7 +241,7 @@ export class ReservationsComponent implements OnInit {
         this.updateUrl();
       },
       error: (err) => {
-        console.error('Error loading reservations:', err);
+        logError('ReservationsComponent', 'Error loading reservations', err);
         this.error.set('Fehler beim Laden der Reservierungen');
         this.loading.set(false);
       }
@@ -466,7 +470,7 @@ export class ReservationsComponent implements OnInit {
         setTimeout(() => this.successMessage.set(null), 5000);
       },
       error: (err) => {
-        console.error('Error confirming reservation:', err);
+        logError('ReservationsComponent', 'Error confirming reservation', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Bestätigen der Reservierung');
       }
@@ -522,7 +526,7 @@ export class ReservationsComponent implements OnInit {
         setTimeout(() => this.successMessage.set(null), 5000);
       },
       error: (err) => {
-        console.error('Error cancelling reservation:', err);
+        logError('ReservationsComponent', 'Error cancelling reservation', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Stornieren der Reservierung');
       }

@@ -1,16 +1,15 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
+import type { Reservation, ReservationSearchFilters } from '@orange-car-rental/data-access';
+import { ReservationStatus, createCustomerId } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import { Reservation, ReservationSearchFilters, ReservationStatus } from '../../services/reservation.model';
-
-interface GroupedReservations {
-  upcoming: Reservation[];
-  past: Reservation[];
-  pending: Reservation[];
-}
+import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
+import type { GroupedReservations } from '../../types';
 
 @Component({
   selector: 'app-booking-history',
@@ -82,10 +81,10 @@ export class BookingHistoryComponent implements OnInit {
     }
 
     const filters: ReservationSearchFilters = {
-      customerId: userProfile.id,
+      customerId: createCustomerId(userProfile.id),
       sortBy: 'PickupDate',
       sortOrder: 'desc',
-      pageSize: 100
+      pageSize: DEFAULT_PAGE_SIZE.BOOKING_HISTORY
     };
 
     try {
@@ -93,7 +92,7 @@ export class BookingHistoryComponent implements OnInit {
       this.groupReservations(response.items);
       this.isLoading.set(false);
     } catch (err) {
-      console.error('Error loading reservations:', err);
+      logError('BookingHistoryComponent', 'Error loading reservations', err);
       this.error.set('Failed to load your booking history. Please try again later.');
       this.isLoading.set(false);
     }
@@ -149,7 +148,7 @@ export class BookingHistoryComponent implements OnInit {
         this.isLoading.set(false);
       },
       error: (err) => {
-        console.error('Guest lookup error:', err);
+        logError('BookingHistoryComponent', 'Guest lookup error', err);
         this.guestLookupError.set('Reservation not found. Please check your Reservation ID and Email.');
         this.isLoading.set(false);
       }
@@ -218,7 +217,7 @@ export class BookingHistoryComponent implements OnInit {
         alert('Reservation cancelled successfully!');
       },
       error: (err) => {
-        console.error('Cancellation error:', err);
+        logError('BookingHistoryComponent', 'Cancellation error', err);
         this.isLoading.set(false);
         alert('Failed to cancel reservation. Please try again or contact support.');
       }

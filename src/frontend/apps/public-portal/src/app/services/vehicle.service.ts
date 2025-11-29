@@ -1,9 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
-import { ISODateString } from './reservation.model';
+import type { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult, ISODateString } from '@orange-car-rental/data-access';
 import { ConfigService } from './config.service';
+import { DEFAULT_PAGE_SIZE } from '../constants/app.constants';
 
 /**
  * Service for accessing the Fleet API
@@ -66,14 +66,14 @@ export class VehicleService {
     currentVehicle: Vehicle,
     pickupDate?: ISODateString,
     returnDate?: ISODateString,
-    maxResults = 4
+    maxResults = DEFAULT_PAGE_SIZE.MAX_SIMILAR_VEHICLES
   ): Observable<Vehicle[]> {
     // Search for vehicles with similar criteria
     const query: VehicleSearchQuery = {
       locationCode: currentVehicle.locationCode,
       pickupDate,
       returnDate,
-      pageSize: 20 // Get more results to filter from
+      pageSize: DEFAULT_PAGE_SIZE.SIMILAR_VEHICLES
     };
 
     return this.searchVehicles(query).pipe(

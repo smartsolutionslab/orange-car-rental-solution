@@ -23,7 +23,7 @@ describe('RegisterComponent', () => {
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     router = TestBed.inject(Router);
-    navigateSpy = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
   });
 
   beforeEach(() => {
@@ -321,11 +321,10 @@ describe('RegisterComponent', () => {
 
     it('should set loading state during submission', async () => {
       component.currentStep.set(3);
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      let resolveRegister: () => void = () => {};
-      authService.register.and.returnValue(new Promise((resolve) => {
-        resolveRegister = resolve;
-      }));
+      // Create a deferred promise to control resolution timing
+      let resolveRegister!: () => void;
+      const deferredPromise = new Promise<void>(resolve => { resolveRegister = resolve; });
+      authService.register.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
       expect(component.isLoading()).toBeTruthy();

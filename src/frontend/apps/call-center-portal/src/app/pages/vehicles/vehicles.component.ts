@@ -1,20 +1,13 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import type { Vehicle, Location, LocationCode, DailyRate, AddVehicleRequest } from '@orange-car-rental/data-access';
+import { VehicleStatus, VehicleCategoryLabel, FuelType, TransmissionType, VehicleStatusLabel } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { VehicleService } from '../../services/vehicle.service';
 import { LocationService } from '../../services/location.service';
-import {
-  Vehicle,
-  VehicleStatus,
-  LocationCode,
-  DailyRate,
-  AddVehicleRequest,
-  VEHICLE_CATEGORIES,
-  FUEL_TYPES,
-  TRANSMISSION_TYPES,
-  VEHICLE_STATUSES
-} from '../../services/vehicle.model';
-import { Location } from '../../services/location.model';
+import { UI_TIMING } from '../../constants/app.constants';
 
 /**
  * Vehicles management page for call center
@@ -52,10 +45,10 @@ export class VehiclesComponent implements OnInit {
   protected readonly searchCategory = signal<string>('');
 
   // Reference data for dropdowns
-  protected readonly categories = VEHICLE_CATEGORIES;
-  protected readonly fuelTypes = FUEL_TYPES;
-  protected readonly transmissionTypes = TRANSMISSION_TYPES;
-  protected readonly statuses = VEHICLE_STATUSES;
+  protected readonly categories = Object.entries(VehicleCategoryLabel).map(([code, name]) => ({ code, name }));
+  protected readonly fuelTypes = Object.values(FuelType);
+  protected readonly transmissionTypes = Object.values(TransmissionType);
+  protected readonly statuses = Object.entries(VehicleStatusLabel).map(([code, label]) => ({ code, label }));
 
   // Forms
   protected addVehicleForm!: FormGroup;
@@ -112,7 +105,7 @@ export class VehiclesComponent implements OnInit {
         this.loadingLocations.set(false);
       },
       error: (err) => {
-        console.error('Error loading locations:', err);
+        logError('VehiclesComponent', 'Error loading locations', err);
         this.loadingLocations.set(false);
       }
     });
@@ -143,7 +136,7 @@ export class VehiclesComponent implements OnInit {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error loading vehicles:', err);
+        logError('VehiclesComponent', 'Error loading vehicles', err);
         this.error.set('Fehler beim Laden der Fahrzeuge');
         this.loading.set(false);
       }
@@ -330,10 +323,10 @@ export class VehiclesComponent implements OnInit {
         this.successMessage.set(`Fahrzeug "${result.name}" erfolgreich hinzugefügt`);
         this.closeAddVehicleModal();
         this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), 5000);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
-        console.error('Error adding vehicle:', err);
+        logError('VehiclesComponent', 'Error adding vehicle', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Hinzufügen des Fahrzeugs');
       }
@@ -375,10 +368,10 @@ export class VehiclesComponent implements OnInit {
         this.successMessage.set(`Status von "${vehicle.name}" auf "${this.getStatusText(newStatus)}" aktualisiert`);
         this.closeStatusModal();
         this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), 5000);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
-        console.error('Error updating status:', err);
+        logError('VehiclesComponent', 'Error updating status', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Aktualisieren des Status');
       }
@@ -420,10 +413,10 @@ export class VehiclesComponent implements OnInit {
         this.successMessage.set(`Standort von "${vehicle.name}" erfolgreich aktualisiert`);
         this.closeLocationModal();
         this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), 5000);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
-        console.error('Error updating location:', err);
+        logError('VehiclesComponent', 'Error updating location', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Aktualisieren des Standorts');
       }
@@ -465,10 +458,10 @@ export class VehiclesComponent implements OnInit {
         this.successMessage.set(`Tagespreis von "${vehicle.name}" erfolgreich aktualisiert`);
         this.closePricingModal();
         this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), 5000);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
-        console.error('Error updating pricing:', err);
+        logError('VehiclesComponent', 'Error updating pricing', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Aktualisieren des Preises');
       }

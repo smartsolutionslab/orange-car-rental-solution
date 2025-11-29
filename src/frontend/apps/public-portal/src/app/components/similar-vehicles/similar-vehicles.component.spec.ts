@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SimilarVehiclesComponent } from './similar-vehicles.component';
-import { Vehicle } from '../../services/vehicle.model';
+import type { Vehicle } from '@orange-car-rental/data-access';
 
 describe('SimilarVehiclesComponent', () => {
   let component: SimilarVehiclesComponent;
@@ -91,7 +91,7 @@ describe('SimilarVehiclesComponent', () => {
 
   describe('Price Difference Calculation', () => {
     it('should calculate price difference correctly for cheaper vehicle', () => {
-      const cheaper = mockSimilarVehicles[0]; // 53.55 vs 59.50
+      const cheaper = mockSimilarVehicles[0]!; // 53.55 vs 59.50
       const result = component['getPriceDifference'](cheaper);
 
       expect(result.amount).toBeCloseTo(5.95, 2);
@@ -122,7 +122,7 @@ describe('SimilarVehiclesComponent', () => {
 
     it('should return empty when current vehicle is null', () => {
       component.currentVehicle = null;
-      const result = component['getPriceDifference'](mockSimilarVehicles[0]);
+      const result = component['getPriceDifference'](mockSimilarVehicles[0]!);
 
       expect(result.amount).toBe(0);
       expect(result.text).toBe('');
@@ -131,35 +131,35 @@ describe('SimilarVehiclesComponent', () => {
 
   describe('Similarity Reasons', () => {
     it('should show "Gleiche Kategorie" for same category', () => {
-      const sameCategory = mockSimilarVehicles[0]; // MITTEL like current
+      const sameCategory = mockSimilarVehicles[0]!; // MITTEL like current
       const reason = component['getSimilarityReason'](sameCategory);
 
       expect(reason).toContain('Gleiche Kategorie');
     });
 
     it('should show "Ähnliche Kategorie" for different category', () => {
-      const differentCategory = mockSimilarVehicles[1]; // KOMPAKT vs MITTEL
+      const differentCategory = mockSimilarVehicles[1]!; // KOMPAKT vs MITTEL
       const reason = component['getSimilarityReason'](differentCategory);
 
       expect(reason).toContain('Ähnliche Kategorie');
     });
 
     it('should include "Günstiger" for cheaper vehicles', () => {
-      const cheaper = mockSimilarVehicles[0];
+      const cheaper = mockSimilarVehicles[0]!;
       const reason = component['getSimilarityReason'](cheaper);
 
       expect(reason).toContain('Günstiger');
     });
 
     it('should include fuel type when matching', () => {
-      const sameFuel = mockSimilarVehicles[0]; // Petrol like current
+      const sameFuel = mockSimilarVehicles[0]!; // Petrol like current
       const reason = component['getSimilarityReason'](sameFuel);
 
       expect(reason).toContain('Petrol');
     });
 
     it('should include transmission type when matching', () => {
-      const sameTransmission = mockSimilarVehicles[0]; // Manual like current
+      const sameTransmission = mockSimilarVehicles[0]!; // Manual like current
       const reason = component['getSimilarityReason'](sameTransmission);
 
       expect(reason).toContain('Manual');
@@ -167,7 +167,7 @@ describe('SimilarVehiclesComponent', () => {
 
     it('should return empty string when current vehicle is null', () => {
       component.currentVehicle = null;
-      const reason = component['getSimilarityReason'](mockSimilarVehicles[0]);
+      const reason = component['getSimilarityReason'](mockSimilarVehicles[0]!);
 
       expect(reason).toBe('');
     });
@@ -176,7 +176,7 @@ describe('SimilarVehiclesComponent', () => {
   describe('Vehicle Selection', () => {
     it('should emit vehicleSelected event when selectVehicle is called', () => {
       spyOn(component.vehicleSelected, 'emit');
-      const vehicle = mockSimilarVehicles[0];
+      const vehicle = mockSimilarVehicles[0]!;
 
       component['selectVehicle'](vehicle);
 

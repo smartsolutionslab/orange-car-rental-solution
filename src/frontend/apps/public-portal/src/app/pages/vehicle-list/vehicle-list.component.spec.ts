@@ -8,8 +8,7 @@ import { of, throwError } from 'rxjs';
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { LocationService } from '../../services/location.service';
-import { Vehicle, VehicleSearchResult } from '../../services/vehicle.model';
-import { VehicleSearchQuery } from '../../components/vehicle-search/vehicle-search.component';
+import type { Vehicle, VehicleSearchResult, VehicleSearchQuery } from '@orange-car-rental/data-access';
 
 // Register German locale for DecimalPipe
 registerLocaleData(localeDe);

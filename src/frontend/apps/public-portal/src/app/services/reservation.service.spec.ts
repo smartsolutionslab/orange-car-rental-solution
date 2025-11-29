@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ReservationService } from './reservation.service';
 import { ConfigService } from './config.service';
-import { GuestReservationRequest, GuestReservationResponse, Reservation } from './reservation.model';
+import type { GuestReservationRequest, GuestReservationResponse, Reservation, CustomerId } from '@orange-car-rental/data-access';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -43,7 +43,7 @@ describe('ReservationService', () => {
 
   const mockGuestReservationResponse: GuestReservationResponse = {
     reservationId: '987e6543-e89b-12d3-a456-426614174000',
-    customerId: '111e2222-e89b-12d3-a456-426614174000',
+    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
     totalPriceNet: 250.00,
     totalPriceVat: 47.50,
     totalPriceGross: 297.50,
@@ -53,7 +53,7 @@ describe('ReservationService', () => {
   const mockReservation: Reservation = {
     id: '987e6543-e89b-12d3-a456-426614174000',
     vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-    customerId: '111e2222-e89b-12d3-a456-426614174000',
+    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
     pickupDate: '2024-01-15T00:00:00Z',
     returnDate: '2024-01-20T00:00:00Z',
     pickupLocationCode: 'BER-HBF',

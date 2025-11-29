@@ -3,7 +3,8 @@ import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
-import { Reservation } from '../../services/reservation.model';
+import type { CustomerId } from '@orange-car-rental/data-access';
+import type { Reservation } from '../../types';
 
 describe('ReservationsComponent', () => {
   let component: ReservationsComponent;
@@ -16,7 +17,7 @@ describe('ReservationsComponent', () => {
     {
       reservationId: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-12-01',
       returnDate: '2025-12-05',
       pickupLocationCode: 'MUC',
@@ -32,7 +33,7 @@ describe('ReservationsComponent', () => {
     {
       reservationId: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
-      customerId: 'cust-002',
+      customerId: '22222222-2222-2222-2222-222222222222' as CustomerId,
       pickupDate: '2025-11-25',
       returnDate: '2025-11-27',
       pickupLocationCode: 'BER',
@@ -48,7 +49,7 @@ describe('ReservationsComponent', () => {
     {
       reservationId: '323e4567-e89b-12d3-a456-426614174002',
       vehicleId: 'veh-003',
-      customerId: 'cust-003',
+      customerId: '33333333-3333-3333-3333-333333333333' as CustomerId,
       pickupDate: '2025-10-01',
       returnDate: '2025-10-03',
       pickupLocationCode: 'FRA',
@@ -118,7 +119,7 @@ describe('ReservationsComponent', () => {
     it('should load filters from URL parameters', () => {
       mockActivatedRoute.queryParams = of({
         status: 'Confirmed',
-        customerId: 'cust-001',
+        customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
         dateFrom: '2025-11-01',
         dateTo: '2025-11-30',
         location: 'MUC',
@@ -144,7 +145,7 @@ describe('ReservationsComponent', () => {
       component.ngOnInit();
 
       expect(component['searchStatus']()).toBe('Confirmed');
-      expect(component['searchCustomerId']()).toBe('cust-001');
+      expect(component['searchCustomerId']()).toBe('11111111-1111-1111-1111-111111111111');
       expect(component['searchPickupDateFrom']()).toBe('2025-11-01');
       expect(component['searchPickupDateTo']()).toBe('2025-11-30');
       expect(component['searchLocation']()).toBe('MUC');
@@ -194,12 +195,12 @@ describe('ReservationsComponent', () => {
     });
 
     it('should apply customer ID filter', () => {
-      component['searchCustomerId'].set('cust-001');
+      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
       component['applyFilters']();
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          customerId: 'cust-001'
+          customerId: '11111111-1111-1111-1111-111111111111'
         })
       );
     });
@@ -247,7 +248,7 @@ describe('ReservationsComponent', () => {
       component['searchStatus'].set('Confirmed');
       expect(component['activeFiltersCount']()).toBe(1);
 
-      component['searchCustomerId'].set('cust-001');
+      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
       expect(component['activeFiltersCount']()).toBe(2);
 
       component['searchPickupDateFrom'].set('2025-11-01');
@@ -256,7 +257,7 @@ describe('ReservationsComponent', () => {
 
     it('should clear all filters', () => {
       component['searchStatus'].set('Confirmed');
-      component['searchCustomerId'].set('cust-001');
+      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
       component['searchPickupDateFrom'].set('2025-11-01');
       component['searchLocation'].set('MUC');
       component['sortBy'].set('Price');
@@ -674,7 +675,7 @@ describe('ReservationsComponent', () => {
   describe('URL Parameter Sync', () => {
     it('should update URL when filters change', () => {
       component['searchStatus'].set('Confirmed');
-      component['searchCustomerId'].set('cust-001');
+      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
       component['sortBy'].set('Price');
 
       mockReservationService.searchReservations.and.returnValue(

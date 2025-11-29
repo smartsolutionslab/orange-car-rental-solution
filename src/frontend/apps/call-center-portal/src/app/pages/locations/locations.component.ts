@@ -1,10 +1,13 @@
-import { Component, inject, OnInit, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import type { Location, Vehicle } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { LocationService } from '../../services/location.service';
 import { VehicleService } from '../../services/vehicle.service';
-import { Location, LocationStatistics, VehicleDistribution } from '../../services/location.model';
-import { Vehicle } from '../../services/vehicle.model';
+import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
+import type { LocationStatistics, VehicleDistribution } from '../../types';
 
 /**
  * Locations management page for call center
@@ -88,8 +91,8 @@ export class LocationsComponent implements OnInit {
         this.loading.set(false);
         this.loadVehicleCounts();
       },
-      error: (error) => {
-        console.error('Error loading locations:', error);
+      error: (err) => {
+        logError('LocationsComponent', 'Error loading locations', err);
         this.error.set('Fehler beim Laden der Standorte');
         this.loading.set(false);
       }
@@ -100,12 +103,12 @@ export class LocationsComponent implements OnInit {
    * Load all vehicles for statistics
    */
   private loadVehicleCounts(): void {
-    this.vehicleService.searchVehicles({ pageSize: 1000 }).subscribe({
+    this.vehicleService.searchVehicles({ pageSize: DEFAULT_PAGE_SIZE.VEHICLES }).subscribe({
       next: (result) => {
         this.allVehicles.set(result.vehicles);
       },
       error: (err) => {
-        console.error('Error loading vehicles:', err);
+        logError('LocationsComponent', 'Error loading vehicles', err);
       }
     });
   }
@@ -172,7 +175,7 @@ export class LocationsComponent implements OnInit {
         this.loadingVehicles.set(false);
       },
       error: (err) => {
-        console.error('Error loading location vehicles:', err);
+        logError('LocationsComponent', 'Error loading location vehicles', err);
         this.loadingVehicles.set(false);
       }
     });

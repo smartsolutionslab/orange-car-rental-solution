@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
 import { ConfirmationComponent } from './confirmation.component';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation } from '../../services/reservation.model';
+import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
 
 describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
@@ -15,7 +15,7 @@ describe('ConfirmationComponent', () => {
   const mockReservation: Reservation = {
     id: '987e6543-e89b-12d3-a456-426614174000',
     vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-    customerId: '111e2222-e89b-12d3-a456-426614174000',
+    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
     pickupDate: '2024-01-15T00:00:00Z',
     returnDate: '2024-01-20T00:00:00Z',
     pickupLocationCode: 'BER-HBF',

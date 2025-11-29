@@ -1,10 +1,12 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { createCustomerId } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
-import { Customer, UpdateCustomerRequest } from '../../services/customer.model';
-import { Reservation } from '../../services/reservation.model';
+import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
+import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 
 /**
  * Customers management page for call center
@@ -76,10 +78,10 @@ export class CustomersComponent {
     this.searchPerformed.set(true);
 
     const query = {
-      email: email || undefined,
-      phoneNumber: phone || undefined,
-      lastName: lastName || undefined,
-      pageSize: 50
+      ...(email && { email }),
+      ...(phone && { phoneNumber: phone }),
+      ...(lastName && { lastName }),
+      pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS
     };
 
     this.customerService.searchCustomers(query).subscribe({
@@ -89,7 +91,7 @@ export class CustomersComponent {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error searching customers:', err);
+        logError('CustomersComponent', 'Error searching customers', err);
         this.error.set('Fehler bei der Kundensuche');
         this.loading.set(false);
       }
@@ -133,13 +135,13 @@ export class CustomersComponent {
   private loadCustomerReservations(customerId: string): void {
     this.loadingReservations.set(true);
 
-    this.reservationService.searchReservations({ customerId, pageSize: 100 }).subscribe({
+    this.reservationService.searchReservations({ customerId: createCustomerId(customerId), pageSize: DEFAULT_PAGE_SIZE.CUSTOMER_RESERVATIONS }).subscribe({
       next: (result) => {
         this.customerReservations.set(result.reservations);
         this.loadingReservations.set(false);
       },
       error: (err) => {
-        console.error('Error loading customer reservations:', err);
+        logError('CustomersComponent', 'Error loading customer reservations', err);
         this.loadingReservations.set(false);
       }
     });
@@ -279,11 +281,11 @@ export class CustomersComponent {
           this.customers.set([...customers]);
         }
 
-        // Clear success message after 3 seconds
-        setTimeout(() => this.successMessage.set(null), 3000);
+        // Clear success message after timeout
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
       },
       error: (err) => {
-        console.error('Error updating customer:', err);
+        logError('CustomersComponent', 'Error updating customer', err);
         this.error.set('Fehler beim Aktualisieren der Kundendaten');
         this.saving.set(false);
       }

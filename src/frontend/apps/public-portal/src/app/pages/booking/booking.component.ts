@@ -1,40 +1,17 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
+import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import type { Location, Vehicle, GuestReservationRequest, CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/data-access';
+import { logError } from '@orange-car-rental/util';
 import { LocationService } from '../../services/location.service';
-import { Location } from '../../services/location.model';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
-import { Vehicle } from '../../services/vehicle.model';
-import { GuestReservationRequest } from '../../services/reservation.model';
 import { AuthService } from '../../services/auth.service';
 import { CustomerService } from '../../services/customer.service';
-import { CustomerProfile, UpdateCustomerProfileRequest } from '../../services/customer.model';
 import { SimilarVehiclesComponent } from '../../components/similar-vehicles/similar-vehicles.component';
-
-interface BookingFormValue {
-  vehicleId: string;
-  categoryCode: string;
-  pickupDate: string;
-  returnDate: string;
-  pickupLocationCode: string;
-  dropoffLocationCode: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
-  licenseNumber: string;
-  licenseIssueCountry: string;
-  licenseIssueDate: string;
-  licenseExpiryDate: string;
-  updateMyProfile: boolean;
-}
+import type { BookingFormValue } from '../../types';
 
 /**
  * Booking form component for creating guest and authenticated user reservations
@@ -168,8 +145,8 @@ export class BookingComponent implements OnInit {
         this.locations.set(locations);
         this.locationsLoading.set(false);
       },
-      error: (error) => {
-        console.error('Error loading locations:', error);
+      error: (err) => {
+        logError('BookingComponent', 'Error loading locations', err);
         this.locationsLoading.set(false);
       }
     });
@@ -190,8 +167,8 @@ export class BookingComponent implements OnInit {
         // Load similar vehicles
         this.loadSimilarVehicles(vehicle);
       },
-      error: (error) => {
-        console.error('Error loading vehicle:', error);
+      error: (err) => {
+        logError('BookingComponent', 'Error loading vehicle', err);
         this.showVehicleUnavailableWarning.set(true);
         // Don't show error to user, just log it
         // The form will require manual categoryCode entry if vehicle load fails
@@ -210,8 +187,8 @@ export class BookingComponent implements OnInit {
       next: (similar) => {
         this.similarVehicles.set(similar);
       },
-      error: (error) => {
-        console.error('Error loading similar vehicles:', error);
+      error: (err) => {
+        logError('BookingComponent', 'Error loading similar vehicles', err);
         // Non-critical error, just log it
       }
     });
@@ -252,8 +229,8 @@ export class BookingComponent implements OnInit {
           })
         });
       },
-      error: (error) => {
-        console.error('Error loading customer profile:', error);
+      error: (err) => {
+        logError('BookingComponent', 'Error loading customer profile', err);
         this.profileLoading.set(false);
         // Don't show error to user, just log it
         // User can still fill the form manually
@@ -433,7 +410,7 @@ export class BookingComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('Error creating reservation:', err);
+        logError('BookingComponent', 'Error creating reservation', err);
         this.submitting.set(false);
         this.error.set(
           'Fehler beim Erstellen der Reservierung. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.'
@@ -476,10 +453,9 @@ export class BookingComponent implements OnInit {
     this.customerService.updateMyProfile(updateRequest).subscribe({
       next: (updatedProfile) => {
         this.customerProfile.set(updatedProfile);
-        console.log('Profile updated successfully');
       },
-      error: (error) => {
-        console.error('Error updating profile:', error);
+      error: (err) => {
+        logError('BookingComponent', 'Error updating profile', err);
         // Don't show error to user since booking was successful
         // Profile update failure should not block the booking flow
       }

@@ -1,4 +1,5 @@
-import { ApplicationConfig, provideZoneChangeDetection, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
+import { provideZoneChangeDetection, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
+import type { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { KeycloakService } from 'keycloak-angular';

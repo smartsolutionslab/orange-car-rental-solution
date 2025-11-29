@@ -1,17 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
+import type { ReservationId, GuestReservationResponse } from '@orange-car-rental/data-access';
+import { ConfigService } from './config.service';
+import type {
   Reservation,
-  ReservationId,
   CreateReservationRequest,
   CreateReservationResponse,
   GuestReservationRequest,
-  GuestReservationResponse,
   ReservationSearchQuery,
   ReservationSearchResult
-} from './reservation.model';
-import { ConfigService } from './config.service';
+} from '../types';
 
 /**
  * Service for accessing the Reservations API

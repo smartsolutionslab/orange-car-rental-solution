@@ -1,15 +1,22 @@
 {
-  "name": "frontend",
+  "name": "@orange-car-rental/frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:public": "yarn workspace @orange-car-rental/public-portal start:dev",
+    "start:call-center": "yarn workspace @orange-car-rental/call-center-portal start:dev",
+    "build:public": "yarn workspace @orange-car-rental/public-portal build",
+    "build:call-center": "yarn workspace @orange-car-rental/call-center-portal build",
+    "test:public": "yarn workspace @orange-car-rental/public-portal test:ci",
+    "test:call-center": "yarn workspace @orange-car-rental/call-center-portal test:ci",
+    "test:all": "yarn workspaces foreach -A run test:ci",
+    "lint": "yarn workspaces foreach -A run lint",
+    "build:all": "yarn workspaces foreach -A run build"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
   "devDependencies": {
     "@angular-architects/native-federation": "^18.2.7",
     "@angular/cli": "^20.3.7",

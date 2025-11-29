@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { VehicleService } from './vehicle.service';
 import { ConfigService } from './config.service';
-import { Vehicle, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import type { Vehicle, VehicleSearchQuery, VehicleSearchResult } from '@orange-car-rental/data-access';
 
 describe('VehicleService', () => {
   let service: VehicleService;

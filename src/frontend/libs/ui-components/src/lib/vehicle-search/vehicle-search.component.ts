@@ -1,21 +1,7 @@
 import { Component, output, signal, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-
-/**
- * Vehicle search query interface
- */
-export interface VehicleSearchQuery {
-  pickupDate?: string;
-  returnDate?: string;
-  locationCode?: string;
-  categoryCode?: string;
-  minSeats?: number;
-  fuelType?: string;
-  transmissionType?: string;
-  maxDailyRateGross?: number;
-  pageNumber?: number;
-  pageSize?: number;
-}
+import type { VehicleSearchQuery } from './types';
+export type { VehicleSearchQuery } from './types';
 
 /**
  * Reusable vehicle search component with date range picker

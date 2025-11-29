@@ -8,12 +8,22 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "experimentalDecorators": true,
+    "verbatimModuleSyntax": true,
     "importHelpers": true,
-    "target": "ES2022",
+    "target": "ES2024",
     "module": "preserve",
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@orange-car-rental/util": ["../../libs/util/src/index.ts"],
+      "@orange-car-rental/data-access": ["../../libs/data-access/src/index.ts"],
+      "@orange-car-rental/ui-components": ["../../libs/ui-components/src/index.ts"],
+      "@orange-car-rental/shared-ui": ["../../libs/shared-ui/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

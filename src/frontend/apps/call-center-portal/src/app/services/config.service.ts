@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-
-export interface AppConfig {
-  apiUrl: string;
-}
+import type { AppConfig } from '../types';
+export type { AppConfig } from '../types';
 
 /**
  * Configuration service that holds runtime configuration

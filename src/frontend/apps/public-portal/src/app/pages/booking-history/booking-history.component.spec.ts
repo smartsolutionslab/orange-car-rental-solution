@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import { Reservation } from '../../services/reservation.model';
+import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
 import { of, throwError } from 'rxjs';
 
 describe('BookingHistoryComponent', () => {
@@ -15,7 +15,7 @@ describe('BookingHistoryComponent', () => {
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-12-01',
       returnDate: '2025-12-05',
       pickupLocationCode: 'MUC',
@@ -30,7 +30,7 @@ describe('BookingHistoryComponent', () => {
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-11-25',
       returnDate: '2025-11-27',
       pickupLocationCode: 'BER',
@@ -45,7 +45,7 @@ describe('BookingHistoryComponent', () => {
     {
       id: '323e4567-e89b-12d3-a456-426614174002',
       vehicleId: 'veh-003',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-10-01',
       returnDate: '2025-10-03',
       pickupLocationCode: 'FRA',
@@ -93,7 +93,7 @@ describe('BookingHistoryComponent', () => {
   describe('Authenticated User Flow', () => {
     beforeEach(() => {
       mockAuthService.isAuthenticated.and.returnValue(true);
-      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser', email: 'test@example.com' }));
+      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser', email: 'test@example.com' }));
       mockReservationService.searchReservations.and.returnValue(
         of({
           items: mockReservations,
@@ -112,7 +112,7 @@ describe('BookingHistoryComponent', () => {
       expect(component.isAuthenticated()).toBe(true);
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          customerId: 'cust-001',
+          customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
           sortBy: 'PickupDate',
           sortOrder: 'desc'
         })
@@ -225,7 +225,7 @@ describe('BookingHistoryComponent', () => {
   describe('Cancellation Flow', () => {
     beforeEach(() => {
       mockAuthService.isAuthenticated.and.returnValue(true);
-      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
       mockReservationService.searchReservations.and.returnValue(
         of({
           items: mockReservations,

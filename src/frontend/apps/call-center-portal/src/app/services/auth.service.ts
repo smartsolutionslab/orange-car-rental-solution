@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { KeycloakService } from 'keycloak-angular';
-import { KeycloakProfile } from 'keycloak-js';
+import type { KeycloakProfile } from 'keycloak-js';
+import { logError } from '@orange-car-rental/util';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +26,7 @@ export class AuthService {
       }
       return null;
     } catch (error) {
-      console.error('Error loading user profile', error);
+      logError('AuthService', 'Error loading user profile', error);
       return null;
     }
   }

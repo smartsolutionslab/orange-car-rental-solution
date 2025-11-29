@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { logError } from '@orange-car-rental/util';
 
 /**
  * Forgot Password Component
@@ -58,7 +59,7 @@ export class ForgotPasswordComponent {
       this.forgotPasswordForm.reset();
 
     } catch (error: unknown) {
-      console.error('Password reset error:', error);
+      logError('ForgotPasswordComponent', 'Password reset error', error);
 
       const httpError = error as { status?: number; message?: string };
       if (httpError.status === 404) {

@@ -4,7 +4,7 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
-import { Reservation } from '../../services/reservation.model';
+import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
 
 /**
  * Integration Tests for Booking History Component
@@ -22,7 +22,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-12-01T10:00:00Z',
       returnDate: '2025-12-05T10:00:00Z',
       pickupLocationCode: 'MUC',
@@ -37,7 +37,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
-      customerId: 'cust-001',
+      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: '2025-11-25T10:00:00Z',
       returnDate: '2025-11-27T10:00:00Z',
       pickupLocationCode: 'BER',
@@ -90,7 +90,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(Promise.resolve({
-        id: 'cust-001',
+        id: '11111111-1111-1111-1111-111111111111',
         username: 'testuser',
         email: 'test@example.com',
         firstName: 'Test',
@@ -105,7 +105,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Assert - HTTP Request
       const req = httpMock.expectOne(request =>
         request.url.includes('/api/reservations/search') &&
-        request.params.get('customerId') === 'cust-001'
+        request.params.get('customerId') === '11111111-1111-1111-1111-111111111111'
       );
       expect(req.request.method).toBe('GET');
 
@@ -130,7 +130,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should handle HTTP error gracefully', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
 
       // Act
       component.ngOnInit();
@@ -151,7 +151,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should retry loading after error', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
 
       component.ngOnInit();
       tick();
@@ -211,7 +211,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       expect(req.request.method).toBe('GET');
 
       // Respond with reservation
-      req.flush(mockReservations[0]);
+      req.flush(mockReservations[0]!);
       tick();
 
       // Verify result
@@ -246,7 +246,7 @@ describe('BookingHistoryComponent (Integration)', () => {
   describe('Cancellation Flow with Real HTTP', () => {
     beforeEach(fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
 
       component.ngOnInit();
       tick();
@@ -333,7 +333,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Step 1: User logs in
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(Promise.resolve({
-        id: 'cust-001',
+        id: '11111111-1111-1111-1111-111111111111',
         username: 'testuser',
         email: 'user@example.com'
       }));
@@ -403,7 +403,7 @@ describe('BookingHistoryComponent (Integration)', () => {
   describe('Performance and Concurrency', () => {
     it('should handle multiple concurrent requests', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
 
       // Start multiple operations
       component.ngOnInit();
@@ -429,7 +429,7 @@ describe('BookingHistoryComponent (Integration)', () => {
 
     it('should handle slow network gracefully', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: 'cust-001', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
 
       component.ngOnInit();
       tick();

@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
+import type {
   GuestReservationRequest,
   GuestReservationResponse,
   Reservation,
@@ -10,7 +10,7 @@ import {
   ReservationSearchResponse,
   CancelReservationRequest,
   EmailAddress
-} from './reservation.model';
+} from '@orange-car-rental/data-access';
 import { ConfigService } from './config.service';
 
 /**
