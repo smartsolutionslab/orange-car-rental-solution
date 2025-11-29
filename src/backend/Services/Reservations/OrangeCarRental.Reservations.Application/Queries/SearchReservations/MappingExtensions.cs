@@ -50,18 +50,19 @@ public static class MappingExtensions
     /// </summary>
     public static ReservationSearchParameters ToSearchParameters(this SearchReservationsQuery query)
     {
-        var (status, customerId, customerName, vehicleId, categoryCode, pickupLocationCode, dateFrom, dateTo, priceMin,
-            priceMax, sortBy, sortDescending, pageNumber, pageSize) = query;
+        var (status, customerId, customerName, vehicleId,
+            category, pickupLocation, dateRange, priceRange,
+            sortBy, sortDescending, pageNumber, pageSize) = query;
 
         return new ReservationSearchParameters(
-            status.TryParseReservationStatus(),
-            CustomerIdentifier.From(customerId),
-            SearchTerm.FromNullable(customerName),
-            VehicleIdentifier.From(vehicleId),
-            VehicleCategory.FromNullable(categoryCode),
-            LocationCode.FromNullable(pickupLocationCode),
-            DateRange.Create(dateFrom, dateTo),
-            PriceRange.Create(priceMin, priceMax),
+            status,
+            customerId,
+            customerName,
+            vehicleId,
+            category,
+            pickupLocation,
+            dateRange,
+            priceRange,
             PagingInfo.Create(pageNumber, pageSize),
             SortingInfo.Create(sortBy, sortDescending));
     }

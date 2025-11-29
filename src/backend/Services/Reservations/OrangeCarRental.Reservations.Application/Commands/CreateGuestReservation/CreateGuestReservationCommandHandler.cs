@@ -24,7 +24,10 @@ public sealed class CreateGuestReservationCommandHandler(
         CreateGuestReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var (vehicleId,vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, name,  email, phoneNumber, birthDate, address, driversLicense) = command;
+        var reservations = unitOfWork.Reservations;
+
+        var (vehicleId, vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, name, email,
+            phoneNumber, birthDate, address, driversLicense) = command;
         // Step 1: Register the customer via Customers API
         // Extract primitive values from value objects for the DTO
         var registerCustomerDto = new RegisterCustomerDto(
@@ -48,7 +51,8 @@ public sealed class CreateGuestReservationCommandHandler(
         // Step 2: Calculate price via Pricing API
         // Note: Pricing service still uses primitives, so we extract from value objects
         var priceCalculation = await pricingService.CalculatePriceAsync(
-            vehicleCategory, bookingPeriod,
+            vehicleCategory,
+            bookingPeriod,
             pickupLocationCode,
             cancellationToken);
 
@@ -63,10 +67,8 @@ public sealed class CreateGuestReservationCommandHandler(
             dropoffLocationCode,
             totalPrice
         );
-
-        // Step 5: Save to repository
-        var reservations = unitOfWork.Reservations;
         await reservations.AddAsync(reservation, cancellationToken);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         // Step 6: Return result with both customer and reservation IDs

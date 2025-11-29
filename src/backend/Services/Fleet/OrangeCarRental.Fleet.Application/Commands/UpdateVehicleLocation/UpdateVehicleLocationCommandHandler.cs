@@ -11,6 +11,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVeh
 public sealed class UpdateVehicleLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<UpdateVehicleLocationCommand, UpdateVehicleLocationResult>
 {
+    private IVehicleRepository Vehicles => unitOfWork.Vehicles;
+
     /// <summary>
     ///     Handles the update vehicle location command.
     /// </summary>
@@ -25,12 +27,11 @@ public sealed class UpdateVehicleLocationCommandHandler(IFleetUnitOfWork unitOfW
     {
         var (vehicleId, newLocationCode) = command;
 
-        var vehicles = unitOfWork.Vehicles;
-        var vehicle = await vehicles.GetByIdAsync(vehicleId, cancellationToken);
+        var vehicle = await Vehicles.GetByIdAsync(vehicleId, cancellationToken);
         var oldLocationCode = vehicle.CurrentLocationCode;
 
         vehicle = vehicle.MoveToLocation(newLocationCode);
-        await vehicles.UpdateAsync(vehicle, cancellationToken);
+        await Vehicles.UpdateAsync(vehicle, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -95,7 +95,8 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
 // Public Portal - Remote microfrontend for vehicle search and booking
 // Accessible at http://localhost:4201
 // Exposes remote entry point for Module Federation
-var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/public-portal")
+var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/apps/public-portal")
+    .WithNpm()
     .WithHttpEndpoint(4201, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
@@ -106,7 +107,8 @@ var publicPortal = builder.AddNpmApp("public-portal", "../../../frontend/apps/pu
 // Call Center Portal - Remote microfrontend for reservation management
 // Accessible at http://localhost:4202
 // Exposes remote entry point for Module Federation
-var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../frontend/apps/call-center-portal")
+var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../frontend/apps/call-center-portal")
+    .WithNpm()
     .WithHttpEndpoint(4202, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
@@ -117,7 +119,8 @@ var callCenterPortal = builder.AddNpmApp("call-center-portal", "../../../fronten
 // Shell - Host microfrontend application that orchestrates remote microfrontends
 // Main entry point accessible at http://localhost:4200
 // Dynamically loads Public Portal and Call Center Portal via Module Federation
-var shell = builder.AddNpmApp("shell", "../../../frontend/apps/shell")
+var shell = builder.AddJavaScriptApp("shell", "../../../frontend/apps/shell")
+    .WithNpm()
     .WithHttpEndpoint(4200, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))

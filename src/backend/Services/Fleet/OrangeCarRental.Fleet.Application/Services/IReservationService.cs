@@ -15,5 +15,7 @@ public interface IReservationService
     /// <param name="period">Start and end date of the rental period.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of vehicle IDs that have confirmed or active reservations during the period.</returns>
-    Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(SearchPeriod period, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(
+        SearchPeriod period,
+        CancellationToken cancellationToken = default);
 }

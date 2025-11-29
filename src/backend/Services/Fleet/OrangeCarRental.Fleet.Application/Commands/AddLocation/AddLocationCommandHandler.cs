@@ -11,6 +11,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocati
 public sealed class AddLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     : ICommandHandler<AddLocationCommand, AddLocationResult>
 {
+    private ILocationRepository Locations => unitOfWork.Locations;
+
     /// <summary>
     ///     Handles the add location command.
     /// </summary>
@@ -23,17 +25,10 @@ public sealed class AddLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     {
         var (code, name, address) = command;
 
-        var locations = unitOfWork.Locations;
-
-        // Check if location code already exists
-        var existingLocation = await locations.FindByCodeAsync(code, cancellationToken);
-        if (existingLocation != null)
-        {
-            throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
-        }
+        await EnsureLocationCodeNotExists(code, cancellationToken);
 
         var location = Location.Create(code, name, address);
-        await locations.AddAsync(location, cancellationToken);
+        await Locations.AddAsync(location, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -43,5 +38,14 @@ public sealed class AddLocationCommandHandler(IFleetUnitOfWork unitOfWork)
             location.Address.FullAddress,
             location.Status.ToString()
         );
+    }
+
+    private async Task EnsureLocationCodeNotExists(LocationCode code, CancellationToken cancellationToken)
+    {
+        var existingLocation = await Locations.FindByCodeAsync(code, cancellationToken);
+        if (existingLocation != null)
+        {
+            throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
+        }
     }
 }

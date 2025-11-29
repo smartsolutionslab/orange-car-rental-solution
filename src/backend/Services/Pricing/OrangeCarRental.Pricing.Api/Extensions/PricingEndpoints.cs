@@ -8,8 +8,7 @@ public static class PricingEndpoints
     public static IEndpointRouteBuilder MapPricingEndpoints(this IEndpointRouteBuilder app)
     {
         var pricing = app.MapGroup("/api/pricing")
-            .WithTags("Pricing")
-            .WithOpenApi();
+            .WithTags("Pricing");
 
         // POST /api/pricing/calculate - Calculate rental price
         pricing.MapPost("/calculate", async (
@@ -51,12 +50,3 @@ public static class PricingEndpoints
         return app;
     }
 }
-
-/// <summary>
-///     Request DTO for calculating rental price.
-/// </summary>
-public sealed record CalculatePriceRequest(
-    string CategoryCode,
-    DateOnly PickupDate,
-    DateOnly ReturnDate,
-    string? LocationCode);

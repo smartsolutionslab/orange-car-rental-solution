@@ -9,8 +9,7 @@ public static class PaymentEndpoints
     public static IEndpointRouteBuilder MapPaymentEndpoints(this IEndpointRouteBuilder app)
     {
         var payments = app.MapGroup("/api/payments")
-            .WithTags("Payments")
-            .WithOpenApi();
+            .WithTags("Payments");
 
         payments.MapPost("/process", async Task<Results<Ok<ProcessPaymentResult>, BadRequest<ProblemDetails>>> (
                 ProcessPaymentCommand command,

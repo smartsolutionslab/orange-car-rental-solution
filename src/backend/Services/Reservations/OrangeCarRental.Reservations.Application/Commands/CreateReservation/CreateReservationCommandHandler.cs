@@ -19,6 +19,8 @@ public sealed class CreateReservationCommandHandler(
         CreateReservationCommand command,
         CancellationToken cancellationToken = default)
     {
+        var reservations = unitOfWork.Reservations;
+
         var (vehicleId, customerId, vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, _) = command;
 
         // Determine the total price: either use provided value or calculate via Pricing API
@@ -41,7 +43,6 @@ public sealed class CreateReservationCommandHandler(
             totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
         }
 
-        // Create the reservation aggregate
         var reservation = Reservation.Create(
             vehicleId,
             customerId,
@@ -51,9 +52,9 @@ public sealed class CreateReservationCommandHandler(
             totalPrice
         );
 
-        // Save to repository
-        var reservations = unitOfWork.Reservations;
+
         await reservations.AddAsync(reservation, cancellationToken);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateReservationResult(

@@ -11,27 +11,32 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence
 /// </summary>
 public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRepository
 {
-    public async Task<Customer> GetByIdAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
+    private DbSet<Customer> Customers => context.Customers;
+
+    public async Task<Customer> GetByIdAsync(
+        CustomerIdentifier id,
+        CancellationToken cancellationToken = default)
     {
-        var customer = await context.Customers
-            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        var customer = await Customers.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
 
         return customer ?? throw new EntityNotFoundException(typeof(Customer), id);
     }
 
-    public async Task<Customer> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<Customer> GetByEmailAsync(
+        Email email,
+        CancellationToken cancellationToken = default)
     {
         // Compare value objects directly - EF Core will use the value converter
-        var customer = await context.Customers
-            .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
+        var customer = await Customers.FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
 
         return customer ?? throw new EntityNotFoundException(typeof(Customer), email);
     }
 
-    public async Task<bool> ExistsWithEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsWithEmailAsync(
+        Email email,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Customers
-            .AnyAsync(c => c.Email == email, cancellationToken);
+        return await Customers.AnyAsync(c => c.Email == email, cancellationToken);
     }
 
     public async Task<bool> ExistsWithEmailAsync(
@@ -39,13 +44,12 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         CustomerIdentifier excludeCustomerIdentifier,
         CancellationToken cancellationToken = default)
     {
-        return await context.Customers
-            .AnyAsync(c => c.Email == email && c.Id != excludeCustomerIdentifier, cancellationToken);
+        return await Customers.AnyAsync(c => c.Email == email && c.Id != excludeCustomerIdentifier, cancellationToken);
     }
 
     public async Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Customers
+        return await Customers
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -57,7 +61,7 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         parameters.Validate();
 
         // Start with base query
-        var query = context.Customers.AsNoTracking().AsQueryable();
+        var query = Customers.AsNoTracking().AsQueryable();
 
         // Apply filters using database-level WHERE clauses
 

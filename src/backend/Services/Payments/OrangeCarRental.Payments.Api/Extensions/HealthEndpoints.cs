@@ -6,8 +6,7 @@ public static class HealthEndpoints
     {
         app.MapGet("/health", () => Results.Ok(new { status = "healthy", service = "payments" }))
             .WithName("HealthCheck")
-            .WithTags("Health")
-            .WithOpenApi();
+            .WithTags("Health");
 
         return app;
     }

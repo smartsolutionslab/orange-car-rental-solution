@@ -8,8 +8,7 @@ public static class LocationEndpoints
     public static IEndpointRouteBuilder MapLocationEndpoints(this IEndpointRouteBuilder app)
     {
         var locations = app.MapGroup("/api/locations")
-            .WithTags("Locations")
-            .WithOpenApi();
+            .WithTags("Locations");
 
         // GET /api/locations - Get all active locations
         locations.MapGet("/", async (

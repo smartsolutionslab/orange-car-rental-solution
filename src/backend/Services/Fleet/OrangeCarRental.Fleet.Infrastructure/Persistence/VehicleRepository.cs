@@ -12,19 +12,20 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 public sealed class VehicleRepository(FleetDbContext context, IReservationService reservationService)
     : IVehicleRepository
 {
+    private DbSet<Vehicle> Vehicles => context.Vehicles;
+
     public async Task<Vehicle> GetByIdAsync(
         VehicleIdentifier id,
         CancellationToken cancellationToken = default)
     {
-        var vehicle = await context.Vehicles
-            .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+        var vehicle = await Vehicles.FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
 
         return vehicle ?? throw new EntityNotFoundException(typeof(Vehicle), id);
     }
 
     public async Task<IReadOnlyList<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Vehicles
+        return await Vehicles
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -36,7 +37,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
         parameters.Validate();
 
         // Start with base query
-        var query = context.Vehicles.AsNoTracking().AsQueryable();
+        var query = Vehicles.AsNoTracking().AsQueryable();
 
         // Apply filters using value objects directly - no parsing in repository
 
@@ -111,13 +112,13 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
     public async Task AddAsync(
         Vehicle vehicle,
         CancellationToken cancellationToken = default) =>
-        await context.Vehicles.AddAsync(vehicle, cancellationToken);
+        await Vehicles.AddAsync(vehicle, cancellationToken);
 
     public Task UpdateAsync(
         Vehicle vehicle,
         CancellationToken cancellationToken = default)
     {
-        context.Vehicles.Update(vehicle);
+        Vehicles.Update(vehicle);
         return Task.CompletedTask;
     }
 
@@ -125,12 +126,11 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
         VehicleIdentifier id,
         CancellationToken cancellationToken = default)
     {
-        var vehicle = await context.Vehicles
-            .FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
+        var vehicle = await Vehicles.FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
 
         if (vehicle != null)
         {
-            context.Vehicles.Remove(vehicle);
+            Vehicles.Remove(vehicle);
         }
     }
 

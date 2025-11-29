@@ -21,8 +21,7 @@ public static class FleetEndpoints
     public static IEndpointRouteBuilder MapFleetEndpoints(this IEndpointRouteBuilder app)
     {
         var fleet = app.MapGroup("/api/vehicles")
-            .WithTags("Fleet - Vehicles")
-            .WithOpenApi();
+            .WithTags("Fleet - Vehicles");
 
         // GET /api/vehicles - Search vehicles
         fleet.MapGet("/", async ([AsParameters] SearchVehiclesQuery query, SearchVehiclesQueryHandler handler, CancellationToken cancellationToken) =>
@@ -52,11 +51,11 @@ public static class FleetEndpoints
                         SeatingCapacity.From(specifications.Seats),
                         specifications.FuelType.ParseFuelType(),
                         specifications.TransmissionType.ParseTransmissionType(),
-                        registration?.LicensePlate,
+                        LicensePlate.FromNullable(registration?.LicensePlate),
                         Manufacturer.FromNullable(basicInfo.Manufacturer),
                         VehicleModel.FromNullable(basicInfo.Model),
                         ManufacturingYear.FromNullable(basicInfo.Year),
-                        basicInfo.ImageUrl
+                        ImageUrl.FromNullable(basicInfo.ImageUrl)
                     );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
@@ -190,8 +189,7 @@ public static class FleetEndpoints
 
         // Location endpoints
         var locations = app.MapGroup("/api/locations")
-            .WithTags("Fleet - Locations")
-            .WithOpenApi();
+            .WithTags("Fleet - Locations");
 
         // GET /api/locations - Get all locations
         locations.MapGet("/", async (

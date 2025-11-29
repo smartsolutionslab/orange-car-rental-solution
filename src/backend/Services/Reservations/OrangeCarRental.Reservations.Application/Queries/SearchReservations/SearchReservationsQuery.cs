@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
@@ -10,26 +11,24 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Sea
 /// </summary>
 public sealed record SearchReservationsQuery(
     // Status filter
-    string? Status = null,
+    ReservationStatus? Status = null,
 
     // Customer filters
     CustomerIdentifier? CustomerId = null,
-    string? CustomerName = null,
+    SearchTerm? CustomerName = null,
 
     // Vehicle filters
     VehicleIdentifier? VehicleId = null,
-    string? CategoryCode = null,
+    VehicleCategory? Category = null,
 
     // Location filter
-    string? PickupLocationCode = null,
+    LocationCode? PickupLocationCode = null,
 
     // Date range filters
-    DateOnly? PickupDateFrom = null,
-    DateOnly? PickupDateTo = null,
+    DateRange? DateRange = null,
 
     // Price range filters (gross amount in EUR)
-    decimal? PriceMin = null,
-    decimal? PriceMax = null,
+    PriceRange? PriceRange = null,
 
     // Sorting
     string? SortBy = null, // Options: "PickupDate", "Price", "Status", "CreatedDate"

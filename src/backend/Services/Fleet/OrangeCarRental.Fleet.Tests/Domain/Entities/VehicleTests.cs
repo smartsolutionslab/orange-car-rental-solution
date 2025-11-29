@@ -288,7 +288,7 @@ public class VehicleTests
         var manufacturer = Manufacturer.From("BMW");
         var model = VehicleModel.From("X5 xDrive40i");
         var year = ManufacturingYear.From(2024);
-        var imageUrl = "https://example.com/bmw-x5.jpg";
+        var imageUrl = ImageUrl.From("https://example.com/bmw-x5.jpg");
 
         // Act
         var updatedVehicle = vehicle.SetDetails(manufacturer, model, year, imageUrl);
@@ -307,14 +307,15 @@ public class VehicleTests
     {
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
+        var licensePlate = LicensePlate.From("B AB 1234");
 
         // Act
-        var updatedVehicle = vehicle.SetLicensePlate("B-AB 1234");
+        var updatedVehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
         updatedVehicle.ShouldNotBeSameAs(vehicle); // New instance
         updatedVehicle.Id.ShouldBe(vehicle.Id); // Same ID
-        updatedVehicle.LicensePlate.ShouldBe("B-AB 1234");
+        updatedVehicle.LicensePlate.ShouldBe(licensePlate);
     }
 
     [Fact]
@@ -323,11 +324,12 @@ public class VehicleTests
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
 
-        // Act
-        var updatedVehicle = vehicle.SetLicensePlate("b-ab 1234");
+        // Act - LicensePlate.From normalizes to uppercase
+        var licensePlate = LicensePlate.From("b ab 1234");
+        var updatedVehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
-        updatedVehicle.LicensePlate.ShouldBe("B-AB 1234");
+        updatedVehicle.LicensePlate!.Value.Value.ShouldBe("B AB 1234");
     }
 
     [Fact]
@@ -336,33 +338,28 @@ public class VehicleTests
         // Arrange
         var vehicle = VehicleBuilder.Default().Build();
 
-        // Act
-        var updatedVehicle = vehicle.SetLicensePlate("  B-AB 1234  ");
+        // Act - LicensePlate.From trims whitespace
+        var licensePlate = LicensePlate.From("  B AB 1234  ");
+        var updatedVehicle = vehicle.SetLicensePlate(licensePlate);
 
         // Assert
-        updatedVehicle.LicensePlate.ShouldBe("B-AB 1234");
+        updatedVehicle.LicensePlate!.Value.Value.ShouldBe("B AB 1234");
     }
 
     [Theory]
     [InlineData("")]
     [InlineData("   ")]
-    public void SetLicensePlate_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidPlate)
+    public void LicensePlate_WithEmptyOrWhitespace_ShouldThrowArgumentException(string invalidPlate)
     {
-        // Arrange
-        var vehicle = VehicleBuilder.Default().Build();
-
-        // Act & Assert
-        Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(invalidPlate));
+        // Act & Assert - LicensePlate.From validates input
+        Should.Throw<ArgumentException>(() => LicensePlate.From(invalidPlate));
     }
 
     [Fact]
-    public void SetLicensePlate_WithNull_ShouldThrowArgumentException()
+    public void LicensePlate_WithNull_ShouldThrowArgumentException()
     {
-        // Arrange
-        var vehicle = VehicleBuilder.Default().Build();
-
-        // Act & Assert
-        Should.Throw<ArgumentException>(() => vehicle.SetLicensePlate(null!));
+        // Act & Assert - LicensePlate.From validates input
+        Should.Throw<ArgumentException>(() => LicensePlate.From(null!));
     }
 
     [Fact]

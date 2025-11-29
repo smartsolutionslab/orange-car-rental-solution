@@ -10,12 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persiste
 ///     Manages reservation data and booking operations.
 ///     Implements IUnitOfWork for transaction management.
 /// </summary>
-public sealed class ReservationsDbContext : DbContext, IUnitOfWork
+public sealed class ReservationsDbContext(DbContextOptions<ReservationsDbContext> options)
+    : DbContext(options), IUnitOfWork
 {
-    public ReservationsDbContext(DbContextOptions<ReservationsDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Reservation> Reservations => Set<Reservation>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

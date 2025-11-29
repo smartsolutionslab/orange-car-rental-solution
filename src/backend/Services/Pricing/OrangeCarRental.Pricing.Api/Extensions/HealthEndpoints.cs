@@ -7,8 +7,7 @@ public static class HealthEndpoints
     public static IEndpointRouteBuilder MapHealthEndpoints(this IEndpointRouteBuilder app)
     {
         var health = app.MapGroup("/health")
-            .WithTags("Health")
-            .WithOpenApi();
+            .WithTags("Health");
 
         // GET /health - Basic health check
         health.MapGet("/",

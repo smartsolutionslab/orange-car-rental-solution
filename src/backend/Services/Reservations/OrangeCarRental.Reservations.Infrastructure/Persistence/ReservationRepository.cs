@@ -1,9 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -12,18 +10,19 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persiste
 /// </summary>
 public sealed class ReservationRepository(ReservationsDbContext context) : IReservationRepository
 {
-    public async Task<Reservation> GetByIdAsync(ReservationIdentifier id,
+    private DbSet<Reservation> Reservations => context.Reservations;
+    public async Task<Reservation> GetByIdAsync(
+        ReservationIdentifier id,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await context.Reservations
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var reservation = await Reservations.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
         return reservation ?? throw new EntityNotFoundException(typeof(Reservation), id);
     }
 
     public async Task<IReadOnlyList<Reservation>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await context.Reservations
+        return await Reservations
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -32,7 +31,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         ReservationSearchParameters parameters,
         CancellationToken cancellationToken = default)
     {
-        var query = context.Reservations.AsNoTracking();
+        var query = Reservations.AsNoTracking();
 
         // Apply filters
         if (parameters.Status != null)
@@ -120,27 +119,32 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         };
     }
 
-    public async Task AddAsync(Reservation reservation, CancellationToken cancellationToken = default) =>
-        await context.Reservations.AddAsync(reservation, cancellationToken);
+    public async Task AddAsync(
+        Reservation reservation,
+        CancellationToken cancellationToken = default) =>
+        await Reservations.AddAsync(reservation, cancellationToken);
 
     /// <summary>
     ///     Marks the reservation for update in the DbContext.
     ///     Note: EF Core's Update() is synchronous. Changes are persisted when SaveChangesAsync() is called.
     /// </summary>
-    public Task UpdateAsync(Reservation reservation, CancellationToken cancellationToken = default)
+    public Task UpdateAsync(
+        Reservation reservation,
+        CancellationToken cancellationToken = default)
     {
-        context.Reservations.Update(reservation);
+        Reservations.Update(reservation);
         return Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(ReservationIdentifier id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(
+        ReservationIdentifier id,
+        CancellationToken cancellationToken = default)
     {
-        var reservation = await context.Reservations
-            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+        var reservation = await Reservations.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
         if (reservation != null)
         {
-            context.Reservations.Remove(reservation);
+            Reservations.Remove(reservation);
         }
     }
 
@@ -150,7 +154,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     {
         // Get all reservations that overlap with the requested period
         // A reservation is considered "booked" if it's Confirmed or Active
-        var bookedVehicleIds = await context.Reservations
+        var bookedVehicleIds = await Reservations
             .AsNoTracking()
             .Where(r =>
                 (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&

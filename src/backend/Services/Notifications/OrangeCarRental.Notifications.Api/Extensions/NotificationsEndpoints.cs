@@ -8,8 +8,7 @@ public static class NotificationsEndpoints
     public static IEndpointRouteBuilder MapNotificationsEndpoints(this IEndpointRouteBuilder app)
     {
         var notifications = app.MapGroup("/api/notifications")
-            .WithTags("Notifications")
-            .WithOpenApi();
+            .WithTags("Notifications");
 
         // POST /api/notifications/email - Send email notification
         notifications.MapPost("/email", async (

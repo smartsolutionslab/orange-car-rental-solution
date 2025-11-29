@@ -20,8 +20,7 @@ public static class ReservationEndpoints
     public static IEndpointRouteBuilder MapReservationEndpoints(this IEndpointRouteBuilder app)
     {
         var reservations = app.MapGroup("/api/reservations")
-            .WithTags("Reservations")
-            .WithOpenApi();
+            .WithTags("Reservations");
 
         // POST /api/reservations - Create a new reservation
         reservations.MapPost("/", async (CreateReservationRequest request, CreateReservationCommandHandler handler) =>
@@ -86,8 +85,16 @@ public static class ReservationEndpoints
                     Email.From(email),
                     PhoneNumber.From(phoneNumber),
                     BirthDate.Of(dateOfBirth),
-                    Address.Of(street, city, postalCode, country),
-                    DriversLicense.Of(driversLicenseNumber, driversLicenseIssueCountry, driversLicenseIssueDate, driversLicenseExpiryDate)
+                    Address.Of(
+                        street,
+                        city,
+                        postalCode,
+                        country),
+                    DriversLicense.Of(
+                        driversLicenseNumber,
+                        driversLicenseIssueCountry,
+                        driversLicenseIssueDate,
+                        driversLicenseExpiryDate)
                 );
 
                 var result = await handler.HandleAsync(command);
@@ -167,16 +174,14 @@ public static class ReservationEndpoints
                 int pageSize = 50) =>
             {
                 var query = new SearchReservationsQuery(
-                    status,
+                    status.TryParseReservationStatus(),
                      CustomerIdentifier.From(customerId),
-                    customerName,
+                    SearchTerm.FromNullable(customerName),
                     VehicleIdentifier.From(vehicleId),
-                    categoryCode,
-                    pickupLocationCode,
-                    pickupDateFrom,
-                    pickupDateTo,
-                    priceMin,
-                    priceMax,
+                    VehicleCategory.FromNullable(categoryCode),
+                    LocationCode.FromNullable(pickupLocationCode),
+                    DateRange.Create(pickupDateFrom, pickupDateTo),
+                    PriceRange.Create(priceMin, priceMax),
                     sortBy,
                     sortDescending,
                     pageNumber,

@@ -7,4 +7,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.Get
 /// <summary>
 ///     Query to retrieve a reservation by ID.
 /// </summary>
-public sealed record GetReservationQuery(ReservationIdentifier ReservationId) : IQuery<ReservationDto>;
+public sealed record GetReservationQuery(
+    ReservationIdentifier ReservationId
+    ) : IQuery<ReservationDto>;

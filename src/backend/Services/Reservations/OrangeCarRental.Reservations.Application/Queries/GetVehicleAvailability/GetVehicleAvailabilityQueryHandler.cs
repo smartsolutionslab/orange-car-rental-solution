@@ -14,13 +14,15 @@ public sealed class GetVehicleAvailabilityQueryHandler(IReservationRepository re
         GetVehicleAvailabilityQuery query,
         CancellationToken cancellationToken = default)
     {
+        var (pickupDate, returnDate) = query;
+
         var bookedVehicleIds = await reservations.GetBookedVehicleIdsAsync(
-            BookingPeriod.Of(query.PickupDate, query.ReturnDate),
+            BookingPeriod.Of(pickupDate, returnDate),
             cancellationToken);
 
         return new GetVehicleAvailabilityResult(
             bookedVehicleIds,
-            query.PickupDate,
-            query.ReturnDate);
+            pickupDate,
+            returnDate);
     }
 }

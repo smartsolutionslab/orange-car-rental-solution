@@ -17,8 +17,7 @@ public static class CustomerEndpoints
     public static IEndpointRouteBuilder MapCustomerEndpoints(this IEndpointRouteBuilder app)
     {
         var customers = app.MapGroup("/api/customers")
-            .WithTags("Customers")
-            .WithOpenApi();
+            .WithTags("Customers");
 
         // POST /api/customers - Register new customer
         customers.MapPost("/", async (
