@@ -1,34 +1,21 @@
-import { Injectable, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import type { CanActivateFn } from '@angular/router';
-import { KeycloakService } from 'keycloak-angular';
-
-@Injectable({
-  providedIn: 'root'
-})
-export class AuthGuardService {
-  constructor(
-    private keycloakService: KeycloakService
-  ) {}
-
-  async canActivate(): Promise<boolean> {
-    const authenticated = await this.keycloakService.isLoggedIn();
-
-    if (!authenticated) {
-      // Redirect to login
-      await this.keycloakService.login({
-        redirectUri: window.location.origin + window.location.pathname
-      });
-      return false;
-    }
-
-    return true;
-  }
-}
+import Keycloak from 'keycloak-js';
 
 /**
  * Auth guard for protecting routes
+ * Uses the new Keycloak direct injection
  */
 export const authGuard: CanActivateFn = async () => {
-  const authGuardService = inject(AuthGuardService);
-  return authGuardService.canActivate();
+  const keycloak = inject(Keycloak);
+  const authenticated = keycloak.authenticated ?? false;
+
+  if (!authenticated) {
+    await keycloak.login({
+      redirectUri: window.location.origin + window.location.pathname
+    });
+    return false;
+  }
+
+  return true;
 };

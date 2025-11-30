@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { KeycloakService } from 'keycloak-angular';
+import { inject, Injectable } from '@angular/core';
+import Keycloak from 'keycloak-js';
 import type { KeycloakProfile } from 'keycloak-js';
 import { logError } from '@orange-car-rental/util';
 
@@ -7,13 +7,13 @@ import { logError } from '@orange-car-rental/util';
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private keycloakService: KeycloakService) {}
+  private readonly keycloak = inject(Keycloak);
 
   /**
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    return this.keycloakService.isLoggedIn();
+    return this.keycloak.authenticated ?? false;
   }
 
   /**
@@ -22,7 +22,7 @@ export class AuthService {
   async getUserProfile(): Promise<KeycloakProfile | null> {
     try {
       if (this.isAuthenticated()) {
-        return await this.keycloakService.loadUserProfile();
+        return await this.keycloak.loadUserProfile();
       }
       return null;
     } catch (error) {
@@ -35,41 +35,42 @@ export class AuthService {
    * Get user roles
    */
   getUserRoles(): string[] {
-    return this.keycloakService.getUserRoles();
+    return this.keycloak.realmAccess?.roles ?? [];
   }
 
   /**
    * Check if user has specific role
    */
   hasRole(role: string): boolean {
-    return this.keycloakService.isUserInRole(role);
+    return this.getUserRoles().includes(role);
   }
 
   /**
    * Get access token
    */
-  getToken(): Promise<string> {
-    return this.keycloakService.getToken();
+  async getToken(): Promise<string> {
+    await this.keycloak.updateToken(30);
+    return this.keycloak.token ?? '';
   }
 
   /**
    * Login user
    */
   login(): void {
-    this.keycloakService.login();
+    this.keycloak.login();
   }
 
   /**
    * Logout user
    */
   logout(): void {
-    this.keycloakService.logout(window.location.origin);
+    this.keycloak.logout({ redirectUri: window.location.origin });
   }
 
   /**
    * Get username
    */
   getUsername(): string {
-    return this.keycloakService.getUsername();
+    return this.keycloak.tokenParsed?.['preferred_username'] ?? '';
   }
 }

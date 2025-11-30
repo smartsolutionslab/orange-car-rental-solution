@@ -95,8 +95,8 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
 // Public Portal - Remote microfrontend for vehicle search and booking
 // Accessible at http://localhost:4201
 // Exposes remote entry point for Module Federation
-var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/apps/public-portal")
-    .WithNpm()
+var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/apps/public-portal", "start")
+    .WithYarn()
     .WithHttpEndpoint(4201, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
@@ -107,8 +107,8 @@ var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/
 // Call Center Portal - Remote microfrontend for reservation management
 // Accessible at http://localhost:4202
 // Exposes remote entry point for Module Federation
-var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../frontend/apps/call-center-portal")
-    .WithNpm()
+var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../frontend/apps/call-center-portal", "start")
+    .WithYarn()
     .WithHttpEndpoint(4202, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
@@ -119,9 +119,9 @@ var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../
 // Shell - Host microfrontend application that orchestrates remote microfrontends
 // Main entry point accessible at http://localhost:4200
 // Dynamically loads Public Portal and Call Center Portal via Module Federation
-var shell = builder.AddJavaScriptApp("shell", "../../../frontend/apps/shell")
-    .WithNpm()
-    .WithHttpEndpoint(4200, env: "PORT")
+var shell = builder.AddJavaScriptApp("shell", "../../../frontend/apps/shell", "start")
+    .WithYarn()
+    .WithHttpEndpoint(4119, env: "PORT")
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithEnvironment("PUBLIC_PORTAL_URL", publicPortal.GetEndpoint("http"))
