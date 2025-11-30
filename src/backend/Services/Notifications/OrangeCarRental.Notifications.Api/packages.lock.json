@@ -562,7 +562,9 @@
       "orangecarrental.buildingblocks.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.0, )"
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.0, )",
+          "Microsoft.EntityFrameworkCore": "[10.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
         }
       },
       "orangecarrental.notifications.application": {

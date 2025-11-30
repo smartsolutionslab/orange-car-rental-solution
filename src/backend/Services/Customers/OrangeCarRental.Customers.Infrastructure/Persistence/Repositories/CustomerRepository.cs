@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
@@ -60,11 +62,79 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
     {
         parameters.Validate();
 
-        // Start with base query
-        var query = Customers.AsNoTracking().AsQueryable();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        // Apply filters using database-level WHERE clauses
+        var query = Customers
+            .AsNoTracking()
+            .ApplyFilters(parameters, today)
+            .ApplySorting(parameters.Sorting, SortFieldSelectors, c => c.RegisteredAtUtc, defaultDescending: true);
 
+        return await query.ToPagedResultAsync(parameters.Paging, cancellationToken);
+    }
+
+    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
+        await context.Customers.AddAsync(customer, cancellationToken);
+
+    public Task UpdateAsync(Customer customer, CancellationToken cancellationToken = default)
+    {
+        context.Customers.Update(customer);
+        return Task.CompletedTask;
+    }
+
+    public async Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
+    {
+        var customer = await GetByIdAsync(id, cancellationToken);
+        context.Customers.Remove(customer);
+    }
+
+    /// <summary>
+    ///     Sort field selectors for customer queries.
+    /// </summary>
+    private static readonly Dictionary<string, Expression<Func<Customer, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["firstname"] = c => c.Name.FirstName,
+        ["first_name"] = c => c.Name.FirstName,
+        ["lastname"] = c => c.Name.LastName,
+        ["last_name"] = c => c.Name.LastName,
+        ["email"] = c => c.Email,
+        ["phonenumber"] = c => c.PhoneNumber,
+        ["phone_number"] = c => c.PhoneNumber,
+        ["phone"] = c => c.PhoneNumber,
+        ["dateofbirth"] = c => c.DateOfBirth,
+        ["date_of_birth"] = c => c.DateOfBirth,
+        ["birthdate"] = c => c.DateOfBirth,
+        ["city"] = c => c.Address.City,
+        ["postalcode"] = c => c.Address.PostalCode,
+        ["postal_code"] = c => c.Address.PostalCode,
+        ["zip"] = c => c.Address.PostalCode,
+        ["status"] = c => c.Status,
+        ["registeredat"] = c => c.RegisteredAtUtc,
+        ["registered_at"] = c => c.RegisteredAtUtc,
+        ["created"] = c => c.RegisteredAtUtc,
+        ["createdat"] = c => c.RegisteredAtUtc,
+        ["updatedat"] = c => c.UpdatedAtUtc,
+        ["updated_at"] = c => c.UpdatedAtUtc,
+        ["modified"] = c => c.UpdatedAtUtc,
+        ["modifiedat"] = c => c.UpdatedAtUtc,
+        ["licenseexpiry"] = c => c.DriversLicense.ExpiryDate,
+        ["license_expiry"] = c => c.DriversLicense.ExpiryDate,
+        ["expirydate"] = c => c.DriversLicense.ExpiryDate
+    };
+}
+
+/// <summary>
+///     Filter extension methods for Customer queries.
+/// </summary>
+internal static class CustomerQueryExtensions
+{
+    /// <summary>
+    ///     Applies all filters from CustomerSearchParameters to the query.
+    /// </summary>
+    public static IQueryable<Customer> ApplyFilters(
+        this IQueryable<Customer> query,
+        CustomerSearchParameters parameters,
+        DateOnly today)
+    {
         // Name search - search in both FirstName and LastName using LIKE
         if (parameters.SearchTerm is not null)
         {
@@ -74,26 +144,15 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
                 EF.Functions.Like(c.Name.LastName.Value, $"%{searchTermValue}%"));
         }
 
-        // Email filter - use value object directly
-        if (parameters.Email is not null) query = query.Where(c => c.Email == parameters.Email);
-
-        // Phone number filter - use value object directly
-        if (parameters.PhoneNumber is not null) query = query.Where(c => c.PhoneNumber == parameters.PhoneNumber);
-
-        // Status filter
-        if (parameters.Status.HasValue) query = query.Where(c => c.Status == parameters.Status.Value);
-
-        // City filter - use value object directly
-        if (parameters.City is not null)
-            query = query.Where(c => c.Address.City == parameters.City.Value);
-
-        // Postal code filter - use value object directly
-        if (parameters.PostalCode is not null)
-            query = query.Where(c => c.Address.PostalCode == parameters.PostalCode.Value);
+        // Direct value object filters
+        query = query
+            .WhereIf(parameters.Email is not null, c => c.Email == parameters.Email)
+            .WhereIf(parameters.PhoneNumber is not null, c => c.PhoneNumber == parameters.PhoneNumber)
+            .WhereIf(parameters.Status.HasValue, c => c.Status == parameters.Status!.Value)
+            .WhereIf(parameters.City is not null, c => c.Address.City == parameters.City!.Value)
+            .WhereIf(parameters.PostalCode is not null, c => c.Address.PostalCode == parameters.PostalCode!.Value);
 
         // Age range filtering - calculated from DateOfBirth
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
-
         if (parameters.AgeRange is { HasFilter: true })
         {
             if (parameters.AgeRange.Min.HasValue)
@@ -134,100 +193,6 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
             }
         }
 
-        // Apply sorting
-        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
-
-        // Get total count and apply pagination
-        var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query
-            .Skip(parameters.Paging.Skip)
-            .Take(parameters.Paging.Take)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<Customer>
-        {
-            Items = items,
-            TotalCount = totalCount,
-            PageNumber = parameters.Paging.PageNumber,
-            PageSize = parameters.Paging.PageSize
-        };
-    }
-
-    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
-        await context.Customers.AddAsync(customer, cancellationToken);
-
-    public Task UpdateAsync(Customer customer, CancellationToken cancellationToken = default)
-    {
-        context.Customers.Update(customer);
-        return Task.CompletedTask;
-    }
-
-    public async Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
-    {
-        var customer = await GetByIdAsync(id, cancellationToken);
-        context.Customers.Remove(customer);
-    }
-
-    /// <summary>
-    ///     Applies sorting to the query based on the specified field and direction.
-    /// </summary>
-    private static IQueryable<Customer> ApplySorting(
-        IQueryable<Customer> query,
-        string? sortBy,
-        bool sortDescending)
-    {
-        if (string.IsNullOrWhiteSpace(sortBy))
-        {
-            // Default sorting: newest first
-            return query.OrderByDescending(c => c.RegisteredAtUtc);
-        }
-
-        // Normalize sort field name
-        var sortField = sortBy.Trim().ToLowerInvariant();
-
-        return sortField switch
-        {
-            "firstname" or "first_name" =>
-                sortDescending ? query.OrderByDescending(c => c.Name.FirstName) : query.OrderBy(c => c.Name.FirstName),
-
-            "lastname" or "last_name" =>
-                sortDescending ? query.OrderByDescending(c => c.Name.LastName) : query.OrderBy(c => c.Name.LastName),
-
-            "email" =>
-                sortDescending ? query.OrderByDescending(c => c.Email) : query.OrderBy(c => c.Email),
-
-            "phonenumber" or "phone_number" or "phone" =>
-                sortDescending ? query.OrderByDescending(c => c.PhoneNumber) : query.OrderBy(c => c.PhoneNumber),
-
-            "dateofbirth" or "date_of_birth" or "birthdate" =>
-                sortDescending ? query.OrderByDescending(c => c.DateOfBirth) : query.OrderBy(c => c.DateOfBirth),
-
-            "city" =>
-                sortDescending ? query.OrderByDescending(c => c.Address.City) : query.OrderBy(c => c.Address.City),
-
-            "postalcode" or "postal_code" or "zip" =>
-                sortDescending
-                    ? query.OrderByDescending(c => c.Address.PostalCode)
-                    : query.OrderBy(c => c.Address.PostalCode),
-
-            "status" =>
-                sortDescending ? query.OrderByDescending(c => c.Status) : query.OrderBy(c => c.Status),
-
-            "registeredat" or "registered_at" or "created" or "createdat" =>
-                sortDescending
-                    ? query.OrderByDescending(c => c.RegisteredAtUtc)
-                    : query.OrderBy(c => c.RegisteredAtUtc),
-
-            "updatedat" or "updated_at" or "modified" or "modifiedat" =>
-                sortDescending ? query.OrderByDescending(c => c.UpdatedAtUtc) : query.OrderBy(c => c.UpdatedAtUtc),
-
-            "licenseexpiry" or "license_expiry" or "expirydate" =>
-                sortDescending
-                    ? query.OrderByDescending(c => c.DriversLicense.ExpiryDate)
-                    : query.OrderBy(c => c.DriversLicense.ExpiryDate),
-
-            // Default: sort by registration date
-            _ => query.OrderByDescending(c => c.RegisteredAtUtc)
-        };
+        return query;
     }
 }

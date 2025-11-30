@@ -562,7 +562,9 @@
       "orangecarrental.buildingblocks.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.0, )"
+          "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.0, )",
+          "Microsoft.EntityFrameworkCore": "[10.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
         }
       },
       "orangecarrental.customers.application": {
@@ -584,6 +586,7 @@
           "Microsoft.EntityFrameworkCore": "[10.0.0, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.0, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Infrastructure": "[1.0.0, )",
           "OrangeCarRental.Customers.Application": "[1.0.0, )",
           "OrangeCarRental.Customers.Domain": "[1.0.0, )"
         }

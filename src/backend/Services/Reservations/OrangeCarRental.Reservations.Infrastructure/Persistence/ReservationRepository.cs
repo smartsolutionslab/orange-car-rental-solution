@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
@@ -31,93 +33,30 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         ReservationSearchParameters parameters,
         CancellationToken cancellationToken = default)
     {
-        var query = Reservations.AsNoTracking();
+        var query = Reservations
+            .AsNoTracking()
+            .ApplyFilters(parameters)
+            .ApplySorting(parameters.Sorting, SortFieldSelectors, r => r.CreatedAt, defaultDescending: true);
 
-        // Apply filters
-        if (parameters.Status != null)
-            query = query.Where(r => r.Status == parameters.Status);
-
-        if (parameters.CustomerId.HasValue)
-            query = query.Where(r => r.CustomerIdentifier == parameters.CustomerId.Value);
-
-        // Note: customerName filter requires denormalized customer data (not yet implemented)
-
-        if (parameters.VehicleId.HasValue)
-            query = query.Where(r => r.VehicleIdentifier == parameters.VehicleId.Value);
-
-        // Note: categoryCode filter requires denormalized vehicle category data (not yet implemented)
-
-        if (parameters.PickupLocationCode.HasValue)
-            query = query.Where(r => r.PickupLocationCode == parameters.PickupLocationCode.Value);
-
-        // Pickup date range filtering
-        if (parameters.PickupDateRange is { HasFilter: true })
-        {
-            if (parameters.PickupDateRange.From.HasValue)
-                query = query.Where(r => r.Period.PickupDate >= parameters.PickupDateRange.From.Value);
-
-            if (parameters.PickupDateRange.To.HasValue)
-                query = query.Where(r => r.Period.PickupDate <= parameters.PickupDateRange.To.Value);
-        }
-
-        // Price range filters - access GrossAmount from Money complex property
-        if (parameters.PriceRange is { HasFilter: true })
-        {
-            if (parameters.PriceRange.Min.HasValue)
-                query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceRange.Min.Value);
-
-            if (parameters.PriceRange.Max.HasValue)
-                query = query.Where(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceRange.Max.Value);
-        }
-
-        // Get total count before pagination (executed at database level)
-        var totalCount = await query.CountAsync(cancellationToken);
-
-        // Apply sorting
-        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
-
-        // Apply pagination (uses Skip/Take properties from SearchParameters)
-        var items = await query
-            .Skip(parameters.Paging.Skip)
-            .Take(parameters.Paging.Take)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<Reservation>
-        {
-            Items = items,
-            TotalCount = totalCount,
-            PageNumber = parameters.Paging.PageNumber,
-            PageSize = parameters.Paging.PageSize
-        };
+        return await query.ToPagedResultAsync(parameters.Paging, cancellationToken);
     }
 
-    private static IQueryable<Reservation> ApplySorting(
-        IQueryable<Reservation> query,
-        string? sortBy,
-        bool sortDescending)
+    /// <summary>
+    ///     Sort field selectors for reservation queries.
+    /// </summary>
+    private static readonly Dictionary<string, Expression<Func<Reservation, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        return sortBy?.ToLowerInvariant() switch
-        {
-            "pickupdate" => sortDescending
-                ? query.OrderByDescending(r => r.Period.PickupDate)
-                : query.OrderBy(r => r.Period.PickupDate),
-
-            "price" => sortDescending
-                ? query.OrderByDescending(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount)
-                : query.OrderBy(r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount),
-
-            "status" => sortDescending
-                ? query.OrderByDescending(r => r.Status)
-                : query.OrderBy(r => r.Status),
-
-            "createddate" => sortDescending
-                ? query.OrderByDescending(r => r.CreatedAt)
-                : query.OrderBy(r => r.CreatedAt),
-
-            // Default sorting by CreatedAt descending
-            _ => query.OrderByDescending(r => r.CreatedAt)
-        };
-    }
+        ["pickupdate"] = r => r.Period.PickupDate,
+        ["pickup_date"] = r => r.Period.PickupDate,
+        ["price"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        ["totalprice"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        ["total_price"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        ["status"] = r => r.Status,
+        ["createddate"] = r => r.CreatedAt,
+        ["created_date"] = r => r.CreatedAt,
+        ["createdat"] = r => r.CreatedAt,
+        ["created_at"] = r => r.CreatedAt
+    };
 
     public async Task AddAsync(
         Reservation reservation,
@@ -167,5 +106,39 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
             .ToListAsync(cancellationToken);
 
         return bookedVehicleIds;
+    }
+}
+
+/// <summary>
+///     Filter extension methods for Reservation queries.
+/// </summary>
+internal static class ReservationQueryExtensions
+{
+    /// <summary>
+    ///     Applies all filters from ReservationSearchParameters to the query.
+    /// </summary>
+    public static IQueryable<Reservation> ApplyFilters(
+        this IQueryable<Reservation> query,
+        ReservationSearchParameters parameters)
+    {
+        query = query
+            .WhereIf(parameters.Status != null, r => r.Status == parameters.Status)
+            .WhereIf(parameters.CustomerId.HasValue, r => r.CustomerIdentifier == parameters.CustomerId!.Value)
+            .WhereIf(parameters.VehicleId.HasValue, r => r.VehicleIdentifier == parameters.VehicleId!.Value)
+            .WhereIf(parameters.PickupLocationCode.HasValue, r => r.PickupLocationCode == parameters.PickupLocationCode!.Value);
+
+        // Pickup date range filtering
+        query = query.WhereInDateRange(
+            parameters.PickupDateRange,
+            r => r.Period.PickupDate >= parameters.PickupDateRange!.From!.Value,
+            r => r.Period.PickupDate <= parameters.PickupDateRange!.To!.Value);
+
+        // Price range filtering
+        query = query.WhereInPriceRange(
+            parameters.PriceRange,
+            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceRange!.Min!.Value,
+            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceRange!.Max!.Value);
+
+        return query;
     }
 }

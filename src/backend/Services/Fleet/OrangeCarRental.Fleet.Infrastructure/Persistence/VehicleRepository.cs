@@ -1,6 +1,8 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
@@ -36,53 +38,17 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
     {
         parameters.Validate();
 
-        // Start with base query
-        var query = Vehicles.AsNoTracking().AsQueryable();
+        var query = Vehicles
+            .AsNoTracking()
+            .ApplyFilters(parameters);
 
-        // Apply filters using value objects directly - no parsing in repository
-
-        // Location filter - use LocationCode directly
-        if (parameters.LocationCode.HasValue)
-        {
-            query = query.Where(v => v.CurrentLocationCode == parameters.LocationCode.Value);
-        }
-
-        // Category filter - use value object directly
-        if (parameters.Category.HasValue) query = query.Where(v => v.Category == parameters.Category.Value);
-
-        // Minimum seats filter
-        if (parameters.MinSeats.HasValue)
-            query = query.Where(v => v.Seats >= parameters.MinSeats.Value);
-
-        // Fuel type filter
-        if (parameters.FuelType.HasValue) query = query.Where(v => v.FuelType == parameters.FuelType.Value);
-
-        // Transmission type filter
-        if (parameters.TransmissionType.HasValue)
-            query = query.Where(v => v.TransmissionType == parameters.TransmissionType.Value);
-
-        // Max daily rate filter
-        if (parameters.MaxDailyRate.HasValue)
-        {
-            var maxRate = parameters.MaxDailyRate.Value;
-            query = query.Where(v =>
-                v.DailyRate.NetAmount + v.DailyRate.VatAmount <= maxRate.NetAmount + maxRate.VatAmount);
-        }
-
-        // Status filter
-        if (parameters.Status.HasValue) query = query.Where(v => v.Status == parameters.Status.Value);
-
-        // Filter by date availability if period is provided
+        // Filter by date availability if period is provided (cross-service call)
         if (parameters.Period.HasValue)
         {
-            var searchPeriod = parameters.Period.Value;
-
-            // Get booked vehicle IDs via Reservations API (maintains bounded context boundaries)
             var bookedVehicleIds = await reservationService.GetBookedVehicleIdsAsync(
-                searchPeriod,
+                parameters.Period.Value,
                 cancellationToken);
 
-            // Apply exclusion filter at database level - NOT in memory
             if (bookedVehicleIds.Count > 0)
             {
                 var bookedIdsSet = bookedVehicleIds.ToHashSet();
@@ -90,23 +56,9 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
             }
         }
 
-        // Apply sorting
-        query = ApplySorting(query, parameters.Sorting.SortBy, parameters.Sorting.Descending);
+        query = query.ApplySorting(parameters.Sorting, SortFieldSelectors, v => v.Name);
 
-        // Get total count and apply pagination at database level for all queries
-        var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query
-            .Skip(parameters.Paging.Skip)
-            .Take(parameters.Paging.Take)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<Vehicle>
-        {
-            Items = items,
-            TotalCount = totalCount,
-            PageNumber = parameters.Paging.PageNumber,
-            PageSize = parameters.Paging.PageSize
-        };
+        return await query.ToPagedResultAsync(parameters.Paging, cancellationToken);
     }
 
     public async Task AddAsync(
@@ -135,55 +87,48 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
     }
 
     /// <summary>
-    ///     Applies sorting to the query based on the specified field and direction.
+    ///     Sort field selectors for vehicle queries.
     /// </summary>
-    private static IQueryable<Vehicle> ApplySorting(
-        IQueryable<Vehicle> query,
-        string? sortBy,
-        bool sortDescending)
+    private static readonly Dictionary<string, Expression<Func<Vehicle, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        if (string.IsNullOrWhiteSpace(sortBy))
-        {
-            // Default sorting: by name ascending
-            return query.OrderBy(v => v.Name);
-        }
+        ["name"] = v => v.Name,
+        ["category"] = v => v.Category,
+        ["categorycode"] = v => v.Category,
+        ["location"] = v => v.CurrentLocationCode,
+        ["locationcode"] = v => v.CurrentLocationCode,
+        ["seats"] = v => v.Seats,
+        ["fueltype"] = v => v.FuelType,
+        ["fuel"] = v => v.FuelType,
+        ["transmissiontype"] = v => v.TransmissionType,
+        ["transmission"] = v => v.TransmissionType,
+        ["dailyrate"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        ["price"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        ["rate"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        ["status"] = v => v.Status
+    };
+}
 
-        var sortField = sortBy.Trim().ToLowerInvariant();
-
-        return sortField switch
-        {
-            "name" =>
-                sortDescending ? query.OrderByDescending(v => v.Name) : query.OrderBy(v => v.Name),
-
-            "category" or "categorycode" =>
-                sortDescending ? query.OrderByDescending(v => v.Category) : query.OrderBy(v => v.Category),
-
-            "location" or "locationcode" =>
-                sortDescending
-                    ? query.OrderByDescending(v => v.CurrentLocationCode)
-                    : query.OrderBy(v => v.CurrentLocationCode),
-
-            "seats" =>
-                sortDescending ? query.OrderByDescending(v => v.Seats) : query.OrderBy(v => v.Seats),
-
-            "fueltype" or "fuel" =>
-                sortDescending ? query.OrderByDescending(v => v.FuelType) : query.OrderBy(v => v.FuelType),
-
-            "transmissiontype" or "transmission" =>
-                sortDescending
-                    ? query.OrderByDescending(v => v.TransmissionType)
-                    : query.OrderBy(v => v.TransmissionType),
-
-            "dailyrate" or "price" or "rate" =>
-                sortDescending
-                    ? query.OrderByDescending(v => v.DailyRate.NetAmount + v.DailyRate.VatAmount)
-                    : query.OrderBy(v => v.DailyRate.NetAmount + v.DailyRate.VatAmount),
-
-            "status" =>
-                sortDescending ? query.OrderByDescending(v => v.Status) : query.OrderBy(v => v.Status),
-
-            // Default: sort by name
-            _ => query.OrderBy(v => v.Name)
-        };
+/// <summary>
+///     Filter extension methods for Vehicle queries.
+/// </summary>
+internal static class VehicleQueryExtensions
+{
+    /// <summary>
+    ///     Applies all filters from VehicleSearchParameters to the query.
+    /// </summary>
+    public static IQueryable<Vehicle> ApplyFilters(
+        this IQueryable<Vehicle> query,
+        VehicleSearchParameters parameters)
+    {
+        return query
+            .WhereIf(parameters.LocationCode.HasValue, v => v.CurrentLocationCode == parameters.LocationCode!.Value)
+            .WhereIf(parameters.Category.HasValue, v => v.Category == parameters.Category!.Value)
+            .WhereIf(parameters.MinSeats.HasValue, v => v.Seats >= parameters.MinSeats!.Value)
+            .WhereIf(parameters.FuelType.HasValue, v => v.FuelType == parameters.FuelType!.Value)
+            .WhereIf(parameters.TransmissionType.HasValue, v => v.TransmissionType == parameters.TransmissionType!.Value)
+            .WhereIf(parameters.MaxDailyRate.HasValue, v =>
+                v.DailyRate.NetAmount + v.DailyRate.VatAmount <=
+                parameters.MaxDailyRate!.Value.NetAmount + parameters.MaxDailyRate.Value.VatAmount)
+            .WhereIf(parameters.Status.HasValue, v => v.Status == parameters.Status!.Value);
     }
 }
