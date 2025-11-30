@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "public-portal": {
+    "shell": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -22,6 +22,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
@@ -59,10 +64,10 @@
           },
           "configurations": {
             "production": {
-              "buildTarget": "public-portal:build:production"
+              "buildTarget": "shell:build:production"
             },
             "development": {
-              "buildTarget": "public-portal:build:development"
+              "buildTarget": "shell:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,6 +87,11 @@
               {
                 "glob": "**/*",
                 "input": "public"
+              },
+              {
+                "glob": "**/*",
+                "input": "src/assets",
+                "output": "assets"
               }
             ],
             "styles": [
