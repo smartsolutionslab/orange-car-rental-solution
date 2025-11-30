@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -30,6 +33,18 @@ builder.Services.AddDbContext<CustomersDbContext>(options =>
 builder.Services.AddDbContext<PricingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("pricing") ??
                          throw new InvalidOperationException("Pricing connection string is missing")));
+
+builder.Services.AddDbContext<PaymentsDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("payments") ??
+                         throw new InvalidOperationException("Payments connection string is missing")));
+
+builder.Services.AddDbContext<NotificationsDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("notifications") ??
+                         throw new InvalidOperationException("Notifications connection string is missing")));
+
+builder.Services.AddDbContext<LocationsDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("locations") ??
+                         throw new InvalidOperationException("Locations connection string is missing")));
 
 var host = builder.Build();
 var logger = host.Services.GetRequiredService<ILogger<Program>>();
@@ -73,6 +88,33 @@ try
         var dbContext = scope.ServiceProvider.GetRequiredService<PricingDbContext>();
         await dbContext.Database.MigrateAsync();
         logger.LogInformation("✓ Pricing database migrated successfully");
+    }
+
+    // Apply Payments migrations
+    logger.LogInformation("Migrating Payments database...");
+    using (var scope = host.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<PaymentsDbContext>();
+        await dbContext.Database.MigrateAsync();
+        logger.LogInformation("✓ Payments database migrated successfully");
+    }
+
+    // Apply Notifications migrations
+    logger.LogInformation("Migrating Notifications database...");
+    using (var scope = host.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<NotificationsDbContext>();
+        await dbContext.Database.MigrateAsync();
+        logger.LogInformation("✓ Notifications database migrated successfully");
+    }
+
+    // Apply Locations migrations
+    logger.LogInformation("Migrating Locations database...");
+    using (var scope = host.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<LocationsDbContext>();
+        await dbContext.Database.MigrateAsync();
+        logger.LogInformation("✓ Locations database migrated successfully");
     }
 
     logger.LogInformation("===========================================");

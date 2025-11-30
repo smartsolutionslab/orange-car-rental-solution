@@ -30,6 +30,15 @@ var pricingDb = sqlServer.AddDatabase("pricing", "OrangeCarRental_Pricing");
 // Customers database - manages customer profiles and driver's license information
 var customersDb = sqlServer.AddDatabase("customers", "OrangeCarRental_Customers");
 
+// Payments database - manages payment transactions
+var paymentsDb = sqlServer.AddDatabase("payments", "OrangeCarRental_Payments");
+
+// Notifications database - manages email and SMS notifications
+var notificationsDb = sqlServer.AddDatabase("notifications", "OrangeCarRental_Notifications");
+
+// Locations database - manages rental locations
+var locationsDb = sqlServer.AddDatabase("locations", "OrangeCarRental_Locations");
+
 // Database Migrator - Standalone console app for running all database migrations
 // Can be triggered manually from the Aspire dashboard
 var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>("db-migrator")
@@ -37,6 +46,9 @@ var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>(
     .WithReference(reservationsDb)
     .WithReference(pricingDb)
     .WithReference(customersDb)
+    .WithReference(paymentsDb)
+    .WithReference(notificationsDb)
+    .WithReference(locationsDb)
     .WaitFor(sqlServer);
 
 // Fleet API - Vehicle inventory and availability management

@@ -17,10 +17,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Infrastructure\OrangeCarRental.Customers.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Location\OrangeCarRental.Location.Infrastructure\OrangeCarRental.Location.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Notifications\OrangeCarRental.Notifications.Infrastructure\OrangeCarRental.Notifications.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Payments\OrangeCarRental.Payments.Infrastructure\OrangeCarRental.Payments.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Infrastructure\OrangeCarRental.Pricing.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>
