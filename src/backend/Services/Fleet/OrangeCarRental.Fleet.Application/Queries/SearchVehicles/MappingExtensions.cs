@@ -6,53 +6,84 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
 
+/// <summary>
+///     Extension methods for mapping between domain objects and DTOs.
+///     Uses C# 14 Extension Members syntax.
+/// </summary>
 public static class MappingExtensions
 {
-    public static VehicleDto ToDto(this Vehicle vehicle) => new(
-        vehicle.Id.Value,
-        vehicle.Name.Value,
-        vehicle.Category.Code,
-        vehicle.Category.Name,
-        vehicle.CurrentLocationCode.Value,
-        string.Empty, // City will be fetched separately if needed
-        vehicle.Seats.Value,
-        vehicle.FuelType.ToString(),
-        vehicle.TransmissionType.ToString(),
-        vehicle.DailyRate.NetAmount,
-        vehicle.DailyRate.VatAmount,
-        vehicle.DailyRate.GrossAmount,
-        vehicle.DailyRate.Currency.Code,
-        vehicle.Status.ToString(),
-        vehicle.LicensePlate,
-        vehicle.Manufacturer?.Value,
-        vehicle.Model?.Value,
-        vehicle.Year?.Value,
-        vehicle.ImageUrl);
-
-    public static SearchVehiclesResult ToDto(this PagedResult<Vehicle> pagedResult)
+    /// <summary>
+    ///     C# 14 Extension Members for Vehicle mapping.
+    /// </summary>
+    extension(Vehicle vehicle)
     {
-        return new SearchVehiclesResult(
-            pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
-            pagedResult.TotalCount,
-            pagedResult.PageNumber,
-            pagedResult.PageSize,
-            pagedResult.TotalPages);
+        /// <summary>
+        ///     Maps a Vehicle aggregate to a VehicleDto.
+        /// </summary>
+        public VehicleDto ToDto() => new(
+            vehicle.Id.Value,
+            vehicle.Name.Value,
+            vehicle.Category.Code,
+            vehicle.Category.Name,
+            vehicle.CurrentLocationCode.Value,
+            string.Empty, // City will be fetched separately if needed
+            vehicle.Seats.Value,
+            vehicle.FuelType.ToString(),
+            vehicle.TransmissionType.ToString(),
+            vehicle.DailyRate.NetAmount,
+            vehicle.DailyRate.VatAmount,
+            vehicle.DailyRate.GrossAmount,
+            vehicle.DailyRate.Currency.Code,
+            vehicle.Status.ToString(),
+            vehicle.LicensePlate,
+            vehicle.Manufacturer?.Value,
+            vehicle.Model?.Value,
+            vehicle.Year?.Value,
+            vehicle.ImageUrl);
     }
 
-    public static VehicleSearchParameters ToVehicleSearchParameters(this SearchVehiclesQuery query)
+    /// <summary>
+    ///     C# 14 Extension Members for PagedResult of Vehicle mapping.
+    /// </summary>
+    extension(PagedResult<Vehicle> pagedResult)
     {
-        return new VehicleSearchParameters(
-            LocationCode.FromNullable(query.LocationCode),
-            VehicleCategory.FromNullable(query.CategoryCode),
-            query.MinSeats.HasValue ? SeatingCapacity.From(query.MinSeats.Value) : null,
-            query.FuelType.TryParseFuelType(),
-            query.TransmissionType.TryParseTransmissionType(),
-            query.MaxDailyRateGross.HasValue
-                ? Money.EuroGross(query.MaxDailyRateGross.Value)
-                : null,
-            VehicleStatus.Available, // Always filter to available vehicles
-            SearchPeriod.Of(query.PickupDate, query.ReturnDate),
-            PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
-            SortingInfo.Create());
+        /// <summary>
+        ///     Maps a PagedResult of Vehicle aggregates to a SearchVehiclesResult.
+        /// </summary>
+        public SearchVehiclesResult ToDto()
+        {
+            return new SearchVehiclesResult(
+                pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
+                pagedResult.TotalCount,
+                pagedResult.PageNumber,
+                pagedResult.PageSize,
+                pagedResult.TotalPages);
+        }
+    }
+
+    /// <summary>
+    ///     C# 14 Extension Members for SearchVehiclesQuery mapping.
+    /// </summary>
+    extension(SearchVehiclesQuery query)
+    {
+        /// <summary>
+        ///     Maps a SearchVehiclesQuery to VehicleSearchParameters.
+        /// </summary>
+        public VehicleSearchParameters ToVehicleSearchParameters()
+        {
+            return new VehicleSearchParameters(
+                LocationCode.FromNullable(query.LocationCode),
+                VehicleCategory.FromNullable(query.CategoryCode),
+                query.MinSeats.HasValue ? SeatingCapacity.From(query.MinSeats.Value) : null,
+                query.FuelType.TryParseFuelType(),
+                query.TransmissionType.TryParseTransmissionType(),
+                query.MaxDailyRateGross.HasValue
+                    ? Money.EuroGross(query.MaxDailyRateGross.Value)
+                    : null,
+                VehicleStatus.Available, // Always filter to available vehicles
+                SearchPeriod.Of(query.PickupDate, query.ReturnDate),
+                PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
+                SortingInfo.Create());
+        }
     }
 }

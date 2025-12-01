@@ -8,10 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 /// </summary>
 public static class CustomerStatusExtensions
 {
-
-
     /// <summary>
-
     ///     C# 14 Extension Members for string to CustomerStatus parsing.
     /// </summary>
     extension(string value)
