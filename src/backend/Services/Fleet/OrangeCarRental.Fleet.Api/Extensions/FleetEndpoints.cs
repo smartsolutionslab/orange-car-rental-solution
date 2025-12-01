@@ -88,7 +88,7 @@ public static class FleetEndpoints
                 {
                     var command = new UpdateVehicleStatusCommand(
                         VehicleIdentifier.From(id),
-                        status.Parse());
+                        status.ParseVehicleStatus());
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }

@@ -27,7 +27,7 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomersUnitOfWork unit
 
         var customers = unitOfWork.Customers;
         var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-        var newStatus = newStatusValue.Parse();
+        var newStatus = newStatusValue.ParseCustomerStatus();
 
         var oldStatus = customer.Status;
 

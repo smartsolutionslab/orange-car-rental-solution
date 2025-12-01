@@ -73,7 +73,7 @@ public static class MappingExtensions
             SearchTerm.FromNullable(query.SearchTerm),
             Email.FromNullable(query.Email),
             PhoneNumber.FromNullable(query.PhoneNumber),
-            query.Status.TryParse(),
+            query.Status.TryParseCustomerStatus(),
             City.FromNullable(query.City),
             PostalCode.FromNullable(query.PostalCode),
             IntRange.TryCreate(query.MinAge, query.MaxAge, out var ageRange)

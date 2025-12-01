@@ -1,16 +1,30 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
+/// <summary>
+///     Extension methods for parsing ReservationStatus from string.
+///     Uses C# 14 Extension Members syntax.
+/// </summary>
 public static class ReservationStatusExtensions
 {
-    public static ReservationStatus? TryParseReservationStatus(this string? value)
+    /// <summary>
+    ///     C# 14 Extension Members for nullable string to ReservationStatus parsing.
+    /// </summary>
+    extension(string? value)
     {
-        ReservationStatus? status = null;
-        if (!string.IsNullOrWhiteSpace(value) &&
-            Enum.TryParse<ReservationStatus>(value, ignoreCase: true, out var parsedStatus))
+        /// <summary>
+        ///     Tries to parse the string to a ReservationStatus enum value.
+        /// </summary>
+        /// <returns>The parsed ReservationStatus or null if parsing fails.</returns>
+        public ReservationStatus? TryParseReservationStatus()
         {
-            status = parsedStatus;
-        }
+            if (string.IsNullOrWhiteSpace(value)) return null;
 
-        return status;
+            if (Enum.TryParse<ReservationStatus>(value, ignoreCase: true, out var parsedStatus))
+            {
+                return parsedStatus;
+            }
+
+            return null;
+        }
     }
 }
