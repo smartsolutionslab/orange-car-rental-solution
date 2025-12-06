@@ -102,6 +102,9 @@ public static class AuthenticationExtensions
             options.AddPolicy("FleetManagerOrAdminPolicy", policy =>
                 policy.RequireRole("fleet_manager", "admin"));
 
+            options.AddPolicy("CustomerOrCallCenterOrAdminPolicy", policy =>
+                policy.RequireRole("customer", "call_center", "admin"));
+
             options.AddPolicy("AuthenticatedUserPolicy", policy =>
                 policy.RequireAuthenticatedUser());
         });

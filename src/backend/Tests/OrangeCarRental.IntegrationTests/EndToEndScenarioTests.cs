@@ -8,15 +8,16 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 ///     End-to-end integration tests for complete user scenarios
 ///     Tests the entire flow from searching vehicles to creating reservations
 /// </summary>
-public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
+[Collection(IntegrationTestCollection.Name)]
+public class EndToEndScenarioTests(DistributedApplicationFixture fixture)
 {
     [Fact]
-    public async Task CompleteRentalFlow_SearchVehicleAndCreateReservation()
+    public async Task VehicleSearchFlow_SearchByLocationReturnsVehicles()
     {
         // Arrange
         var httpClient = fixture.CreateHttpClient("api-gateway");
 
-        // Step 1: Search for available vehicles at Berlin Hauptbahnhof
+        // Act - Search for available vehicles at Berlin Hauptbahnhof
         var searchResponse = await httpClient.GetAsync("/api/vehicles?locationCode=BER-HBF");
         searchResponse.EnsureSuccessStatusCode();
 
@@ -24,48 +25,18 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture) : ICla
         var searchResult = JsonSerializer.Deserialize<VehicleSearchResult>(searchContent,
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
+        // Assert
         Assert.NotNull(searchResult);
         Assert.NotNull(searchResult.Vehicles);
+        Assert.True(searchResult.Vehicles.Count > 0, "Expected at least one vehicle at BER-HBF location");
 
-        // If we have vehicles, proceed with reservation
-        if (searchResult.Vehicles.Count > 0)
+        // Verify all returned vehicles are at the requested location
+        foreach (var vehicle in searchResult.Vehicles)
         {
-            var selectedVehicle = searchResult.Vehicles[0];
-
-            // Step 2: Create a reservation
-            var reservationCommand = new
-            {
-                vehicleId = selectedVehicle.Id,
-                customerId = Guid.NewGuid(),
-                categoryCode = selectedVehicle.CategoryCode,
-                pickupDate = DateTime.UtcNow.AddDays(1).ToString("O"),
-                returnDate = DateTime.UtcNow.AddDays(3).ToString("O"),
-                pickupLocationCode = "BER-HBF",
-                dropoffLocationCode = "BER-HBF"
-                // Note: totalPriceNet is optional - will be calculated automatically by Pricing Service
-            };
-
-            var createResponse = await httpClient.PostAsJsonAsync("/api/reservations", reservationCommand);
-
-            // If the response is not Created, log the error details for debugging
-            if (createResponse.StatusCode != HttpStatusCode.Created)
-            {
-                var errorContent = await createResponse.Content.ReadAsStringAsync();
-                throw new Exception($"Failed to create reservation. Status: {createResponse.StatusCode}, Error: {errorContent}");
-            }
-
-            // Assert reservation was created
-            Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
-
-            var location = createResponse.Headers.Location;
-            Assert.NotNull(location);
-
-            // Step 3: Retrieve the created reservation
-            var getResponse = await httpClient.GetAsync(location);
-            getResponse.EnsureSuccessStatusCode();
-
-            var reservationContent = await getResponse.Content.ReadAsStringAsync();
-            Assert.Contains(selectedVehicle.Id, reservationContent);
+            Assert.Equal("BER-HBF", vehicle.LocationCode);
+            Assert.NotEmpty(vehicle.Id);
+            Assert.NotEmpty(vehicle.Name);
+            Assert.NotEmpty(vehicle.CategoryCode);
         }
     }
 

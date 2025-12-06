@@ -57,6 +57,11 @@ var fleetApi = builder
     .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
     .WithReference(fleetDb)
     .WithReference(reservationsDb)
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
@@ -65,6 +70,11 @@ var fleetApi = builder
 var pricingApi = builder
     .AddProject<OrangeCarRental_Pricing_Api>("pricing-api")
     .WithReference(pricingDb)
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
@@ -73,6 +83,11 @@ var pricingApi = builder
 var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
     .WithReference(customersDb)
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
     .WaitFor(sqlServer);
 
@@ -83,6 +98,11 @@ var reservationsApi = builder
     .WithReference(reservationsDb)
     .WithReference(pricingApi)
     .WithReference(customersApi)
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
     .WaitFor(sqlServer)
     .WaitFor(pricingApi)
@@ -97,6 +117,11 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
     .WithEnvironment("CUSTOMERS_API_URL", customersApi.GetEndpoint("http"))
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WithExternalHttpEndpoints()
     .WaitFor(keycloak)
     .WaitFor(fleetApi)

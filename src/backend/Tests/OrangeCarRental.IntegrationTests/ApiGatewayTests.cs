@@ -6,7 +6,8 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 ///     Integration tests for the API Gateway
 ///     Tests the entire Aspire setup including SQL Server, Fleet API, Reservations API and the Gateway
 /// </summary>
-public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixture<DistributedApplicationFixture>
+[Collection(IntegrationTestCollection.Name)]
+public class ApiGatewayTests(DistributedApplicationFixture fixture)
 {
     [Fact]
     public async Task ApiGateway_HealthCheck_ReturnsHealthy()
@@ -48,13 +49,12 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixt
         var httpClient = fixture.CreateHttpClient("api-gateway");
 
         // Act - The gateway should route /api/reservations to the Reservations API
-        // For now, we'll test that the route exists by calling a non-existent reservation
+        // Since this endpoint requires authentication, we expect 401 Unauthorized
         var response = await httpClient.GetAsync("/api/reservations/00000000-0000-0000-0000-000000000001");
 
-        // Assert - Should get 404 (not found) not 502 (bad gateway) or 404 with gateway error
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("not found", content, StringComparison.OrdinalIgnoreCase);
+        // Assert - Should get 401 (unauthorized) because the endpoint requires authentication
+        // This proves the route exists and is properly forwarded (not 502 bad gateway)
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
@@ -76,15 +76,15 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture) : IClassFixt
     }
 
     [Fact]
-    public async Task ReservationsApi_DirectAccess_GetNonExistentReservation_Returns404()
+    public async Task ReservationsApi_DirectAccess_GetReservation_Returns401_WhenNotAuthenticated()
     {
         // Arrange - Access Reservations API directly
         var httpClient = fixture.CreateHttpClient("reservations-api");
 
-        // Act
+        // Act - This endpoint requires authentication
         var response = await httpClient.GetAsync("/api/reservations/00000000-0000-0000-0000-000000000001");
 
-        // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        // Assert - Should get 401 (unauthorized) because the endpoint requires authentication
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

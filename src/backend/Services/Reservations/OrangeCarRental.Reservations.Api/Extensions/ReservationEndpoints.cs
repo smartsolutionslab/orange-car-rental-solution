@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -313,7 +314,7 @@ public static class ReservationEndpoints
         reservations.MapGet("/availability", async (
                 DateOnly pickupDate,
                 DateOnly returnDate,
-                GetVehicleAvailabilityQueryHandler handler,
+                [FromServices] GetVehicleAvailabilityQueryHandler handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = new GetVehicleAvailabilityQuery(pickupDate, returnDate);
