@@ -19,7 +19,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("customers")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -60,8 +60,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedAtUtc");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Address", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Address#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Address#Address", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
@@ -87,8 +89,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                                 .HasColumnName("Address_Street");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("DriversLicense", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.DriversLicense#DriversLicense", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DriversLicense", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.DriversLicense#DriversLicense", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<DateOnly>("ExpiryDate")
                                 .HasColumnType("date")
                                 .HasColumnName("DriversLicense_ExpiryDate");
@@ -110,8 +114,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                                 .HasColumnName("DriversLicense_LicenseNumber");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("Name", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Name#CustomerName", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Name#CustomerName", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("FirstName")
                                 .IsRequired()
                                 .HasMaxLength(100)

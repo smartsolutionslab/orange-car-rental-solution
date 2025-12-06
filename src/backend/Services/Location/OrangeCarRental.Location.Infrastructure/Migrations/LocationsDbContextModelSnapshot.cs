@@ -19,19 +19,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("locations")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Location.Domain.Location.Location", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LocationId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Code");
@@ -62,8 +57,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedAt");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Address", "SmartSolutionsLab.OrangeCarRental.Location.Domain.Location.Location.Address#LocationAddress", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "SmartSolutionsLab.OrangeCarRental.Location.Domain.Location.Location.Address#LocationAddress", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
@@ -89,8 +86,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Migrations
                                 .HasColumnName("Street");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("Contact", "SmartSolutionsLab.OrangeCarRental.Location.Domain.Location.Location.Contact#ContactInfo", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Contact", "SmartSolutionsLab.OrangeCarRental.Location.Domain.Location.Location.Contact#ContactInfo", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Email")
                                 .IsRequired()
                                 .HasMaxLength(255)
@@ -105,9 +104,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Migrations
                         });
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.HasIndex("Status");
 

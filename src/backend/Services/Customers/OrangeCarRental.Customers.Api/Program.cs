@@ -18,6 +18,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -38,7 +39,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -111,6 +112,6 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapCustomerEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

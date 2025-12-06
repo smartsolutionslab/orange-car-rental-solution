@@ -19,19 +19,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("fleet")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location.Location", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("LocationId");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
+                    b.Property<string>("Id")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Code");
@@ -48,8 +43,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Migrations
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Status");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Address", "SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location.Location.Address#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location.Location.Address#Address", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
@@ -70,9 +67,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Migrations
                         });
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
 
                     b.HasIndex("Status");
 
@@ -149,8 +143,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasColumnName("Year");
 
-                    b.ComplexProperty<Dictionary<string, object>>("DailyRate", "SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Vehicle.DailyRate#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DailyRate", "SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle.Vehicle.DailyRate#Money", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)

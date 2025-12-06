@@ -19,7 +19,7 @@ COPY . .
 RUN npm run build:development
 
 # Expose port for dev server
-EXPOSE 4200
+EXPOSE 4301
 
 # Default command (can be overridden)
 CMD ["npm", "run", "start:dev"]

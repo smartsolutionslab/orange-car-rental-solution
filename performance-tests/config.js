@@ -3,7 +3,7 @@
 export const config = {
   // Environment URLs
   environments: {
-    local: 'http://localhost:4200',
+    local: 'http://localhost:4300',
     dev: 'https://dev.orange-rental.de',
     staging: 'https://staging.orange-rental.de',
     production: 'https://orange-rental.de'

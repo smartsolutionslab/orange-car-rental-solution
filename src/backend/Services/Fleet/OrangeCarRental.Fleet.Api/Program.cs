@@ -21,6 +21,9 @@ using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Aspire service defaults (OpenTelemetry, health checks, service discovery, resilience)
+builder.AddServiceDefaults();
+
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
@@ -40,7 +43,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -57,14 +60,11 @@ builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions
         sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure"));
 });
 
-// Register HTTP client for Reservations API (maintains bounded context boundaries)
+// Register HTTP client for Reservations API with service discovery
 builder.Services.AddHttpClient<IReservationService, ReservationService>(client =>
 {
-    // In production, use service discovery or configuration
-    // For now, using Aspire-provided base address
-    var reservationsApiUrl = builder.Configuration["Services:Reservations:Http:0"]
-                             ?? "http://localhost:5002";
-    client.BaseAddress = new Uri(reservationsApiUrl);
+    client.BaseAddress = new Uri("http://reservations-api");
+    client.Timeout = TimeSpan.FromSeconds(30);
 });
 
 // Register Unit of Work and repositories
@@ -126,6 +126,6 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapFleetEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

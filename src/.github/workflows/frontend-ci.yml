@@ -113,6 +113,6 @@ jobs:
       uses: treosh/lighthouse-ci-action@v11
       with:
         urls: |
-          http://localhost:4200
+          http://localhost:4300
         uploadArtifacts: true
         temporaryPublicStorage: true

@@ -19,7 +19,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("payments")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -72,8 +72,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                         .HasColumnType("nvarchar(200)")
                         .HasColumnName("TransactionId");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Amount", "SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment.Payment.Amount#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Amount", "SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment.Payment.Amount#Money", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)

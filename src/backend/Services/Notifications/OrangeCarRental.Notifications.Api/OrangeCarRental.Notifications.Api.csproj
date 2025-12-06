@@ -12,6 +12,7 @@
     <PackageReference Include="Serilog.Sinks.Console"/>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ServiceDefaults\OrangeCarRental.ServiceDefaults.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Notifications.Application\OrangeCarRental.Notifications.Application.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Notifications.Infrastructure\OrangeCarRental.Notifications.Infrastructure.csproj"/>
     <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj"/>

@@ -118,7 +118,7 @@ if ($healthyCount -eq $totalServices) {
     Write-Host ""
     Write-Host "💡 Next Steps:" -ForegroundColor Yellow
     Write-Host "   1. Start frontend: cd ../frontend && npm start"
-    Write-Host "   2. Open browser:   http://localhost:4200"
+    Write-Host "   2. Open browser:   http://localhost:4300"
     Write-Host "   3. Test booking flow"
     Write-Host ""
     Write-Host "🛑 To stop all services: Run .\stop-all-services.ps1" -ForegroundColor Red

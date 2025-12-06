@@ -12,7 +12,7 @@ test.describe('Reservations - Initial Load and Authentication', () => {
 
   test.beforeEach(async ({ page, baseURL }) => {
     // Use call center portal URL
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -50,7 +50,7 @@ test.describe('Reservations - Status Filtering', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -114,7 +114,7 @@ test.describe('Reservations - Date Range Filtering', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -144,7 +144,7 @@ test.describe('Reservations - Price Range Filtering', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -174,7 +174,7 @@ test.describe('Reservations - Location Filtering', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -203,7 +203,7 @@ test.describe('Reservations - Multiple Filters Combined', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -259,7 +259,7 @@ test.describe('Reservations - Sorting', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -295,7 +295,7 @@ test.describe('Reservations - Grouping', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -355,7 +355,7 @@ test.describe('Reservations - Pagination', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -416,7 +416,7 @@ test.describe('Reservations - Actions', () => {
   let reservationsPage: ReservationsPage;
 
   test.beforeEach(async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     authHelper = new AuthHelper(page);
@@ -473,7 +473,7 @@ test.describe('Reservations - Actions', () => {
 
 test.describe('Reservations - End-to-End Agent Workflow', () => {
   test('should complete full agent workflow', async ({ page, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     const authHelper = new AuthHelper(page);
@@ -525,7 +525,7 @@ test.describe('Reservations - End-to-End Agent Workflow', () => {
 
 test.describe('Reservations - Browser Compatibility', () => {
   test('should work in different browsers', async ({ page, browserName, baseURL }) => {
-    const callCenterUrl = baseURL?.replace(':4200', ':4201') || 'http://localhost:4201';
+    const callCenterUrl = baseURL?.replace(':4300', ':4302') || 'http://localhost:4302';
     await page.goto(callCenterUrl);
 
     const authHelper = new AuthHelper(page);

@@ -8,22 +8,12 @@ public class PaymentsDbContextFactory : IDesignTimeDbContextFactory<PaymentsDbCo
 {
     public PaymentsDbContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../OrangeCarRental.Payments.Api"))
-            .AddJsonFile("appsettings.json", false)
-            .AddJsonFile("appsettings.Development.json", true)
-            .Build();
-
-        var connectionString = configuration.GetConnectionString("PaymentsDatabase");
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException(
-                "Connection string 'PaymentsDatabase' not found in appsettings.json");
-        }
+        // Design-time connection string for EF Core migrations
+        // This is only used for generating migrations, not at runtime
+        const string designTimeConnectionString = "Server=localhost;Database=OrangeCarRental_Payments;Trusted_Connection=True;TrustServerCertificate=True";
 
         var optionsBuilder = new DbContextOptionsBuilder<PaymentsDbContext>();
-        optionsBuilder.UseSqlServer(connectionString,
+        optionsBuilder.UseSqlServer(designTimeConnectionString,
             sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure"));
 
         return new PaymentsDbContext(optionsBuilder.Options);

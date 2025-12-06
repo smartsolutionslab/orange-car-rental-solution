@@ -105,11 +105,13 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WaitFor(customersApi);
 
 // Public Portal - Remote microfrontend for vehicle search and booking
-// Accessible at http://localhost:4201
+// Accessible at http://localhost:4301
 // Exposes remote entry point for Module Federation
+// Using isProxied: false because Angular dev server binds directly to the port
+// and Module Federation requires consistent URLs for remote entry points
 var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/apps/public-portal", "start")
     .WithYarn()
-    .WithHttpEndpoint(4201, env: "PORT")
+    .WithHttpEndpoint(4301, isProxied: false)
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
@@ -117,11 +119,13 @@ var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/
     .WaitFor(apiGateway);
 
 // Call Center Portal - Remote microfrontend for reservation management
-// Accessible at http://localhost:4202
+// Accessible at http://localhost:4302
 // Exposes remote entry point for Module Federation
+// Using isProxied: false because Angular dev server binds directly to the port
+// and Module Federation requires consistent URLs for remote entry points
 var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../frontend/apps/call-center-portal", "start")
     .WithYarn()
-    .WithHttpEndpoint(4202, env: "PORT")
+    .WithHttpEndpoint(4302, isProxied: false)
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithExternalHttpEndpoints()
@@ -129,11 +133,13 @@ var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../
     .WaitFor(apiGateway);
 
 // Shell - Host microfrontend application that orchestrates remote microfrontends
-// Main entry point accessible at http://localhost:4200
+// Main entry point accessible at http://localhost:4300
 // Dynamically loads Public Portal and Call Center Portal via Module Federation
+// Using isProxied: false because Angular dev server binds directly to the port
+// and Module Federation requires consistent URLs for remote entry points
 var shell = builder.AddJavaScriptApp("shell", "../../../frontend/apps/shell", "start")
     .WithYarn()
-    .WithHttpEndpoint(4119, env: "PORT")
+    .WithHttpEndpoint(4300, isProxied: false)
     .WithReference(apiGateway)
     .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
     .WithEnvironment("PUBLIC_PORTAL_URL", publicPortal.GetEndpoint("http"))

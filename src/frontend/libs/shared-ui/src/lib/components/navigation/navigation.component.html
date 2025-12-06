@@ -1,0 +1,39 @@
+<nav class="nav">
+  <div class="nav__brand">
+    <svg class="nav__logo" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="brandIcon()"></svg>
+    <span class="nav__title">{{ brandTitle() }}</span>
+  </div>
+
+  <ul class="nav__menu">
+    @for (item of navItems(); track item.path) {
+      <li class="nav__item">
+        <a
+          [routerLink]="item.path"
+          routerLinkActive="nav__link--active"
+          [routerLinkActiveOptions]="{ exact: item.exactMatch ?? false }"
+          class="nav__link"
+        >
+          @if (item.icon) {
+            <svg class="nav__link-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="item.icon"></svg>
+          }
+          <span class="nav__link-text">{{ item.label }}</span>
+        </a>
+      </li>
+    }
+  </ul>
+
+  <div class="nav__auth">
+    @if (isAuthenticated()) {
+      <span class="nav__username">{{ username() }}</span>
+      <button (click)="onLogout()" class="nav__auth-button nav__auth-button--logout">
+        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.logout"></svg>
+        <span>{{ logoutLabel() }}</span>
+      </button>
+    } @else {
+      <button (click)="onLogin()" class="nav__auth-button nav__auth-button--login">
+        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.login"></svg>
+        <span>{{ loginLabel() }}</span>
+      </button>
+    }
+  </div>
+</nav>

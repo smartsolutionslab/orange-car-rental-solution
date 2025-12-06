@@ -1,4 +1,4 @@
-import { Component, output, signal, OnInit, inject } from '@angular/core';
+import { Component, output, signal, inject, type OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import type { VehicleSearchQuery } from './types';
 export type { VehicleSearchQuery } from './types';

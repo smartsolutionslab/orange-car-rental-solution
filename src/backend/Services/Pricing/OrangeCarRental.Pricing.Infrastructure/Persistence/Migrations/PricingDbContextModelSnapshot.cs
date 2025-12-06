@@ -19,12 +19,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.M
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("pricing")
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Aggregates.PricingPolicy", b =>
+            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.PricingPolicy", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
@@ -53,8 +53,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.M
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("LocationCode");
 
-                    b.ComplexProperty<Dictionary<string, object>>("DailyRate", "SmartSolutionsLab.OrangeCarRental.Pricing.Domain.Aggregates.PricingPolicy.DailyRate#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DailyRate", "SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.PricingPolicy.DailyRate#Money", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)

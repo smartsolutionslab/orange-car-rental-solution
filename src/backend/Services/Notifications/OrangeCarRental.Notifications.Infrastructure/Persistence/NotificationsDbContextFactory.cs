@@ -12,23 +12,12 @@ public class NotificationsDbContextFactory : IDesignTimeDbContextFactory<Notific
 {
     public NotificationsDbContext CreateDbContext(string[] args)
     {
-        // Build configuration to read from appsettings.json in the API project
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../OrangeCarRental.Notifications.Api"))
-            .AddJsonFile("appsettings.json", false)
-            .AddJsonFile("appsettings.Development.json", true)
-            .Build();
-
-        var connectionString = configuration.GetConnectionString("NotificationsDatabase");
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException(
-                "Connection string 'NotificationsDatabase' not found in appsettings.json");
-        }
+        // Design-time connection string for EF Core migrations
+        // This is only used for generating migrations, not at runtime
+        const string designTimeConnectionString = "Server=localhost;Database=OrangeCarRental_Notifications;Trusted_Connection=True;TrustServerCertificate=True";
 
         var optionsBuilder = new DbContextOptionsBuilder<NotificationsDbContext>();
-        optionsBuilder.UseSqlServer(connectionString,
+        optionsBuilder.UseSqlServer(designTimeConnectionString,
             sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Notifications.Infrastructure"));
 
         return new NotificationsDbContext(optionsBuilder.Options);

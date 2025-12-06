@@ -121,7 +121,7 @@ services:
       context: ./frontend/apps/call-center-portal
       dockerfile: Dockerfile
     ports:
-      - "4202:8080"
+      - "4302:8080"
     environment:
       - API_URL=http://api-gateway:8080
     depends_on:
@@ -141,7 +141,7 @@ services:
       context: ./frontend/apps/public-portal
       dockerfile: Dockerfile
     ports:
-      - "4200:8080"
+      - "4301:8080"
     environment:
       - API_URL=http://api-gateway:8080
     depends_on:

@@ -8,22 +8,12 @@ public class LocationsDbContextFactory : IDesignTimeDbContextFactory<LocationsDb
 {
     public LocationsDbContext CreateDbContext(string[] args)
     {
-        var configuration = new ConfigurationBuilder()
-            .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../OrangeCarRental.Location.Api"))
-            .AddJsonFile("appsettings.json", false)
-            .AddJsonFile("appsettings.Development.json", true)
-            .Build();
-
-        var connectionString = configuration.GetConnectionString("LocationsDatabase");
-
-        if (string.IsNullOrEmpty(connectionString))
-        {
-            throw new InvalidOperationException(
-                "Connection string 'LocationsDatabase' not found in appsettings.json");
-        }
+        // Design-time connection string for EF Core migrations
+        // This is only used for generating migrations, not at runtime
+        const string designTimeConnectionString = "Server=localhost;Database=OrangeCarRental_Locations;Trusted_Connection=True;TrustServerCertificate=True";
 
         var optionsBuilder = new DbContextOptionsBuilder<LocationsDbContext>();
-        optionsBuilder.UseSqlServer(connectionString,
+        optionsBuilder.UseSqlServer(designTimeConnectionString,
             sqlOptions => sqlOptions.MigrationsAssembly("OrangeCarRental.Location.Infrastructure"));
 
         return new LocationsDbContext(optionsBuilder.Options);

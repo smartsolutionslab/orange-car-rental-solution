@@ -3,6 +3,9 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Aspire service defaults (OpenTelemetry, health checks, service discovery, resilience)
+builder.AddServiceDefaults();
+
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
@@ -52,8 +55,8 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         policy.WithOrigins(
-                  "http://localhost:4200", "http://localhost:4201", "http://localhost:4202",
-                  "https://localhost:4200", "https://localhost:4201", "https://localhost:4202")
+                  "http://localhost:4300", "http://localhost:4301", "http://localhost:4302",
+                  "https://localhost:4300", "https://localhost:4301", "https://localhost:4302")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -82,12 +85,7 @@ app.UseAuthentication();
 // Map reverse proxy (will forward Authorization header to backend services)
 app.MapReverseProxy();
 
-// Health check
-app.MapGet("/health", () => Results.Ok(new
-{
-    service = "API Gateway",
-    status = "Healthy",
-    timestamp = DateTime.UtcNow
-})).WithName("HealthCheck");
+// Map default health check endpoints
+app.MapDefaultEndpoints();
 
 app.Run();

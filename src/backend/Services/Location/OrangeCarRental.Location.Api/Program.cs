@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Location.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands.CreateLocation;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries.GetAllLocations;
 using SmartSolutionsLab.OrangeCarRental.Location.Domain;
@@ -9,6 +10,7 @@ using SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -29,7 +31,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -90,6 +92,6 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapLocationEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

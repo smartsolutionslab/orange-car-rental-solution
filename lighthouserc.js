@@ -9,9 +9,9 @@ module.exports = {
     collect: {
       // URLs to test
       url: [
-        'http://localhost:4200',
-        'http://localhost:4200/booking-history',
-        'http://localhost:4200/search',
+        'http://localhost:4300',
+        'http://localhost:4300/booking-history',
+        'http://localhost:4300/search',
       ],
 
       // Number of runs per URL

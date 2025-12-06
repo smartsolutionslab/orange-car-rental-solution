@@ -117,7 +117,7 @@ if [ $healthy_count -eq $total_services ]; then
     echo ""
     echo "💡 Next Steps:"
     echo "   1. Start frontend: cd ../frontend && npm start"
-    echo "   2. Open browser:   http://localhost:4200"
+    echo "   2. Open browser:   http://localhost:4300"
     echo "   3. Test booking flow"
     echo ""
     echo "📝 View logs: tail -f logs/*.log"

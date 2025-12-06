@@ -13,6 +13,7 @@
     <PackageReference Include="Serilog.Sinks.Console" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\ServiceDefaults\OrangeCarRental.ServiceDefaults.csproj" />
     <ProjectReference Include="..\OrangeCarRental.Reservations.Application\OrangeCarRental.Reservations.Application.csproj" />
     <ProjectReference Include="..\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
     <!-- Reference to Customers.Domain for guest reservation value objects (Email, PhoneNumber, etc.) -->

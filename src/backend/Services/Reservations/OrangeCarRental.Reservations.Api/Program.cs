@@ -17,6 +17,9 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add Aspire service defaults (OpenTelemetry, health checks, service discovery, resilience)
+builder.AddServiceDefaults();
+
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(context.Configuration)
@@ -36,7 +39,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -53,30 +56,19 @@ builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDb
         sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
 });
 
-// Register Aspire Service Discovery for inter-service communication
-builder.Services.AddServiceDiscovery();
-
-// Register HTTP client for Pricing API with Service Discovery
-// The service name "http://pricing-api" is resolved by Aspire's Service Discovery
+// Register HTTP client for Pricing API (service discovery configured via AddServiceDefaults)
 builder.Services.AddHttpClient<IPricingService, PricingService>(client =>
 {
     client.BaseAddress = new Uri("http://pricing-api");
     client.Timeout = TimeSpan.FromSeconds(30);
-})
-.AddServiceDiscovery();
+});
 
-Log.Information("Pricing API: Using Aspire Service Discovery (http://pricing-api)");
-
-// Register HTTP client for Customers API with Service Discovery
-// The service name "http://customers-api" is resolved by Aspire's Service Discovery
+// Register HTTP client for Customers API (service discovery configured via AddServiceDefaults)
 builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
 {
     client.BaseAddress = new Uri("http://customers-api");
     client.Timeout = TimeSpan.FromSeconds(30);
-})
-.AddServiceDiscovery();
-
-Log.Information("Customers API: Using Aspire Service Discovery (http://customers-api)");
+});
 
 // Register Unit of Work and repositories
 builder.Services.AddScoped<IReservationsUnitOfWork, ReservationsUnitOfWork>();
@@ -128,6 +120,6 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapReservationEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

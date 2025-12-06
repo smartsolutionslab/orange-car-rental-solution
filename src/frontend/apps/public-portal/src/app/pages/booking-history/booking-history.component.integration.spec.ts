@@ -18,13 +18,26 @@ describe('BookingHistoryComponent (Integration)', () => {
 
   const apiUrl = 'http://localhost:5000';
 
+  // Use dynamic dates to ensure tests work regardless of when they run
+  const getFutureDate = (daysFromNow: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() + daysFromNow);
+    return date.toISOString();
+  };
+
+  const getPastDate = (daysAgo: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString();
+  };
+
   const mockReservations: Reservation[] = [
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-12-01T10:00:00Z',
-      returnDate: '2025-12-05T10:00:00Z',
+      pickupDate: getFutureDate(7), // 7 days from now - upcoming
+      returnDate: getFutureDate(11), // 11 days from now
       pickupLocationCode: 'MUC',
       dropoffLocationCode: 'MUC',
       totalPriceNet: 336.13,
@@ -32,14 +45,14 @@ describe('BookingHistoryComponent (Integration)', () => {
       totalPriceGross: 400.00,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: '2025-11-20T09:00:00Z'
+      createdAt: getPastDate(15)
     },
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-11-25T10:00:00Z',
-      returnDate: '2025-11-27T10:00:00Z',
+      pickupDate: getFutureDate(14), // 14 days from now - pending
+      returnDate: getFutureDate(16), // 16 days from now
       pickupLocationCode: 'BER',
       dropoffLocationCode: 'BER',
       totalPriceNet: 168.07,
@@ -47,7 +60,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       totalPriceGross: 200.00,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: '2025-11-20T09:00:00Z'
+      createdAt: getPastDate(15)
     }
   ];
 

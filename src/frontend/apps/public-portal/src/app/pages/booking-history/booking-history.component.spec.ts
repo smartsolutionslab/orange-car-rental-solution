@@ -11,13 +11,26 @@ describe('BookingHistoryComponent', () => {
   let mockReservationService: jasmine.SpyObj<ReservationService>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
 
+  // Use dynamic dates to ensure tests work regardless of when they run
+  const getFutureDate = (daysFromNow: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() + daysFromNow);
+    return date.toISOString().split('T')[0]!;
+  };
+
+  const getPastDate = (daysAgo: number): string => {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().split('T')[0]!;
+  };
+
   const mockReservations: Reservation[] = [
     {
       id: '123e4567-e89b-12d3-a456-426614174000',
       vehicleId: 'veh-001',
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-12-01',
-      returnDate: '2025-12-05',
+      pickupDate: getFutureDate(7), // 7 days from now - upcoming
+      returnDate: getFutureDate(11), // 11 days from now
       pickupLocationCode: 'MUC',
       dropoffLocationCode: 'MUC',
       totalPriceNet: 336.13,
@@ -25,14 +38,14 @@ describe('BookingHistoryComponent', () => {
       totalPriceGross: 400.00,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: '2025-11-20'
+      createdAt: getPastDate(15)
     },
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
       vehicleId: 'veh-002',
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-11-25',
-      returnDate: '2025-11-27',
+      pickupDate: getFutureDate(14), // 14 days from now - pending
+      returnDate: getFutureDate(16), // 16 days from now
       pickupLocationCode: 'BER',
       dropoffLocationCode: 'BER',
       totalPriceNet: 168.07,
@@ -40,14 +53,14 @@ describe('BookingHistoryComponent', () => {
       totalPriceGross: 200.00,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: '2025-11-20'
+      createdAt: getPastDate(15)
     },
     {
       id: '323e4567-e89b-12d3-a456-426614174002',
       vehicleId: 'veh-003',
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-10-01',
-      returnDate: '2025-10-03',
+      pickupDate: getPastDate(60), // 60 days ago - past
+      returnDate: getPastDate(58), // 58 days ago
       pickupLocationCode: 'FRA',
       dropoffLocationCode: 'FRA',
       totalPriceNet: 252.10,
@@ -55,7 +68,7 @@ describe('BookingHistoryComponent', () => {
       totalPriceGross: 300.00,
       currency: 'EUR',
       status: 'Completed',
-      createdAt: '2025-09-25'
+      createdAt: getPastDate(75)
     }
   ];
 
