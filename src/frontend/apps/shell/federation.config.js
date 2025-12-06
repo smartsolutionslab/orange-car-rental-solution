@@ -19,5 +19,6 @@ module.exports = withNativeFederation({
     'rxjs/fetch',
     'rxjs/testing',
     'rxjs/webSocket',
+    '@angular/common/locales/de',
   ],
 });

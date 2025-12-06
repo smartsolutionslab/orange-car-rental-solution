@@ -1,4 +1,6 @@
 import type { Routes } from '@angular/router';
+// Import locale registration as side effect - runs when routes are loaded
+import './locale-de';
 import { VehicleListComponent } from './pages/vehicle-list/vehicle-list.component';
 import { BookingComponent } from './pages/booking/booking.component';
 import { ConfirmationComponent } from './pages/confirmation/confirmation.component';
