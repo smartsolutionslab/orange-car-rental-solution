@@ -6,7 +6,7 @@ import type { CustomerId } from '@orange-car-rental/reservation-api';
 import type { LocationCode } from '@orange-car-rental/location-api';
 import type { ISODateString, Price } from '@orange-car-rental/shared';
 
-export type CreateReservationRequest = {
+export interface CreateReservationRequest {
   readonly vehicleId: VehicleId;
   readonly customerId: CustomerId;
   readonly pickupDate: ISODateString;
@@ -14,4 +14,4 @@ export type CreateReservationRequest = {
   readonly pickupLocationCode: LocationCode;
   readonly dropoffLocationCode: LocationCode;
   readonly totalPriceNet?: Price;
-};
+}

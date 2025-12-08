@@ -8,7 +8,7 @@ import type { LocationCode } from '@orange-car-rental/location-api';
 import type { ISODateString, Price, Currency } from '@orange-car-rental/shared';
 import type { RentalDays } from './rental-days.type';
 
-export type Reservation = {
+export interface Reservation {
   readonly reservationId: ReservationId;
   readonly vehicleId: VehicleId;
   readonly customerId: CustomerId;
@@ -27,4 +27,4 @@ export type Reservation = {
   readonly confirmedAt?: ISODateString;
   readonly cancelledAt?: ISODateString;
   readonly completedAt?: ISODateString;
-};
+}

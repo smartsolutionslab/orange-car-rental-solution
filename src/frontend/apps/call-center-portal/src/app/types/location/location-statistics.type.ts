@@ -3,7 +3,7 @@
  */
 import type { LocationCode, LocationName } from '@orange-car-rental/location-api';
 
-export type LocationStatistics = {
+export interface LocationStatistics {
   readonly locationCode: LocationCode;
   readonly locationName: LocationName;
   readonly totalVehicles: number;
@@ -12,4 +12,4 @@ export type LocationStatistics = {
   readonly maintenanceVehicles: number;
   readonly outOfServiceVehicles: number;
   readonly utilizationRate: number;
-};
+}

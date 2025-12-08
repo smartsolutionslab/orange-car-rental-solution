@@ -13,6 +13,7 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
+  ReservationCardComponent,
   formatDateDE,
   formatPriceDE,
   getReservationStatusClass,
@@ -34,6 +35,7 @@ import type { GroupedReservations } from '../../types';
     LoadingStateComponent,
     EmptyStateComponent,
     ErrorStateComponent,
+    ReservationCardComponent,
   ],
   templateUrl: './booking-history.component.html',
   styleUrls: ['./booking-history.component.css']

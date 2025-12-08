@@ -1,7 +1,7 @@
 /**
  * User registration data
  */
-export type RegisterData = {
+export interface RegisterData {
   readonly email: string;
   readonly password: string;
   readonly firstName: string;

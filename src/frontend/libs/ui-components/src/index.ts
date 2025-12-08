@@ -53,3 +53,16 @@ export { SelectSeatsComponent } from './lib/select-seats/select-seats.component'
 
 // Select Page Size Component
 export { SelectPageSizeComponent } from './lib/select-page-size/select-page-size.component';
+
+// Detail Row Component
+export { DetailRowComponent } from './lib/detail-row/detail-row.component';
+
+// Reservation Card Component
+export {
+  ReservationCardComponent,
+  type ReservationCardVariant,
+  type ReservationCardData,
+} from './lib/reservation-card/reservation-card.component';
+
+// Form Field Component
+export { FormFieldComponent } from './lib/form-field/form-field.component';

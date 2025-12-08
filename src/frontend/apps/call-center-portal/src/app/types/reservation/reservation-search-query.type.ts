@@ -7,7 +7,7 @@ import type { ReservationStatus, ReservationSortField } from '@orange-car-rental
 import type { ISODateString, Price, SortOrder } from '@orange-car-rental/shared';
 import type { LocationCode } from '@orange-car-rental/location-api';
 
-export type ReservationSearchQuery = {
+export interface ReservationSearchQuery {
   readonly customerId?: CustomerId;
   readonly vehicleId?: VehicleId;
   readonly status?: ReservationStatus;
@@ -21,4 +21,4 @@ export type ReservationSearchQuery = {
   readonly sortOrder?: SortOrder;
   readonly pageNumber?: number;
   readonly pageSize?: number;
-};
+}

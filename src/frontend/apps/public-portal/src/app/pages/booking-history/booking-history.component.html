@@ -25,40 +25,13 @@
             <h2>Bevorstehende Buchungen</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().upcoming; track reservation.id) {
-                <div class="reservation-card">
-                  <div class="card-header">
-                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
-                    <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
-                  </div>
-                  <div class="card-body">
-                    <div class="detail-row">
-                      <span class="label">Abholtermin:</span>
-                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="label">Rückgabetermin:</span>
-                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="label">Abholort:</span>
-                      <span class="value">{{ reservation.pickupLocationCode }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="label">Rückgabeort:</span>
-                      <span class="value">{{ reservation.dropoffLocationCode }}</span>
-                    </div>
-                    <div class="detail-row price">
-                      <span class="label">Gesamtpreis:</span>
-                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
-                    </div>
-                  </div>
-                  <div class="card-footer">
-                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
-                    @if (canCancel(reservation)) {
-                      <button class="btn-danger" (click)="openCancelModal(reservation)">Stornieren</button>
-                    }
-                  </div>
-                </div>
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="upcoming"
+                  [canCancel]="canCancel(reservation)"
+                  (viewDetails)="viewDetails(reservation)"
+                  (cancel)="openCancelModal(reservation)"
+                ></ui-reservation-card>
               }
             </div>
           </section>
@@ -70,32 +43,13 @@
             <h2>Ausstehende Bestätigungen</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().pending; track reservation.id) {
-                <div class="reservation-card pending">
-                  <div class="card-header">
-                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
-                    <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
-                  </div>
-                  <div class="card-body">
-                    <div class="detail-row">
-                      <span class="label">Abholtermin:</span>
-                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="label">Rückgabetermin:</span>
-                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
-                    </div>
-                    <div class="detail-row price">
-                      <span class="label">Gesamtpreis:</span>
-                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
-                    </div>
-                  </div>
-                  <div class="card-footer">
-                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
-                    @if (canCancel(reservation)) {
-                      <button class="btn-danger" (click)="openCancelModal(reservation)">Stornieren</button>
-                    }
-                  </div>
-                </div>
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="pending"
+                  [canCancel]="canCancel(reservation)"
+                  (viewDetails)="viewDetails(reservation)"
+                  (cancel)="openCancelModal(reservation)"
+                ></ui-reservation-card>
               }
             </div>
           </section>
@@ -107,29 +61,12 @@
             <h2>Vergangene Buchungen</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().past; track reservation.id) {
-                <div class="reservation-card past">
-                  <div class="card-header">
-                    <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
-                    <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
-                  </div>
-                  <div class="card-body">
-                    <div class="detail-row">
-                      <span class="label">Abholtermin:</span>
-                      <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
-                    </div>
-                    <div class="detail-row">
-                      <span class="label">Rückgabetermin:</span>
-                      <span class="value">{{ formatDate(reservation.returnDate) }}</span>
-                    </div>
-                    <div class="detail-row price">
-                      <span class="label">Gesamtpreis:</span>
-                      <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
-                    </div>
-                  </div>
-                  <div class="card-footer">
-                    <button class="btn-secondary" (click)="viewDetails(reservation)">Details</button>
-                  </div>
-                </div>
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="past"
+                  [showCancel]="false"
+                  (viewDetails)="viewDetails(reservation)"
+                ></ui-reservation-card>
               }
             </div>
           </section>
@@ -198,40 +135,15 @@
       @if (guestReservation()) {
         <div class="guest-result">
           <h3>Ihre Buchung</h3>
-          <div class="reservation-card">
-            <div class="card-header">
-              <span class="reservation-id">{{ guestReservation()!.id }}</span>
-              <ui-status-badge type="reservation" [status]="guestReservation()!.status"></ui-status-badge>
-            </div>
-            <div class="card-body">
-              <div class="detail-row">
-                <span class="label">Abholtermin:</span>
-                <span class="value">{{ formatDate(guestReservation()!.pickupDate) }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Rückgabetermin:</span>
-                <span class="value">{{ formatDate(guestReservation()!.returnDate) }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Abholort:</span>
-                <span class="value">{{ guestReservation()!.pickupLocationCode }}</span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Rückgabeort:</span>
-                <span class="value">{{ guestReservation()!.dropoffLocationCode }}</span>
-              </div>
-              <div class="detail-row price">
-                <span class="label">Gesamtpreis:</span>
-                <span class="value">{{ formatPrice(guestReservation()!.totalPriceGross) }}</span>
-              </div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-secondary" (click)="printReservation()">Drucken</button>
-              @if (canCancel(guestReservation()!)) {
-                <button class="btn-danger" (click)="openCancelModal(guestReservation()!)">Stornieren</button>
-              }
-            </div>
-          </div>
+          <ui-reservation-card
+            [reservation]="guestReservation()!"
+            variant="guest"
+            [canCancel]="canCancel(guestReservation()!)"
+            [showDetails]="false"
+            [showPrint]="true"
+            (print)="printReservation()"
+            (cancel)="openCancelModal(guestReservation()!)"
+          ></ui-reservation-card>
         </div>
       }
     </div>

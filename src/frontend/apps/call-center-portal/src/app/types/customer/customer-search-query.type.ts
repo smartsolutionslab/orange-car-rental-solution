@@ -3,10 +3,10 @@
  */
 import type { EmailAddress, PhoneNumber } from '@orange-car-rental/shared';
 
-export type CustomerSearchQuery = {
+export interface CustomerSearchQuery {
   readonly email?: EmailAddress;
   readonly phoneNumber?: PhoneNumber;
   readonly lastName?: string;
   readonly pageNumber?: number;
   readonly pageSize?: number;
-};
+}

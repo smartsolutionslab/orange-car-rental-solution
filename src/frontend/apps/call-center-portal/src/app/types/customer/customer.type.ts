@@ -6,7 +6,7 @@ import type { EmailAddress, PhoneNumber, ISODateString, PostalCode, CountryCode 
 import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 import type { CityName } from '@orange-car-rental/location-api';
 
-export type Customer = {
+export interface Customer {
   readonly id: CustomerId;
   readonly firstName: string;
   readonly lastName: string;
@@ -23,4 +23,4 @@ export type Customer = {
   readonly licenseExpiryDate: ISODateString;
   readonly createdAt: ISODateString;
   readonly updatedAt?: ISODateString;
-};
+}

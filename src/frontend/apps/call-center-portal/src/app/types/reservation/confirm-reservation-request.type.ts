@@ -3,6 +3,6 @@
  */
 import type { ReservationId } from '@orange-car-rental/reservation-api';
 
-export type ConfirmReservationRequest = {
+export interface ConfirmReservationRequest {
   readonly reservationId: ReservationId;
-};
+}

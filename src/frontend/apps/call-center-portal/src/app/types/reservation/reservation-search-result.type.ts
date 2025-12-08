@@ -3,7 +3,7 @@
  */
 import type { Reservation } from './reservation.type';
 
-export type ReservationSearchResult = {
+export interface ReservationSearchResult {
   readonly reservations: Reservation[];
   readonly totalCount: number;
   readonly pageNumber: number;
@@ -11,4 +11,4 @@ export type ReservationSearchResult = {
   readonly totalPages: number;
   readonly hasPreviousPage?: boolean;
   readonly hasNextPage?: boolean;
-};
+}

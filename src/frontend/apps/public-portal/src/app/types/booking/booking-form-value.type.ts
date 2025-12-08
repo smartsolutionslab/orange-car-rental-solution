@@ -1,7 +1,7 @@
 /**
  * Booking form value type
  */
-export type BookingFormValue = {
+export interface BookingFormValue {
   readonly vehicleId: string;
   readonly categoryCode: string;
   readonly pickupDate: string;
