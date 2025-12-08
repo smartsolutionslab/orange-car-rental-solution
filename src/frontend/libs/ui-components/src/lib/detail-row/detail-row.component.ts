@@ -4,6 +4,10 @@ import { CommonModule } from '@angular/common';
 /**
  * Reusable detail row component for displaying label-value pairs
  * Commonly used in cards, modals, and detail views
+ *
+ * Usage:
+ * - Simple: <ui-detail-row label="Name" [value]="customer.name"></ui-detail-row>
+ * - With content: <ui-detail-row label="Status"><ui-status-badge [status]="item.status"></ui-status-badge></ui-detail-row>
  */
 @Component({
   selector: 'ui-detail-row',
@@ -13,9 +17,10 @@ import { CommonModule } from '@angular/common';
     <div class="detail-row" [class.highlight]="highlight" [class.price]="isPrice">
       <span class="label">{{ label }}</span>
       <span class="value" [class.strong]="strong">
-        <ng-content></ng-content>
-        @if (!hasContent && value) {
+        @if (value !== undefined && value !== null) {
           {{ value }}
+        } @else {
+          <ng-content></ng-content>
         }
       </span>
     </div>
@@ -65,11 +70,4 @@ export class DetailRowComponent {
   @Input() highlight = false;
   @Input() isPrice = false;
   @Input() strong = false;
-
-  protected hasContent = false;
-
-  ngAfterContentInit(): void {
-    // Check if ng-content has content
-    this.hasContent = true;
-  }
 }

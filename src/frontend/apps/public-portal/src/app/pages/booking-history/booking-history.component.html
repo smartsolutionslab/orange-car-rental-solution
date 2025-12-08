@@ -155,42 +155,23 @@
       @if (detailReservation()) {
         <div class="detail-section">
           <h3>Reservierung</h3>
-          <div class="detail-row">
-            <span class="label">Reservierungsnummer:</span>
-            <span class="value">{{ detailReservation()!.id }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Status:</span>
+          <ui-detail-row label="Reservierungsnummer:" [value]="detailReservation()!.id"></ui-detail-row>
+          <ui-detail-row label="Status:">
             <ui-status-badge type="reservation" [status]="detailReservation()!.status"></ui-status-badge>
-          </div>
+          </ui-detail-row>
         </div>
 
         <div class="detail-section">
           <h3>Mietzeitraum</h3>
-          <div class="detail-row">
-            <span class="label">Abholung:</span>
-            <span class="value">{{ formatDate(detailReservation()!.pickupDate) }} - {{ detailReservation()!.pickupLocationCode }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">Rückgabe:</span>
-            <span class="value">{{ formatDate(detailReservation()!.returnDate) }} - {{ detailReservation()!.dropoffLocationCode }}</span>
-          </div>
+          <ui-detail-row label="Abholung:" [value]="formatDate(detailReservation()!.pickupDate) + ' - ' + detailReservation()!.pickupLocationCode"></ui-detail-row>
+          <ui-detail-row label="Rückgabe:" [value]="formatDate(detailReservation()!.returnDate) + ' - ' + detailReservation()!.dropoffLocationCode"></ui-detail-row>
         </div>
 
         <div class="detail-section">
           <h3>Preise</h3>
-          <div class="detail-row">
-            <span class="label">Nettobetrag:</span>
-            <span class="value">{{ formatPrice(detailReservation()!.totalPriceNet) }}</span>
-          </div>
-          <div class="detail-row">
-            <span class="label">MwSt. (19%):</span>
-            <span class="value">{{ formatPrice(detailReservation()!.totalPriceVat) }}</span>
-          </div>
-          <div class="detail-row price-total">
-            <span class="label"><strong>Gesamtbetrag:</strong></span>
-            <span class="value"><strong>{{ formatPrice(detailReservation()!.totalPriceGross) }}</strong></span>
-          </div>
+          <ui-detail-row label="Nettobetrag:" [value]="formatPrice(detailReservation()!.totalPriceNet)"></ui-detail-row>
+          <ui-detail-row label="MwSt. (19%):" [value]="formatPrice(detailReservation()!.totalPriceVat)"></ui-detail-row>
+          <ui-detail-row label="Gesamtbetrag:" [value]="formatPrice(detailReservation()!.totalPriceGross)" [strong]="true" [highlight]="true"></ui-detail-row>
         </div>
 
         <div class="detail-section">
