@@ -1,7 +1,7 @@
-import { provideZoneChangeDetection, LOCALE_ID } from '@angular/core';
+import { provideZoneChangeDetection, LOCALE_ID, APP_INITIALIZER } from '@angular/core';
 import type { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors, HttpClient } from '@angular/common/http';
 import {
   provideKeycloak,
   withAutoRefreshToken,
@@ -15,6 +15,7 @@ import type { IncludeBearerTokenCondition } from 'keycloak-angular';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import { environment } from '../environments/environment';
 import { ConfigService } from './services/config.service';
+import { initializeApp } from './initializers/config.initializer';
 
 import { routes } from './app.routes';
 
@@ -29,6 +30,12 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: API_CONFIG, useExisting: ConfigService },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [HttpClient, ConfigService],
+      multi: true
+    },
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
       useValue: [urlCondition]
