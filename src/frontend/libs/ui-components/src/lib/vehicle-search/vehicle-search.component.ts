@@ -5,6 +5,7 @@ import { SelectCategoryComponent } from '../select-category/select-category.comp
 import { SelectFuelTypeComponent } from '../select-fuel-type/select-fuel-type.component';
 import { SelectTransmissionComponent } from '../select-transmission/select-transmission.component';
 import { SelectLocationComponent } from '../select-location/select-location.component';
+import { SelectSeatsComponent } from '../select-seats/select-seats.component';
 
 export type { VehicleSearchQuery } from './types';
 
@@ -17,6 +18,7 @@ export type { VehicleSearchQuery } from './types';
     SelectFuelTypeComponent,
     SelectTransmissionComponent,
     SelectLocationComponent,
+    SelectSeatsComponent,
   ],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css',

@@ -133,13 +133,12 @@
           </svg>
           Min. Sitze
         </label>
-        <select id="minSeats" formControlName="minSeats" class="form-input">
-          <option [value]="null">Alle</option>
-          <option [value]="2">2+</option>
-          <option [value]="4">4+</option>
-          <option [value]="5">5+</option>
-          <option [value]="7">7+</option>
-        </select>
+        <ui-select-seats
+          id="minSeats"
+          formControlName="minSeats"
+          placeholder="Alle"
+          cssClass="form-input"
+        />
       </div>
     </div>
   </div>

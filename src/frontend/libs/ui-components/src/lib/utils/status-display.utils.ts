@@ -73,6 +73,20 @@ export function formatDateDE(dateString: string): string {
 }
 
 /**
+ * Format date to German locale with weekday (Montag, 1. Januar 2025)
+ */
+export function formatDateLongDE(dateString: string): string {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  return date.toLocaleDateString('de-DE', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+}
+
+/**
  * Format price to German currency format
  */
 export function formatPriceDE(price: number, currency = 'EUR'): string {

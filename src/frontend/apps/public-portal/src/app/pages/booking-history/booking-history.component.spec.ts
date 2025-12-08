@@ -380,11 +380,11 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should return correct status class', () => {
-      expect(component.getStatusClass('Pending')).toBe('status-pending');
-      expect(component.getStatusClass('Confirmed')).toBe('status-confirmed');
-      expect(component.getStatusClass('Active')).toBe('status-active');
+      expect(component.getStatusClass('Pending')).toBe('status-warning');
+      expect(component.getStatusClass('Confirmed')).toBe('status-success');
+      expect(component.getStatusClass('Active')).toBe('status-info');
       expect(component.getStatusClass('Completed')).toBe('status-completed');
-      expect(component.getStatusClass('Cancelled')).toBe('status-cancelled');
+      expect(component.getStatusClass('Cancelled')).toBe('status-error');
     });
 
     it('should return correct status label', () => {

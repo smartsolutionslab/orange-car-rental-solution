@@ -3,55 +3,34 @@
   <p class="subtitle">Verwalten Sie alle Reservierungen und Buchungen</p>
 </div>
 
+
 <!-- Statistics Dashboard -->
 <div class="dashboard-grid">
-  <div class="stat-card">
-    <div class="stat-icon">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Heutige Buchungen</h3>
-      <p class="stat-value">{{ todayReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--success">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Aktive Buchungen</h3>
-      <p class="stat-value">{{ activeReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--warning">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Anstehend</h3>
-      <p class="stat-value">{{ pendingReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--info">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Gesamt</h3>
-      <p class="stat-value">{{ totalCount() }}</p>
-    </div>
-  </div>
+  <ui-stat-card
+    label="Heutige Buchungen"
+    [value]="todayReservations()"
+    [loading]="loading()"
+    iconPath="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z"
+  />
+  <ui-stat-card
+    label="Aktive Buchungen"
+    [value]="activeReservations()"
+    [loading]="loading()"
+    variant="success"
+  />
+  <ui-stat-card
+    label="Anstehend"
+    [value]="pendingReservations()"
+    [loading]="loading()"
+    variant="warning"
+  />
+  <ui-stat-card
+    label="Gesamt"
+    [value]="totalCount()"
+    [loading]="loading()"
+    variant="info"
+    iconPath="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"
+  />
 </div>
 
 <!-- Success Message -->
@@ -232,12 +211,10 @@
       <!-- Page Size -->
       <div class="control-group">
         <label>Einträge pro Seite</label>
-        <select [(ngModel)]="pageSize" (change)="applyFilters()">
-          <option [value]="10">10</option>
-          <option [value]="25">25</option>
-          <option [value]="50">50</option>
-          <option [value]="100">100</option>
-        </select>
+        <ui-select-page-size
+          [(ngModel)]="pageSize"
+          (ngModelChange)="applyFilters()"
+        />
       </div>
     </div>
 
@@ -364,60 +341,18 @@
       </div>
     }
 
+
     <!-- Pagination -->
-    @if (totalPages() > 1) {
-      <div class="pagination">
-        <button
-          class="btn-pagination"
-          (click)="previousPage()"
-          [disabled]="currentPage() === 1"
-        >
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-          </svg>
-          Zurück
-        </button>
-
-        <div class="page-numbers">
-          @if (currentPage() > 3) {
-            <button class="btn-page" (click)="goToPage(1)">1</button>
-            @if (currentPage() > 4) {
-              <span class="pagination-ellipsis">...</span>
-            }
-          }
-
-          @for (page of [currentPage() - 2, currentPage() - 1, currentPage(), currentPage() + 1, currentPage() + 2]; track page) {
-            @if (page > 0 && page <= totalPages()) {
-              <button
-                class="btn-page"
-                [class.active]="page === currentPage()"
-                (click)="goToPage(page)"
-              >
-                {{ page }}
-              </button>
-            }
-          }
-
-          @if (currentPage() < totalPages() - 2) {
-            @if (currentPage() < totalPages() - 3) {
-              <span class="pagination-ellipsis">...</span>
-            }
-            <button class="btn-page" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
-          }
-        </div>
-
-        <button
-          class="btn-pagination"
-          (click)="nextPage()"
-          [disabled]="currentPage() === totalPages()"
-        >
-          Weiter
-          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-            <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/>
-          </svg>
-        </button>
-      </div>
-    }
+    <ui-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalItems]="totalCount()"
+      [pageSize]="pageSize()"
+      [showItemRange]="true"
+      itemLabel="Reservierung"
+      itemLabelPlural="Reservierungen"
+      (pageChange)="goToPage($event)"
+    />
   }
 
   <!-- Empty State -->

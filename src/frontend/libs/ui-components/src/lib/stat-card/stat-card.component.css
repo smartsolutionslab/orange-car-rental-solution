@@ -1,0 +1,83 @@
+.stat-card {
+  background: white;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  transition: box-shadow 0.2s;
+}
+
+.stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card--loading {
+  opacity: 0.7;
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  background: #ff7f00;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  flex-shrink: 0;
+}
+
+.stat-icon svg {
+  width: 28px;
+  height: 28px;
+}
+
+.stat-icon--success {
+  background: #28a745;
+}
+
+.stat-icon--warning {
+  background: #ffc107;
+  color: #212529;
+}
+
+.stat-icon--info {
+  background: #17a2b8;
+}
+
+.stat-icon--error {
+  background: #dc3545;
+}
+
+.stat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #6c757d;
+  margin: 0 0 0.25rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #212529;
+  margin: 0;
+}
+
+.stat-value--loading {
+  color: #adb5bd;
+}
+
+.stat-subtitle {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin: 0.25rem 0 0 0;
+}

@@ -31,6 +31,9 @@ export { LoadingStateComponent } from './lib/state-display/loading-state.compone
 export { EmptyStateComponent } from './lib/state-display/empty-state.component';
 export { ErrorStateComponent } from './lib/state-display/error-state.component';
 
+// Stat Card Component
+export { StatCardComponent, type StatCardVariant } from './lib/stat-card/stat-card.component';
+
 // Utility Functions
 export {
   getVehicleStatusClass,
@@ -38,5 +41,15 @@ export {
   getReservationStatusClass,
   getReservationStatusLabel,
   formatDateDE,
+  formatDateLongDE,
   formatPriceDE,
 } from './lib/utils/status-display.utils';
+
+// Pagination Component
+export { PaginationComponent } from './lib/pagination/pagination.component';
+
+// Select Seats Component
+export { SelectSeatsComponent } from './lib/select-seats/select-seats.component';
+
+// Select Page Size Component
+export { SelectPageSizeComponent } from './lib/select-page-size/select-page-size.component';

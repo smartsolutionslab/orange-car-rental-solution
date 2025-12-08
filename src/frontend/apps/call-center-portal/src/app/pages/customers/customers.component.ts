@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
+import { formatDateDE, getReservationStatusClass, ModalComponent } from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
-import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
+import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
 import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 
 /**
@@ -15,7 +16,7 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ModalComponent],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
 })
@@ -127,6 +128,7 @@ export class CustomersComponent {
     this.showDetails.set(false);
     this.selectedCustomer.set(null);
     this.customerReservations.set([]);
+    this.editMode.set(false);
   }
 
   /**
@@ -147,77 +149,58 @@ export class CustomersComponent {
     });
   }
 
-  /**
-   * Format date for display
-   */
-  protected formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  }
+  // Helpers - using shared utilities
+  protected formatDate = formatDateDE;
+  protected getStatusClass = getReservationStatusClass;
 
   /**
-   * Get status badge class
-   */
-  protected getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'confirmed':
-      case 'active':
-        return 'status-success';
-      case 'pending':
-        return 'status-warning';
-      case 'cancelled':
-        return 'status-error';
-      case 'completed':
-        return 'status-info';
-      default:
-        return '';
-    }
-  }
-
-  /**
-   * Calculate customer age
+   * Calculate age from date of birth
    */
   protected calculateAge(dateOfBirth: string): number {
+    if (!dateOfBirth) return 0;
     const today = new Date();
     const birthDate = new Date(dateOfBirth);
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-
     return age;
   }
 
   /**
-   * Enter edit mode and populate form
+   * Update edit form field
+   */
+  protected updateEditForm(field: keyof UpdateCustomerRequest, value: string): void {
+    this.editForm.update(form => ({
+      ...form,
+      [field]: value
+    }));
+  }
+
+  /**
+   * Enter edit mode
    */
   protected enterEditMode(): void {
     const customer = this.selectedCustomer();
-    if (!customer) return;
-
-    this.editForm.set({
-      firstName: customer.firstName,
-      lastName: customer.lastName,
-      email: customer.email,
-      phoneNumber: customer.phoneNumber,
-      dateOfBirth: customer.dateOfBirth,
-      street: customer.street,
-      city: customer.city,
-      postalCode: customer.postalCode,
-      country: customer.country,
-      licenseNumber: customer.licenseNumber,
-      licenseIssueCountry: customer.licenseIssueCountry,
-      licenseIssueDate: customer.licenseIssueDate,
-      licenseExpiryDate: customer.licenseExpiryDate
-    });
-    this.editMode.set(true);
-    this.error.set(null);
+    if (customer) {
+      this.editForm.set({
+        firstName: customer.firstName ?? '',
+        lastName: customer.lastName ?? '',
+        email: customer.email ?? '',
+        phoneNumber: customer.phoneNumber ?? '',
+        dateOfBirth: customer.dateOfBirth ?? '',
+        street: customer.street ?? '',
+        city: customer.city ?? '',
+        postalCode: customer.postalCode ?? '',
+        country: customer.country ?? '',
+        licenseNumber: customer.licenseNumber ?? '',
+        licenseIssueCountry: customer.licenseIssueCountry ?? '',
+        licenseIssueDate: customer.licenseIssueDate ?? '',
+        licenseExpiryDate: customer.licenseExpiryDate ?? ''
+      });
+      this.editMode.set(true);
+    }
   }
 
   /**
@@ -225,7 +208,6 @@ export class CustomersComponent {
    */
   protected cancelEdit(): void {
     this.editMode.set(false);
-    this.error.set(null);
   }
 
   /**
@@ -235,78 +217,24 @@ export class CustomersComponent {
     const customer = this.selectedCustomer();
     if (!customer) return;
 
-    const form = this.editForm();
-
-    // Validation
-    if (!form.firstName?.trim() || !form.lastName?.trim()) {
-      this.error.set('Vorname und Nachname sind erforderlich');
-      return;
-    }
-
-    if (!form.email?.trim() || !this.isValidEmail(form.email)) {
-      this.error.set('Gültige E-Mail-Adresse ist erforderlich');
-      return;
-    }
-
-    if (!form.phoneNumber?.trim()) {
-      this.error.set('Telefonnummer ist erforderlich');
-      return;
-    }
-
-    if (!form.dateOfBirth) {
-      this.error.set('Geburtsdatum ist erforderlich');
-      return;
-    }
-
-    if (!form.licenseNumber?.trim()) {
-      this.error.set('Führerscheinnummer ist erforderlich');
-      return;
-    }
-
     this.saving.set(true);
     this.error.set(null);
 
-    this.customerService.updateCustomer(customer.id, form).subscribe({
+    this.customerService.updateCustomer(customer.id, this.editForm()).subscribe({
       next: (updatedCustomer) => {
         this.selectedCustomer.set(updatedCustomer);
         this.editMode.set(false);
         this.saving.set(false);
         this.successMessage.set('Kundendaten erfolgreich aktualisiert');
-
-        // Update in list
-        const customers = this.customers();
-        const index = customers.findIndex(c => c.id === updatedCustomer.id);
-        if (index !== -1) {
-          customers[index] = updatedCustomer;
-          this.customers.set([...customers]);
-        }
-
-        // Clear success message after timeout
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
+        setTimeout(() => this.successMessage.set(null), 3000);
+        // Refresh the customer list
+        this.searchCustomers();
       },
       error: (err) => {
         logError('CustomersComponent', 'Error updating customer', err);
-        this.error.set('Fehler beim Aktualisieren der Kundendaten');
+        this.error.set('Fehler beim Speichern der Kundendaten');
         this.saving.set(false);
       }
     });
-  }
-
-  /**
-   * Validate email format
-   */
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  /**
-   * Update a field in the edit form
-   */
-  protected updateEditForm<K extends keyof UpdateCustomerRequest>(field: K, value: UpdateCustomerRequest[K]): void {
-    this.editForm.update(form => ({
-      ...form,
-      [field]: value
-    }));
   }
 }

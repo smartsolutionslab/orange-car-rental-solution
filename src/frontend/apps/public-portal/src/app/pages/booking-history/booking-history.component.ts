@@ -13,6 +13,10 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
+  formatDateDE,
+  formatPriceDE,
+  getReservationStatusClass,
+  getReservationStatusLabel,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -241,44 +245,11 @@ export class BookingHistoryComponent implements OnInit {
     });
   }
 
-  // Helpers
-  formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
-  }
-
-  formatPrice(price: number): string {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price);
-  }
-
-  getStatusClass(status: string): string {
-    const statusMap: Record<string, string> = {
-      'Pending': 'status-pending',
-      'Confirmed': 'status-confirmed',
-      'Active': 'status-active',
-      'Completed': 'status-completed',
-      'Cancelled': 'status-cancelled'
-    };
-    return statusMap[status] || '';
-  }
-
-  getStatusLabel(status: string): string {
-    const labelMap: Record<string, string> = {
-      'Pending': 'Ausstehend',
-      'Confirmed': 'Bestätigt',
-      'Active': 'Aktiv',
-      'Completed': 'Abgeschlossen',
-      'Cancelled': 'Storniert'
-    };
-    return labelMap[status] || status;
-  }
+  // Helpers - using shared utilities
+  formatDate = formatDateDE;
+  formatPrice = formatPriceDE;
+  getStatusClass = getReservationStatusClass;
+  getStatusLabel = getReservationStatusLabel;
 
   printReservation() {
     // TODO: Implement print functionality

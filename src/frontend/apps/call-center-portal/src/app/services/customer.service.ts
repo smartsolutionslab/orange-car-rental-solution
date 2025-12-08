@@ -78,9 +78,11 @@ export class CustomerService {
     };
 
     // Update profile first, then license
-    return this.http.put<void>(`${this.apiUrl}/${id}/profile`, profileRequest).pipe(
+    return this.http.put<void>(`${this.apiUrl}/${id}/profile`, profileRequest)
+      .pipe(
       switchMap(() => this.http.put<void>(`${this.apiUrl}/${id}/license`, licenseRequest)),
-      switchMap(() => this.getCustomer(id))
+      switchMap(() => this.getCustomer(id)
+      )
     );
   }
 }

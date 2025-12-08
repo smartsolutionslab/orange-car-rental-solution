@@ -1,0 +1,59 @@
+@if (total() > 1) {
+  <div class="pagination-container">
+    @if (showItemRange && totalItems && pageSize) {
+      <div class="pagination-info">
+        Zeige {{ rangeStart() }} - {{ rangeEnd() }} von {{ totalItems }} {{ totalItems === 1 ? itemLabel : itemLabelPlural }}
+      </div>
+    }
+
+    <div class="pagination">
+      <button
+        class="btn-pagination"
+        (click)="previousPage()"
+        [disabled]="page() === 1"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+        {{ previousLabel }}
+      </button>
+
+      <div class="page-numbers">
+        @if (showLeadingFirstPage()) {
+          <button class="btn-page" (click)="goToPage(1)">1</button>
+          @if (showLeadingDots()) {
+            <span class="pagination-ellipsis">...</span>
+          }
+        }
+
+        @for (p of visiblePages(); track p) {
+          <button
+            class="btn-page"
+            [class.active]="p === page()"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+        }
+
+        @if (showTrailingLastPage()) {
+          @if (showTrailingDots()) {
+            <span class="pagination-ellipsis">...</span>
+          }
+          <button class="btn-page" (click)="goToPage(total())">{{ total() }}</button>
+        }
+      </div>
+
+      <button
+        class="btn-pagination"
+        (click)="nextPage()"
+        [disabled]="page() === total()"
+      >
+        {{ nextLabel }}
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+}

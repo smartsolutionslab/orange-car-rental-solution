@@ -12,13 +12,13 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
+  StatCardComponent,
   getVehicleStatusClass,
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
 import type { LocationStatistics, VehicleDistribution } from '../../types';
-
 /**
  * Locations management page for call center
  * Displays rental locations and management tools
@@ -34,6 +34,7 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
     LoadingStateComponent,
     EmptyStateComponent,
     ErrorStateComponent,
+    StatCardComponent,
   ],
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css'
