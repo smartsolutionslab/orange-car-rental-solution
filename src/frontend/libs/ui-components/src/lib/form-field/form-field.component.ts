@@ -93,6 +93,6 @@ export class FormFieldComponent {
   @Input() inputId?: string;
   @Input() required = false;
   @Input() hasError = false;
-  @Input() errorMessage?: string;
+  @Input() errorMessage?: string | null;
   @Input() hint?: string;
 }

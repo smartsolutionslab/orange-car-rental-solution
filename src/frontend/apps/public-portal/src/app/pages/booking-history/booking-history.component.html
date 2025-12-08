@@ -96,8 +96,7 @@
       <p>Geben Sie Ihre Reservierungsnummer und E-Mail-Adresse ein, um Ihre Buchung zu finden.</p>
 
       <form class="lookup-form" (ngSubmit)="onGuestLookup()">
-        <div class="form-group">
-          <label for="reservationId">Reservierungsnummer</label>
+        <ui-form-field label="Reservierungsnummer" inputId="reservationId" [required]="true">
           <input
             type="text"
             id="reservationId"
@@ -106,10 +105,9 @@
             placeholder="z.B. 550e8400-e29b-41d4"
             required
           />
-        </div>
+        </ui-form-field>
 
-        <div class="form-group">
-          <label for="email">E-Mail-Adresse</label>
+        <ui-form-field label="E-Mail-Adresse" inputId="email" [required]="true">
           <input
             type="email"
             id="email"
@@ -118,7 +116,7 @@
             placeholder="ihre@email.de"
             required
           />
-        </div>
+        </ui-form-field>
 
         @if (guestLookupError()) {
           <div class="error-message-inline">
