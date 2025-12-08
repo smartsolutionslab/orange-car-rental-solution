@@ -8,9 +8,9 @@ import type {
   ReservationId,
   ReservationSearchFilters,
   ReservationSearchResponse,
-  CancelReservationRequest,
-  EmailAddress
-} from '@orange-car-rental/data-access';
+  CancelReservationRequest
+} from '@orange-car-rental/reservation-api';
+import type { EmailAddress } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 
 /**

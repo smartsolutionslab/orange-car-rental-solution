@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ConfigService } from '../../services/config.service';
-import type { CustomerId } from '@orange-car-rental/data-access';
+import type { CustomerId } from '@orange-car-rental/reservation-api';
 import type { Reservation } from '../../types';
 import { of } from 'rxjs';
 

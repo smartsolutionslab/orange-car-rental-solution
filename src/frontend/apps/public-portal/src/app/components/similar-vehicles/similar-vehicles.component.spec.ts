@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SimilarVehiclesComponent } from './similar-vehicles.component';
-import type { Vehicle } from '@orange-car-rental/data-access';
+import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 describe('SimilarVehiclesComponent', () => {
   let component: SimilarVehiclesComponent;
@@ -75,7 +76,10 @@ describe('SimilarVehiclesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SimilarVehiclesComponent]
+      imports: [SimilarVehiclesComponent],
+      providers: [
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(SimilarVehiclesComponent);

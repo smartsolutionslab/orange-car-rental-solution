@@ -1,18 +1,23 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import Keycloak from 'keycloak-js';
-import type { KeycloakProfile } from 'keycloak-js';
 import { firstValueFrom } from 'rxjs';
+import { BaseAuthService } from '@orange-car-rental/auth';
 import { environment } from '../../environments/environment';
 import { logError } from '@orange-car-rental/util';
 import type { RegisterData, TokenResponse } from '../types';
 export type { RegisterData } from '../types';
 
+/**
+ * Authentication service for public portal
+ * Extends BaseAuthService with additional methods for:
+ * - Direct login with email/password
+ * - User registration
+ * - Password reset
+ */
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
-  private readonly keycloak = inject(Keycloak);
+export class AuthService extends BaseAuthService {
   private readonly http = inject(HttpClient);
 
   private keycloakUrl = environment.keycloak?.url || 'http://localhost:9080';
@@ -20,63 +25,12 @@ export class AuthService {
   private clientId = environment.keycloak?.clientId || 'public-portal';
 
   /**
-   * Check if user is authenticated
-   */
-  isAuthenticated(): boolean {
-    return this.keycloak.authenticated ?? false;
-  }
-
-  /**
-   * Get user profile
-   */
-  async getUserProfile(): Promise<KeycloakProfile | null> {
-    try {
-      if (this.isAuthenticated()) {
-        return await this.keycloak.loadUserProfile();
-      }
-      return null;
-    } catch (error) {
-      logError('AuthService', 'Error loading user profile', error);
-      return null;
-    }
-  }
-
-  /**
-   * Get user roles
-   */
-  getUserRoles(): string[] {
-    return this.keycloak.realmAccess?.roles ?? [];
-  }
-
-  /**
-   * Check if user has specific role
-   */
-  hasRole(role: string): boolean {
-    return this.getUserRoles().includes(role);
-  }
-
-  /**
-   * Get access token
-   */
-  async getToken(): Promise<string> {
-    await this.keycloak.updateToken(30);
-    return this.keycloak.token ?? '';
-  }
-
-  /**
-   * Login user with redirect to Keycloak (legacy method)
-   */
-  loginRedirect(): void {
-    this.keycloak.login();
-  }
-
-  /**
    * Login user with email and password using Keycloak REST API
    * @param email User email
    * @param password User password
    * @param rememberMe Whether to remember the user
    */
-  async login(email: string, password: string, _rememberMe = false): Promise<void> {
+  async loginWithPassword(email: string, password: string, _rememberMe = false): Promise<void> {
     try {
       const tokenUrl = `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/token`;
 
@@ -106,20 +60,6 @@ export class AuthService {
       logError('AuthService', 'Login error', error);
       throw error;
     }
-  }
-
-  /**
-   * Logout user
-   */
-  logout(): void {
-    this.keycloak.logout({ redirectUri: window.location.origin });
-  }
-
-  /**
-   * Get username
-   */
-  getUsername(): string {
-    return this.keycloak.tokenParsed?.['preferred_username'] ?? '';
   }
 
   /**
@@ -159,7 +99,7 @@ export class AuthService {
       );
 
       // After successful registration, log the user in
-      await this.login(userData.email, userData.password, false);
+      await this.loginWithPassword(userData.email, userData.password, false);
     } catch (error: unknown) {
       logError('AuthService', 'Registration error', error);
       throw error;

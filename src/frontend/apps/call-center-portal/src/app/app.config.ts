@@ -12,7 +12,9 @@ import {
   INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG
 } from 'keycloak-angular';
 import type { IncludeBearerTokenCondition } from 'keycloak-angular';
+import { API_CONFIG } from '@orange-car-rental/shared';
 import { environment } from '../environments/environment';
+import { ConfigService } from './services/config.service';
 
 import { routes } from './app.routes';
 
@@ -26,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
     { provide: LOCALE_ID, useValue: 'de-DE' },
+    { provide: API_CONFIG, useExisting: ConfigService },
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
       useValue: [urlCondition]

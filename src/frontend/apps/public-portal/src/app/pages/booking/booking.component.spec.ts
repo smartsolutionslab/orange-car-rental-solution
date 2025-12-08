@@ -2,29 +2,29 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
+import { provideHttpClient } from '@angular/common/http';
+
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+
 import { BookingComponent } from './booking.component';
-import { LocationService } from '../../services/location.service';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { CustomerService } from '../../services/customer.service';
-import type { Location, Vehicle, GuestReservationResponse, CustomerProfile, CustomerId } from '@orange-car-rental/data-access';
+import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import type { GuestReservationResponse, CustomerId } from '@orange-car-rental/reservation-api';
+import type { CustomerProfile } from '@orange-car-rental/customer-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 describe('BookingComponent', () => {
   let component: BookingComponent;
   let fixture: ComponentFixture<BookingComponent>;
-  let locationService: jasmine.SpyObj<LocationService>;
   let vehicleService: jasmine.SpyObj<VehicleService>;
   let reservationService: jasmine.SpyObj<ReservationService>;
   let authService: jasmine.SpyObj<AuthService>;
   let customerService: jasmine.SpyObj<CustomerService>;
   let router: jasmine.SpyObj<Router>;
   let activatedRoute: { queryParams: Observable<Record<string, string>> };
-
-  const mockLocations: Location[] = [
-    { code: 'BER-HBF', name: 'Berlin Hauptbahnhof', street: 'Europaplatz 1', city: 'Berlin', postalCode: '10557', fullAddress: 'Europaplatz 1, 10557 Berlin' },
-    { code: 'MUC-FLG', name: 'Munich Airport', street: 'Nordallee 25', city: 'Munich', postalCode: '85356', fullAddress: 'Nordallee 25, 85356 Munich' }
-  ];
 
   const mockVehicle: Vehicle = {
     id: '123e4567-e89b-12d3-a456-426614174000',
@@ -79,7 +79,6 @@ describe('BookingComponent', () => {
   };
 
   beforeEach(async () => {
-    const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getAllLocations']);
     const vehicleServiceSpy = jasmine.createSpyObj('VehicleService', ['getVehicleById']);
     const reservationServiceSpy = jasmine.createSpyObj('ReservationService', ['createGuestReservation']);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
@@ -93,24 +92,24 @@ describe('BookingComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BookingComponent, ReactiveFormsModule],
       providers: [
-        { provide: LocationService, useValue: locationServiceSpy },
+        provideHttpClient(),
+        provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleServiceSpy },
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: CustomerService, useValue: customerServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: activatedRoute }
+        { provide: ActivatedRoute, useValue: activatedRoute },
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 
-    locationService = TestBed.inject(LocationService) as jasmine.SpyObj<LocationService>;
     vehicleService = TestBed.inject(VehicleService) as jasmine.SpyObj<VehicleService>;
     reservationService = TestBed.inject(ReservationService) as jasmine.SpyObj<ReservationService>;
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     customerService = TestBed.inject(CustomerService) as jasmine.SpyObj<CustomerService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
 
-    locationService.getAllLocations.and.returnValue(of(mockLocations));
     authService.isAuthenticated.and.returnValue(false); // Default to not authenticated
 
     fixture = TestBed.createComponent(BookingComponent);
@@ -133,12 +132,6 @@ describe('BookingComponent', () => {
 
   it('should start at step 1', () => {
     expect(component['currentStep']()).toBe(1);
-  });
-
-  it('should load locations on init', () => {
-    fixture.detectChanges();
-    expect(locationService.getAllLocations).toHaveBeenCalled();
-    expect(component['locations']().length).toBe(2);
   });
 
   it('should load vehicle when vehicleId is in query params', () => {

@@ -2,11 +2,24 @@ import { Component, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import type { Vehicle, Location, LocationCode, DailyRate, AddVehicleRequest } from '@orange-car-rental/data-access';
-import { VehicleStatus, VehicleCategoryLabel, FuelType, TransmissionType, VehicleStatusLabel } from '@orange-car-rental/data-access';
+import type { Vehicle, DailyRate, AddVehicleRequest } from '@orange-car-rental/vehicle-api';
+import { VehicleStatus, VehicleCategoryLabel, FuelType, TransmissionType, VehicleStatusLabel } from '@orange-car-rental/vehicle-api';
+import type { Location, LocationCode } from '@orange-car-rental/location-api';
+import { LocationService } from '@orange-car-rental/location-api';
 import { logError } from '@orange-car-rental/util';
+import {
+  SelectVehicleStatusComponent,
+  SelectLocationComponent,
+  SelectCategoryComponent,
+  StatusBadgeComponent,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  getVehicleStatusClass,
+  getVehicleStatusLabel,
+} from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
-import { LocationService } from '../../services/location.service';
 import { UI_TIMING } from '../../constants/app.constants';
 
 /**
@@ -16,7 +29,19 @@ import { UI_TIMING } from '../../constants/app.constants';
 @Component({
   selector: 'app-vehicles',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SelectVehicleStatusComponent,
+    SelectLocationComponent,
+    SelectCategoryComponent,
+    StatusBadgeComponent,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css'
 })
@@ -207,38 +232,12 @@ export class VehiclesComponent implements OnInit {
   /**
    * Get status badge class
    */
-  protected getStatusClass(status: string): string {
-    switch (status) {
-      case 'Available':
-        return 'status-success';
-      case 'Rented':
-        return 'status-info';
-      case 'Maintenance':
-        return 'status-warning';
-      case 'OutOfService':
-        return 'status-error';
-      default:
-        return '';
-    }
-  }
+  protected getStatusClass = getVehicleStatusClass;
 
   /**
    * Get status display text
    */
-  protected getStatusText(status: string): string {
-    switch (status) {
-      case 'Available':
-        return 'Verfügbar';
-      case 'Rented':
-        return 'Vermietet';
-      case 'Maintenance':
-        return 'Wartung';
-      case 'OutOfService':
-        return 'Außer Betrieb';
-      default:
-        return status;
-    }
-  }
+  protected getStatusText = getVehicleStatusLabel;
 
   /**
    * Get unique locations from vehicles

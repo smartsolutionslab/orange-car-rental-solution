@@ -69,14 +69,12 @@
           </svg>
           Standort
         </label>
-        <select id="location" formControlName="locationCode" class="form-input">
-          <option value="">Alle Standorte</option>
-          <option value="BER-HBF">Berlin Hauptbahnhof</option>
-          <option value="MUC-FLG">München Flughafen</option>
-          <option value="FRA-FLG">Frankfurt Flughafen</option>
-          <option value="HAM-HBF">Hamburg Hauptbahnhof</option>
-          <option value="CGN-HBF">Köln Hauptbahnhof</option>
-        </select>
+        <ui-select-location
+          id="location"
+          formControlName="locationCode"
+          placeholder="Alle Standorte"
+          cssClass="form-input"
+        />
       </div>
 
       <!-- Category -->
@@ -87,14 +85,12 @@
           </svg>
           Fahrzeugklasse
         </label>
-        <select id="category" formControlName="categoryCode" class="form-input">
-          <option value="">Alle Klassen</option>
-          <option value="KLEIN">Kleinwagen</option>
-          <option value="KOMPAKT">Kompaktklasse</option>
-          <option value="MITTEL">Mittelklasse</option>
-          <option value="OBER">Oberklasse</option>
-          <option value="SUV">SUV</option>
-        </select>
+        <ui-select-category
+          id="category"
+          formControlName="categoryCode"
+          placeholder="Alle Klassen"
+          cssClass="form-input"
+        />
       </div>
 
       <!-- Fuel Type -->
@@ -105,13 +101,12 @@
           </svg>
           Kraftstoffart
         </label>
-        <select id="fuel" formControlName="fuelType" class="form-input">
-          <option value="">Alle</option>
-          <option value="Petrol">Benzin</option>
-          <option value="Diesel">Diesel</option>
-          <option value="Electric">Elektro</option>
-          <option value="Hybrid">Hybrid</option>
-        </select>
+        <ui-select-fuel-type
+          id="fuel"
+          formControlName="fuelType"
+          placeholder="Alle"
+          cssClass="form-input"
+        />
       </div>
 
       <!-- Transmission -->
@@ -122,11 +117,12 @@
           </svg>
           Getriebe
         </label>
-        <select id="transmission" formControlName="transmissionType" class="form-input">
-          <option value="">Alle</option>
-          <option value="Manual">Manuell</option>
-          <option value="Automatic">Automatik</option>
-        </select>
+        <ui-select-transmission
+          id="transmission"
+          formControlName="transmissionType"
+          placeholder="Alle"
+          cssClass="form-input"
+        />
       </div>
 
       <!-- Min Seats -->

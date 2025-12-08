@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type { CustomerProfile, UpdateCustomerProfileRequest, CustomerId } from '@orange-car-rental/data-access';
+import type { CustomerProfile, UpdateCustomerProfileRequest, CustomerId } from '@orange-car-rental/customer-api';
 import { ConfigService } from './config.service';
 
 /**

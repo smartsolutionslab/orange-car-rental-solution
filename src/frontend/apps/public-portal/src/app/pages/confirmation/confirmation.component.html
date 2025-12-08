@@ -1,24 +1,18 @@
 <div class="confirmation-container">
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading">
-      <div class="loading-spinner"></div>
-      <p>Lade Reservierungsdetails...</p>
-    </div>
+    <ui-loading-state message="Lade Reservierungsdetails..."></ui-loading-state>
   }
 
   <!-- Error State -->
   @if (error() && !loading()) {
-    <div class="error-container">
-      <div class="error-icon-large">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-      </div>
-      <h1>{{ error() }}</h1>
-      <p>Bitte versuchen Sie es später erneut oder kontaktieren Sie unseren Kundenservice.</p>
-      <button class="btn btn-primary" (click)="goToHome()">Zur Startseite</button>
-    </div>
+    <ui-error-state
+      title="Fehler"
+      [message]="error()!"
+      [showRetry]="true"
+      retryLabel="Zur Startseite"
+      (retry)="goToHome()"
+    ></ui-error-state>
   }
 
   <!-- Success State -->
@@ -122,9 +116,7 @@
               </svg>
               Status
             </h3>
-            <div class="status-badge status-{{ reservation()!.status.toLowerCase() }}">
-              {{ reservation()!.status }}
-            </div>
+            <ui-status-badge type="reservation" [status]="reservation()!.status"></ui-status-badge>
           </div>
         </div>
       </div>

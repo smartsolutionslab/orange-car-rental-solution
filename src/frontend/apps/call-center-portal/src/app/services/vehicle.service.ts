@@ -4,14 +4,14 @@ import { Observable } from 'rxjs';
 import type {
   Vehicle,
   VehicleId,
-  LocationCode,
   DailyRate,
   VehicleSearchQuery,
   VehicleSearchResult,
   AddVehicleRequest,
   AddVehicleResult
-} from '@orange-car-rental/data-access';
-import { VehicleStatus } from '@orange-car-rental/data-access';
+} from '@orange-car-rental/vehicle-api';
+import { VehicleStatus } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
 import { ConfigService } from './config.service';
 
 /**

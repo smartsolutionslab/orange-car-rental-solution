@@ -21,7 +21,7 @@ describe('App', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
       'isAuthenticated',
       'getUsername',
-      'loginRedirect',
+      'login',
       'logout'
     ]);
     authServiceSpy.isAuthenticated.and.returnValue(false);

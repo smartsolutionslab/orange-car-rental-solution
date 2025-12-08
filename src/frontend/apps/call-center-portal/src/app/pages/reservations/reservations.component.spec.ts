@@ -3,8 +3,9 @@ import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
-import type { CustomerId } from '@orange-car-rental/data-access';
+import type { CustomerId } from '@orange-car-rental/reservation-api';
 import type { Reservation } from '../../types';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 describe('ReservationsComponent', () => {
   let component: ReservationsComponent;
@@ -82,7 +83,8 @@ describe('ReservationsComponent', () => {
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: mockActivatedRoute }
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 
@@ -660,7 +662,7 @@ describe('ReservationsComponent', () => {
       expect(component['getStatusClass']('Confirmed')).toBe('status-success');
       expect(component['getStatusClass']('Pending')).toBe('status-warning');
       expect(component['getStatusClass']('Cancelled')).toBe('status-error');
-      expect(component['getStatusClass']('Completed')).toBe('status-info');
+      expect(component['getStatusClass']('Completed')).toBe('status-completed');
     });
 
     it('should return correct status label', () => {

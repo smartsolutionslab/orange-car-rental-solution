@@ -6,7 +6,7 @@ import { ReservationsComponent } from './pages/reservations/reservations.compone
 import { CustomersComponent } from './pages/customers/customers.component';
 import { LocationsComponent } from './pages/locations/locations.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { authGuard } from './guards/auth.guard';
+import { authGuard } from '@orange-car-rental/auth';
 
 export const routes: Routes = [
   {

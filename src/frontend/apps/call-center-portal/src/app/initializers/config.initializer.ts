@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
+import type { ApiConfig } from '@orange-car-rental/shared';
 import { ConfigService } from '../services/config.service';
-import type { AppConfig } from '../services/config.service';
 import { firstValueFrom, catchError, of } from 'rxjs';
 
 const DEFAULT_API_URL = 'http://localhost:5002';
@@ -13,7 +13,7 @@ export function initializeApp(http: HttpClient, configService: ConfigService): (
   return async () => {
     try {
       const config = await firstValueFrom(
-        http.get<AppConfig>('/config.json').pipe(
+        http.get<ApiConfig>('/config.json').pipe(
           catchError(() => of({ apiUrl: DEFAULT_API_URL }))
         )
       );

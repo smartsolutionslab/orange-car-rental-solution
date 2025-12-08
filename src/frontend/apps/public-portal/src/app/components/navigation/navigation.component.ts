@@ -70,10 +70,10 @@ export class NavigationComponent implements OnInit {
   }
 
   /**
-   * Trigger login flow
+   * Trigger login flow (Keycloak redirect)
    */
   protected login(): void {
-    this.authService.loginRedirect();
+    this.authService.login();
   }
 
   /**

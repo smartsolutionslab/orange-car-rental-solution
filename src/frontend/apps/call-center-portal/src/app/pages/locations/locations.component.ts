@@ -2,9 +2,19 @@ import { Component, inject, signal, computed } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import type { Location, Vehicle } from '@orange-car-rental/data-access';
+import type { Location } from '@orange-car-rental/location-api';
+import { LocationService } from '@orange-car-rental/location-api';
+import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import { logError } from '@orange-car-rental/util';
-import { LocationService } from '../../services/location.service';
+import {
+  StatusBadgeComponent,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  getVehicleStatusClass,
+  getVehicleStatusLabel,
+} from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
 import type { LocationStatistics, VehicleDistribution } from '../../types';
@@ -16,7 +26,15 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
 @Component({
   selector: 'app-locations',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    StatusBadgeComponent,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css'
 })
@@ -184,38 +202,12 @@ export class LocationsComponent implements OnInit {
   /**
    * Get status badge class
    */
-  protected getStatusClass(status: string): string {
-    switch (status) {
-      case 'Available':
-        return 'status-success';
-      case 'Rented':
-        return 'status-info';
-      case 'Maintenance':
-        return 'status-warning';
-      case 'OutOfService':
-        return 'status-error';
-      default:
-        return '';
-    }
-  }
+  protected getStatusClass = getVehicleStatusClass;
 
   /**
    * Get status display text
    */
-  protected getStatusText(status: string): string {
-    switch (status) {
-      case 'Available':
-        return 'Verfügbar';
-      case 'Rented':
-        return 'Vermietet';
-      case 'Maintenance':
-        return 'Wartung';
-      case 'OutOfService':
-        return 'Außer Betrieb';
-      default:
-        return status;
-    }
-  }
+  protected getStatusText = getVehicleStatusLabel;
 
   /**
    * Get total number of locations

@@ -14,6 +14,19 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
+    "baseUrl": ".",
+    "paths": {
+      "@orange-car-rental/shared": ["../../libs/shared/src/index.ts"],
+      "@orange-car-rental/auth": ["../../libs/auth/src/index.ts"],
+      "@orange-car-rental/location-api": ["../../libs/location-api/src/index.ts"],
+      "@orange-car-rental/vehicle-api": ["../../libs/vehicle-api/src/index.ts"],
+      "@orange-car-rental/reservation-api": ["../../libs/reservation-api/src/index.ts"],
+      "@orange-car-rental/customer-api": ["../../libs/customer-api/src/index.ts"],
+      "@orange-car-rental/pricing-api": ["../../libs/pricing-api/src/index.ts"],
+      "@orange-car-rental/util": ["../../libs/util/src/index.ts"],
+      "@orange-car-rental/ui-components": ["../../libs/ui-components/src/index.ts"],
+      "@orange-car-rental/shared-ui": ["../../libs/shared-ui/src/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

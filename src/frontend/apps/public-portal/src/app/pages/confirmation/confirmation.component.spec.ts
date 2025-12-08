@@ -3,7 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
 import { ConfirmationComponent } from './confirmation.component';
 import { ReservationService } from '../../services/reservation.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
+import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
@@ -40,7 +41,8 @@ describe('ConfirmationComponent', () => {
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: Router, useValue: routerSpy },
-        { provide: ActivatedRoute, useValue: activatedRoute }
+        { provide: ActivatedRoute, useValue: activatedRoute },
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 

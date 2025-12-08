@@ -1,17 +1,10 @@
 /**
  * Guest reservation request (flat structure for call-center)
  */
-import type {
-  VehicleId,
-  CategoryCode,
-  LocationCode,
-  ISODateString,
-  EmailAddress,
-  PhoneNumber,
-  PostalCode,
-  CountryCode,
-  LicenseNumber,
-} from '@orange-car-rental/data-access';
+import type { VehicleId, CategoryCode } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
+import type { ISODateString, EmailAddress, PhoneNumber, PostalCode, CountryCode } from '@orange-car-rental/shared';
+import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 
 export type GuestReservationRequest = {
   readonly vehicleId: VehicleId;

@@ -3,8 +3,21 @@ import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ReservationStatus, isCustomerId } from '@orange-car-rental/data-access';
+import { ReservationStatus, isCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
+import {
+  SelectReservationStatusComponent,
+  SelectLocationComponent,
+  StatusBadgeComponent,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  getReservationStatusClass,
+  getReservationStatusLabel,
+  formatDateDE,
+  formatPriceDE,
+} from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import type { Reservation, ReservationSearchQuery } from '../../types';
 
@@ -19,7 +32,17 @@ type GroupedReservations = Record<string, Reservation[]>;
 @Component({
   selector: 'app-reservations',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    SelectReservationStatusComponent,
+    SelectLocationComponent,
+    StatusBadgeComponent,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css'
 })
@@ -133,16 +156,6 @@ export class ReservationsComponent implements OnInit {
     { value: 'status', label: 'Nach Status' },
     { value: 'pickupDate', label: 'Nach Abholdatum' },
     { value: 'location', label: 'Nach Standort' }
-  ];
-
-  // Status options
-  protected readonly statusOptions = [
-    { value: '', label: 'Alle Status' },
-    { value: 'Pending', label: 'Ausstehend' },
-    { value: 'Confirmed', label: 'Bestätigt' },
-    { value: 'Active', label: 'Aktiv' },
-    { value: 'Completed', label: 'Abgeschlossen' },
-    { value: 'Cancelled', label: 'Storniert' }
   ];
 
   ngOnInit(): void {
@@ -372,24 +385,12 @@ export class ReservationsComponent implements OnInit {
   /**
    * Format date for display
    */
-  protected formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  }
+  protected formatDate = formatDateDE;
 
   /**
    * Format price for display
    */
-  protected formatPrice(price: number): string {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(price);
-  }
+  protected formatPrice = formatPriceDE;
 
   /**
    * Math helper for templates
@@ -399,35 +400,12 @@ export class ReservationsComponent implements OnInit {
   /**
    * Get status badge class
    */
-  protected getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'confirmed':
-      case 'active':
-        return 'status-success';
-      case 'pending':
-        return 'status-warning';
-      case 'cancelled':
-        return 'status-error';
-      case 'completed':
-        return 'status-info';
-      default:
-        return '';
-    }
-  }
+  protected getStatusClass = getReservationStatusClass;
 
   /**
    * Get status label in German
    */
-  protected getStatusLabel(status: string): string {
-    const labels: Record<string, string> = {
-      'Pending': 'Ausstehend',
-      'Confirmed': 'Bestätigt',
-      'Active': 'Aktiv',
-      'Completed': 'Abgeschlossen',
-      'Cancelled': 'Storniert'
-    };
-    return labels[status] || status;
-  }
+  protected getStatusLabel = getReservationStatusLabel;
 
   /**
    * Check if reservation can be confirmed

@@ -11,7 +11,7 @@ describe('LoginComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['login']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['loginWithPassword']);
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
@@ -122,20 +122,20 @@ describe('LoginComponent', () => {
     it('should not submit if form is invalid', async () => {
       component.loginForm.patchValue({ email: '', password: '' });
       await component.onSubmit();
-      expect(authService.login).not.toHaveBeenCalled();
+      expect(authService.loginWithPassword).not.toHaveBeenCalled();
     });
 
-    it('should call authService.login with correct parameters on valid form', async () => {
-      authService.login.and.returnValue(Promise.resolve());
+    it('should call authService.loginWithPassword with correct parameters on valid form', async () => {
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
       // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
 
-      expect(authService.login).toHaveBeenCalledWith('test@example.com', 'password123', true);
+      expect(authService.loginWithPassword).toHaveBeenCalledWith('test@example.com', 'password123', true);
     });
 
     it('should navigate to home on successful login', async () => {
-      authService.login.and.returnValue(Promise.resolve());
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
       // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
@@ -147,7 +147,7 @@ describe('LoginComponent', () => {
       // Create a deferred promise to control resolution timing
       let resolveLogin!: () => void;
       const deferredPromise = new Promise<void>(resolve => { resolveLogin = resolve; });
-      authService.login.and.returnValue(deferredPromise);
+      authService.loginWithPassword.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
       expect(component.isLoading()).toBeTruthy();
@@ -159,7 +159,7 @@ describe('LoginComponent', () => {
 
     it('should show error message on 401 error', async () => {
       const error = { status: 401, message: 'Unauthorized' };
-      authService.login.and.returnValue(Promise.reject(error));
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
 
       await component.onSubmit();
 
@@ -169,7 +169,7 @@ describe('LoginComponent', () => {
 
     it('should show error message on 403 error', async () => {
       const error = { status: 403, message: 'Forbidden' };
-      authService.login.and.returnValue(Promise.reject(error));
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
 
       await component.onSubmit();
 
@@ -179,7 +179,7 @@ describe('LoginComponent', () => {
 
     it('should show network error message', async () => {
       const error = { message: 'Network error' };
-      authService.login.and.returnValue(Promise.reject(error));
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
 
       await component.onSubmit();
 
@@ -189,7 +189,7 @@ describe('LoginComponent', () => {
 
     it('should show generic error message on unknown error', async () => {
       const error = { status: 500, message: 'Server error' };
-      authService.login.and.returnValue(Promise.reject(error));
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
 
       await component.onSubmit();
 
@@ -199,7 +199,7 @@ describe('LoginComponent', () => {
 
     it('should clear error message on new submission', async () => {
       component.errorMessage.set('Previous error');
-      authService.login.and.returnValue(Promise.resolve());
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
       // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();

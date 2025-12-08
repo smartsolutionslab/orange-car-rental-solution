@@ -8,7 +8,7 @@ import { BookingHistoryComponent } from './pages/booking-history/booking-history
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { ForgotPasswordComponent } from './pages/forgot-password/forgot-password.component';
-import { authGuard } from './guards/auth.guard';
+import { authGuard } from '@orange-car-rental/auth';
 
 export const routes: Routes = [
   {

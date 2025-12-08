@@ -1,16 +1,11 @@
 /**
  * Call-center reservation model (extended version)
  */
-import type {
-  ReservationId,
-  CustomerId,
-  VehicleId,
-  LocationCode,
-  ISODateString,
-  Price,
-  Currency,
-  ReservationStatus,
-} from '@orange-car-rental/data-access';
+import type { ReservationId, ReservationStatus } from '@orange-car-rental/reservation-api';
+import type { CustomerId } from '@orange-car-rental/customer-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
+import type { ISODateString, Price, Currency } from '@orange-car-rental/shared';
 import type { RentalDays } from './rental-days.type';
 
 export type Reservation = {

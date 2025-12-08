@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import type { Vehicle } from '@orange-car-rental/data-access';
+import type { Vehicle } from '@orange-car-rental/vehicle-api';
 
 /**
  * Similar Vehicles Component

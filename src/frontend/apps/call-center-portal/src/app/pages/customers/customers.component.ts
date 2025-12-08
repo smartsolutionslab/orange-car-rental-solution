@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { createCustomerId } from '@orange-car-rental/data-access';
+import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';

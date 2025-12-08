@@ -84,16 +84,13 @@
 
           <div class="form-field full-width">
             <label for="pickupLocationCode">Abholstation *</label>
-            <select
+            <ui-select-location
               id="pickupLocationCode"
               formControlName="pickupLocationCode"
+              placeholder="Bitte wählen..."
+              [showCity]="true"
               [class.invalid]="bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched"
-            >
-              <option value="">Bitte wählen...</option>
-              @for (location of locations(); track location.code) {
-                <option [value]="location.code">{{ location.city }} - {{ location.name }}</option>
-              }
-            </select>
+            />
             @if (bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched) {
               <span class="error-text">Bitte wählen Sie eine Abholstation</span>
             }
@@ -101,16 +98,13 @@
 
           <div class="form-field full-width">
             <label for="dropoffLocationCode">Rückgabestation *</label>
-            <select
+            <ui-select-location
               id="dropoffLocationCode"
               formControlName="dropoffLocationCode"
+              placeholder="Bitte wählen..."
+              [showCity]="true"
               [class.invalid]="bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched"
-            >
-              <option value="">Bitte wählen...</option>
-              @for (location of locations(); track location.code) {
-                <option [value]="location.code">{{ location.city }} - {{ location.name }}</option>
-              }
-            </select>
+            />
             @if (bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched) {
               <span class="error-text">Bitte wählen Sie eine Rückgabestation</span>
             }

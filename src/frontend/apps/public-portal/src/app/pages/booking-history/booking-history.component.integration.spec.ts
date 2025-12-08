@@ -4,7 +4,8 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
+import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 /**
  * Integration Tests for Booking History Component
@@ -82,7 +83,8 @@ describe('BookingHistoryComponent (Integration)', () => {
       providers: [
         ReservationService,
         { provide: AuthService, useValue: authServiceSpy },
-        { provide: ConfigService, useValue: configServiceSpy }
+        { provide: ConfigService, useValue: configServiceSpy },
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 

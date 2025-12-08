@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ReservationService } from './reservation.service';
 import { ConfigService } from './config.service';
-import type { GuestReservationRequest, GuestReservationResponse, Reservation, CustomerId } from '@orange-car-rental/data-access';
+import type { GuestReservationRequest, GuestReservationResponse, Reservation, CustomerId } from '@orange-car-rental/reservation-api';
 
 describe('ReservationService', () => {
   let service: ReservationService;

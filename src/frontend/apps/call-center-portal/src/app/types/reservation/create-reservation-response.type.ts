@@ -1,12 +1,8 @@
 /**
  * Create reservation response
  */
-import type {
-  ReservationId,
-  ReservationStatus,
-  Price,
-  Currency,
-} from '@orange-car-rental/data-access';
+import type { ReservationId, ReservationStatus } from '@orange-car-rental/reservation-api';
+import type { Price, Currency } from '@orange-car-rental/shared';
 
 export type CreateReservationResponse = {
   readonly reservationId: ReservationId;

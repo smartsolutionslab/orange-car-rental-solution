@@ -7,8 +7,8 @@ import localeDe from '@angular/common/locales/de';
 import { of, throwError } from 'rxjs';
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleService } from '../../services/vehicle.service';
-import { LocationService } from '../../services/location.service';
-import type { Vehicle, VehicleSearchResult, VehicleSearchQuery } from '@orange-car-rental/data-access';
+import type { Vehicle, VehicleSearchResult, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 
 // Register German locale for DecimalPipe
 registerLocaleData(localeDe);
@@ -17,7 +17,6 @@ describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
   let fixture: ComponentFixture<VehicleListComponent>;
   let vehicleService: jasmine.SpyObj<VehicleService>;
-  let locationService: jasmine.SpyObj<LocationService>;
   let router: jasmine.SpyObj<Router>;
 
   const mockVehicle: Vehicle = {
@@ -52,26 +51,23 @@ describe('VehicleListComponent', () => {
 
   beforeEach(async () => {
     const vehicleServiceSpy = jasmine.createSpyObj('VehicleService', ['searchVehicles']);
-    const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getAllLocations', 'getLocationByCode']);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     await TestBed.configureTestingModule({
       imports: [VehicleListComponent],
       providers: [
         { provide: VehicleService, useValue: vehicleServiceSpy },
-        { provide: LocationService, useValue: locationServiceSpy },
         { provide: Router, useValue: routerSpy },
         provideHttpClient(),
-        provideHttpClientTesting()
+        provideHttpClientTesting(),
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 
     vehicleService = TestBed.inject(VehicleService) as jasmine.SpyObj<VehicleService>;
-    locationService = TestBed.inject(LocationService) as jasmine.SpyObj<LocationService>;
     router = TestBed.inject(Router) as jasmine.SpyObj<Router>;
 
     vehicleService.searchVehicles.and.returnValue(of(mockSearchResult));
-    locationService.getAllLocations.and.returnValue(of([]));
 
     fixture = TestBed.createComponent(VehicleListComponent);
     component = fixture.componentInstance;

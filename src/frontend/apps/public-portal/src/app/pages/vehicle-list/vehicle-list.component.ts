@@ -2,8 +2,13 @@ import { Component, signal, inject } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
-import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/data-access';
+import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
 import { logError } from '@orange-car-rental/util';
+import {
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+} from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-search.component';
 
@@ -14,7 +19,13 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
 @Component({
   selector: 'app-vehicle-list',
   standalone: true,
-  imports: [DecimalPipe, VehicleSearchComponent],
+  imports: [
+    DecimalPipe,
+    VehicleSearchComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css'
 })

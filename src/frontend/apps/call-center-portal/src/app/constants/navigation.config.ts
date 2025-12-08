@@ -5,7 +5,7 @@ import {
   ICON_LOCATION,
   ICON_EMAIL,
 } from '@orange-car-rental/util';
-import type { NavItem } from '@orange-car-rental/data-access';
+import type { NavItem } from '@orange-car-rental/shared';
 
 /** Call center roles for access control */
 export const CALL_CENTER_ROLES = {

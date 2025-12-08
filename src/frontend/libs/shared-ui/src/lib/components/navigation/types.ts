@@ -1,7 +1,7 @@
-import type { NavItem } from '@orange-car-rental/data-access';
+import type { NavItem } from '@orange-car-rental/shared';
 
-// Re-export NavItem from data-access for convenience
-export type { NavItem } from '@orange-car-rental/data-access';
+// Re-export NavItem from shared for convenience
+export type { NavItem } from '@orange-car-rental/shared';
 
 /**
  * Navigation configuration

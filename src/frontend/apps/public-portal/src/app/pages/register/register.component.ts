@@ -79,7 +79,7 @@ export class RegisterComponent {
 
       // Auto-login after registration
       setTimeout(async () => {
-        await this.authService.login(formValue.email, formValue.password);
+        await this.authService.loginWithPassword(formValue.email, formValue.password);
         this.router.navigate(['/']);
       }, 2000);
 

@@ -2,7 +2,8 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/data-access';
+import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import { API_CONFIG } from '@orange-car-rental/shared';
 import { of, throwError } from 'rxjs';
 
 describe('BookingHistoryComponent', () => {
@@ -88,7 +89,8 @@ describe('BookingHistoryComponent', () => {
       imports: [BookingHistoryComponent],
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy }
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 

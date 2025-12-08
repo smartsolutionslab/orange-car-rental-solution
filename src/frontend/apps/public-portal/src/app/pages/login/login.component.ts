@@ -48,7 +48,7 @@ export class LoginComponent {
     try {
       const { email, password, rememberMe } = this.loginForm.value;
 
-      await this.authService.login(email, password, rememberMe);
+      await this.authService.loginWithPassword(email, password, rememberMe);
 
       // Redirect to intended page or home
       const returnUrl = this.getReturnUrl();

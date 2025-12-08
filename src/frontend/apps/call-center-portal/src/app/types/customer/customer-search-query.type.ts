@@ -1,7 +1,7 @@
 /**
  * Customer search query
  */
-import type { EmailAddress, PhoneNumber } from '@orange-car-rental/data-access';
+import type { EmailAddress, PhoneNumber } from '@orange-car-rental/shared';
 
 export type CustomerSearchQuery = {
   readonly email?: EmailAddress;

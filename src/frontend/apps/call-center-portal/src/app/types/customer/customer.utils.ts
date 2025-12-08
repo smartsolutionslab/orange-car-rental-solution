@@ -1,7 +1,7 @@
 /**
  * Customer utility functions
  */
-import type { CustomerDisplayName } from '@orange-car-rental/data-access';
+import type { CustomerDisplayName } from '@orange-car-rental/customer-api';
 import type { Customer } from './customer.type';
 
 /**

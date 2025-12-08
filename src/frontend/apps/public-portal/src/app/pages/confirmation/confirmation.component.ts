@@ -2,8 +2,13 @@ import { Component, signal, inject } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import type { Reservation } from '@orange-car-rental/data-access';
+import type { Reservation } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
+import {
+  StatusBadgeComponent,
+  LoadingStateComponent,
+  ErrorStateComponent,
+} from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 
 /**
@@ -13,7 +18,12 @@ import { ReservationService } from '../../services/reservation.service';
 @Component({
   selector: 'app-confirmation',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    StatusBadgeComponent,
+    LoadingStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './confirmation.component.html',
   styleUrl: './confirmation.component.css'
 })

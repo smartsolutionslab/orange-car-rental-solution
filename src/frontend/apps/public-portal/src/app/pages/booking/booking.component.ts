@@ -3,9 +3,11 @@ import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import type { Location, Vehicle, GuestReservationRequest, CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/data-access';
+import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
+import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
 import { logError } from '@orange-car-rental/util';
-import { LocationService } from '../../services/location.service';
+import { SelectLocationComponent } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -27,7 +29,7 @@ import type { BookingFormValue } from '../../types';
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent],
+  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent],
   templateUrl: './booking.component.html',
   styleUrl: './booking.component.css'
 })
@@ -35,7 +37,6 @@ export class BookingComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  private readonly locationService = inject(LocationService);
   private readonly vehicleService = inject(VehicleService);
   private readonly reservationService = inject(ReservationService);
   private readonly authService = inject(AuthService);
@@ -49,11 +50,9 @@ export class BookingComponent implements OnInit {
   // Loading and error states
   protected readonly submitting = signal(false);
   protected readonly error = signal<string | null>(null);
-  protected readonly locationsLoading = signal(false);
   protected readonly profileLoading = signal(false);
 
   // Data
-  protected readonly locations = signal<Location[]>([]);
   protected readonly selectedVehicle = signal<Vehicle | null>(null);
   protected readonly similarVehicles = signal<Vehicle[]>([]);
   protected readonly customerProfile = signal<CustomerProfile | null>(null);
@@ -102,9 +101,6 @@ export class BookingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load locations
-    this.loadLocations();
-
     // Check if user is authenticated and load their profile
     this.isAuthenticated.set(this.authService.isAuthenticated());
     if (this.isAuthenticated()) {
@@ -132,24 +128,6 @@ export class BookingComponent implements OnInit {
 
     // Set up date validation
     this.setupDateValidation();
-  }
-
-  /**
-   * Load locations from API
-   */
-  private loadLocations(): void {
-    this.locationsLoading.set(true);
-
-    this.locationService.getAllLocations().subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.locationsLoading.set(false);
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error loading locations', err);
-        this.locationsLoading.set(false);
-      }
-    });
   }
 
   /**

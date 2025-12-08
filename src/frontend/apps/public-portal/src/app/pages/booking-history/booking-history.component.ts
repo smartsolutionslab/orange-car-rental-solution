@@ -2,10 +2,18 @@ import { Component, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import type { Reservation, ReservationSearchFilters } from '@orange-car-rental/data-access';
-import { ReservationStatus, createCustomerId } from '@orange-car-rental/data-access';
+import type { Reservation, ReservationSearchFilters, ReservationStatus } from '@orange-car-rental/reservation-api';
+import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
+import {
+  StatusBadgeComponent,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+} from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
@@ -14,13 +22,22 @@ import type { GroupedReservations } from '../../types';
 @Component({
   selector: 'app-booking-history',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    StatusBadgeComponent,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+  ],
   templateUrl: './booking-history.component.html',
   styleUrls: ['./booking-history.component.css']
 })
 export class BookingHistoryComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   // State signals
   isAuthenticated = signal(false);
@@ -266,5 +283,9 @@ export class BookingHistoryComponent implements OnInit {
   printReservation() {
     // TODO: Implement print functionality
     window.print();
+  }
+
+  navigateToVehicles() {
+    this.router.navigate(['/vehicles']);
   }
 }

@@ -68,33 +68,32 @@
   <div class="filters-section">
     <div class="filter-group">
       <label for="statusFilter">Status</label>
-      <select id="statusFilter" [value]="searchStatus()" (change)="searchStatus.set($any($event.target).value); applyFilters()">
-        <option value="">Alle</option>
-        <option value="Available">Verfügbar</option>
-        <option value="Rented">Vermietet</option>
-        <option value="Maintenance">Wartung</option>
-        <option value="OutOfService">Außer Betrieb</option>
-      </select>
+      <ui-select-vehicle-status
+        id="statusFilter"
+        [ngModel]="searchStatus()"
+        (ngModelChange)="searchStatus.set($event); applyFilters()"
+        placeholder="Alle Status"
+      />
     </div>
 
     <div class="filter-group">
       <label for="locationFilter">Standort</label>
-      <select id="locationFilter" [value]="searchLocation()" (change)="searchLocation.set($any($event.target).value); applyFilters()">
-        <option value="">Alle</option>
-        @for (location of uniqueLocations; track location) {
-          <option [value]="location">{{ location }}</option>
-        }
-      </select>
+      <ui-select-location
+        id="locationFilter"
+        [ngModel]="searchLocation()"
+        (ngModelChange)="searchLocation.set($event); applyFilters()"
+        placeholder="Alle Standorte"
+      />
     </div>
 
     <div class="filter-group">
       <label for="categoryFilter">Kategorie</label>
-      <select id="categoryFilter" [value]="searchCategory()" (change)="searchCategory.set($any($event.target).value); applyFilters()">
-        <option value="">Alle</option>
-        @for (category of uniqueCategories; track category) {
-          <option [value]="category">{{ category }}</option>
-        }
-      </select>
+      <ui-select-category
+        id="categoryFilter"
+        [ngModel]="searchCategory()"
+        (ngModelChange)="searchCategory.set($event); applyFilters()"
+        placeholder="Alle Kategorien"
+      />
     </div>
 
     <button class="btn-secondary" (click)="clearFilters()">Filter zurücksetzen</button>
@@ -102,20 +101,12 @@
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Lade Fahrzeuge...</p>
-    </div>
+    <ui-loading-state message="Lade Fahrzeuge..."></ui-loading-state>
   }
 
   <!-- Error State -->
   @if (error()) {
-    <div class="error-state">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      <p>{{ error() }}</p>
-    </div>
+    <ui-error-state [message]="error()!" [showRetry]="true" (retry)="loadVehicles()"></ui-error-state>
   }
 
   <!-- Vehicles Table -->
@@ -147,7 +138,7 @@
               <td>{{ vehicle.categoryCode }}</td>
               <td>{{ vehicle.locationCode }}</td>
               <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
-              <td><span class="status-badge" [ngClass]="getStatusClass(vehicle.status)">{{ getStatusText(vehicle.status) }}</span></td>
+              <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
               <td>
                 <button class="btn-icon" (click)="viewDetails(vehicle)" title="Details anzeigen">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -164,111 +155,102 @@
 
   <!-- No Results -->
   @if (!loading() && !error() && vehicles().length === 0) {
-    <div class="no-results">
-      <svg class="no-results-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
-      </svg>
-      <h3>Keine Fahrzeuge gefunden</h3>
-      <p>Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen.</p>
-    </div>
+    <ui-empty-state
+      icon="car"
+      title="Keine Fahrzeuge gefunden"
+      description="Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen."
+      [showAction]="true"
+      actionLabel="Filter zurücksetzen"
+      (action)="clearFilters()"
+    ></ui-empty-state>
   }
 </div>
 
 <!-- Vehicle Details Modal -->
-@if (showDetails() && selectedVehicle()) {
-  <div class="modal-overlay" (click)="closeDetails()" (keydown.escape)="closeDetails()" tabindex="0" role="dialog" aria-modal="true">
-    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" role="document">
-      <div class="modal-header">
-        <h2>Fahrzeugdetails</h2>
-        <button class="btn-close" (click)="closeDetails()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Vehicle Information -->
-        <div class="info-section">
-          <h3>Fahrzeuginformationen</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Fahrzeug-ID</label>
-              <p><span class="id-badge">{{ selectedVehicle()!.id }}</span></p>
-            </div>
-            <div class="detail-item">
-              <label>Kennzeichen</label>
-              <p>
-                @if (selectedVehicle()!.licensePlate) {
-                  <span class="license-plate">{{ selectedVehicle()!.licensePlate }}</span>
-                } @else {
-                  <span class="text-muted">Nicht zugewiesen</span>
-                }
-              </p>
-            </div>
-            <div class="detail-item">
-              <label>Hersteller & Modell</label>
-              <p>{{ selectedVehicle()!.manufacturer }} {{ selectedVehicle()!.model }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Baujahr</label>
-              <p>{{ selectedVehicle()!.year }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Kategorie</label>
-              <p>{{ selectedVehicle()!.categoryCode }} - {{ selectedVehicle()!.categoryName }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Status</label>
-              <p><span class="status-badge" [ngClass]="getStatusClass(selectedVehicle()!.status)">{{ getStatusText(selectedVehicle()!.status) }}</span></p>
-            </div>
+<ui-modal [isOpen]="showDetails() && !!selectedVehicle()" title="Fahrzeugdetails" size="lg" (close)="closeDetails()">
+  <ng-container modal-body>
+    @if (selectedVehicle()) {
+      <!-- Vehicle Information -->
+      <div class="info-section">
+        <h3>Fahrzeuginformationen</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Fahrzeug-ID</label>
+            <p><span class="id-badge">{{ selectedVehicle()!.id }}</span></p>
+          </div>
+          <div class="detail-item">
+            <label>Kennzeichen</label>
+            <p>
+              @if (selectedVehicle()!.licensePlate) {
+                <span class="license-plate">{{ selectedVehicle()!.licensePlate }}</span>
+              } @else {
+                <span class="text-muted">Nicht zugewiesen</span>
+              }
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>Hersteller & Modell</label>
+            <p>{{ selectedVehicle()!.manufacturer }} {{ selectedVehicle()!.model }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Baujahr</label>
+            <p>{{ selectedVehicle()!.year }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Kategorie</label>
+            <p>{{ selectedVehicle()!.categoryCode }} - {{ selectedVehicle()!.categoryName }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Status</label>
+            <p><ui-status-badge type="vehicle" [status]="selectedVehicle()!.status"></ui-status-badge></p>
           </div>
         </div>
+      </div>
 
-        <!-- Location & Pricing -->
-        <div class="info-section">
-          <h3>Standort & Preise</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Standort</label>
-              <p>{{ selectedVehicle()!.locationCode }} - {{ selectedVehicle()!.city }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Tagespreis (Netto)</label>
-              <p>{{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
-            </div>
-            <div class="detail-item">
-              <label>MwSt (19%)</label>
-              <p>{{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Tagespreis (Brutto)</label>
-              <p><strong>{{ selectedVehicle()!.dailyRateGross.toFixed(2) }} {{ selectedVehicle()!.currency }}</strong></p>
-            </div>
+      <!-- Location & Pricing -->
+      <div class="info-section">
+        <h3>Standort & Preise</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Standort</label>
+            <p>{{ selectedVehicle()!.locationCode }} - {{ selectedVehicle()!.city }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Tagespreis (Netto)</label>
+            <p>{{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
+          </div>
+          <div class="detail-item">
+            <label>MwSt (19%)</label>
+            <p>{{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Tagespreis (Brutto)</label>
+            <p><strong>{{ selectedVehicle()!.dailyRateGross.toFixed(2) }} {{ selectedVehicle()!.currency }}</strong></p>
           </div>
         </div>
+      </div>
 
-        <!-- Features -->
-        <div class="info-section">
-          <h3>Ausstattung</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Getriebe</label>
-              <p>{{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Kraftstoff</label>
-              <p>{{ selectedVehicle()!.fuelType }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Sitzplätze</label>
-              <p>{{ selectedVehicle()!.seats }}</p>
-            </div>
+      <!-- Features -->
+      <div class="info-section">
+        <h3>Ausstattung</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>Getriebe</label>
+            <p>{{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Kraftstoff</label>
+            <p>{{ selectedVehicle()!.fuelType }}</p>
+          </div>
+          <div class="detail-item">
+            <label>Sitzplätze</label>
+            <p>{{ selectedVehicle()!.seats }}</p>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
-      </div>
-    </div>
-  </div>
-}
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+  </ng-container>
+</ui-modal>

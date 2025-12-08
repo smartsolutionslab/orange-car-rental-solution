@@ -1,0 +1,11 @@
+{
+  "name": "@orange-car-rental/auth",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^19.2.0",
+    "@angular/core": "^19.2.0",
+    "@angular/router": "^19.2.0",
+    "keycloak-angular": "^19.1.0",
+    "keycloak-js": "^26.1.4"
+  }
+}

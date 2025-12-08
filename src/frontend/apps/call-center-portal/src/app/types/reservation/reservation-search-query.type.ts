@@ -1,17 +1,11 @@
 /**
  * Reservation search query (extended for call-center)
  */
-import type {
-  CustomerId,
-  VehicleId,
-  ReservationStatus,
-  ISODateString,
-  LocationCode,
-  CategoryCode,
-  Price,
-  ReservationSortField,
-  SortOrder,
-} from '@orange-car-rental/data-access';
+import type { CustomerId } from '@orange-car-rental/reservation-api';
+import type { VehicleId, CategoryCode } from '@orange-car-rental/vehicle-api';
+import type { ReservationStatus, ReservationSortField } from '@orange-car-rental/reservation-api';
+import type { ISODateString, Price, SortOrder } from '@orange-car-rental/shared';
+import type { LocationCode } from '@orange-car-rental/location-api';
 
 export type ReservationSearchQuery = {
   readonly customerId?: CustomerId;

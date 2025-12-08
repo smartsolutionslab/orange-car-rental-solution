@@ -7,9 +7,11 @@
     "libs/*"
   ],
   "resolutions": {
-    "@parcel/source-map": "npm:source-map@^0.7.4"
+    "@parcel/source-map": "npm:source-map@^0.7.4",
+    "oxc-parser": "^0.101.0"
   },
   "scripts": {
+    "postinstall": "patch-package",
     "start:public": "yarn workspace @orange-car-rental/public-portal start:dev",
     "start:call-center": "yarn workspace @orange-car-rental/call-center-portal start:dev",
     "build:public": "yarn workspace @orange-car-rental/public-portal build",
@@ -21,11 +23,14 @@
     "build:all": "yarn workspaces foreach -A run build"
   },
   "devDependencies": {
-    "@angular-architects/native-federation": "^20.1.7",
-    "@angular/cli": "^20.3.7",
+    "@angular-architects/native-federation": "^21.0.2",
+    "@angular/cli": "^21.0.2",
     "autoprefixer": "^10.4.21",
     "concurrently": "^9.2.1",
+    "magic-string": "^0.30.17",
+    "patch-package": "^8.0.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.16"
+    "postinstall-postinstall": "^2.1.0",
+    "tailwindcss": "^4.1.17"
   }
 }

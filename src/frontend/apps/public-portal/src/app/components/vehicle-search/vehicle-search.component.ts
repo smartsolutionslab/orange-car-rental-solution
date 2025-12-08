@@ -2,9 +2,13 @@ import { Component, output, signal, inject } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import type { Location, VehicleSearchQuery, FuelType, TransmissionType } from '@orange-car-rental/data-access';
-import { logError } from '@orange-car-rental/util';
-import { LocationService } from '../../services/location.service';
+import type { VehicleSearchQuery, FuelType, TransmissionType } from '@orange-car-rental/vehicle-api';
+import {
+  SelectLocationComponent,
+  SelectCategoryComponent,
+  SelectFuelTypeComponent,
+  SelectTransmissionComponent
+} from '@orange-car-rental/ui-components';
 
 /**
  * Reusable vehicle search component with date range picker
@@ -22,13 +26,19 @@ import { LocationService } from '../../services/location.service';
 @Component({
   selector: 'app-vehicle-search',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    SelectLocationComponent,
+    SelectCategoryComponent,
+    SelectFuelTypeComponent,
+    SelectTransmissionComponent
+  ],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css'
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
-  private readonly locationService = inject(LocationService);
 
   // Output event for search
   searchSubmit = output<VehicleSearchQuery>();
@@ -36,11 +46,6 @@ export class VehicleSearchComponent implements OnInit {
   // Form state
   protected readonly searchForm: FormGroup;
   protected readonly searching = signal(false);
-
-  // Location data
-  protected readonly locations = signal<Location[]>([]);
-  protected readonly locationsLoading = signal(false);
-  protected readonly locationsError = signal<string | null>(null);
 
   // Minimum dates for validation
   protected readonly today = new Date().toISOString().split('T')[0];
@@ -60,9 +65,6 @@ export class VehicleSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Fetch locations from API
-    this.loadLocations();
-
     // Set default dates (tomorrow for pickup, +3 days for return)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -89,26 +91,6 @@ export class VehicleSearchComponent implements OnInit {
             returnDate: pickup.toISOString().split('T')[0]
           });
         }
-      }
-    });
-  }
-
-  /**
-   * Load locations from API
-   */
-  private loadLocations(): void {
-    this.locationsLoading.set(true);
-    this.locationsError.set(null);
-
-    this.locationService.getAllLocations().subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.locationsLoading.set(false);
-      },
-      error: (err) => {
-        logError('VehicleSearchComponent', 'Error loading locations', err);
-        this.locationsError.set('Failed to load locations');
-        this.locationsLoading.set(false);
       }
     });
   }

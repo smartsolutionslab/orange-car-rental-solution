@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import type { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult, ISODateString } from '@orange-car-rental/data-access';
+import type { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult } from '@orange-car-rental/vehicle-api';
+import type { ISODateString } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 import { DEFAULT_PAGE_SIZE } from '../constants/app.constants';
 
