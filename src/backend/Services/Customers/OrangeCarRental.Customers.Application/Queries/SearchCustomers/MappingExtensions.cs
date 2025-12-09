@@ -104,15 +104,11 @@ public static class MappingExtensions
                 query.Status.TryParseCustomerStatus(),
                 City.FromNullable(query.City),
                 PostalCode.FromNullable(query.PostalCode),
-                IntRange.TryCreate(query.MinAge, query.MaxAge, out var ageRange)
-                    ? ageRange
-                    : null,
+                IntRange.FromNullable(query.MinAge, query.MaxAge),
                 query.LicenseExpiringWithinDays.HasValue
                     ? IntRange.UpTo(query.LicenseExpiringWithinDays.Value)
                     : null,
-                DateRange.Create(
-                    query.RegisteredFrom.HasValue ? DateOnly.FromDateTime(query.RegisteredFrom.Value) : null,
-                    query.RegisteredTo.HasValue ? DateOnly.FromDateTime(query.RegisteredTo.Value) : null),
+                DateRange.Create(query.RegisteredFrom, query.RegisteredTo),
                 PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
                 SortingInfo.Create(query.SortBy, query.SortDescending)
             );

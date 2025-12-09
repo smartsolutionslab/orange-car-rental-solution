@@ -33,26 +33,13 @@ public sealed record IntRange(
         return new IntRange(min, max);
     }
 
-    /// <summary>
-    ///     Tries to create an IntRange instance.
-    /// </summary>
-    public static bool TryCreate(int? min, int? max, out IntRange? result, bool allowNegative = false)
+    public static IntRange? FromNullable(int? min, int? max)
     {
-        if (!allowNegative && ((min.HasValue && min < 0) || (max.HasValue && max < 0)))
-        {
-            result = null;
-            return false;
-        }
+        if (min is null || max is null) return null;
 
-        if (min.HasValue && max.HasValue && min > max)
-        {
-            result = null;
-            return false;
-        }
-
-        result = new IntRange(min, max);
-        return true;
+        return Create(min, max);
     }
+
 
     /// <summary>
     ///     No range filter.
