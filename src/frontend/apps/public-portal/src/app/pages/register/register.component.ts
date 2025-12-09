@@ -5,6 +5,7 @@ import type { ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
+import { SuccessAlertComponent } from '@orange-car-rental/ui-components';
 
 /**
  * Register Component
@@ -15,7 +16,7 @@ import { logError } from '@orange-car-rental/util';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, SuccessAlertComponent],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })
