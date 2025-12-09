@@ -9,8 +9,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 ///     Handler for GetCustomerQuery.
 ///     Retrieves a customer by ID and maps to DTO.
 /// </summary>
-public sealed class GetCustomerQueryHandler(ICustomerRepository customers)
-    : IQueryHandler<GetCustomerQuery, CustomerDto>
+public sealed class GetCustomerQueryHandler(
+    ICustomerRepository customers
+) : IQueryHandler<GetCustomerQuery, CustomerDto>
 {
     /// <summary>
     ///     Handles the get customer query.

@@ -11,7 +11,12 @@ public static class HealthEndpoints
 
         // GET /health - Basic health check
         health.MapGet("/",
-                () => Results.Ok(new { status = "healthy", service = "Customers API", timestamp = DateTime.UtcNow }))
+                () => Results.Ok(new
+                {
+                    status = "healthy",
+                    service = "Customers API",
+                    timestamp = DateTime.UtcNow
+                }))
             .WithName("HealthCheck")
             .WithSummary("Health check")
             .WithDescription("Returns the health status of the Customers API.");

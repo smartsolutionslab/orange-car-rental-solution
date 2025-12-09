@@ -9,8 +9,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCus
 ///     Handler for GetCustomerByEmailQuery.
 ///     Retrieves a customer by email address and maps to DTO.
 /// </summary>
-public sealed class GetCustomerByEmailQueryHandler(ICustomerRepository customers)
-    : IQueryHandler<GetCustomerByEmailQuery, CustomerDto>
+public sealed class GetCustomerByEmailQueryHandler(
+    ICustomerRepository customers
+) : IQueryHandler<GetCustomerByEmailQuery, CustomerDto>
 {
     /// <summary>
     ///     Handles the get customer by email query.
