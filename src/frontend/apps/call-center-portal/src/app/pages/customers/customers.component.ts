@@ -3,7 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
-import { formatDateDE, getReservationStatusClass, ModalComponent } from '@orange-car-rental/ui-components';
+import {
+  formatDateDE,
+  getReservationStatusClass,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent
+} from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
 import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
@@ -16,7 +23,7 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, LoadingStateComponent, EmptyStateComponent, ErrorStateComponent],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
 })
