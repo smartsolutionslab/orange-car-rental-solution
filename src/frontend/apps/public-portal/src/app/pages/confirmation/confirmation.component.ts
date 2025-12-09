@@ -8,6 +8,8 @@ import {
   StatusBadgeComponent,
   LoadingStateComponent,
   ErrorStateComponent,
+  calculateRentalDays,
+  formatDateLongDE,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 
@@ -91,30 +93,16 @@ export class ConfirmationComponent implements OnInit {
   }
 
   /**
-   * Calculate number of rental days
+   * Calculate number of rental days using shared utility
    */
   protected getRentalDays(): number {
     const reservation = this.reservation();
     if (!reservation) return 0;
-
-    const pickup = new Date(reservation.pickupDate);
-    const returnDate = new Date(reservation.returnDate);
-    const diffTime = Math.abs(returnDate.getTime() - pickup.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays;
+    return calculateRentalDays(reservation.pickupDate, reservation.returnDate);
   }
 
   /**
-   * Format date for display
+   * Format date for display using shared utility
    */
-  protected formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
+  protected formatDate = formatDateLongDE;
 }

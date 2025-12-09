@@ -45,6 +45,7 @@ export {
   formatDateDE,
   formatDateLongDE,
   formatPriceDE,
+  calculateRentalDays,
 } from './lib/utils/status-display.utils';
 
 // Pagination Component

@@ -7,7 +7,7 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
 import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
 import { logError } from '@orange-car-rental/util';
-import { SelectLocationComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
+import { SelectLocationComponent, ErrorAlertComponent, calculateRentalDays } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -444,19 +444,10 @@ export class BookingComponent implements OnInit {
    * Calculate number of rental days
    */
   protected getRentalDays(): number {
-    const pickupDate = this.bookingForm.get('pickupDate')?.value;
-    const returnDate = this.bookingForm.get('returnDate')?.value;
-
-    if (!pickupDate || !returnDate) {
-      return 0;
-    }
-
-    const pickup = new Date(pickupDate);
-    const returnD = new Date(returnDate);
-    const diffTime = Math.abs(returnD.getTime() - pickup.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays;
+    return calculateRentalDays(
+      this.bookingForm.get('pickupDate')?.value,
+      this.bookingForm.get('returnDate')?.value
+    );
   }
 
   /**

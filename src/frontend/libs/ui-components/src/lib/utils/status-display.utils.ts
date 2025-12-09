@@ -95,3 +95,25 @@ export function formatPriceDE(price: number, currency = 'EUR'): string {
     currency,
   }).format(price);
 }
+
+/**
+ * Calculate the number of rental days between two dates
+ * @param pickupDate - Start date (ISO string or Date)
+ * @param returnDate - End date (ISO string or Date)
+ * @returns Number of days between the two dates
+ */
+export function calculateRentalDays(
+  pickupDate: string | Date | null | undefined,
+  returnDate: string | Date | null | undefined
+): number {
+  if (!pickupDate || !returnDate) {
+    return 0;
+  }
+
+  const pickup = typeof pickupDate === 'string' ? new Date(pickupDate) : pickupDate;
+  const returnD = typeof returnDate === 'string' ? new Date(returnDate) : returnDate;
+  const diffTime = Math.abs(returnD.getTime() - pickup.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  return diffDays;
+}
