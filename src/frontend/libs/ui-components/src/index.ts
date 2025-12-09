@@ -69,3 +69,6 @@ export {
 
 // Form Field Component
 export { FormFieldComponent } from './lib/form-field/form-field.component';
+
+// Icon Component
+export { IconComponent, ICONS, ICON_NAMES, isValidIconName, type IconName } from './lib/icon';
