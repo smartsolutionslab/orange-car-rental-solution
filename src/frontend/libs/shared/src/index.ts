@@ -1,5 +1,6 @@
 // Shared Library
-// Configuration tokens and common types used across all domain libraries
+// Configuration tokens, common types, and state utilities used across all domain libraries
 
 export * from './lib/config';
 export * from './lib/types';
+export * from './lib/state';
