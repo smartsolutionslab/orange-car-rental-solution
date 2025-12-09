@@ -383,7 +383,7 @@
                 <div class="reservation-card">
                   <div class="reservation-header">
                     <span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span>
-                    <span class="status-badge" [ngClass]="getStatusClass(reservation.status)">{{ reservation.status }}</span>
+                    <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
                   </div>
                   <div class="reservation-details">
                     <div class="reservation-row">
