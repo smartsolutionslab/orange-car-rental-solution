@@ -3,7 +3,7 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
-import { API_CONFIG } from '@orange-car-rental/shared';
+import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
 import { of, throwError } from 'rxjs';
 
 describe('BookingHistoryComponent', () => {
@@ -11,6 +11,7 @@ describe('BookingHistoryComponent', () => {
   let fixture: ComponentFixture<BookingHistoryComponent>;
   let mockReservationService: jasmine.SpyObj<ReservationService>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockToastService: jasmine.SpyObj<ToastService>;
 
   // Use dynamic dates to ensure tests work regardless of when they run
   const getFutureDate = (daysFromNow: number): string => {
@@ -85,17 +86,26 @@ describe('BookingHistoryComponent', () => {
       'getUserProfile'
     ]);
 
+    const toastServiceSpy = jasmine.createSpyObj('ToastService', [
+      'success',
+      'error',
+      'info',
+      'warning'
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [BookingHistoryComponent],
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
         { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 
     mockReservationService = TestBed.inject(ReservationService) as jasmine.SpyObj<ReservationService>;
     mockAuthService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    mockToastService = TestBed.inject(ToastService) as jasmine.SpyObj<ToastService>;
 
     fixture = TestBed.createComponent(BookingHistoryComponent);
     component = fixture.componentInstance;
@@ -308,14 +318,13 @@ describe('BookingHistoryComponent', () => {
       component.selectedReservation.set(mockReservations[0]);
       component.cancellationReason = 'Change of plans';
 
-      spyOn(window, 'alert');
-
       component.confirmCancellation();
 
       expect(mockReservationService.cancelReservation).toHaveBeenCalledWith(
         mockReservations[0].id,
         'Change of plans'
       );
+      expect(mockToastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
     });
 
     it('should not cancel without reason', () => {
@@ -335,11 +344,11 @@ describe('BookingHistoryComponent', () => {
       component.selectedReservation.set(mockReservations[0]);
       component.cancellationReason = 'Test';
 
-      spyOn(window, 'alert');
-
       component.confirmCancellation();
 
-      expect(window.alert).toHaveBeenCalledWith('Failed to cancel reservation. Please try again or contact support.');
+      expect(mockToastService.error).toHaveBeenCalledWith(
+        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.'
+      );
     });
   });
 

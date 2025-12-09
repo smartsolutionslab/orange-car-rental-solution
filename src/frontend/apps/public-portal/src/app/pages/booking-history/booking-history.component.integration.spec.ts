@@ -5,7 +5,7 @@ import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
 import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
-import { API_CONFIG } from '@orange-car-rental/shared';
+import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
 
 /**
  * Integration Tests for Booking History Component
@@ -16,6 +16,7 @@ describe('BookingHistoryComponent (Integration)', () => {
   let fixture: ComponentFixture<BookingHistoryComponent>;
   let httpMock: HttpTestingController;
   let authService: jasmine.SpyObj<AuthService>;
+  let toastService: jasmine.SpyObj<ToastService>;
 
   const apiUrl = 'http://localhost:5000';
 
@@ -71,6 +72,13 @@ describe('BookingHistoryComponent (Integration)', () => {
       'getUserProfile'
     ]);
 
+    const toastServiceSpy = jasmine.createSpyObj('ToastService', [
+      'success',
+      'error',
+      'info',
+      'warning'
+    ]);
+
     const configServiceSpy = jasmine.createSpyObj('ConfigService', [], {
       apiUrl: apiUrl
     });
@@ -84,12 +92,14 @@ describe('BookingHistoryComponent (Integration)', () => {
         ReservationService,
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ConfigService, useValue: configServiceSpy },
+        { provide: ToastService, useValue: toastServiceSpy },
         { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
       ]
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    toastService = TestBed.inject(ToastService) as jasmine.SpyObj<ToastService>;
 
     fixture = TestBed.createComponent(BookingHistoryComponent);
     component = fixture.componentInstance;
@@ -283,8 +293,6 @@ describe('BookingHistoryComponent (Integration)', () => {
       component.selectedReservation.set(reservation);
       component.cancellationReason = 'Change of plans';
 
-      spyOn(window, 'alert');
-
       // Act
       component.confirmCancellation();
       tick();
@@ -314,7 +322,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify success
-      expect(window.alert).toHaveBeenCalledWith('Reservation cancelled successfully!');
+      expect(toastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
       expect(component.showCancelModal()).toBe(false);
     }));
 
@@ -323,8 +331,6 @@ describe('BookingHistoryComponent (Integration)', () => {
       const reservation = component.groupedReservations().upcoming[0];
       component.selectedReservation.set(reservation);
       component.cancellationReason = 'Test';
-
-      spyOn(window, 'alert');
 
       // Act
       component.confirmCancellation();
@@ -338,7 +344,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify error
-      expect(window.alert).toHaveBeenCalledWith('Failed to cancel reservation. Please try again or contact support.');
+      expect(toastService.error).toHaveBeenCalledWith('Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.');
       expect(component.isLoading()).toBe(false);
     }));
   });
@@ -384,7 +390,6 @@ describe('BookingHistoryComponent (Integration)', () => {
 
       // Step 5: User confirms cancellation
       component.cancellationReason = 'Trip cancelled';
-      spyOn(window, 'alert');
       component.confirmCancellation();
       tick();
 
@@ -409,7 +414,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Step 8: Verify final state
-      expect(window.alert).toHaveBeenCalledWith('Reservation cancelled successfully!');
+      expect(toastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
       expect(component.groupedReservations().past.some(r => r.id === reservation.id && r.status === 'Cancelled')).toBe(true);
       expect(component.showCancelModal()).toBe(false);
     }));

@@ -7,6 +7,7 @@ import { firstValueFrom } from 'rxjs';
 import type { Reservation, ReservationSearchFilters, ReservationStatus } from '@orange-car-rental/reservation-api';
 import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
+import { ToastService } from '@orange-car-rental/shared';
 import {
   StatusBadgeComponent,
   ModalComponent,
@@ -50,6 +51,7 @@ export class BookingHistoryComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
 
   // State signals
   isAuthenticated = signal(false);
@@ -243,12 +245,12 @@ export class BookingHistoryComponent implements OnInit {
           this.guestReservation.set(updated);
         }
 
-        alert('Reservation cancelled successfully!');
+        this.toast.success('Reservierung erfolgreich storniert!');
       },
       error: (err) => {
         logError('BookingHistoryComponent', 'Cancellation error', err);
         this.isLoading.set(false);
-        alert('Failed to cancel reservation. Please try again or contact support.');
+        this.toast.error('Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.');
       }
     });
   }
