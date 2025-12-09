@@ -2,6 +2,10 @@
  * Customer utility functions
  */
 import type { CustomerDisplayName } from '@orange-car-rental/customer-api';
+import {
+  isLicenseExpired as checkLicenseExpired,
+  isLicenseExpiringSoon,
+} from '@orange-car-rental/ui-components';
 import type { Customer } from './customer.type';
 
 /**
@@ -15,8 +19,7 @@ export const getCustomerDisplayName = (
  * Helper function to check if license is expired
  */
 export const isLicenseExpired = (customer: Pick<Customer, 'licenseExpiryDate'>): boolean => {
-  const expiryDate = new Date(customer.licenseExpiryDate);
-  return expiryDate < new Date();
+  return checkLicenseExpired(customer.licenseExpiryDate);
 };
 
 /**
@@ -26,8 +29,5 @@ export const licenseExpiresSoon = (
   customer: Pick<Customer, 'licenseExpiryDate'>,
   days = 30
 ): boolean => {
-  const expiryDate = new Date(customer.licenseExpiryDate);
-  const warningDate = new Date();
-  warningDate.setDate(warningDate.getDate() + days);
-  return expiryDate <= warningDate && expiryDate >= new Date();
+  return isLicenseExpiringSoon(customer.licenseExpiryDate, days);
 };

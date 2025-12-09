@@ -7,7 +7,13 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
 import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
 import { logError } from '@orange-car-rental/util';
-import { SelectLocationComponent, ErrorAlertComponent, calculateRentalDays } from '@orange-car-rental/ui-components';
+import {
+  SelectLocationComponent,
+  ErrorAlertComponent,
+  calculateRentalDays,
+  getTodayDateString,
+  addDays,
+} from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -60,7 +66,7 @@ export class BookingComponent implements OnInit {
   protected readonly showVehicleUnavailableWarning = signal(false);
 
   // Date constraints
-  protected readonly today = new Date().toISOString().split('T')[0];
+  protected readonly today = getTodayDateString();
   protected readonly minReturnDate = signal(this.today);
   protected readonly maxLicenseIssueDate = signal(this.today);
   protected readonly minLicenseExpiryDate = signal(this.today);
@@ -223,15 +229,14 @@ export class BookingComponent implements OnInit {
     // Update min return date when pickup date changes
     this.bookingForm.get('pickupDate')?.valueChanges.subscribe((pickupDate: string) => {
       if (pickupDate) {
-        const pickup = new Date(pickupDate);
-        pickup.setDate(pickup.getDate() + 1);
-        this.minReturnDate.set(pickup.toISOString().split('T')[0]);
+        const minReturn = addDays(pickupDate, 1);
+        this.minReturnDate.set(minReturn);
 
         // Ensure return date is after pickup date
         const currentReturnDate = this.bookingForm.get('returnDate')?.value;
         if (currentReturnDate && currentReturnDate <= pickupDate) {
           this.bookingForm.patchValue({
-            returnDate: pickup.toISOString().split('T')[0]
+            returnDate: minReturn
           });
         }
       }
@@ -240,15 +245,14 @@ export class BookingComponent implements OnInit {
     // Update min expiry date when issue date changes
     this.bookingForm.get('licenseIssueDate')?.valueChanges.subscribe((issueDate: string) => {
       if (issueDate) {
-        const issue = new Date(issueDate);
-        issue.setDate(issue.getDate() + 1);
-        this.minLicenseExpiryDate.set(issue.toISOString().split('T')[0]);
+        const minExpiry = addDays(issueDate, 1);
+        this.minLicenseExpiryDate.set(minExpiry);
 
         // Ensure expiry date is after issue date
         const currentExpiryDate = this.bookingForm.get('licenseExpiryDate')?.value;
         if (currentExpiryDate && currentExpiryDate <= issueDate) {
           this.bookingForm.patchValue({
-            licenseExpiryDate: issue.toISOString().split('T')[0]
+            licenseExpiryDate: minExpiry
           });
         }
       }

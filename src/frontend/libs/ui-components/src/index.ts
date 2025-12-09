@@ -72,3 +72,25 @@ export { FormFieldComponent } from './lib/form-field/form-field.component';
 
 // Icon Component
 export { IconComponent, ICONS, ICON_NAMES, isValidIconName, type IconName } from './lib/icon';
+
+// Date Utilities
+export {
+  getTodayDateString,
+  getTomorrowDateString,
+  addDays,
+  getMinReturnDate,
+  isDateInPast,
+  isDateTodayOrFuture,
+  isLicenseExpired,
+  isLicenseExpiringSoon,
+  calculateAge,
+  getDaysUntil,
+  getHoursUntil,
+  canCancelReservation,
+  parseDate,
+  isBefore,
+  isAfter,
+  isSameDay,
+  getMaxDateOfBirthForAge,
+  formatDateRange,
+} from './lib/utils/date.utils';

@@ -7,7 +7,9 @@ import {
   SelectLocationComponent,
   SelectCategoryComponent,
   SelectFuelTypeComponent,
-  SelectTransmissionComponent
+  SelectTransmissionComponent,
+  getTodayDateString,
+  addDays,
 } from '@orange-car-rental/ui-components';
 
 /**
@@ -48,7 +50,7 @@ export class VehicleSearchComponent implements OnInit {
   protected readonly searching = signal(false);
 
   // Minimum dates for validation
-  protected readonly today = new Date().toISOString().split('T')[0];
+  protected readonly today = getTodayDateString();
   protected readonly minReturnDate = signal(this.today);
 
   constructor() {
@@ -66,29 +68,25 @@ export class VehicleSearchComponent implements OnInit {
 
   ngOnInit(): void {
     // Set default dates (tomorrow for pickup, +3 days for return)
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const returnDate = new Date(tomorrow);
-    returnDate.setDate(returnDate.getDate() + 3);
+    const tomorrow = addDays(new Date(), 1);
+    const defaultReturn = addDays(tomorrow, 3);
 
     this.searchForm.patchValue({
-      pickupDate: tomorrow.toISOString().split('T')[0],
-      returnDate: returnDate.toISOString().split('T')[0]
+      pickupDate: tomorrow,
+      returnDate: defaultReturn
     });
 
     // Update min return date when pickup date changes
     this.searchForm.get('pickupDate')?.valueChanges.subscribe((pickupDate: string) => {
       if (pickupDate) {
-        const pickup = new Date(pickupDate);
-        pickup.setDate(pickup.getDate() + 1);
-        this.minReturnDate.set(pickup.toISOString().split('T')[0]);
+        const minReturn = addDays(pickupDate, 1);
+        this.minReturnDate.set(minReturn);
 
         // Ensure return date is after pickup date
         const currentReturnDate = this.searchForm.get('returnDate')?.value;
         if (currentReturnDate && currentReturnDate <= pickupDate) {
           this.searchForm.patchValue({
-            returnDate: pickup.toISOString().split('T')[0]
+            returnDate: minReturn
           });
         }
       }
