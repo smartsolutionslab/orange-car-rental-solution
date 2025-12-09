@@ -30,6 +30,7 @@ export { ModalComponent } from './lib/modal/modal.component';
 export { LoadingStateComponent } from './lib/state-display/loading-state.component';
 export { EmptyStateComponent } from './lib/state-display/empty-state.component';
 export { ErrorStateComponent } from './lib/state-display/error-state.component';
+export { SuccessAlertComponent } from './lib/state-display/success-alert.component';
 
 // Stat Card Component
 export { StatCardComponent, type StatCardVariant } from './lib/stat-card/stat-card.component';

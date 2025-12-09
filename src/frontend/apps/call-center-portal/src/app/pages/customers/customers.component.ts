@@ -10,7 +10,8 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
-  StatusBadgeComponent
+  StatusBadgeComponent,
+  SuccessAlertComponent
 } from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -24,7 +25,7 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, LoadingStateComponent, EmptyStateComponent, ErrorStateComponent, StatusBadgeComponent],
+  imports: [CommonModule, FormsModule, ModalComponent, LoadingStateComponent, EmptyStateComponent, ErrorStateComponent, StatusBadgeComponent, SuccessAlertComponent],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css'
 })
