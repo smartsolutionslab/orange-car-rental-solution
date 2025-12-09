@@ -119,9 +119,7 @@
         </ui-form-field>
 
         @if (guestLookupError()) {
-          <div class="error-message-inline">
-            {{ guestLookupError() }}
-          </div>
+          <ui-error-alert [message]="guestLookupError()!"></ui-error-alert>
         }
 
         <button type="submit" class="btn-primary" [disabled]="isLoading()">
