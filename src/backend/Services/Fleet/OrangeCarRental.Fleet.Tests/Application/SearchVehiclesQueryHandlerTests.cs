@@ -52,7 +52,7 @@ public class SearchVehiclesQueryHandlerTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Vehicles.Count.ShouldBe(3);
+        result.Items.Count.ShouldBe(3);
         result.TotalCount.ShouldBe(3);
         result.PageNumber.ShouldBe(1);
         result.PageSize.ShouldBe(20);
@@ -259,8 +259,8 @@ public class SearchVehiclesQueryHandlerTests
         var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
-        result.Vehicles.Count.ShouldBe(3);
-        var firstDto = result.Vehicles.First();
+        result.Items.Count.ShouldBe(3);
+        var firstDto = result.Items.First();
         var firstVehicle = vehicles.First();
 
         firstDto.Id.ShouldBe(firstVehicle.Id.Value);

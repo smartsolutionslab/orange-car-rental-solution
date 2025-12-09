@@ -1,4 +1,5 @@
-﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Contracts;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
@@ -178,7 +179,7 @@ public static class CustomerEndpoints
             .WithSummary("Search customers with filters")
             .WithDescription(
                 "Search and filter customers by name, email, phone, status, city, postal code, age range, license expiry, and registration date. Supports sorting and pagination. Returns paged results with customer details.")
-            .Produces<SearchCustomersResult>()
+            .Produces<PagedResult<CustomerDto>>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status500InternalServerError)
             .RequireAuthorization("CallCenterOrAdminPolicy");

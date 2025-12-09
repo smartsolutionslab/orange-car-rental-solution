@@ -1,4 +1,3 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -39,22 +38,6 @@ public static class MappingExtensions
             reservation.ConfirmedAt,
             reservation.CancelledAt,
             reservation.CompletedAt);
-    }
-
-    /// <summary>
-    ///     C# 14 Extension Members for PagedResult of Reservation mapping.
-    /// </summary>
-    extension(PagedResult<Reservation> pagedResult)
-    {
-        /// <summary>
-        ///     Maps a PagedResult of Reservation aggregates to a SearchReservationsResult.
-        /// </summary>
-        public SearchReservationsResult ToDto() => new(
-            pagedResult.Items.Select(r => r.ToDto()).ToList(),
-            pagedResult.TotalCount,
-            pagedResult.PageNumber,
-            pagedResult.PageSize,
-            pagedResult.TotalPages);
     }
 
     /// <summary>

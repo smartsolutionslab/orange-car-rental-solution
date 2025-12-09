@@ -27,11 +27,11 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture)
 
         // Assert
         Assert.NotNull(searchResult);
-        Assert.NotNull(searchResult.Vehicles);
-        Assert.True(searchResult.Vehicles.Count > 0, "Expected at least one vehicle at BER-HBF location");
+        Assert.NotNull(searchResult.Items);
+        Assert.True(searchResult.Items.Count > 0, "Expected at least one vehicle at BER-HBF location");
 
         // Verify all returned vehicles are at the requested location
-        foreach (var vehicle in searchResult.Vehicles)
+        foreach (var vehicle in searchResult.Items)
         {
             Assert.Equal("BER-HBF", vehicle.LocationCode);
             Assert.NotEmpty(vehicle.Id);
@@ -58,10 +58,10 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture)
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.NotNull(result);
-        Assert.NotNull(result.Vehicles);
+        Assert.NotNull(result.Items);
 
         // All returned vehicles should match the filters
-        foreach (var vehicle in result.Vehicles)
+        foreach (var vehicle in result.Items)
         {
             Assert.Equal("MUC-FLG", vehicle.LocationCode);
             Assert.Equal("KOMPAKT", vehicle.CategoryCode);
@@ -84,11 +84,11 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture)
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         Assert.NotNull(result);
-        Assert.NotNull(result.Vehicles);
+        Assert.NotNull(result.Items);
 
-        if (result.Vehicles.Count > 0)
+        if (result.Items.Count > 0)
         {
-            var vehicle = result.Vehicles[0];
+            var vehicle = result.Items[0];
 
             // Verify pricing structure includes VAT
             Assert.True(vehicle.DailyRateNet > 0);
@@ -107,7 +107,7 @@ public class EndToEndScenarioTests(DistributedApplicationFixture fixture)
     // Helper classes for deserialization
     private class VehicleSearchResult
     {
-        public List<Vehicle> Vehicles { get; set; } = new();
+        public List<Vehicle> Items { get; set; } = new();
         public int TotalCount { get; set; }
         public int PageNumber { get; set; }
         public int PageSize { get; set; }

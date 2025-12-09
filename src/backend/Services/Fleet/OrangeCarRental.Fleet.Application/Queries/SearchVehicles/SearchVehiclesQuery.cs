@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
@@ -17,4 +18,4 @@ public sealed record SearchVehiclesQuery(
     decimal? MaxDailyRateGross,
     int? PageNumber,
     int? PageSize
-) : IQuery<SearchVehiclesResult>;
+) : IQuery<PagedResult<VehicleDto>>;

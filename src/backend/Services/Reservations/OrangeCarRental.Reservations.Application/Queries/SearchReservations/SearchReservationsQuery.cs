@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -37,4 +38,4 @@ public sealed record SearchReservationsQuery(
     // Pagination - uses standardized defaults from PagedResult
     int PageNumber = 1,
     int PageSize = PagedResult<object>.DefaultPageSize
-) : IQuery<SearchReservationsResult>;
+) : IQuery<PagedResult<ReservationDto>>;

@@ -38,7 +38,7 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture)
         var content = await response.Content.ReadAsStringAsync();
 
         // Should return vehicle search results
-        Assert.Contains("vehicles", content);
+        Assert.Contains("items", content);
         Assert.Contains("totalCount", content);
     }
 
@@ -70,7 +70,7 @@ public class ApiGatewayTests(DistributedApplicationFixture fixture)
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
 
-        Assert.Contains("vehicles", content);
+        Assert.Contains("items", content);
         Assert.Contains("totalCount", content);
         Assert.Contains("pageNumber", content);
     }

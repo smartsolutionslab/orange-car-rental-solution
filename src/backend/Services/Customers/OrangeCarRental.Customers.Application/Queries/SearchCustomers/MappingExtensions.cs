@@ -1,4 +1,3 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -68,22 +67,6 @@ public static class MappingExtensions
             license.IsValid(),
             license.IsEuLicense(),
             license.DaysUntilExpiry());
-    }
-
-    /// <summary>
-    ///     C# 14 Extension Members for PagedResult of Customer mapping.
-    /// </summary>
-    extension(PagedResult<Customer> pagedResult)
-    {
-        /// <summary>
-        ///     Maps a PagedResult of Customer aggregates to a SearchCustomersResult.
-        /// </summary>
-        public SearchCustomersResult ToDto() => new(
-            pagedResult.Items.Select(c => c.ToDto()).ToList(),
-            pagedResult.TotalCount,
-            pagedResult.PageNumber,
-            pagedResult.PageSize,
-            pagedResult.TotalPages);
     }
 
     /// <summary>

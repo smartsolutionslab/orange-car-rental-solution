@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Contracts;
@@ -32,7 +33,7 @@ public static class FleetEndpoints
             .WithName("SearchVehicles")
             .WithSummary("Search available vehicles")
             .WithDescription("Search and filter vehicles by location, category, dates, and other criteria. Returns vehicles with German VAT-inclusive pricing (19%).")
-            .Produces<SearchVehiclesResult>()
+            .Produces<PagedResult<VehicleDto>>()
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .AllowAnonymous();
 

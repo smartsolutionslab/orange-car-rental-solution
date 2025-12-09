@@ -1,4 +1,6 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
@@ -22,4 +24,4 @@ public sealed record SearchCustomersQuery(
     bool SortDescending,
     int? PageNumber,
     int? PageSize
-) : IQuery<SearchCustomersResult>;
+) : IQuery<PagedResult<CustomerDto>>;

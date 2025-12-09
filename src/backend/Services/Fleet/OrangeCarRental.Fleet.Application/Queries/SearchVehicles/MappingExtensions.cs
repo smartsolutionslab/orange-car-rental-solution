@@ -1,4 +1,3 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -40,25 +39,6 @@ public static class MappingExtensions
             vehicle.Model?.Value,
             vehicle.Year?.Value,
             vehicle.ImageUrl);
-    }
-
-    /// <summary>
-    ///     C# 14 Extension Members for PagedResult of Vehicle mapping.
-    /// </summary>
-    extension(PagedResult<Vehicle> pagedResult)
-    {
-        /// <summary>
-        ///     Maps a PagedResult of Vehicle aggregates to a SearchVehiclesResult.
-        /// </summary>
-        public SearchVehiclesResult ToDto()
-        {
-            return new SearchVehiclesResult(
-                pagedResult.Items.Select(vehicle => vehicle.ToDto()).ToList(),
-                pagedResult.TotalCount,
-                pagedResult.PageNumber,
-                pagedResult.PageSize,
-                pagedResult.TotalPages);
-        }
     }
 
     /// <summary>

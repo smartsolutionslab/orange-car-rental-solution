@@ -60,7 +60,7 @@ public class SearchVehiclesQueryHandlerTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Vehicles.Count.ShouldBe(2);
+        result.Items.Count.ShouldBe(2);
         result.TotalCount.ShouldBe(2);
         result.PageNumber.ShouldBe(1);
         result.PageSize.ShouldBe(10);
@@ -105,7 +105,7 @@ public class SearchVehiclesQueryHandlerTests
 
         // Assert
         result.ShouldNotBeNull();
-        result.Vehicles.ShouldBeEmpty();
+        result.Items.ShouldBeEmpty();
         result.TotalCount.ShouldBe(0);
         result.TotalPages.ShouldBe(0);
     }
@@ -215,8 +215,8 @@ public class SearchVehiclesQueryHandlerTests
         var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
-        result.Vehicles.Count.ShouldBe(1);
-        result.Vehicles[0].LocationCode.ShouldBe("BER-HBF");
+        result.Items.Count.ShouldBe(1);
+        result.Items[0].LocationCode.ShouldBe("BER-HBF");
     }
 
     [Fact]
@@ -257,8 +257,8 @@ public class SearchVehiclesQueryHandlerTests
         var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
-        result.Vehicles.Count.ShouldBe(1);
-        result.Vehicles[0].CategoryCode.ShouldBe("SUV");
+        result.Items.Count.ShouldBe(1);
+        result.Items[0].CategoryCode.ShouldBe("SUV");
     }
 
     [Fact]
