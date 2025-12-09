@@ -21,6 +21,7 @@ import {
   formatDateDE,
   formatPriceDE,
   SuccessAlertComponent,
+  ErrorAlertComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import type { Reservation, ReservationSearchQuery } from '../../types';
@@ -50,6 +51,7 @@ type GroupedReservations = Record<string, Reservation[]>;
     PaginationComponent,
     SelectPageSizeComponent,
     SuccessAlertComponent,
+    ErrorAlertComponent,
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css'

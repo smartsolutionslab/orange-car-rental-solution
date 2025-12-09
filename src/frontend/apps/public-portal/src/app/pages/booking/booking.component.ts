@@ -7,7 +7,7 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
 import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
 import { logError } from '@orange-car-rental/util';
-import { SelectLocationComponent } from '@orange-car-rental/ui-components';
+import { SelectLocationComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -29,7 +29,7 @@ import type { BookingFormValue } from '../../types';
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent],
+  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent, ErrorAlertComponent],
   templateUrl: './booking.component.html',
   styleUrl: './booking.component.css'
 })
