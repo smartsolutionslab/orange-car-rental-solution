@@ -1,6 +1,7 @@
 import { Component, signal, inject } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CustomValidators } from '@orange-car-rental/shared';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
@@ -92,7 +93,7 @@ export class BookingComponent implements OnInit {
       // Address details
       street: ['', [Validators.required, Validators.minLength(5)]],
       city: ['', [Validators.required, Validators.minLength(2)]],
-      postalCode: ['', [Validators.required, Validators.pattern(/^[0-9]{5}$/)]],
+      postalCode: ['', [Validators.required, CustomValidators.germanPostalCode()]],
       country: ['Deutschland', Validators.required],
 
       // Driver's license details
