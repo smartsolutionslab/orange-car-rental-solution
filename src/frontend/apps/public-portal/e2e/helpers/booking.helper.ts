@@ -91,7 +91,7 @@ export async function completeBooking(page: Page, userData = testUsers.guest) {
 /**
  * Check if form fields are pre-filled
  */
-export async function checkPrefilledData(page: Page, expectedData: any) {
+export async function checkPrefilledData(page: Page, expectedData: { firstName: string; lastName: string; email: string }) {
   const firstName = await page.inputValue('input[formControlName="firstName"]');
   const lastName = await page.inputValue('input[formControlName="lastName"]');
   const email = await page.inputValue('input[formControlName="email"]');
