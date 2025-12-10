@@ -6,3 +6,4 @@ export * from './lib/types';
 export * from './lib/state';
 export * from './lib/toast';
 export * from './lib/forms';
+export * from './lib/http';

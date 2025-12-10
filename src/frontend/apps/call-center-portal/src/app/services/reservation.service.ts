@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type { ReservationId, GuestReservationResponse } from '@orange-car-rental/reservation-api';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 import type {
   Reservation,
@@ -60,18 +61,7 @@ export class ReservationService {
    * @returns Observable of search results with reservations and pagination
    */
   searchReservations(query?: ReservationSearchQuery): Observable<ReservationSearchResult> {
-    let params = new HttpParams();
-
-    if (query) {
-      if (query.customerId) params = params.set('customerId', query.customerId);
-      if (query.vehicleId) params = params.set('vehicleId', query.vehicleId);
-      if (query.status) params = params.set('status', query.status);
-      if (query.pickupDateFrom) params = params.set('pickupDateFrom', query.pickupDateFrom);
-      if (query.pickupDateTo) params = params.set('pickupDateTo', query.pickupDateTo);
-      if (query.pageNumber !== undefined) params = params.set('pageNumber', query.pageNumber.toString());
-      if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
-    }
-
+    const params = HttpParamsBuilder.fromObject(query);
     return this.http.get<ReservationSearchResult>(`${this.apiUrl}/search`, { params });
   }
 

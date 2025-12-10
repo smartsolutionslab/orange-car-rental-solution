@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import type {
   GuestReservationRequest,
@@ -11,6 +11,7 @@ import type {
   CancelReservationRequest
 } from '@orange-car-rental/reservation-api';
 import type { EmailAddress } from '@orange-car-rental/shared';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 
 /**
@@ -52,17 +53,7 @@ export class ReservationService {
    * @returns Observable of paginated reservation results
    */
   searchReservations(filters: ReservationSearchFilters): Observable<ReservationSearchResponse> {
-    let params = new HttpParams();
-
-    if (filters.customerId) params = params.set('customerId', filters.customerId);
-    if (filters.status) params = params.set('status', filters.status);
-    if (filters.pickupDateFrom) params = params.set('pickupDateFrom', filters.pickupDateFrom);
-    if (filters.pickupDateTo) params = params.set('pickupDateTo', filters.pickupDateTo);
-    if (filters.sortBy) params = params.set('sortBy', filters.sortBy);
-    if (filters.sortOrder) params = params.set('sortOrder', filters.sortOrder);
-    if (filters.pageNumber) params = params.set('pageNumber', filters.pageNumber.toString());
-    if (filters.pageSize) params = params.set('pageSize', filters.pageSize.toString());
-
+    const params = HttpParamsBuilder.fromObject(filters);
     return this.http.get<ReservationSearchResponse>(`${this.apiUrl}/search`, { params });
   }
 
@@ -84,10 +75,7 @@ export class ReservationService {
    * @returns Observable of reservation details
    */
   lookupGuestReservation(reservationId: ReservationId, email: EmailAddress): Observable<Reservation> {
-    const params = new HttpParams()
-      .set('reservationId', reservationId)
-      .set('email', email);
-
+    const params = HttpParamsBuilder.fromObject({ reservationId, email });
     return this.http.get<Reservation>(`${this.apiUrl}/lookup`, { params });
   }
 }

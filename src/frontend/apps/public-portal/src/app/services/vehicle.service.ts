@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import type { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult } from '@orange-car-rental/vehicle-api';
 import type { ISODateString } from '@orange-car-rental/shared';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 import { DEFAULT_PAGE_SIZE } from '../constants/app.constants';
 
@@ -27,22 +28,7 @@ export class VehicleService {
    * @returns Observable of search results with vehicles and pagination
    */
   searchVehicles(query?: VehicleSearchQuery): Observable<VehicleSearchResult> {
-    let params = new HttpParams();
-
-    if (query) {
-      // Add query parameters only if they have values
-      if (query.pickupDate) params = params.set('pickupDate', query.pickupDate);
-      if (query.returnDate) params = params.set('returnDate', query.returnDate);
-      if (query.locationCode) params = params.set('locationCode', query.locationCode);
-      if (query.categoryCode) params = params.set('categoryCode', query.categoryCode);
-      if (query.minSeats !== undefined) params = params.set('minSeats', query.minSeats.toString());
-      if (query.fuelType) params = params.set('fuelType', query.fuelType);
-      if (query.transmissionType) params = params.set('transmissionType', query.transmissionType);
-      if (query.maxDailyRateGross !== undefined) params = params.set('maxDailyRateGross', query.maxDailyRateGross.toString());
-      if (query.pageNumber !== undefined) params = params.set('pageNumber', query.pageNumber.toString());
-      if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
-    }
-
+    const params = HttpParamsBuilder.fromObject(query);
     return this.http.get<VehicleSearchResult>(this.apiUrl, { params });
   }
 
