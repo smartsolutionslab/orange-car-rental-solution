@@ -78,4 +78,41 @@ export class BaseAuthService {
   getUsername(): string {
     return this.keycloak.tokenParsed?.['preferred_username'] ?? '';
   }
+
+  /**
+   * Call center agent roles
+   */
+  private readonly agentRoles = ['call-center-agent', 'call-center-supervisor', 'admin'] as const;
+
+  /**
+   * Check if user is a call center agent (has any agent role)
+   */
+  isCallCenterAgent(): boolean {
+    return this.agentRoles.some(role => this.hasRole(role));
+  }
+
+  /**
+   * Check if user is a customer (not an agent)
+   */
+  isCustomer(): boolean {
+    return this.isAuthenticated() && !this.isCallCenterAgent();
+  }
+
+  /**
+   * Get appropriate redirect URL based on user roles after login
+   * @param returnUrl - Optional return URL from query params
+   */
+  getPostLoginRedirect(returnUrl?: string | null): string {
+    // If there's a specific return URL (not root or login), use it
+    if (returnUrl && returnUrl !== '/' && returnUrl !== '/login') {
+      return returnUrl;
+    }
+
+    // Role-based default redirect
+    if (this.isCallCenterAgent()) {
+      return '/admin';
+    }
+
+    return '/my-bookings';
+  }
 }

@@ -51,9 +51,10 @@ export class LoginComponent {
 
       await this.authService.loginWithPassword(email, password, rememberMe);
 
-      // Redirect to intended page or home
+      // Get role-based redirect URL
       const returnUrl = this.getReturnUrl();
-      this.router.navigate([returnUrl]);
+      const redirectUrl = this.authService.getPostLoginRedirect(returnUrl);
+      this.router.navigate([redirectUrl]);
     } catch (error: unknown) {
       logError('LoginComponent', 'Login error', error);
 

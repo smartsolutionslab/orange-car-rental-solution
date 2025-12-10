@@ -6,32 +6,36 @@ import { ReservationsComponent } from './pages/reservations/reservations.compone
 import { CustomersComponent } from './pages/customers/customers.component';
 import { LocationsComponent } from './pages/locations/locations.component';
 import { ContactComponent } from './pages/contact/contact.component';
-import { authGuard } from '@orange-car-rental/auth';
+import { agentGuard } from '@orange-car-rental/auth';
 
+/**
+ * Call Center Portal Routes
+ * All routes require agent role (call-center-agent, call-center-supervisor, or admin)
+ */
 export const routes: Routes = [
   {
     path: '',
     component: VehiclesComponent,
-    canActivate: [authGuard]
+    canActivate: [agentGuard]
   },
   {
     path: 'reservations',
     component: ReservationsComponent,
-    canActivate: [authGuard]
+    canActivate: [agentGuard]
   },
   {
     path: 'customers',
     component: CustomersComponent,
-    canActivate: [authGuard]
+    canActivate: [agentGuard]
   },
   {
     path: 'locations',
     component: LocationsComponent,
-    canActivate: [authGuard]
+    canActivate: [agentGuard]
   },
   {
     path: 'contact',
     component: ContactComponent,
-    canActivate: [authGuard]
+    canActivate: [agentGuard]
   }
 ];

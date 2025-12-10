@@ -11,7 +11,8 @@ describe('LoginComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['loginWithPassword']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['loginWithPassword', 'getPostLoginRedirect']);
+    authServiceSpy.getPostLoginRedirect.and.returnValue('/my-bookings');
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
@@ -134,13 +135,14 @@ describe('LoginComponent', () => {
       expect(authService.loginWithPassword).toHaveBeenCalledWith('test@example.com', 'password123', true);
     });
 
-    it('should navigate to home on successful login', async () => {
+    it('should navigate to redirect URL from auth service on successful login', async () => {
       authService.loginWithPassword.and.returnValue(Promise.resolve());
       // navigate spy already returns Promise.resolve(true) from beforeEach
 
       await component.onSubmit();
 
-      expect(router.navigate).toHaveBeenCalledWith(['/']);
+      expect(authService.getPostLoginRedirect).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(['/my-bookings']);
     });
 
     it('should set loading state during submission', async () => {

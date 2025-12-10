@@ -24,22 +24,17 @@ const loadCallCenterPortalRoutes = async () => {
 };
 
 export const routes: Routes = [
+  // Public portal routes at root (vehicle search is home page)
   {
     path: '',
-    loadComponent: async () => (await import('./home/home.component')).HomeComponent
-  },
-  {
-    path: 'vehicles',
     loadChildren: loadPublicPortalRoutes
   },
-  {
-    path: 'booking',
-    loadChildren: loadPublicPortalRoutes
-  },
+  // Call center portal at /admin (requires agent role)
   {
     path: 'admin',
     loadChildren: loadCallCenterPortalRoutes
   },
+  // Catch-all redirect to home
   {
     path: '**',
     redirectTo: ''
