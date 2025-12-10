@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
+import { FormHelpers } from '@orange-car-rental/shared';
 import { ErrorAlertComponent } from '@orange-car-rental/ui-components';
 
 /**
@@ -39,7 +40,7 @@ export class LoginComponent {
 
   async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
-      this.markFormGroupTouched(this.loginForm);
+      FormHelpers.markAllTouched(this.loginForm);
       return;
     }
 
@@ -76,13 +77,6 @@ export class LoginComponent {
 
   togglePasswordVisibility(): void {
     this.showPassword.set(!this.showPassword());
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
-    });
   }
 
   private getReturnUrl(): string {

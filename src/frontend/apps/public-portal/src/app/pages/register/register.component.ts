@@ -5,6 +5,7 @@ import type { ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
+import { FormHelpers } from '@orange-car-rental/shared';
 import { SuccessAlertComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
 
 /**
@@ -56,7 +57,7 @@ export class RegisterComponent {
 
   async onSubmit(): Promise<void> {
     if (this.registerForm.invalid) {
-      this.markFormGroupTouched(this.registerForm);
+      FormHelpers.markAllTouched(this.registerForm);
       return;
     }
 
@@ -158,12 +159,6 @@ export class RegisterComponent {
     } else {
       this.showConfirmPassword.set(!this.showConfirmPassword());
     }
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      formGroup.get(key)?.markAsTouched();
-    });
   }
 
   // Custom Validators
