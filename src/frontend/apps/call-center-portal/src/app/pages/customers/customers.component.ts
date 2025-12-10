@@ -6,6 +6,7 @@ import { logError } from '@orange-car-rental/util';
 import {
   formatDateDE,
   getReservationStatusClass,
+  calculateAge,
   ModalComponent,
   LoadingStateComponent,
   EmptyStateComponent,
@@ -15,7 +16,7 @@ import {
 } from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
-import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
+import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
 import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 
 /**
@@ -161,21 +162,7 @@ export class CustomersComponent {
   // Helpers - using shared utilities
   protected formatDate = formatDateDE;
   protected getStatusClass = getReservationStatusClass;
-
-  /**
-   * Calculate age from date of birth
-   */
-  protected calculateAge(dateOfBirth: string): number {
-    if (!dateOfBirth) return 0;
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-    return age;
-  }
+  protected calculateAge = calculateAge;
 
   /**
    * Update edit form field
@@ -235,7 +222,7 @@ export class CustomersComponent {
         this.editMode.set(false);
         this.saving.set(false);
         this.successMessage.set('Kundendaten erfolgreich aktualisiert');
-        setTimeout(() => this.successMessage.set(null), 3000);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
         // Refresh the customer list
         this.searchCustomers();
       },

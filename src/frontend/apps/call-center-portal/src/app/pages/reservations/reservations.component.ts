@@ -24,6 +24,7 @@ import {
   ErrorAlertComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
+import { UI_TIMING } from '../../constants/app.constants';
 import type { Reservation, ReservationSearchQuery } from '../../types';
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
@@ -454,8 +455,8 @@ export class ReservationsComponent implements OnInit {
         this.loadReservations();
         this.closeDetails();
 
-        // Clear success message after 5 seconds
-        setTimeout(() => this.successMessage.set(null), 5000);
+        // Clear success message after timeout
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
         logError('ReservationsComponent', 'Error confirming reservation', err);
@@ -510,8 +511,8 @@ export class ReservationsComponent implements OnInit {
         this.closeDetails();
         this.loadReservations();
 
-        // Clear success message after 5 seconds
-        setTimeout(() => this.successMessage.set(null), 5000);
+        // Clear success message after timeout
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
       },
       error: (err) => {
         logError('ReservationsComponent', 'Error cancelling reservation', err);
