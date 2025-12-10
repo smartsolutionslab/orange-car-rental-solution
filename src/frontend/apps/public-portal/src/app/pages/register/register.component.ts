@@ -1,11 +1,10 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
-import type { ValidationErrors } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
-import { FormHelpers } from '@orange-car-rental/shared';
+import { FormHelpers, CustomValidators } from '@orange-car-rental/shared';
 import { SuccessAlertComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
 
 /**
@@ -39,20 +38,20 @@ export class RegisterComponent {
     this.registerForm = this.fb.group({
       // Step 1: Account Information
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), this.passwordStrengthValidator]],
+      password: ['', [Validators.required, Validators.minLength(8), CustomValidators.passwordStrength()]],
       confirmPassword: ['', [Validators.required]],
 
       // Step 2: Personal Information
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-()]{10,}$/)]],
-      dateOfBirth: ['', [Validators.required, this.ageValidator(18)]],
+      dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(18)]],
 
       // Step 3: Terms
       acceptTerms: [false, [Validators.requiredTrue]],
       acceptPrivacy: [false, [Validators.requiredTrue]],
       acceptMarketing: [false]
-    }, { validators: this.passwordMatchValidator });
+    }, { validators: CustomValidators.passwordMatch('password', 'confirmPassword') });
   }
 
   async onSubmit(): Promise<void> {
@@ -159,47 +158,6 @@ export class RegisterComponent {
     } else {
       this.showConfirmPassword.set(!this.showConfirmPassword());
     }
-  }
-
-  // Custom Validators
-  private passwordStrengthValidator(control: AbstractControl): ValidationErrors | null {
-    const value = control.value;
-    if (!value) return null;
-
-    const hasUpperCase = /[A-Z]/.test(value);
-    const hasLowerCase = /[a-z]/.test(value);
-    const hasNumeric = /[0-9]/.test(value);
-    const hasSpecial = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(value);
-
-    const passwordValid = hasUpperCase && hasLowerCase && hasNumeric && hasSpecial;
-
-    return !passwordValid ? { weakPassword: true } : null;
-  }
-
-  private passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
-    const password = control.get('password');
-    const confirmPassword = control.get('confirmPassword');
-
-    if (!password || !confirmPassword) return null;
-
-    return password.value === confirmPassword.value ? null : { passwordMismatch: true };
-  }
-
-  private ageValidator(minAge: number) {
-    return (control: AbstractControl): ValidationErrors | null => {
-      if (!control.value) return null;
-
-      const birthDate = new Date(control.value);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        return age - 1 >= minAge ? null : { underage: { minAge } };
-      }
-
-      return age >= minAge ? null : { underage: { minAge } };
-    };
   }
 
   // Convenience getters
