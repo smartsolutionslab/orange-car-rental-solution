@@ -446,9 +446,7 @@ Use our [feature request template](.github/ISSUE_TEMPLATE/feature_request.md):
 ## 📚 Resources
 
 ### Documentation
-- [Quick Start Testing](./QUICK-START-TESTING.md)
 - [CI/CD Setup](./CI-CD-SETUP.md)
-- [Test Coverage Report](./TEST-COVERAGE-REPORT.md)
 - [Commit Guide](./COMMIT-GUIDE.md)
 
 ### External
