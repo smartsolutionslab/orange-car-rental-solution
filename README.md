@@ -148,7 +148,7 @@ Complete guides for operating and developing the Orange Car Rental system:
 - 🚀 [**DEPLOYMENT.md**](./DEPLOYMENT.md) - Production deployment guide
 - 🔧 [**MONITORING.md**](./MONITORING.md) - Observability and alerting
 - 🔐 [**SECURITY.md**](./SECURITY.md) - Security guidelines
-- 🚢 [**CI/CD Pipeline**](./CI_CD.md) - GitHub Actions workflows
+- 🚢 [**CI/CD Pipeline**](./CI-CD-SETUP.md) - GitHub Actions workflows
 - 🔍 [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ### Database
@@ -225,7 +225,7 @@ npm run e2e
 - 🎭 [E2E Testing Guide](./src/frontend/apps/public-portal/E2E_TESTING.md) - Complete Playwright E2E documentation
 - ⚡ [Performance Testing Guide](./performance-tests/README.md) - k6 load and performance testing
 - 📊 [Performance SLOs](./PERFORMANCE_SLOS.md) - Service Level Objectives and benchmarks
-- 🚀 [CI/CD Pipeline](./CI_CD.md) - GitHub Actions workflows and deployment
+- 🚀 [CI/CD Pipeline](./CI-CD-SETUP.md) - GitHub Actions workflows and deployment
 - 📋 [User Stories](./USER_STORIES.md) - Feature implementation status and test coverage
 
 **Backend Tests:**
@@ -427,7 +427,7 @@ Automated deployment via GitHub Actions:
 - ✅ Automated database migrations
 - ✅ Rollback capability
 
-See [CI_CD.md](./CI_CD.md) for complete CI/CD documentation.
+See [CI-CD-SETUP.md](./CI-CD-SETUP.md) for complete CI/CD documentation.
 
 ### Monitoring & Observability
 

@@ -418,7 +418,7 @@ DateFormatter.formatGermanShort(new Date())
 - ✅ **ARCHITECTURE.md** - Complete system architecture
 - ✅ **GERMAN_MARKET_REQUIREMENTS.md** - Compliance requirements
 - ✅ **README.md** - Project overview
-- ✅ **NEXT_STEPS.md** - Continuation guide
+- ✅ **NEXT-STEPS.md** - Continuation guide
 
 ### CI/CD Documentation
 

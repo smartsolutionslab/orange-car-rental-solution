@@ -938,7 +938,7 @@ git push --force-with-lease
 - **Project Documentation:**
   - `USER_STORIES.md` - User story specifications
   - `ARCHITECTURE.md` - System architecture
-  - `GITHUB_SETUP_COMPLETE.md` - GitHub setup guide
+  - `CONTRIBUTING.md` - GitHub setup guide
   - `GERMAN_MARKET_REQUIREMENTS.md` - Compliance requirements
 
 ---

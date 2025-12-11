@@ -235,6 +235,6 @@ kubectl delete certificate orange-rental-tls -n orange-production
 
 - [Full Deployment Guide](../DEPLOYMENT.md)
 - [Monitoring Guide](../MONITORING.md)
-- [CI/CD Documentation](../CI_CD.md)
+- [CI/CD Documentation](../CI-CD-SETUP.md)
 - [Azure Portal](https://portal.azure.com)
 - [Application Insights](https://portal.azure.com/#blade/HubsExtension/BrowseResource/resourceType/microsoft.insights%2Fcomponents)
