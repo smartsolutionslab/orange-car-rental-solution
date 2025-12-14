@@ -7,7 +7,7 @@ on:
 
 env:
   NODE_VERSION: '20'
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '10.0.x'
   DOCKER_REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -136,7 +136,7 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           file: ./docker/Dockerfile.${{ matrix.component }}
