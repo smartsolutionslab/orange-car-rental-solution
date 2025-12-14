@@ -11,13 +11,8 @@ import { of } from 'rxjs';
 /**
  * Integration Tests for Reservations Component (Call Center Portal)
  * Tests the full interaction between component, service, and HTTP layer
- *
- * NOTE: Tests are skipped due to mismatches between test expectations and actual service implementation:
- * - The service doesn't include sortBy/sortOrder params but tests expect them
- * - There are timing issues with httpMock.verify() in async scenarios
- * - The cancel endpoint uses 'cancellationReason' but tests expect 'reason'
  */
-xdescribe('ReservationsComponent (Integration)', () => {
+describe('ReservationsComponent (Integration)', () => {
   let component: ReservationsComponent;
   let fixture: ComponentFixture<ReservationsComponent>;
   let httpMock: HttpTestingController;
@@ -599,7 +594,7 @@ xdescribe('ReservationsComponent (Integration)', () => {
         request.url.includes(`/api/reservations/${confirmedReservation.reservationId}/cancel`) &&
         request.method === 'PUT'
       );
-      expect(req.request.body).toEqual({ reason: 'Customer request' });
+      expect(req.request.body).toEqual({ cancellationReason: 'Customer request' });
       req.flush(null);
       tick();
 

@@ -1,6 +1,7 @@
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Projects;
 
@@ -17,13 +18,29 @@ public class IntegrationTestCollection : ICollectionFixture<DistributedApplicati
 }
 
 /// <summary>
-///     Fixture that starts the Aspire AppHost for integration testing
-///     This spins up the entire application including SQL Server, all APIs, and the gateway
+///     Fixture that starts the Aspire AppHost for integration testing.
+///     This spins up the entire application including SQL Server, all APIs, and the gateway.
+///     Databases are cleaned up after each test run to ensure test isolation.
 /// </summary>
 public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
     private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(5);
+    private string? sqlConnectionString;
+
+    /// <summary>
+    ///     Database names used by the application that should be dropped after tests.
+    /// </summary>
+    private static readonly string[] DatabaseNames =
+    [
+        "OrangeCarRental_Fleet",
+        "OrangeCarRental_Reservations",
+        "OrangeCarRental_Pricing",
+        "OrangeCarRental_Customers",
+        "OrangeCarRental_Payments",
+        "OrangeCarRental_Notifications",
+        "OrangeCarRental_Locations"
+    ];
 
     public DistributedApplication App => app ?? throw new InvalidOperationException("App not initialized. Call InitializeAsync first.");
 
@@ -41,6 +58,9 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
         // Wait for critical resources to be ready using Aspire's ResourceNotificationService
         await WaitForResourcesAsync(cts.Token);
+
+        // Store SQL connection string for cleanup
+        await CaptureSqlConnectionStringAsync(cts.Token);
     }
 
     private async Task WaitForResourcesAsync(CancellationToken cancellationToken)
@@ -116,6 +136,9 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        // Clean up databases before disposing to ensure fresh state on next run
+        await CleanupDatabasesAsync();
+
         if (app != null) await app.DisposeAsync();
     }
 
@@ -126,5 +149,103 @@ public class DistributedApplicationFixture : IAsyncLifetime
         var client = app.CreateHttpClient(resourceName);
         client.Timeout = TimeSpan.FromMinutes(2);
         return client;
+    }
+
+    /// <summary>
+    ///     Captures the SQL Server connection string from the running Aspire app.
+    ///     This is used later for database cleanup.
+    /// </summary>
+    private async Task CaptureSqlConnectionStringAsync(CancellationToken cancellationToken)
+    {
+        if (app == null) return;
+
+        try
+        {
+            // Get connection string from fleet database resource (any database would work)
+            var connectionString = await app.GetConnectionStringAsync("fleet", cancellationToken);
+            if (!string.IsNullOrEmpty(connectionString))
+            {
+                // Modify connection string to connect to master database for DROP commands
+                var builder = new SqlConnectionStringBuilder(connectionString)
+                {
+                    InitialCatalog = "master",
+                    TrustServerCertificate = true
+                };
+                sqlConnectionString = builder.ConnectionString;
+                Console.WriteLine("Captured SQL Server connection string for cleanup.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Could not capture SQL connection string: {ex.Message}");
+            // Non-fatal - tests can still run, just won't have cleanup
+        }
+    }
+
+    /// <summary>
+    ///     Drops all test databases to ensure a fresh state for the next test run.
+    ///     This provides test isolation between runs.
+    /// </summary>
+    private async Task CleanupDatabasesAsync()
+    {
+        if (string.IsNullOrEmpty(sqlConnectionString))
+        {
+            Console.WriteLine("No SQL connection string available. Skipping database cleanup.");
+            return;
+        }
+
+        Console.WriteLine("Cleaning up test databases...");
+
+        try
+        {
+            await using var connection = new SqlConnection(sqlConnectionString);
+            await connection.OpenAsync();
+
+            foreach (var dbName in DatabaseNames)
+            {
+                try
+                {
+                    // First, kill all connections to the database
+                    var killConnectionsSql = $@"
+                        IF EXISTS (SELECT name FROM sys.databases WHERE name = '{dbName}')
+                        BEGIN
+                            ALTER DATABASE [{dbName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+                        END";
+
+                    await using (var killCmd = new SqlCommand(killConnectionsSql, connection))
+                    {
+                        killCmd.CommandTimeout = 30;
+                        await killCmd.ExecuteNonQueryAsync();
+                    }
+
+                    // Then drop the database
+                    var dropSql = $@"
+                        IF EXISTS (SELECT name FROM sys.databases WHERE name = '{dbName}')
+                        BEGIN
+                            DROP DATABASE [{dbName}];
+                        END";
+
+                    await using (var dropCmd = new SqlCommand(dropSql, connection))
+                    {
+                        dropCmd.CommandTimeout = 30;
+                        await dropCmd.ExecuteNonQueryAsync();
+                    }
+
+                    Console.WriteLine($"  Dropped database: {dbName}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"  Warning: Could not drop database {dbName}: {ex.Message}");
+                    // Continue with other databases
+                }
+            }
+
+            Console.WriteLine("Database cleanup completed.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Warning: Database cleanup failed: {ex.Message}");
+            // Non-fatal - don't fail the test run because of cleanup issues
+        }
     }
 }

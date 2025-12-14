@@ -110,8 +110,7 @@ describe('BookingHistoryComponent (Integration)', () => {
   });
 
   describe('Complete Authenticated User Flow', () => {
-    // Skip: Flaky due to async timing issues with HttpTestingController.verify()
-    xit('should load and display user reservations with real HTTP calls', fakeAsync(() => {
+    it('should load and display user reservations with real HTTP calls', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(Promise.resolve({
@@ -125,7 +124,6 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Act
       component.ngOnInit();
       tick();
-      fixture.detectChanges();
 
       // Assert - HTTP Request
       const req = httpMock.expectOne(request =>
@@ -143,7 +141,6 @@ describe('BookingHistoryComponent (Integration)', () => {
         totalPages: 1
       });
       tick();
-      fixture.detectChanges();
 
       // Verify component state
       expect(component.isAuthenticated()).toBe(true);
