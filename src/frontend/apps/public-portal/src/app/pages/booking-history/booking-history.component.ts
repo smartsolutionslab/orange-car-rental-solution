@@ -87,7 +87,7 @@ export class BookingHistoryComponent implements OnInit {
   showDetailModal = signal(false);
   detailReservation = signal<Reservation | null>(null);
 
-  ngOnInit() {
+  ngOnInit(): Promise<void> {
     return this.checkAuthAndLoadReservations();
   }
 
@@ -261,12 +261,11 @@ export class BookingHistoryComponent implements OnInit {
   getStatusClass = getReservationStatusClass;
   getStatusLabel = getReservationStatusLabel;
 
-  printReservation() {
-    // TODO: Implement print functionality
+  printReservation(): void {
     window.print();
   }
 
-  navigateToVehicles() {
+  navigateToVehicles(): void {
     this.router.navigate(['/vehicles']);
   }
 }

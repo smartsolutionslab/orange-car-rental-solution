@@ -1,6 +1,6 @@
 /**
  * Application runtime configuration
  */
-export type AppConfig = {
+export interface AppConfig {
   readonly apiUrl: string;
-};
+}
