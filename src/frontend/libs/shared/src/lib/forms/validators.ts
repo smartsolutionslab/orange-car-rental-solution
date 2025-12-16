@@ -1,3 +1,4 @@
+import { FormGroup } from '@angular/forms';
 import type { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 /**
@@ -167,7 +168,8 @@ export const CustomValidators = {
    */
   atLeastOneChecked(): ValidatorFn {
     return (formGroup: AbstractControl): ValidationErrors | null => {
-      const controls = (formGroup as any).controls;
+      const group = formGroup as FormGroup;
+      const controls = group.controls;
       if (!controls) return null;
 
       const hasChecked = Object.keys(controls).some(key => controls[key].value === true);

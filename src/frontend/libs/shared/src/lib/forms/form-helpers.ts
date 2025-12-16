@@ -2,31 +2,38 @@ import { FormGroup } from '@angular/forms';
 import type { AbstractControl } from '@angular/forms';
 
 /**
+ * Validation message function type.
+ * Uses Record<string, unknown> for params since Angular validators
+ * return different param shapes for different error types.
+ */
+type ValidationMessageFn = (params: Record<string, unknown>) => string;
+
+/**
  * German error messages for common validation errors.
  * Used by getFieldError to provide localized error messages.
  */
-export const ValidationMessages: Record<string, string | ((params: any) => string)> = {
+export const ValidationMessages: Record<string, string | ValidationMessageFn> = {
   required: 'Dieses Feld ist erforderlich',
   email: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
-  minlength: (params: { requiredLength: number }) =>
-    `Mindestens ${params.requiredLength} Zeichen erforderlich`,
-  maxlength: (params: { requiredLength: number }) =>
-    `Maximal ${params.requiredLength} Zeichen erlaubt`,
-  min: (params: { min: number }) => `Der Wert muss mindestens ${params.min} sein`,
-  max: (params: { max: number }) => `Der Wert darf maximal ${params.max} sein`,
+  minlength: (params) =>
+    `Mindestens ${params['requiredLength']} Zeichen erforderlich`,
+  maxlength: (params) =>
+    `Maximal ${params['requiredLength']} Zeichen erlaubt`,
+  min: (params) => `Der Wert muss mindestens ${params['min']} sein`,
+  max: (params) => `Der Wert darf maximal ${params['max']} sein`,
   pattern: 'Ungültiges Format',
   weakPassword: 'Passwort muss Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen enthalten',
   passwordMismatch: 'Passwörter stimmen nicht überein',
-  underage: (params: { minAge: number }) =>
-    `Sie müssen mindestens ${params.minAge} Jahre alt sein`,
+  underage: (params) =>
+    `Sie müssen mindestens ${params['minAge']} Jahre alt sein`,
   pastDate: 'Das Datum darf nicht in der Vergangenheit liegen',
   dateAfter: 'Das Startdatum muss vor dem Enddatum liegen',
   invalidPhone: 'Bitte geben Sie eine gültige Telefonnummer ein',
   invalidPostalCode: 'Bitte geben Sie eine gültige Postleitzahl ein (5 Ziffern)',
   invalidLicensePlate: 'Bitte geben Sie ein gültiges Kennzeichen ein',
   noneSelected: 'Bitte wählen Sie mindestens eine Option',
-  outOfRange: (params: { min: number; max: number }) =>
-    `Der Wert muss zwischen ${params.min} und ${params.max} liegen`,
+  outOfRange: (params) =>
+    `Der Wert muss zwischen ${params['min']} und ${params['max']} liegen`,
   notPositive: 'Bitte geben Sie einen positiven Wert ein',
   notANumber: 'Bitte geben Sie eine gültige Zahl ein',
 };
