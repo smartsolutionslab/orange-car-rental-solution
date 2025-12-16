@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import type { Reservation, ReservationSearchFilters, ReservationStatus } from '@orange-car-rental/reservation-api';
-import { createCustomerId } from '@orange-car-rental/reservation-api';
+import type { Reservation, ReservationSearchFilters } from '@orange-car-rental/reservation-api';
+import { createCustomerId, ReservationStatus } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import { ToastService } from '@orange-car-rental/shared';
 import {
@@ -140,9 +140,9 @@ export class BookingHistoryComponent implements OnInit {
     reservations.forEach(reservation => {
       const pickupDate = new Date(reservation.pickupDate);
 
-      if (reservation.status === 'Pending') {
+      if (reservation.status === ReservationStatus.Pending) {
         grouped.pending.push(reservation);
-      } else if (reservation.status === 'Confirmed' || reservation.status === 'Active') {
+      } else if (reservation.status === ReservationStatus.Confirmed || reservation.status === ReservationStatus.Active) {
         if (pickupDate >= now) {
           grouped.upcoming.push(reservation);
         } else {
@@ -199,7 +199,7 @@ export class BookingHistoryComponent implements OnInit {
 
   // Cancellation
   canCancel(reservation: Reservation): boolean {
-    if (reservation.status !== 'Confirmed' && reservation.status !== 'Pending') {
+    if (reservation.status !== ReservationStatus.Confirmed && reservation.status !== ReservationStatus.Pending) {
       return false;
     }
 
@@ -241,7 +241,7 @@ export class BookingHistoryComponent implements OnInit {
           this.loadCustomerReservations();
         } else {
           // For guest, just update the status locally
-          const updated: Reservation = { ...reservation, status: 'Cancelled' as ReservationStatus };
+          const updated: Reservation = { ...reservation, status: ReservationStatus.Cancelled };
           this.guestReservation.set(updated);
         }
 

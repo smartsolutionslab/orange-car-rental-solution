@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import type { Location } from '@orange-car-rental/location-api';
 import { LocationService } from '@orange-car-rental/location-api';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import { VehicleStatus } from '@orange-car-rental/vehicle-api';
 import { logError } from '@orange-car-rental/util';
 import {
   StatusBadgeComponent,
@@ -74,11 +75,11 @@ export class LocationsComponent implements OnInit {
 
     this.locations().forEach(location => {
       const locationVehicles = vehicles.filter(v => v.locationCode === location.code);
-      const available = locationVehicles.filter(v => v.status === 'Available').length;
-      const rented = locationVehicles.filter(v => v.status === 'Rented').length;
-      const maintenance = locationVehicles.filter(v => v.status === 'Maintenance').length;
-      const outOfService = locationVehicles.filter(v => v.status === 'OutOfService').length;
-      const reserved = locationVehicles.filter(v => v.status === 'Reserved').length;
+      const available = locationVehicles.filter(v => v.status === VehicleStatus.Available).length;
+      const rented = locationVehicles.filter(v => v.status === VehicleStatus.Rented).length;
+      const maintenance = locationVehicles.filter(v => v.status === VehicleStatus.Maintenance).length;
+      const outOfService = locationVehicles.filter(v => v.status === VehicleStatus.OutOfService).length;
+      const reserved = locationVehicles.filter(v => v.status === VehicleStatus.Reserved).length;
       const total = locationVehicles.length;
 
       stats.set(location.code, {
@@ -236,14 +237,14 @@ export class LocationsComponent implements OnInit {
    * Get total available vehicles across all locations
    */
   protected get totalAvailableVehicles(): number {
-    return this.allVehicles().filter(v => v.status === 'Available').length;
+    return this.allVehicles().filter(v => v.status === VehicleStatus.Available).length;
   }
 
   /**
    * Get total rented vehicles across all locations
    */
   protected get totalRentedVehicles(): number {
-    return this.allVehicles().filter(v => v.status === 'Rented').length;
+    return this.allVehicles().filter(v => v.status === VehicleStatus.Rented).length;
   }
 
   /**
