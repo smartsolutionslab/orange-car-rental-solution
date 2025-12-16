@@ -109,7 +109,7 @@ export class VehiclesComponent implements OnInit {
     });
 
     this.statusForm = this.fb.group({
-      status: ['Available', Validators.required]
+      status: [VehicleStatus.Available, Validators.required]
     });
 
     this.locationForm = this.fb.group({
@@ -214,21 +214,21 @@ export class VehiclesComponent implements OnInit {
    * Get number of available vehicles
    */
   protected get availableVehicles(): number {
-    return this.vehicles().filter(v => v.status === 'Available').length;
+    return this.vehicles().filter(v => v.status === VehicleStatus.Available).length;
   }
 
   /**
    * Get number of vehicles in maintenance
    */
   protected get maintenanceVehicles(): number {
-    return this.vehicles().filter(v => v.status === 'Maintenance').length;
+    return this.vehicles().filter(v => v.status === VehicleStatus.Maintenance).length;
   }
 
   /**
    * Get number of rented vehicles
    */
   protected get rentedVehicles(): number {
-    return this.vehicles().filter(v => v.status === 'Rented').length;
+    return this.vehicles().filter(v => v.status === VehicleStatus.Rented).length;
   }
 
   /**

@@ -283,11 +283,11 @@ export class ReservationsComponent implements OnInit {
     );
 
     this.activeReservations.set(
-      reservations.filter(r => r.status === 'Confirmed' || r.status === 'Active').length
+      reservations.filter(r => r.status === ReservationStatus.Confirmed || r.status === ReservationStatus.Active).length
     );
 
     this.pendingReservations.set(
-      reservations.filter(r => r.status === 'Pending').length
+      reservations.filter(r => r.status === ReservationStatus.Pending).length
     );
   }
 
@@ -422,14 +422,14 @@ export class ReservationsComponent implements OnInit {
    * Check if reservation can be confirmed
    */
   protected canConfirm(reservation: Reservation): boolean {
-    return reservation.status === 'Pending';
+    return reservation.status === ReservationStatus.Pending;
   }
 
   /**
    * Check if reservation can be cancelled
    */
   protected canCancel(reservation: Reservation): boolean {
-    return reservation.status === 'Pending' || reservation.status === 'Confirmed';
+    return reservation.status === ReservationStatus.Pending || reservation.status === ReservationStatus.Confirmed;
   }
 
   /**
