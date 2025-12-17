@@ -1,5 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { IconComponent } from '../icon/icon.component';
+import type { IconName } from '../icon/icons';
 
 /**
  * Stat card variant types for styling
@@ -13,7 +15,7 @@ export type StatCardVariant = 'default' | 'success' | 'warning' | 'info' | 'erro
 @Component({
   selector: 'ui-stat-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconComponent],
   templateUrl: './stat-card.component.html',
   styleUrl: './stat-card.component.css'
 })
@@ -41,8 +43,15 @@ export class StatCardComponent {
   /**
    * SVG icon path (d attribute for path element)
    * If not provided, a default icon is used based on variant
+   * @deprecated Use iconName instead for consistency with IconComponent
    */
   @Input() iconPath?: string;
+
+  /**
+   * Icon name from the icon registry
+   * Preferred over iconPath for consistency
+   */
+  @Input() iconName?: IconName;
 
   /**
    * Whether to show loading state

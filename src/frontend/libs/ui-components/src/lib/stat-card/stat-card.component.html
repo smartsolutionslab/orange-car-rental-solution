@@ -1,8 +1,12 @@
 <div class="stat-card" [class.stat-card--loading]="loading">
   <div [class]="iconClass">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path [attr.d]="defaultIconPath"/>
-    </svg>
+    @if (iconName) {
+      <lib-icon [name]="iconName" variant="filled" size="lg" />
+    } @else {
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path [attr.d]="defaultIconPath"/>
+      </svg>
+    }
   </div>
   <div class="stat-content">
     <h3 class="stat-label">{{ label }}</h3>
