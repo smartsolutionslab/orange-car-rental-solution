@@ -70,6 +70,7 @@ export class ReservationsComponent implements OnInit {
   protected readonly selectedReservation = signal<Reservation | null>(null);
   protected readonly showDetails = signal(false);
   protected readonly showCancelModal = signal(false);
+  protected readonly showConfirmModal = signal(false);
   protected readonly cancelReason = signal<string>('');
   protected readonly actionInProgress = signal(false);
   protected readonly successMessage = signal<string | null>(null);
@@ -435,14 +436,29 @@ export class ReservationsComponent implements OnInit {
   }
 
   /**
-   * Confirm a reservation
+   * Show confirmation dialog for reservation
    */
   protected confirmReservation(reservation: Reservation): void {
     if (!this.canConfirm(reservation)) {
       return;
     }
+    this.selectedReservation.set(reservation);
+    this.showConfirmModal.set(true);
+  }
 
-    if (!confirm(`Möchten Sie die Reservierung ${reservation.reservationId.substring(0, 8)} wirklich bestätigen?`)) {
+  /**
+   * Close confirmation modal
+   */
+  protected closeConfirmModal(): void {
+    this.showConfirmModal.set(false);
+  }
+
+  /**
+   * Execute the reservation confirmation
+   */
+  protected executeConfirmation(): void {
+    const reservation = this.selectedReservation();
+    if (!reservation) {
       return;
     }
 
@@ -454,8 +470,9 @@ export class ReservationsComponent implements OnInit {
       next: () => {
         this.actionInProgress.set(false);
         this.successMessage.set('Reservierung erfolgreich bestätigt');
-        this.loadReservations();
+        this.closeConfirmModal();
         this.closeDetails();
+        this.loadReservations();
 
         // Clear success message after timeout
         setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);

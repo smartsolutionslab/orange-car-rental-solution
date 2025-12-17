@@ -547,23 +547,33 @@ describe('ReservationsComponent', () => {
       expect(component['canCancel'](completedReservation)).toBe(false);
     });
 
-    it('should confirm reservation successfully', () => {
-      mockReservationService.confirmReservation.and.returnValue(of(void 0));
-      spyOn(window, 'confirm').and.returnValue(true);
-
+    it('should open confirmation modal when confirming reservation', () => {
       component['confirmReservation'](mockReservations[1]);
+
+      expect(component['showConfirmModal']()).toBe(true);
+      expect(component['selectedReservation']()).toEqual(mockReservations[1]);
+    });
+
+    it('should confirm reservation successfully via modal', () => {
+      mockReservationService.confirmReservation.and.returnValue(of(void 0));
+
+      component['selectedReservation'].set(mockReservations[1]);
+      component['executeConfirmation']();
 
       expect(mockReservationService.confirmReservation).toHaveBeenCalledWith(
         mockReservations[1].reservationId
       );
       expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
+      expect(component['showConfirmModal']()).toBe(false);
     });
 
-    it('should not confirm when user cancels dialog', () => {
-      spyOn(window, 'confirm').and.returnValue(false);
+    it('should close confirmation modal without confirming', () => {
+      component['selectedReservation'].set(mockReservations[1]);
+      component['showConfirmModal'].set(true);
 
-      component['confirmReservation'](mockReservations[1]);
+      component['closeConfirmModal']();
 
+      expect(component['showConfirmModal']()).toBe(false);
       expect(mockReservationService.confirmReservation).not.toHaveBeenCalled();
     });
 
@@ -571,9 +581,9 @@ describe('ReservationsComponent', () => {
       mockReservationService.confirmReservation.and.returnValue(
         throwError(() => new Error('Confirmation failed'))
       );
-      spyOn(window, 'confirm').and.returnValue(true);
 
-      component['confirmReservation'](mockReservations[1]);
+      component['selectedReservation'].set(mockReservations[1]);
+      component['executeConfirmation']();
 
       expect(component['error']()).toBe('Fehler beim Bestätigen der Reservierung');
     });

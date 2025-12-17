@@ -465,3 +465,30 @@
     </button>
   </ng-container>
 </ui-modal>
+
+<!-- Confirm Modal -->
+<ui-modal [isOpen]="showConfirmModal() && !!selectedReservation()" title="Reservierung bestätigen" size="sm" (close)="closeConfirmModal()">
+  <ng-container modal-body>
+    @if (selectedReservation()) {
+      <p>Möchten Sie diese Reservierung wirklich bestätigen?</p>
+      <p><strong>Reservierungs-ID:</strong> {{ selectedReservation()!.reservationId.substring(0, 8) }}...</p>
+      <p><strong>Kunde:</strong> {{ selectedReservation()!.customerId.substring(0, 8) }}...</p>
+      <p><strong>Abholdatum:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
+      <p><strong>Gesamtpreis:</strong> {{ formatPrice(selectedReservation()!.totalPriceGross) }}</p>
+
+      @if (error()) {
+        <ui-error-state variant="inline" [message]="error()!"></ui-error-state>
+      }
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    <button class="btn-secondary" (click)="closeConfirmModal()">Abbrechen</button>
+    <button
+      class="btn-success"
+      (click)="executeConfirmation()"
+      [disabled]="actionInProgress()"
+    >
+      {{ actionInProgress() ? 'Wird bestätigt...' : 'Bestätigung durchführen' }}
+    </button>
+  </ng-container>
+</ui-modal>

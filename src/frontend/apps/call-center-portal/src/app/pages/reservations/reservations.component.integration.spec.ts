@@ -557,10 +557,16 @@ describe('ReservationsComponent (Integration)', () => {
     it('should confirm pending reservation', fakeAsync(() => {
       // Arrange
       const pendingReservation = mockReservations[1]!; // Status: Pending
-      spyOn(window, 'confirm').and.returnValue(true);
 
-      // Act
+      // Act - open confirmation modal
       component['confirmReservation'](pendingReservation);
+      tick();
+
+      expect(component['showConfirmModal']()).toBe(true);
+      expect(component['selectedReservation']()).toEqual(pendingReservation);
+
+      // Execute the confirmation
+      component['executeConfirmation']();
       tick();
 
       // Assert - HTTP Request to confirm
@@ -577,6 +583,7 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
+      expect(component['showConfirmModal']()).toBe(false);
     }));
 
     it('should cancel reservation with reason', fakeAsync(() => {
@@ -610,10 +617,11 @@ describe('ReservationsComponent (Integration)', () => {
     it('should handle confirmation error', fakeAsync(() => {
       // Arrange
       const pendingReservation = mockReservations[1]!;
-      spyOn(window, 'confirm').and.returnValue(true);
 
-      // Act
+      // Act - open confirmation modal and execute
       component['confirmReservation'](pendingReservation);
+      tick();
+      component['executeConfirmation']();
       tick();
 
       // Assert - HTTP Request fails
@@ -670,9 +678,12 @@ describe('ReservationsComponent (Integration)', () => {
       expect(component['showDetails']()).toBe(true);
       expect(component['selectedReservation']()).toEqual(reservation);
 
-      // Step 5: Agent confirms the reservation
-      spyOn(window, 'confirm').and.returnValue(true);
+      // Step 5: Agent confirms the reservation via modal
       component['confirmReservation'](reservation);
+      tick();
+      expect(component['showConfirmModal']()).toBe(true);
+      
+      component['executeConfirmation']();
       tick();
 
       req = httpMock.expectOne(request =>
