@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
 import type { IconName } from '../icon/icons';
@@ -23,56 +23,57 @@ export class StatCardComponent {
   /**
    * The title/label for the statistic
    */
-  @Input({ required: true }) label!: string;
+  readonly label = input.required<string>();
 
   /**
    * The value to display (number or string)
    */
-  @Input({ required: true }) value!: string | number;
+  readonly value = input.required<string | number>();
 
   /**
    * Optional subtitle or additional info
    */
-  @Input() subtitle?: string;
+  readonly subtitle = input<string | undefined>(undefined);
 
   /**
    * Visual variant for the card icon
    */
-  @Input() variant: StatCardVariant = 'default';
+  readonly variant = input<StatCardVariant>('default');
 
   /**
    * SVG icon path (d attribute for path element)
    * If not provided, a default icon is used based on variant
    * @deprecated Use iconName instead for consistency with IconComponent
    */
-  @Input() iconPath?: string;
+  readonly iconPath = input<string | undefined>(undefined);
 
   /**
    * Icon name from the icon registry
    * Preferred over iconPath for consistency
    */
-  @Input() iconName?: IconName;
+  readonly iconName = input<IconName | undefined>(undefined);
 
   /**
    * Whether to show loading state
    */
-  @Input() loading = false;
+  readonly loading = input(false);
 
   /**
    * Get the icon class based on variant
    */
-  get iconClass(): string {
-    if (this.variant === 'default') return 'stat-icon';
-    return `stat-icon stat-icon--${this.variant}`;
-  }
+  protected readonly iconClass = computed(() => {
+    if (this.variant() === 'default') return 'stat-icon';
+    return `stat-icon stat-icon--${this.variant()}`;
+  });
 
   /**
    * Get default icon path based on variant
    */
-  get defaultIconPath(): string {
-    if (this.iconPath) return this.iconPath;
+  protected readonly defaultIconPath = computed(() => {
+    const path = this.iconPath();
+    if (path) return path;
     
-    switch (this.variant) {
+    switch (this.variant()) {
       case 'success':
         return 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z';
       case 'warning':
@@ -84,5 +85,5 @@ export class StatCardComponent {
       default:
         return 'M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z';
     }
-  }
+  });
 }

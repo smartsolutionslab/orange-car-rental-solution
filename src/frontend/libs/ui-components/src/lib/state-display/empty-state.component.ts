@@ -1,19 +1,9 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
  * Empty State Component
  * Displays a placeholder when no data is available
- *
- * @example
- * <ui-empty-state
- *   icon="car"
- *   title="Keine Fahrzeuge gefunden"
- *   description="Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen."
- *   [showAction]="true"
- *   actionLabel="Filter zurücksetzen"
- *   (action)="clearFilters()"
- * ></ui-empty-state>
  */
 @Component({
   selector: 'ui-empty-state',
@@ -22,7 +12,7 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="empty-state">
       <div class="empty-icon">
-        @switch (icon) {
+        @switch (icon()) {
           @case ('car') {
             <svg viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
@@ -55,13 +45,13 @@ import { CommonModule } from '@angular/common';
           }
         }
       </div>
-      <h3 class="empty-title">{{ title }}</h3>
-      @if (description) {
-        <p class="empty-description">{{ description }}</p>
+      <h3 class="empty-title">{{ title() }}</h3>
+      @if (description()) {
+        <p class="empty-description">{{ description() }}</p>
       }
-      @if (showAction && actionLabel) {
+      @if (showAction() && actionLabel()) {
         <button class="empty-action" (click)="action.emit()">
-          {{ actionLabel }}
+          {{ actionLabel() }}
         </button>
       }
     </div>
@@ -75,7 +65,6 @@ import { CommonModule } from '@angular/common';
       padding: 3rem 2rem;
       text-align: center;
     }
-
     .empty-icon {
       width: 4rem;
       height: 4rem;
@@ -85,26 +74,19 @@ import { CommonModule } from '@angular/common';
       margin-bottom: 1rem;
       color: #9ca3af;
     }
-
-    .empty-icon svg {
-      width: 100%;
-      height: 100%;
-    }
-
+    .empty-icon svg { width: 100%; height: 100%; }
     .empty-title {
       margin: 0 0 0.5rem 0;
       font-size: 1.125rem;
       font-weight: 600;
       color: #374151;
     }
-
     .empty-description {
       margin: 0;
       font-size: 0.875rem;
       color: #6b7280;
       max-width: 24rem;
     }
-
     .empty-action {
       margin-top: 1.5rem;
       padding: 0.5rem 1rem;
@@ -117,18 +99,15 @@ import { CommonModule } from '@angular/common';
       cursor: pointer;
       transition: background-color 0.15s ease;
     }
-
-    .empty-action:hover {
-      background-color: #ea580c;
-    }
+    .empty-action:hover { background-color: #ea580c; }
   `]
 })
 export class EmptyStateComponent {
-  @Input() icon: 'car' | 'reservation' | 'location' | 'search' | 'document' | 'default' = 'default';
-  @Input({ required: true }) title = '';
-  @Input() description = '';
-  @Input() showAction = false;
-  @Input() actionLabel = '';
+  readonly icon = input<'car' | 'reservation' | 'location' | 'search' | 'document' | 'default'>('default');
+  readonly title = input.required<string>();
+  readonly description = input('');
+  readonly showAction = input(false);
+  readonly actionLabel = input('');
 
-  @Output() action = new EventEmitter<void>();
+  readonly action = output<void>();
 }

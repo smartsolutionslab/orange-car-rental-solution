@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -14,11 +14,11 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="detail-row" [class.highlight]="highlight" [class.price]="isPrice">
-      <span class="label">{{ label }}</span>
-      <span class="value" [class.strong]="strong">
-        @if (value !== undefined && value !== null) {
-          {{ value }}
+    <div class="detail-row" [class.highlight]="highlight()" [class.price]="isPrice()">
+      <span class="label">{{ label() }}</span>
+      <span class="value" [class.strong]="strong()">
+        @if (value() !== undefined && value() !== null) {
+          {{ value() }}
         } @else {
           <ng-content></ng-content>
         }
@@ -65,9 +65,9 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class DetailRowComponent {
-  @Input({ required: true }) label!: string;
-  @Input() value?: string | number;
-  @Input() highlight = false;
-  @Input() isPrice = false;
-  @Input() strong = false;
+  readonly label = input.required<string>();
+  readonly value = input<string | number | undefined>(undefined);
+  readonly highlight = input(false);
+  readonly isPrice = input(false);
+  readonly strong = input(false);
 }

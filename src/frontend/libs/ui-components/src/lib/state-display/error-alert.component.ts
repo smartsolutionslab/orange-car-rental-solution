@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
       <svg class="alert-icon" viewBox="0 0 24 24" fill="currentColor">
         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
       </svg>
-      <span class="alert-message">{{ message }}</span>
+      <span class="alert-message">{{ message() }}</span>
     </div>
   `,
   styles: [`
@@ -46,5 +46,5 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ErrorAlertComponent {
-  @Input({ required: true }) message!: string;
+  readonly message = input.required<string>();
 }

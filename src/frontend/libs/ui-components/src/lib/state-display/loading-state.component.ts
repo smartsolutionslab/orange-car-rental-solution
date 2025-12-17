@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 /**
  * Loading State Component
@@ -12,9 +12,9 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   template: `
     <div class="loading-state">
-      <div class="loading-spinner" [class.spinner-sm]="size === 'sm'" [class.spinner-lg]="size === 'lg'"></div>
-      @if (message) {
-        <p class="loading-message">{{ message }}</p>
+      <div class="loading-spinner" [class.spinner-sm]="size() === 'sm'" [class.spinner-lg]="size() === 'lg'"></div>
+      @if (message()) {
+        <p class="loading-message">{{ message() }}</p>
       }
     </div>
   `,
@@ -63,6 +63,6 @@ import { Component, Input } from '@angular/core';
   `]
 })
 export class LoadingStateComponent {
-  @Input() message = 'Laden...';
-  @Input() size: 'sm' | 'md' | 'lg' = 'md';
+  readonly message = input('Laden...');
+  readonly size = input<'sm' | 'md' | 'lg'>('md');
 }

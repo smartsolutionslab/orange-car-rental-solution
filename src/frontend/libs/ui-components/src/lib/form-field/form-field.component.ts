@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -10,19 +10,19 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="form-field" [class.has-error]="hasError">
-      <label [for]="inputId" class="form-label">
-        {{ label }}
-        @if (required) {
+    <div class="form-field" [class.has-error]="hasError()">
+      <label [for]="inputId()" class="form-label">
+        {{ label() }}
+        @if (required()) {
           <span class="required">*</span>
         }
       </label>
       <ng-content></ng-content>
-      @if (hasError && errorMessage) {
-        <span class="error-text">{{ errorMessage }}</span>
+      @if (hasError() && errorMessage()) {
+        <span class="error-text">{{ errorMessage() }}</span>
       }
-      @if (hint && !hasError) {
-        <span class="hint-text">{{ hint }}</span>
+      @if (hint() && !hasError()) {
+        <span class="hint-text">{{ hint() }}</span>
       }
     </div>
   `,
@@ -89,10 +89,10 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class FormFieldComponent {
-  @Input({ required: true }) label!: string;
-  @Input() inputId?: string;
-  @Input() required = false;
-  @Input() hasError = false;
-  @Input() errorMessage?: string | null;
-  @Input() hint?: string;
+  readonly label = input.required<string>();
+  readonly inputId = input<string | undefined>(undefined);
+  readonly required = input(false);
+  readonly hasError = input(false);
+  readonly errorMessage = input<string | null | undefined>(undefined);
+  readonly hint = input<string | undefined>(undefined);
 }
