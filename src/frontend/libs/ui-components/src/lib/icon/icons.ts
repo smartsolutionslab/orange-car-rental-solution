@@ -266,6 +266,157 @@ export const ICONS: Record<string, string[]> = {
   spinner: [
     'M12 3v3m0 12v3m-9-9h3m12 0h3m-2.636-6.364l-2.121 2.121M6.757 17.243l-2.121 2.121m12.728 0l-2.121-2.121M6.757 6.757L4.636 4.636',
   ],
+
+  // ============================================================================
+  // MATERIAL DESIGN FILLED ICONS
+  // These icons use filled style (not stroke-based) for a bolder appearance
+  // ============================================================================
+
+  // Calendar filled (Material Design)
+  'calendar-filled': [
+    'M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z',
+  ],
+
+  // Location marker filled (Material Design)
+  'location-marker-filled': [
+    'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+  ],
+
+  // Car filled (Material Design)
+  'car-filled': [
+    'M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z',
+  ],
+
+  // Fuel/gas station (Material Design)
+  'fuel': [
+    'M19.77 7.23l.01-.01-3.72-3.72L15 4.56l2.11 2.11c-.94.36-1.61 1.26-1.61 2.33 0 1.38 1.12 2.5 2.5 2.5.36 0 .69-.08 1-.21v7.21c0 .55-.45 1-1 1s-1-.45-1-1V14c0-1.1-.9-2-2-2h-1V5c0-1.1-.9-2-2-2H6c-1.1 0-2 .9-2 2v16h10v-7.5h1.5v5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V9c0-.69-.28-1.32-.73-1.77zM12 13.5V19H6v-7h6v1.5zm0-3.5H6V5h6v5z',
+  ],
+
+  // Transmission/gearbox (simple bars)
+  'transmission': [
+    'M7 6h10v2H7zm0 4h10v2H7zm0 4h10v2H7z',
+  ],
+
+  // Seats/passengers (Material Design grid)
+  'seats': [
+    'M4 9h3V6H4c-1.1 0-2 .9-2 2v3h2V9zm0 4H2v3c0 1.1.9 2 2 2h3v-2H4v-3zm16-7v2h3V6c0-1.1-.9-2-2-2h-3v3h2zm-3 0h3v2h-3zM8 6h3v3H8zm3 11v2H8v-2h3zm-3-3h3v3H8zm8 3h3v2h-3zm3-11h-3v3h3zm-3 7h3v3h-3z',
+  ],
+
+  // Search filled (Material Design)
+  'search-filled': [
+    'M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
+  ],
+
+  // Refresh/reset filled (Material Design)
+  'refresh-filled': [
+    'M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z',
+  ],
+
+  // Plus filled (Material Design)
+  'plus-filled': [
+    'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
+  ],
+
+  // Eye filled (Material Design)
+  'eye-filled': [
+    'M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z',
+  ],
+
+  // X/close filled (Material Design)
+  'x-filled': [
+    'M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z',
+  ],
+
+  // Filter filled (Material Design)
+  'filter-filled': [
+    'M10 18h4v-2h-4v2zM3 6v2h18V6H3zm3 7h12v-2H6v2z',
+  ],
+
+  // Chevron up filled (Material Design)
+  'chevron-up-filled': [
+    'M7 14l5-5 5 5z',
+  ],
+
+  // Chevron down filled (Material Design)
+  'chevron-down-filled': [
+    'M7 10l5 5 5-5z',
+  ],
+
+  // Chevron left filled (Material Design)
+  'chevron-left-filled': [
+    'M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z',
+  ],
+
+  // Chevron right filled (Material Design)
+  'chevron-right-filled': [
+    'M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z',
+  ],
+
+  // Phone filled (Material Design)
+  'phone-filled': [
+    'M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z',
+  ],
+
+  // Mail filled (Material Design)
+  'mail-filled': [
+    'M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z',
+  ],
+
+  // Check circle filled (Material Design)
+  'check-circle-filled': [
+    'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z',
+  ],
+
+  // Check only (Material Design)
+  'check-filled': [
+    'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
+  ],
+
+  // Clipboard list filled (Material Design)
+  'clipboard-list-filled': [
+    'M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z',
+  ],
+
+  // Question circle filled (Material Design)
+  'question-circle-filled': [
+    'M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z',
+  ],
+
+  // Chat filled (Material Design)
+  'chat-filled': [
+    'M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z',
+  ],
+
+  // Clock filled (Material Design)
+  'clock-filled': [
+    'M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z',
+  ],
+
+  // Edit/pencil filled (Material Design)
+  'pencil-filled': [
+    'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',
+  ],
+
+  // Currency/dollar sign (Material Design)
+  'currency': [
+    'M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z',
+  ],
+
+  // Info circle filled (Material Design)
+  'info-circle-filled': [
+    'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z',
+  ],
+
+  // Print filled (Material Design)
+  'print-filled': [
+    'M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z',
+  ],
+
+  // Home filled (Material Design)
+  'home-filled': [
+    'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
+  ],
+
 };
 
 /**

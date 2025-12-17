@@ -6,6 +6,7 @@ import { SelectFuelTypeComponent } from '../select-fuel-type/select-fuel-type.co
 import { SelectTransmissionComponent } from '../select-transmission/select-transmission.component';
 import { SelectLocationComponent } from '../select-location/select-location.component';
 import { SelectSeatsComponent } from '../select-seats/select-seats.component';
+import { IconComponent } from '../icon/icon.component';
 
 export type { VehicleSearchQuery } from './types';
 
@@ -19,6 +20,7 @@ export type { VehicleSearchQuery } from './types';
     SelectTransmissionComponent,
     SelectLocationComponent,
     SelectSeatsComponent,
+    IconComponent,
   ],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css',
