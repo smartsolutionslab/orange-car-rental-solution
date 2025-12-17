@@ -18,7 +18,7 @@ import {
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
-import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
+import { DEFAULT_PAGE_SIZE, UTILIZATION_THRESHOLDS } from '../../constants/app.constants';
 import type { LocationStatistics, VehicleDistribution } from '../../types';
 /**
  * Locations management page for call center
@@ -273,8 +273,8 @@ export class LocationsComponent implements OnInit {
    * Get utilization rate class for styling
    */
   protected getUtilizationClass(rate: number): string {
-    if (rate >= 80) return 'utilization-high';
-    if (rate >= 50) return 'utilization-medium';
+    if (rate >= UTILIZATION_THRESHOLDS.HIGH) return 'utilization-high';
+    if (rate >= UTILIZATION_THRESHOLDS.MEDIUM) return 'utilization-medium';
     return 'utilization-low';
   }
 

@@ -6,7 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers, CustomValidators } from '@orange-car-rental/shared';
 import { SuccessAlertComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
-import { UI_TIMING } from '../../constants/app.constants';
+import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
 
 /**
  * Register Component
@@ -46,7 +46,7 @@ export class RegisterComponent {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-()]{10,}$/)]],
-      dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(18)]],
+      dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(BUSINESS_RULES.MINIMUM_RENTAL_AGE)]],
 
       // Step 3: Terms
       acceptTerms: [false, [Validators.requiredTrue]],

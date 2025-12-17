@@ -24,7 +24,7 @@ import {
   ErrorAlertComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
-import { UI_TIMING } from '../../constants/app.constants';
+import { UI_TIMING, DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
 import type { Reservation, ReservationSearchQuery } from '../../types';
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
@@ -90,7 +90,7 @@ export class ReservationsComponent implements OnInit {
 
   // Pagination
   protected readonly currentPage = signal(1);
-  protected readonly pageSize = signal(25);
+  protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE.RESERVATIONS);
   protected readonly totalCount = signal(0);
   protected readonly totalPages = computed(() =>
     Math.ceil(this.totalCount() / this.pageSize())
@@ -225,7 +225,7 @@ export class ReservationsComponent implements OnInit {
     if (this.sortOrder() !== 'desc') queryParams.sortOrder = this.sortOrder();
     if (this.groupBy() !== 'none') queryParams.groupBy = this.groupBy();
     if (this.currentPage() !== 1) queryParams.page = this.currentPage();
-    if (this.pageSize() !== 25) queryParams.pageSize = this.pageSize();
+    if (this.pageSize() !== DEFAULT_PAGE_SIZE.RESERVATIONS) queryParams.pageSize = this.pageSize();
 
     this.router.navigate([], {
       relativeTo: this.route,

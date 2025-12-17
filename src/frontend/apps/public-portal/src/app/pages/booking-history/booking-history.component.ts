@@ -25,7 +25,7 @@ import {
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import { DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
+import { DEFAULT_PAGE_SIZE, BUSINESS_RULES } from '../../constants/app.constants';
 import type { GroupedReservations } from '../../types';
 
 @Component({
@@ -208,7 +208,7 @@ export class BookingHistoryComponent implements OnInit {
     const now = new Date();
     const hoursUntilPickup = (pickupDate.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-    return hoursUntilPickup >= 48;
+    return hoursUntilPickup >= BUSINESS_RULES.FREE_CANCELLATION_HOURS;
   }
 
   openCancelModal(reservation: Reservation) {

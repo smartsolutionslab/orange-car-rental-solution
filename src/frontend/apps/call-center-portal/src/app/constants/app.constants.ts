@@ -25,3 +25,9 @@ export const DEFAULT_PAGE_SIZE = {
   VEHICLES: PAGE_SIZES.ALL,
   CUSTOMER_RESERVATIONS: PAGE_SIZES.LARGE
 } as const;
+
+// Business logic constants
+export const UTILIZATION_THRESHOLDS = {
+  HIGH: 80,
+  MEDIUM: 50
+} as const;

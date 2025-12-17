@@ -24,3 +24,9 @@ export const DEFAULT_PAGE_SIZE = {
   BOOKING_HISTORY: PAGE_SIZES.LARGE,
   MAX_SIMILAR_VEHICLES: 4
 } as const;
+
+// Business logic constants
+export const BUSINESS_RULES = {
+  FREE_CANCELLATION_HOURS: 48,
+  MINIMUM_RENTAL_AGE: 18
+} as const;
