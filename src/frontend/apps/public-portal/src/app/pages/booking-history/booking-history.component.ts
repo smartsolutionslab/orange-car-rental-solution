@@ -1,5 +1,6 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -52,6 +53,7 @@ export class BookingHistoryComponent implements OnInit {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly destroyRef = inject(DestroyRef);
 
   // State signals
   isAuthenticated = signal(false);
@@ -173,7 +175,7 @@ export class BookingHistoryComponent implements OnInit {
     this.reservationService.lookupGuestReservation(
       reservationId,
       email
-    ).subscribe({
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (reservation) => {
         this.guestReservation.set(reservation);
         this.isLoading.set(false);
@@ -231,7 +233,7 @@ export class BookingHistoryComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.reservationService.cancelReservation(reservation.id, this.cancellationReason).subscribe({
+    this.reservationService.cancelReservation(reservation.id, this.cancellationReason).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.closeCancelModal();
         this.isLoading.set(false);

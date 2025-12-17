@@ -1,5 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import type { Reservation } from '@orange-car-rental/reservation-api';
@@ -35,6 +36,7 @@ export class ConfirmationComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly reservationService = inject(ReservationService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly reservation = signal<Reservation | null>(null);
   protected readonly loading = signal(true);
@@ -44,7 +46,7 @@ export class ConfirmationComponent implements OnInit {
 
   ngOnInit(): void {
     // Get reservation ID from query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       const reservationId = params['reservationId'];
       const customerId = params['customerId'];
 
@@ -67,7 +69,7 @@ export class ConfirmationComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.reservationService.getReservation(reservationId).subscribe({
+    this.reservationService.getReservation(reservationId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (reservation) => {
         this.reservation.set(reservation);
         this.loading.set(false);

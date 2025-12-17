@@ -1,5 +1,6 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import type { Location } from '@orange-car-rental/location-api';
@@ -45,6 +46,7 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
 export class LocationsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly vehicleService = inject(VehicleService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly locations = signal<Location[]>([]);
   protected readonly allVehicles = signal<Vehicle[]>([]);
@@ -107,7 +109,7 @@ export class LocationsComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.locationService.getAllLocations().subscribe({
+    this.locationService.getAllLocations().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         this.loading.set(false);
@@ -125,7 +127,7 @@ export class LocationsComponent implements OnInit {
    * Load all vehicles for statistics
    */
   private loadVehicleCounts(): void {
-    this.vehicleService.searchVehicles({ pageSize: DEFAULT_PAGE_SIZE.VEHICLES }).subscribe({
+    this.vehicleService.searchVehicles({ pageSize: DEFAULT_PAGE_SIZE.VEHICLES }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         this.allVehicles.set(result.vehicles);
       },
@@ -191,7 +193,7 @@ export class LocationsComponent implements OnInit {
   private loadLocationVehicles(locationCode: string): void {
     this.loadingVehicles.set(true);
 
-    this.vehicleService.searchVehicles({ locationCode }).subscribe({
+    this.vehicleService.searchVehicles({ locationCode }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         this.locationVehicles.set(result.vehicles);
         this.loadingVehicles.set(false);
