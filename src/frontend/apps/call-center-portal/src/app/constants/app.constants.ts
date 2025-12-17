@@ -31,3 +31,20 @@ export const UTILIZATION_THRESHOLDS = {
   HIGH: 80,
   MEDIUM: 50
 } as const;
+
+// Vehicle form defaults
+export const VEHICLE_DEFAULTS = {
+  SEATS: 5,
+  DAILY_RATE_NET: 50
+} as const;
+
+// Vehicle form validation constraints
+export const VEHICLE_CONSTRAINTS = {
+  MIN_YEAR: 1900,
+  MAX_YEAR_OFFSET: 1, // Current year + 1
+  MIN_SEATS: 1,
+  MAX_SEATS: 9
+} as const;
+
+// German VAT rate (19%)
+export const GERMAN_VAT_MULTIPLIER = 1.19;

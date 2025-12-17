@@ -146,7 +146,7 @@ export class BookingComponent implements OnInit {
    * Load vehicle details and similar vehicles
    */
   private loadVehicle(vehicleId: string): void {
-    this.vehicleService.getVehicleById(vehicleId).subscribe({
+    this.vehicleService.getVehicleById(vehicleId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (vehicle) => {
         this.selectedVehicle.set(vehicle);
         // Auto-populate categoryCode from loaded vehicle
@@ -173,7 +173,7 @@ export class BookingComponent implements OnInit {
     const pickupDate = this.bookingForm.get('pickupDate')?.value;
     const returnDate = this.bookingForm.get('returnDate')?.value;
 
-    this.vehicleService.getSimilarVehicles(vehicle, pickupDate, returnDate).subscribe({
+    this.vehicleService.getSimilarVehicles(vehicle, pickupDate, returnDate).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (similar) => {
         this.similarVehicles.set(similar);
       },
@@ -191,7 +191,7 @@ export class BookingComponent implements OnInit {
   private loadCustomerProfile(): void {
     this.profileLoading.set(true);
 
-    this.customerService.getMyProfile().subscribe({
+    this.customerService.getMyProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (profile) => {
         this.customerProfile.set(profile);
         this.profileLoading.set(false);
@@ -381,7 +381,7 @@ export class BookingComponent implements OnInit {
       }
     };
 
-    this.reservationService.createGuestReservation(request).subscribe({
+    this.reservationService.createGuestReservation(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (response) => {
         // Update profile if checkbox is checked and user is authenticated
         if (this.isAuthenticated() && this.bookingForm.get('updateMyProfile')?.value) {
@@ -438,7 +438,7 @@ export class BookingComponent implements OnInit {
       }
     };
 
-    this.customerService.updateMyProfile(updateRequest).subscribe({
+    this.customerService.updateMyProfile(updateRequest).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (updatedProfile) => {
         this.customerProfile.set(updatedProfile);
       },

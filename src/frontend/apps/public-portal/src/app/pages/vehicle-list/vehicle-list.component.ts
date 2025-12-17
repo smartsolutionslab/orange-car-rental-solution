@@ -1,5 +1,6 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
 import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
@@ -34,6 +35,7 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
@@ -54,7 +56,7 @@ export class VehicleListComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.vehicleService.searchVehicles(query).subscribe({
+    this.vehicleService.searchVehicles(query).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         this.vehicles.set(result.vehicles);
         this.totalCount.set(result.totalCount);

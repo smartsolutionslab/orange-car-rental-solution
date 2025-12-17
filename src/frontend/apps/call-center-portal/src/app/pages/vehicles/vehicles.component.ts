@@ -1,5 +1,6 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import type { Vehicle, DailyRate, AddVehicleRequest } from '@orange-car-rental/vehicle-api';
@@ -22,7 +23,7 @@ import {
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
-import { UI_TIMING } from '../../constants/app.constants';
+import { UI_TIMING, VEHICLE_DEFAULTS, VEHICLE_CONSTRAINTS, GERMAN_VAT_MULTIPLIER } from '../../constants/app.constants';
 
 /**
  * Vehicles management page for call center
@@ -53,6 +54,7 @@ export class VehiclesComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly locationService = inject(LocationService);
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly locations = signal<Location[]>([]);
@@ -99,14 +101,14 @@ export class VehiclesComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       manufacturer: [''],
       model: [''],
-      year: [new Date().getFullYear(), [Validators.min(1900), Validators.max(new Date().getFullYear() + 1)]],
+      year: [new Date().getFullYear(), [Validators.min(VEHICLE_CONSTRAINTS.MIN_YEAR), Validators.max(new Date().getFullYear() + VEHICLE_CONSTRAINTS.MAX_YEAR_OFFSET)]],
       imageUrl: [''],
       category: ['', Validators.required],
-      seats: [5, [Validators.required, Validators.min(1), Validators.max(9)]],
+      seats: [VEHICLE_DEFAULTS.SEATS, [Validators.required, Validators.min(VEHICLE_CONSTRAINTS.MIN_SEATS), Validators.max(VEHICLE_CONSTRAINTS.MAX_SEATS)]],
       fuelType: ['Petrol', Validators.required],
       transmissionType: ['Manual', Validators.required],
       locationCode: ['', Validators.required],
-      dailyRateNet: [50, [Validators.required, Validators.min(1)]],
+      dailyRateNet: [VEHICLE_DEFAULTS.DAILY_RATE_NET, [Validators.required, Validators.min(1)]],
       licensePlate: ['']
     });
 
@@ -119,7 +121,7 @@ export class VehiclesComponent implements OnInit {
     });
 
     this.pricingForm = this.fb.group({
-      dailyRateNet: [50, [Validators.required, Validators.min(1)]]
+      dailyRateNet: [VEHICLE_DEFAULTS.DAILY_RATE_NET, [Validators.required, Validators.min(1)]]
     });
   }
 
@@ -128,7 +130,7 @@ export class VehiclesComponent implements OnInit {
    */
   private loadLocations(): void {
     this.loadingLocations.set(true);
-    this.locationService.getAllLocations().subscribe({
+    this.locationService.getAllLocations().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (locations) => {
         this.locations.set(locations);
         this.loadingLocations.set(false);
@@ -159,7 +161,7 @@ export class VehiclesComponent implements OnInit {
       query.categoryCode = this.searchCategory();
     }
 
-    this.vehicleService.searchVehicles(query).subscribe({
+    this.vehicleService.searchVehicles(query).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         this.vehicles.set(result.vehicles);
         this.loading.set(false);
@@ -267,10 +269,10 @@ export class VehiclesComponent implements OnInit {
   protected showAddVehicleModal(): void {
     this.addVehicleForm.reset({
       year: new Date().getFullYear(),
-      seats: 5,
+      seats: VEHICLE_DEFAULTS.SEATS,
       fuelType: 'Petrol',
       transmissionType: 'Manual',
-      dailyRateNet: 50
+      dailyRateNet: VEHICLE_DEFAULTS.DAILY_RATE_NET
     });
     this.showAddModal.set(true);
     this.error.set(null);
@@ -318,7 +320,7 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.addVehicle(request).subscribe({
+    this.vehicleService.addVehicle(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (result) => {
         this.actionInProgress.set(false);
         this.successMessage.set(`Fahrzeug "${result.name}" erfolgreich hinzugefügt`);
@@ -363,7 +365,7 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleStatus(vehicle.id, newStatus).subscribe({
+    this.vehicleService.updateVehicleStatus(vehicle.id, newStatus).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.actionInProgress.set(false);
         this.successMessage.set(`Status von "${vehicle.name}" auf "${this.getStatusText(newStatus)}" aktualisiert`);
@@ -408,7 +410,7 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleLocation(vehicle.id, newLocation).subscribe({
+    this.vehicleService.updateVehicleLocation(vehicle.id, newLocation).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.actionInProgress.set(false);
         this.successMessage.set(`Standort von "${vehicle.name}" erfolgreich aktualisiert`);
@@ -453,7 +455,7 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleDailyRate(vehicle.id, newRate).subscribe({
+    this.vehicleService.updateVehicleDailyRate(vehicle.id, newRate).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.actionInProgress.set(false);
         this.successMessage.set(`Tagespreis von "${vehicle.name}" erfolgreich aktualisiert`);
@@ -473,6 +475,6 @@ export class VehiclesComponent implements OnInit {
    * Calculate daily rate gross with VAT
    */
   protected calculateGrossRate(netRate: number): number {
-    return netRate * 1.19; // 19% German VAT
+    return netRate * GERMAN_VAT_MULTIPLIER;
   }
 }
