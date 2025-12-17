@@ -34,7 +34,7 @@
   <div class="section-header">
     <h2>Fahrzeugübersicht</h2>
     <button class="btn-primary" disabled>
-      <lib-icon name="plus-filled" variant="filled" size="md" />
+      <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
       Neues Fahrzeug
     </button>
   </div>
@@ -115,8 +115,8 @@
               <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
               <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
               <td>
-                <button class="btn-icon" (click)="viewDetails(vehicle)" title="Details anzeigen">
-                  <lib-icon name="eye-filled" variant="filled" size="sm" />
+                <button class="btn-icon" (click)="viewDetails(vehicle)" title="Details anzeigen" aria-label="Fahrzeugdetails anzeigen">
+                  <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
               </td>
             </tr>

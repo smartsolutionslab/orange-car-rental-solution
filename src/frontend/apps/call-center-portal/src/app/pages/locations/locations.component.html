@@ -48,24 +48,24 @@
               <h3>{{ location.name }}</h3>
               <span class="location-code">{{ location.code }}</span>
             </div>
-            <button class="btn-icon" (click)="viewDetails(location)" title="Details anzeigen">
-              <lib-icon name="eye-filled" variant="filled" size="sm" />
+            <button class="btn-icon" (click)="viewDetails(location)" title="Details anzeigen" aria-label="Standortdetails anzeigen">
+              <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
             </button>
           </div>
 
           <div class="location-body">
             <div class="detail-row">
-              <lib-icon name="location-marker-filled" variant="filled" size="sm" class="detail-icon" />
+              <lib-icon name="location-marker-filled" variant="filled" size="sm" class="detail-icon" aria-hidden="true" />
               <span>{{ location.street }}</span>
             </div>
             <div class="detail-row">
-              <lib-icon name="check-circle-filled" variant="filled" size="sm" class="detail-icon" />
+              <lib-icon name="check-circle-filled" variant="filled" size="sm" class="detail-icon" aria-hidden="true" />
               <span>{{ location.postalCode }} {{ location.city }}</span>
             </div>
 
             <div class="location-footer">
               <div class="vehicle-count">
-                <lib-icon name="car-filled" variant="filled" size="sm" />
+                <lib-icon name="car-filled" variant="filled" size="sm" aria-hidden="true" />
                 <span>{{ getLocationStats(location.code)?.totalVehicles || 0 }} Fahrzeuge</span>
               </div>
             </div>
@@ -132,11 +132,11 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>Kennzeichen</th>
-                  <th>Fahrzeug</th>
-                  <th>Kategorie</th>
-                  <th>Tagespreis</th>
-                  <th>Status</th>
+                  <th scope="col">Kennzeichen</th>
+                  <th scope="col">Fahrzeug</th>
+                  <th scope="col">Kategorie</th>
+                  <th scope="col">Tagespreis</th>
+                  <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>

@@ -47,7 +47,7 @@
   <div class="section-header">
     <h2>Reservierungsübersicht</h2>
     <button class="btn-primary" disabled>
-      <lib-icon name="plus-filled" variant="filled" size="md" />
+      <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
       Neue Buchung
     </button>
   </div>
@@ -61,7 +61,7 @@
           <span class="active-filters-badge">{{ activeFiltersCount() }} aktive Filter</span>
         }
         <button class="btn-secondary btn-sm" (click)="clearFilters()">
-          <lib-icon name="x-filled" variant="filled" size="sm" />
+          <lib-icon name="x-filled" variant="filled" size="sm" aria-hidden="true" />
           Zurücksetzen
         </button>
       </div>
@@ -147,7 +147,7 @@
       <!-- Apply Filters Button -->
       <div class="filter-group filter-actions">
         <button class="btn-primary btn-block" (click)="applyFilters()" [disabled]="loading()">
-          <lib-icon name="filter-filled" variant="filled" [customSize]="18" />
+          <lib-icon name="filter-filled" variant="filled" [customSize]="18" aria-hidden="true" />
           Filter anwenden
         </button>
       </div>
@@ -168,11 +168,12 @@
             class="btn-icon"
             (click)="changeSortBy(sortBy())"
             [title]="sortOrder() === 'asc' ? 'Aufsteigend' : 'Absteigend'"
+            [attr.aria-label]="sortOrder() === 'asc' ? 'Sortierung umkehren (aktuell aufsteigend)' : 'Sortierung umkehren (aktuell absteigend)'"
           >
             @if (sortOrder() === 'asc') {
-              <lib-icon name="chevron-up-filled" variant="filled" [customSize]="20" />
+              <lib-icon name="chevron-up-filled" variant="filled" [customSize]="20" aria-hidden="true" />
             } @else {
-              <lib-icon name="chevron-down-filled" variant="filled" [customSize]="20" />
+              <lib-icon name="chevron-down-filled" variant="filled" [customSize]="20" aria-hidden="true" />
             }
           </button>
         </div>
@@ -228,14 +229,14 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Reservierungs-ID</th>
-                    <th>Kunde</th>
-                    <th>Abholdatum</th>
-                    <th>Rückgabedatum</th>
-                    <th>Standort</th>
-                    <th>Preis</th>
-                    <th>Status</th>
-                    <th>Aktionen</th>
+                    <th scope="col">Reservierungs-ID</th>
+                    <th scope="col">Kunde</th>
+                    <th scope="col">Abholdatum</th>
+                    <th scope="col">Rückgabedatum</th>
+                    <th scope="col">Standort</th>
+                    <th scope="col">Preis</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Aktionen</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -279,14 +280,14 @@
         <table>
           <thead>
             <tr>
-              <th>Reservierungs-ID</th>
-              <th>Kunde</th>
-              <th>Abholdatum</th>
-              <th>Rückgabedatum</th>
-              <th>Standort</th>
-              <th>Preis</th>
-              <th>Status</th>
-              <th>Aktionen</th>
+              <th scope="col">Reservierungs-ID</th>
+              <th scope="col">Kunde</th>
+              <th scope="col">Abholdatum</th>
+              <th scope="col">Rückgabedatum</th>
+              <th scope="col">Standort</th>
+              <th scope="col">Preis</th>
+              <th scope="col">Status</th>
+              <th scope="col">Aktionen</th>
             </tr>
           </thead>
           <tbody>
