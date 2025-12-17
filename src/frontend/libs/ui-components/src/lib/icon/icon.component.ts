@@ -1,4 +1,5 @@
 import { Component, input, computed } from '@angular/core';
+import { logError } from '@orange-car-rental/util';
 import { CommonModule } from '@angular/common';
 import { ICONS, type IconName, isValidIconName } from './icons';
 
@@ -136,7 +137,7 @@ export class IconComponent {
     if (isValidIconName(iconName)) {
       return ICONS[iconName];
     }
-    console.warn(`Icon "${iconName}" not found in registry`);
+    logError('IconComponent', `Icon '${iconName}' not found in registry`);
     return [];
   });
 

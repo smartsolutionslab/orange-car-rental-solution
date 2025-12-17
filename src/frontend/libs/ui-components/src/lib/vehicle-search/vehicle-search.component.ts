@@ -1,4 +1,5 @@
-import { Component, output, signal, inject, type OnInit } from '@angular/core';
+import { Component, output, signal, inject, DestroyRef, type OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import type { VehicleSearchQuery } from './types';
 import { SelectCategoryComponent } from '../select-category/select-category.component';
@@ -9,6 +10,11 @@ import { SelectSeatsComponent } from '../select-seats/select-seats.component';
 import { IconComponent } from '../icon/icon.component';
 
 export type { VehicleSearchQuery } from './types';
+
+/** Default pickup/return time for vehicle search */
+const DEFAULT_SEARCH_TIME = '10:00';
+/** Default rental duration in days */
+const DEFAULT_RENTAL_DAYS = 3;
 
 @Component({
   selector: 'ocr-vehicle-search',
@@ -27,6 +33,7 @@ export type { VehicleSearchQuery } from './types';
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   search = output<VehicleSearchQuery>();
 
@@ -39,9 +46,9 @@ export class VehicleSearchComponent implements OnInit {
   constructor() {
     this.searchForm = this.fb.group({
       pickupDate: [''],
-      pickupTime: ['10:00'],
+      pickupTime: [DEFAULT_SEARCH_TIME],
       returnDate: [''],
-      returnTime: ['10:00'],
+      returnTime: [DEFAULT_SEARCH_TIME],
       locationCode: [''],
       categoryCode: [''],
       fuelType: [''],
@@ -55,14 +62,14 @@ export class VehicleSearchComponent implements OnInit {
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const returnDate = new Date(tomorrow);
-    returnDate.setDate(returnDate.getDate() + 3);
+    returnDate.setDate(returnDate.getDate() + DEFAULT_RENTAL_DAYS);
 
     this.searchForm.patchValue({
       pickupDate: tomorrow.toISOString().split('T')[0],
       returnDate: returnDate.toISOString().split('T')[0],
     });
 
-    this.searchForm.get('pickupDate')?.valueChanges.subscribe((pickupDate) => {
+    this.searchForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate) => {
       if (pickupDate) {
         const pickup = new Date(pickupDate);
         pickup.setDate(pickup.getDate() + 1);
@@ -115,9 +122,9 @@ export class VehicleSearchComponent implements OnInit {
   protected onReset(): void {
     this.searchForm.reset({
       pickupDate: '',
-      pickupTime: '10:00',
+      pickupTime: DEFAULT_SEARCH_TIME,
       returnDate: '',
-      returnTime: '10:00',
+      returnTime: DEFAULT_SEARCH_TIME,
       locationCode: '',
       categoryCode: '',
       fuelType: '',

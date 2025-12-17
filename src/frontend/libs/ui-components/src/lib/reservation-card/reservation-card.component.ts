@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StatusBadgeComponent } from '../status-badge/status-badge.component';
 import { formatDateDE, formatPriceDE } from '../utils/status-display.utils';
@@ -25,45 +25,45 @@ export interface ReservationCardData {
   standalone: true,
   imports: [CommonModule, StatusBadgeComponent],
   template: `
-    <div class="reservation-card" [ngClass]="variant">
+    <div class="reservation-card" [ngClass]="variant()">
       <div class="card-header">
-        <span class="reservation-id">{{ reservation.id.substring(0, 8) }}...</span>
-        <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
+        <span class="reservation-id">{{ reservation().id.substring(0, 8) }}...</span>
+        <ui-status-badge type="reservation" [status]="reservation().status"></ui-status-badge>
       </div>
       <div class="card-body">
         <div class="detail-row">
           <span class="label">Abholtermin:</span>
-          <span class="value">{{ formatDate(reservation.pickupDate) }}</span>
+          <span class="value">{{ formatDate(reservation().pickupDate) }}</span>
         </div>
         <div class="detail-row">
           <span class="label">Rückgabetermin:</span>
-          <span class="value">{{ formatDate(reservation.returnDate) }}</span>
+          <span class="value">{{ formatDate(reservation().returnDate) }}</span>
         </div>
-        @if (showLocations && reservation.pickupLocationCode) {
+        @if (showLocations() && reservation().pickupLocationCode) {
           <div class="detail-row">
             <span class="label">Abholort:</span>
-            <span class="value">{{ reservation.pickupLocationCode }}</span>
+            <span class="value">{{ reservation().pickupLocationCode }}</span>
           </div>
         }
-        @if (showLocations && reservation.dropoffLocationCode) {
+        @if (showLocations() && reservation().dropoffLocationCode) {
           <div class="detail-row">
             <span class="label">Rückgabeort:</span>
-            <span class="value">{{ reservation.dropoffLocationCode }}</span>
+            <span class="value">{{ reservation().dropoffLocationCode }}</span>
           </div>
         }
         <div class="detail-row price">
           <span class="label">Gesamtpreis:</span>
-          <span class="value">{{ formatPrice(reservation.totalPriceGross) }}</span>
+          <span class="value">{{ formatPrice(reservation().totalPriceGross) }}</span>
         </div>
       </div>
       <div class="card-footer">
-        @if (showDetails) {
+        @if (showDetails()) {
           <button class="btn-secondary" (click)="onViewDetails()">Details</button>
         }
-        @if (showPrint) {
+        @if (showPrint()) {
           <button class="btn-secondary" (click)="onPrint()">Drucken</button>
         }
-        @if (showCancel && canCancel) {
+        @if (showCancel() && canCancel()) {
           <button class="btn-danger" (click)="onCancel()">Stornieren</button>
         }
       </div>
@@ -179,33 +179,33 @@ export interface ReservationCardData {
   `]
 })
 export class ReservationCardComponent {
-  @Input({ required: true }) reservation!: ReservationCardData;
-  @Input() variant: ReservationCardVariant = 'upcoming';
-  @Input() canCancel = false;
-  @Input() showDetails = true;
-  @Input() showPrint = false;
-  @Input() showCancel = true;
+  readonly reservation = input.required<ReservationCardData>();
+  readonly variant = input<ReservationCardVariant>('upcoming');
+  readonly canCancel = input(false);
+  readonly showDetails = input(true);
+  readonly showPrint = input(false);
+  readonly showCancel = input(true);
 
-  @Output() viewDetails = new EventEmitter<ReservationCardData>();
-  @Output() cancel = new EventEmitter<ReservationCardData>();
-  @Output() print = new EventEmitter<ReservationCardData>();
+  readonly viewDetails = output<ReservationCardData>();
+  readonly cancel = output<ReservationCardData>();
+  readonly print = output<ReservationCardData>();
 
   protected readonly formatDate = formatDateDE;
   protected readonly formatPrice = formatPriceDE;
 
-  protected get showLocations(): boolean {
-    return this.variant === 'upcoming' || this.variant === 'guest';
-  }
+  protected readonly showLocations = computed(() =>
+    this.variant() === 'upcoming' || this.variant() === 'guest'
+  );
 
   protected onViewDetails(): void {
-    this.viewDetails.emit(this.reservation);
+    this.viewDetails.emit(this.reservation());
   }
 
   protected onCancel(): void {
-    this.cancel.emit(this.reservation);
+    this.cancel.emit(this.reservation());
   }
 
   protected onPrint(): void {
-    this.print.emit(this.reservation);
+    this.print.emit(this.reservation());
   }
 }

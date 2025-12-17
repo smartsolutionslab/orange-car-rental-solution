@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, input, output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 /**
@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    @if (isOpen) {
+    @if (isOpen()) {
       <div
         class="modal-overlay"
         (click)="onOverlayClick()"
@@ -30,16 +30,16 @@ import { CommonModule } from '@angular/common';
       >
         <div
           class="modal-content"
-          [class.modal-sm]="size === 'sm'"
-          [class.modal-md]="size === 'md'"
-          [class.modal-lg]="size === 'lg'"
-          [class.modal-xl]="size === 'xl'"
+          [class.modal-sm]="size() === 'sm'"
+          [class.modal-md]="size() === 'md'"
+          [class.modal-lg]="size() === 'lg'"
+          [class.modal-xl]="size() === 'xl'"
           (click)="$event.stopPropagation()"
           (keydown)="$event.stopPropagation()"
           role="document"
         >
           <div class="modal-header">
-            <h2 [id]="titleId">{{ title }}</h2>
+            <h2 [id]="titleId">{{ title() }}</h2>
             <button class="btn-close" (click)="onClose()" type="button" aria-label="Schließen">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -49,7 +49,7 @@ import { CommonModule } from '@angular/common';
           <div class="modal-body">
             <ng-content select="[modal-body]"></ng-content>
           </div>
-          @if (showFooter) {
+          @if (showFooter()) {
             <div class="modal-footer">
               <ng-content select="[modal-footer]"></ng-content>
             </div>
@@ -183,26 +183,26 @@ import { CommonModule } from '@angular/common';
   `]
 })
 export class ModalComponent {
-  @Input({ required: true }) isOpen = false;
-  @Input({ required: true }) title = '';
-  @Input() size: 'sm' | 'md' | 'lg' | 'xl' = 'md';
-  @Input() showFooter = true;
-  @Input() closeOnEscape = true;
-  @Input() closeOnOverlayClick = true;
+  readonly isOpen = input.required<boolean>();
+  readonly title = input.required<string>();
+  readonly size = input<'sm' | 'md' | 'lg' | 'xl'>('md');
+  readonly showFooter = input(true);
+  readonly closeOnEscape = input(true);
+  readonly closeOnOverlayClick = input(true);
 
-  @Output() close = new EventEmitter<void>();
+  readonly close = output<void>();
 
   protected readonly titleId = `modal-title-${Math.random().toString(36).slice(2, 9)}`;
 
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
-    if (this.isOpen && this.closeOnEscape) {
+    if (this.isOpen() && this.closeOnEscape()) {
       this.onClose();
     }
   }
 
   protected onOverlayClick(): void {
-    if (this.closeOnOverlayClick) {
+    if (this.closeOnOverlayClick()) {
       this.onClose();
     }
   }
