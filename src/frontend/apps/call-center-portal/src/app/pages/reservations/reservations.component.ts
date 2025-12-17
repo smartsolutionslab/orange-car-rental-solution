@@ -1,8 +1,9 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { Component, inject, signal, computed, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReservationStatus, isCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import {
@@ -63,6 +64,7 @@ export class ReservationsComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly reservations = signal<Reservation[]>([]);
   protected readonly loading = signal(false);
@@ -182,7 +184,7 @@ export class ReservationsComponent implements OnInit {
    * Load filter values from URL query parameters
    */
   private loadFiltersFromUrl(): void {
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       if (params['status']) this.searchStatus.set(params['status']);
       if (params['customerId']) this.searchCustomerId.set(params['customerId']);
       if (params['dateFrom']) this.searchPickupDateFrom.set(params['dateFrom']);

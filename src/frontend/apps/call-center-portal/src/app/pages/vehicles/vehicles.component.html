@@ -6,25 +6,25 @@
 <div class="dashboard-grid">
   <ui-stat-card
     label="Gesamte Fahrzeuge"
-    [value]="totalVehicles"
+    [value]="totalVehicles()"
     [loading]="loading()"
     iconName="car-filled"
   />
   <ui-stat-card
     label="Verfügbar"
-    [value]="availableVehicles"
+    [value]="availableVehicles()"
     [loading]="loading()"
     variant="success"
   />
   <ui-stat-card
     label="In Wartung"
-    [value]="maintenanceVehicles"
+    [value]="maintenanceVehicles()"
     [loading]="loading()"
     variant="warning"
   />
   <ui-stat-card
     label="Vermietet"
-    [value]="rentedVehicles"
+    [value]="rentedVehicles()"
     [loading]="loading()"
     variant="info"
   />

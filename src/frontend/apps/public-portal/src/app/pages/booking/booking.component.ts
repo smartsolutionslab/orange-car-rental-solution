@@ -1,9 +1,10 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomValidators } from '@orange-car-rental/shared';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
 import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
@@ -48,6 +49,7 @@ export class BookingComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly vehicleService = inject(VehicleService);
+  private readonly destroyRef = inject(DestroyRef);
   private readonly reservationService = inject(ReservationService);
   private readonly authService = inject(AuthService);
   private readonly customerService = inject(CustomerService);
@@ -118,7 +120,7 @@ export class BookingComponent implements OnInit {
     }
 
     // Get vehicle ID from route query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
       const vehicleId = params['vehicleId'];
       const pickupDate = params['pickupDate'];
       const returnDate = params['returnDate'];
@@ -231,7 +233,7 @@ export class BookingComponent implements OnInit {
    */
   private setupDateValidation(): void {
     // Update min return date when pickup date changes
-    this.bookingForm.get('pickupDate')?.valueChanges.subscribe((pickupDate: string) => {
+    this.bookingForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate: string) => {
       if (pickupDate) {
         const minReturn = addDays(pickupDate, 1);
         this.minReturnDate.set(minReturn);
@@ -247,7 +249,7 @@ export class BookingComponent implements OnInit {
     });
 
     // Update min expiry date when issue date changes
-    this.bookingForm.get('licenseIssueDate')?.valueChanges.subscribe((issueDate: string) => {
+    this.bookingForm.get('licenseIssueDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((issueDate: string) => {
       if (issueDate) {
         const minExpiry = addDays(issueDate, 1);
         this.minLicenseExpiryDate.set(minExpiry);

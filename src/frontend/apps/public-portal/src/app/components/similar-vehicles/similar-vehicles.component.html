@@ -1,6 +1,6 @@
 <div class="similar-vehicles-container">
   <!-- Unavailability Warning -->
-  @if (showUnavailableWarning && currentVehicle) {
+  @if (showUnavailableWarning() && currentVehicle()) {
     <div class="unavailable-warning">
       <svg class="warning-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
@@ -8,7 +8,7 @@
       <div class="warning-content">
         <h3 class="warning-title">Fahrzeug nicht verfügbar</h3>
         <p class="warning-text">
-          {{ currentVehicle.name }} ist für den gewählten Zeitraum leider nicht mehr verfügbar.
+          {{ currentVehicle()!.name }} ist für den gewählten Zeitraum leider nicht mehr verfügbar.
           Hier sind ähnliche Alternativen:
         </p>
       </div>
@@ -16,7 +16,7 @@
   }
 
   <!-- Header -->
-  @if (!showUnavailableWarning) {
+  @if (!showUnavailableWarning()) {
     <div class="section-header">
       <h2 class="section-title">Ähnliche Fahrzeuge</h2>
       <p class="section-subtitle">Vielleicht interessiert Sie auch eines dieser Fahrzeuge</p>
@@ -24,9 +24,9 @@
   }
 
   <!-- Similar Vehicles Grid -->
-  @if (similarVehicles.length > 0) {
+  @if (similarVehicles().length > 0) {
     <div class="vehicles-grid">
-      @for (vehicle of similarVehicles; track vehicle.id) {
+      @for (vehicle of similarVehicles(); track vehicle.id) {
         <div class="vehicle-card">
           <!-- Vehicle Image -->
           <div class="vehicle-image">

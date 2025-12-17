@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, computed } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -206,32 +206,30 @@ export class VehiclesComponent implements OnInit {
   }
 
   /**
-   * Get total number of vehicles
+   * Total number of vehicles
    */
-  protected get totalVehicles(): number {
-    return this.vehicles().length;
-  }
+  protected readonly totalVehicles = computed(() => this.vehicles().length);
 
   /**
-   * Get number of available vehicles
+   * Number of available vehicles
    */
-  protected get availableVehicles(): number {
-    return this.vehicles().filter(v => v.status === VehicleStatus.Available).length;
-  }
+  protected readonly availableVehicles = computed(() =>
+    this.vehicles().filter(v => v.status === VehicleStatus.Available).length
+  );
 
   /**
-   * Get number of vehicles in maintenance
+   * Number of vehicles in maintenance
    */
-  protected get maintenanceVehicles(): number {
-    return this.vehicles().filter(v => v.status === VehicleStatus.Maintenance).length;
-  }
+  protected readonly maintenanceVehicles = computed(() =>
+    this.vehicles().filter(v => v.status === VehicleStatus.Maintenance).length
+  );
 
   /**
-   * Get number of rented vehicles
+   * Number of rented vehicles
    */
-  protected get rentedVehicles(): number {
-    return this.vehicles().filter(v => v.status === VehicleStatus.Rented).length;
-  }
+  protected readonly rentedVehicles = computed(() =>
+    this.vehicles().filter(v => v.status === VehicleStatus.Rented).length
+  );
 
   /**
    * Get status badge class
@@ -244,20 +242,20 @@ export class VehiclesComponent implements OnInit {
   protected getStatusText = getVehicleStatusLabel;
 
   /**
-   * Get unique locations from vehicles
+   * Unique locations from vehicles
    */
-  protected get uniqueLocations(): string[] {
+  protected readonly uniqueLocations = computed(() => {
     const locations = new Set(this.vehicles().map(v => v.locationCode));
     return Array.from(locations).sort();
-  }
+  });
 
   /**
-   * Get unique categories from vehicles
+   * Unique categories from vehicles
    */
-  protected get uniqueCategories(): string[] {
+  protected readonly uniqueCategories = computed(() => {
     const categories = new Set(this.vehicles().map(v => v.categoryCode));
     return Array.from(categories).sort();
-  }
+  });
 
   // ============================================================================
   // FLEET MANAGEMENT ACTIONS

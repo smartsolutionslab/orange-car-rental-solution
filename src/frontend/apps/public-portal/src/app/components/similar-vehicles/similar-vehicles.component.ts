@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
 
@@ -17,20 +17,20 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
   styleUrl: './similar-vehicles.component.css'
 })
 export class SimilarVehiclesComponent {
-  @Input() currentVehicle: Vehicle | null = null;
-  @Input() similarVehicles: Vehicle[] = [];
-  @Input() showUnavailableWarning = false;
-  @Output() vehicleSelected = new EventEmitter<Vehicle>();
+  readonly currentVehicle = input<Vehicle | null>(null);
+  readonly similarVehicles = input<Vehicle[]>([]);
+  readonly showUnavailableWarning = input(false);
+  readonly vehicleSelected = output<Vehicle>();
 
   /**
    * Calculate price difference between current and alternative vehicle
    */
   protected getPriceDifference(vehicle: Vehicle): { amount: number; text: string } {
-    if (!this.currentVehicle) {
+    if (!this.currentVehicle()) {
       return { amount: 0, text: '' };
     }
 
-    const currentPrice = this.currentVehicle.dailyRateGross;
+    const currentPrice = this.currentVehicle()!.dailyRateGross;
     const alternativePrice = vehicle.dailyRateGross;
     const difference = currentPrice - alternativePrice;
     const absDifference = Math.abs(difference);
@@ -57,14 +57,14 @@ export class SimilarVehiclesComponent {
    * Get similarity reason for the vehicle
    */
   protected getSimilarityReason(vehicle: Vehicle): string {
-    if (!this.currentVehicle) {
+    if (!this.currentVehicle()) {
       return '';
     }
 
     const reasons: string[] = [];
 
     // Same category
-    if (vehicle.categoryCode === this.currentVehicle.categoryCode) {
+    if (vehicle.categoryCode === this.currentVehicle()!.categoryCode) {
       reasons.push('Gleiche Kategorie');
     } else {
       reasons.push('Ähnliche Kategorie');
@@ -79,12 +79,12 @@ export class SimilarVehiclesComponent {
     }
 
     // Same fuel type
-    if (vehicle.fuelType === this.currentVehicle.fuelType) {
+    if (vehicle.fuelType === this.currentVehicle()!.fuelType) {
       reasons.push(`${vehicle.fuelType}`);
     }
 
     // Same transmission
-    if (vehicle.transmissionType === this.currentVehicle.transmissionType) {
+    if (vehicle.transmissionType === this.currentVehicle()!.transmissionType) {
       reasons.push(vehicle.transmissionType);
     }
 

@@ -1,6 +1,7 @@
-import { Component, output, signal, inject } from '@angular/core';
+import { Component, output, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import type { VehicleSearchQuery, FuelType, TransmissionType } from '@orange-car-rental/vehicle-api';
 import {
@@ -43,6 +44,7 @@ import {
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
   // Output event for search
   searchSubmit = output<VehicleSearchQuery>();
@@ -79,7 +81,7 @@ export class VehicleSearchComponent implements OnInit {
     });
 
     // Update min return date when pickup date changes
-    this.searchForm.get('pickupDate')?.valueChanges.subscribe((pickupDate: string) => {
+    this.searchForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate: string) => {
       if (pickupDate) {
         const minReturn = addDays(pickupDate, 1);
         this.minReturnDate.set(minReturn);

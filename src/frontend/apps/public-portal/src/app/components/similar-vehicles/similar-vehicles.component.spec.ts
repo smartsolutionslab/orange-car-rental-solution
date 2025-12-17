@@ -84,8 +84,8 @@ describe('SimilarVehiclesComponent', () => {
 
     fixture = TestBed.createComponent(SimilarVehiclesComponent);
     component = fixture.componentInstance;
-    component.currentVehicle = mockCurrentVehicle;
-    component.similarVehicles = mockSimilarVehicles;
+    fixture.componentRef.setInput('currentVehicle', mockCurrentVehicle);
+    fixture.componentRef.setInput('similarVehicles', mockSimilarVehicles);
     fixture.detectChanges();
   });
 
@@ -125,7 +125,8 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should return empty when current vehicle is null', () => {
-      component.currentVehicle = null;
+      fixture.componentRef.setInput('currentVehicle', null);
+      fixture.detectChanges();
       const result = component['getPriceDifference'](mockSimilarVehicles[0]!);
 
       expect(result.amount).toBe(0);
@@ -170,7 +171,8 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should return empty string when current vehicle is null', () => {
-      component.currentVehicle = null;
+      fixture.componentRef.setInput('currentVehicle', null);
+      fixture.detectChanges();
       const reason = component['getSimilarityReason'](mockSimilarVehicles[0]!);
 
       expect(reason).toBe('');
@@ -226,7 +228,7 @@ describe('SimilarVehiclesComponent', () => {
 
   describe('UI Rendering', () => {
     it('should display unavailable warning when showUnavailableWarning is true', () => {
-      component.showUnavailableWarning = true;
+      fixture.componentRef.setInput('showUnavailableWarning', true);
       fixture.detectChanges();
 
       const warning = fixture.nativeElement.querySelector('.unavailable-warning');
@@ -234,7 +236,7 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should not show unavailable warning when showUnavailableWarning is false', () => {
-      component.showUnavailableWarning = false;
+      fixture.componentRef.setInput('showUnavailableWarning', false);
       fixture.detectChanges();
 
       const warning = fixture.nativeElement.querySelector('.unavailable-warning');
@@ -242,7 +244,7 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should display section header when no warning', () => {
-      component.showUnavailableWarning = false;
+      fixture.componentRef.setInput('showUnavailableWarning', false);
       fixture.detectChanges();
 
       const header = fixture.nativeElement.querySelector('.section-title');
@@ -268,7 +270,7 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should show no vehicles message when array is empty', () => {
-      component.similarVehicles = [];
+      fixture.componentRef.setInput('similarVehicles', []);
       fixture.detectChanges();
 
       const noVehicles = fixture.nativeElement.querySelector('.no-vehicles');
