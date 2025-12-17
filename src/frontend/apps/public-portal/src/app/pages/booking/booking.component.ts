@@ -14,6 +14,7 @@ import {
   calculateRentalDays,
   getTodayDateString,
   addDays,
+  IconComponent,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -36,7 +37,9 @@ import type { BookingFormValue } from '../../types';
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent, ErrorAlertComponent],
+  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent, ErrorAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './booking.component.html',
   styleUrl: './booking.component.css'
 })

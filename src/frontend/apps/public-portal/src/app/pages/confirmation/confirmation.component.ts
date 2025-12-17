@@ -10,6 +10,7 @@ import {
   ErrorStateComponent,
   calculateRentalDays,
   formatDateLongDE,
+  IconComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 
@@ -25,6 +26,7 @@ import { ReservationService } from '../../services/reservation.service';
     StatusBadgeComponent,
     LoadingStateComponent,
     ErrorStateComponent,
+    IconComponent,
   ],
   templateUrl: './confirmation.component.html',
   styleUrl: './confirmation.component.css'

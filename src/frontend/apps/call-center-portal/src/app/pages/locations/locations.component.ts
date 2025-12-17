@@ -14,6 +14,7 @@ import {
   EmptyStateComponent,
   ErrorStateComponent,
   StatCardComponent,
+  IconComponent,
   getVehicleStatusClass,
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
@@ -36,6 +37,7 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
     EmptyStateComponent,
     ErrorStateComponent,
     StatCardComponent,
+    IconComponent,
   ],
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css'

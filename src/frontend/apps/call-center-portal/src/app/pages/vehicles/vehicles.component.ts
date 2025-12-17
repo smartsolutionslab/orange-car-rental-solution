@@ -16,7 +16,8 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
-    StatCardComponent,
+  StatCardComponent,
+  IconComponent,
   getVehicleStatusClass,
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
@@ -43,6 +44,7 @@ import { UI_TIMING } from '../../constants/app.constants';
     EmptyStateComponent,
     ErrorStateComponent,
     StatCardComponent,
+    IconComponent,
   ],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css'

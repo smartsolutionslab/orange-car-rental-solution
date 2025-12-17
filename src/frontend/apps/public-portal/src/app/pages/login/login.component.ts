@@ -5,7 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers } from '@orange-car-rental/shared';
-import { ErrorAlertComponent } from '@orange-car-rental/ui-components';
+import { ErrorAlertComponent,
+  IconComponent,
+} from '@orange-car-rental/ui-components';
 
 /**
  * Login Component
@@ -16,7 +18,9 @@ import { ErrorAlertComponent } from '@orange-car-rental/ui-components';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorAlertComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })

@@ -4,7 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
-import { FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
+import { FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent,
+  IconComponent,
+} from '@orange-car-rental/ui-components';
 
 /**
  * Forgot Password Component
@@ -15,7 +17,9 @@ import { FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent } from '
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css'
 })

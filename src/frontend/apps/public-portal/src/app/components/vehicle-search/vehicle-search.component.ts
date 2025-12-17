@@ -10,6 +10,7 @@ import {
   SelectTransmissionComponent,
   getTodayDateString,
   addDays,
+  IconComponent,
 } from '@orange-car-rental/ui-components';
 
 /**
@@ -34,7 +35,8 @@ import {
     SelectLocationComponent,
     SelectCategoryComponent,
     SelectFuelTypeComponent,
-    SelectTransmissionComponent
+    SelectTransmissionComponent,
+    IconComponent
   ],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css'

@@ -8,6 +8,7 @@ import {
   LoadingStateComponent,
   EmptyStateComponent,
   ErrorStateComponent,
+  IconComponent,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-search.component';
@@ -25,6 +26,7 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
     LoadingStateComponent,
     EmptyStateComponent,
     ErrorStateComponent,
+    IconComponent,
   ],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css'

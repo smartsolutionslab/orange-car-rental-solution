@@ -70,9 +70,7 @@
 
           @if (getRentalDays() > 0) {
             <div class="rental-info">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-              </svg>
+              <lib-icon name="clock-filled" variant="filled" size="sm" />
               <span>{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span>
             </div>
           }
@@ -410,9 +408,7 @@
     <div class="form-navigation">
       @if (currentStep() > 1) {
         <button type="button" class="btn btn-secondary" (click)="previousStep()" [disabled]="submitting()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
-          </svg>
+          <lib-icon name="chevron-left-filled" variant="filled" size="sm" />
           Zurück
         </button>
       }
@@ -427,9 +423,7 @@
           [disabled]="!isCurrentStepValid()"
         >
           Weiter
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
-          </svg>
+          <lib-icon name="chevron-right-filled" variant="filled" size="sm" />
         </button>
       }
 
@@ -443,9 +437,7 @@
             <span class="spinner"></span>
             Wird gesendet...
           } @else {
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
+            <lib-icon name="check-filled" variant="filled" size="lg" />
             Buchung abschließen
           }
         </button>
