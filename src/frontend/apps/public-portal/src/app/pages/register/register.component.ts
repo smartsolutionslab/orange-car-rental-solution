@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers, CustomValidators } from '@orange-car-rental/shared';
 import { SuccessAlertComponent, ErrorAlertComponent } from '@orange-car-rental/ui-components';
+import { UI_TIMING } from '../../constants/app.constants';
 
 /**
  * Register Component
@@ -82,7 +83,7 @@ export class RegisterComponent {
       setTimeout(async () => {
         await this.authService.loginWithPassword(formValue.email, formValue.password);
         this.router.navigate(['/']);
-      }, 2000);
+      }, UI_TIMING.REDIRECT_DELAY);
 
     } catch (error: unknown) {
       logError('RegisterComponent', 'Registration error', error);

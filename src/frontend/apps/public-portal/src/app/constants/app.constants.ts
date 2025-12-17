@@ -13,7 +13,8 @@ export const PAGE_SIZES = {
 export const UI_TIMING = {
   SUCCESS_MESSAGE_DURATION: 3000,
   ERROR_MESSAGE_DURATION: 5000,
-  DEBOUNCE_TIME: 300
+  DEBOUNCE_TIME: 300,
+  REDIRECT_DELAY: 2000
 } as const;
 
 // Default page size for different contexts
