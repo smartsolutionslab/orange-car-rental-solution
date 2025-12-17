@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, computed, signal } from '@angular/core';
+import { Component, input, output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IconComponent } from '../icon/icon.component';
 
@@ -20,77 +20,59 @@ export class PaginationComponent {
   /**
    * Current page number (1-indexed)
    */
-  @Input({ required: true })
-  set currentPage(value: number) {
-    this._currentPage.set(value);
-  }
-  private readonly _currentPage = signal(1);
+  readonly currentPage = input.required<number>();
 
   /**
    * Total number of pages
    */
-  @Input({ required: true })
-  set totalPages(value: number) {
-    this._totalPages.set(value);
-  }
-  private readonly _totalPages = signal(1);
+  readonly totalPages = input.required<number>();
 
   /**
    * Total count of items (optional, for display)
    */
-  @Input() totalItems?: number;
+  readonly totalItems = input<number | undefined>(undefined);
 
   /**
    * Items per page (optional, for display)
    */
-  @Input() pageSize?: number;
+  readonly pageSize = input<number | undefined>(undefined);
 
   /**
    * Label for previous button
    */
-  @Input() previousLabel = 'Zurück';
+  readonly previousLabel = input('Zurück');
 
   /**
    * Label for next button
    */
-  @Input() nextLabel = 'Weiter';
+  readonly nextLabel = input('Weiter');
 
   /**
    * Show item range info (e.g., "Showing 1-10 of 100")
    */
-  @Input() showItemRange = false;
+  readonly showItemRange = input(false);
 
   /**
    * Item label for range display (singular)
    */
-  @Input() itemLabel = 'Eintrag';
+  readonly itemLabel = input('Eintrag');
 
   /**
    * Item label for range display (plural)
    */
-  @Input() itemLabelPlural = 'Einträge';
+  readonly itemLabelPlural = input('Einträge');
 
   /**
    * Emitted when page changes
    */
-  @Output() pageChange = new EventEmitter<number>();
-
-  /**
-   * Current page signal for template
-   */
-  protected readonly page = computed(() => this._currentPage());
-
-  /**
-   * Total pages signal for template
-   */
-  protected readonly total = computed(() => this._totalPages());
+  readonly pageChange = output<number>();
 
   /**
    * Calculate visible page numbers
    */
   protected readonly visiblePages = computed(() => {
-    const current = this._currentPage();
-    const total = this._totalPages();
+    const current = this.currentPage();
+    const total = this.totalPages();
     const pages: number[] = [];
 
     for (let i = current - PaginationComponent.PAGES_AROUND_CURRENT; i <= current + PaginationComponent.PAGES_AROUND_CURRENT; i++) {
@@ -105,39 +87,40 @@ export class PaginationComponent {
   /**
    * Check if we should show first page and leading ellipsis
    */
-  protected readonly showLeadingEllipsis = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
-  protected readonly showLeadingFirstPage = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
-  protected readonly showLeadingDots = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 2);
+  protected readonly showLeadingFirstPage = computed(() => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
+  protected readonly showLeadingDots = computed(() => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 2);
 
   /**
    * Check if we should show last page and trailing ellipsis
    */
-  protected readonly showTrailingEllipsis = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
-  protected readonly showTrailingLastPage = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
-  protected readonly showTrailingDots = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT - 1);
+  protected readonly showTrailingLastPage = computed(() => this.currentPage() < this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
+  protected readonly showTrailingDots = computed(() => this.currentPage() < this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT - 1);
 
   /**
    * Calculate range start
    */
   protected readonly rangeStart = computed(() => {
-    if (!this.pageSize) return 0;
-    return (this._currentPage() - 1) * this.pageSize + 1;
+    const size = this.pageSize();
+    if (!size) return 0;
+    return (this.currentPage() - 1) * size + 1;
   });
 
   /**
    * Calculate range end
    */
   protected readonly rangeEnd = computed(() => {
-    if (!this.pageSize || !this.totalItems) return 0;
-    return Math.min(this._currentPage() * this.pageSize, this.totalItems);
+    const size = this.pageSize();
+    const total = this.totalItems();
+    if (!size || !total) return 0;
+    return Math.min(this.currentPage() * size, total);
   });
 
   /**
    * Go to previous page
    */
   protected previousPage(): void {
-    if (this._currentPage() > 1) {
-      this.pageChange.emit(this._currentPage() - 1);
+    if (this.currentPage() > 1) {
+      this.pageChange.emit(this.currentPage() - 1);
     }
   }
 
@@ -145,8 +128,8 @@ export class PaginationComponent {
    * Go to next page
    */
   protected nextPage(): void {
-    if (this._currentPage() < this._totalPages()) {
-      this.pageChange.emit(this._currentPage() + 1);
+    if (this.currentPage() < this.totalPages()) {
+      this.pageChange.emit(this.currentPage() + 1);
     }
   }
 
@@ -154,7 +137,7 @@ export class PaginationComponent {
    * Go to specific page
    */
   protected goToPage(page: number): void {
-    if (page >= 1 && page <= this._totalPages() && page !== this._currentPage()) {
+    if (page >= 1 && page <= this.totalPages() && page !== this.currentPage()) {
       this.pageChange.emit(page);
     }
   }
