@@ -92,7 +92,7 @@ export class BookingComponent implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-()]+$/)]],
+      phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
       dateOfBirth: ['', Validators.required],
 
       // Address details

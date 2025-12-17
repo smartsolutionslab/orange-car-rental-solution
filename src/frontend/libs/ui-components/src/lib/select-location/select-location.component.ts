@@ -11,6 +11,7 @@ import {
 import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LocationService, type Location } from '@orange-car-rental/location-api';
+import { logError } from '@orange-car-rental/util';
 
 @Component({
   selector: 'ui-select-location',
@@ -114,7 +115,7 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
           this.locationLoaded.emit(locations);
         },
         error: (err) => {
-          console.error('[SelectLocationComponent] Error loading locations:', err);
+          logError('SelectLocationComponent', 'Error loading locations', err);
           this.error.set('Failed to load locations');
           this.loading.set(false);
         },

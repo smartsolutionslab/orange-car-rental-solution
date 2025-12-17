@@ -49,7 +49,7 @@ export class RegisterComponent {
       // Step 2: Personal Information
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^\+?[0-9\s\-()]{10,}$/)]],
+      phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
       dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(BUSINESS_RULES.MINIMUM_RENTAL_AGE)]],
 
       // Step 3: Terms
@@ -234,7 +234,7 @@ export class RegisterComponent {
     if (this.phoneNumber?.hasError('required') && this.phoneNumber?.touched) {
       return 'Telefonnummer ist erforderlich';
     }
-    if (this.phoneNumber?.hasError('pattern') && this.phoneNumber?.touched) {
+    if (this.phoneNumber?.hasError('invalidPhone') && this.phoneNumber?.touched) {
       return 'Bitte geben Sie eine gültige Telefonnummer ein';
     }
     return null;

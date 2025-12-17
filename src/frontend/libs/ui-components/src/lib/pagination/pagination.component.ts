@@ -14,6 +14,9 @@ import { IconComponent } from '../icon/icon.component';
   styleUrl: './pagination.component.css'
 })
 export class PaginationComponent {
+  /** Number of pages to display before and after the current page */
+  private static readonly PAGES_AROUND_CURRENT = 2;
+
   /**
    * Current page number (1-indexed)
    */
@@ -90,7 +93,7 @@ export class PaginationComponent {
     const total = this._totalPages();
     const pages: number[] = [];
 
-    for (let i = current - 2; i <= current + 2; i++) {
+    for (let i = current - PaginationComponent.PAGES_AROUND_CURRENT; i <= current + PaginationComponent.PAGES_AROUND_CURRENT; i++) {
       if (i > 0 && i <= total) {
         pages.push(i);
       }
@@ -102,16 +105,16 @@ export class PaginationComponent {
   /**
    * Check if we should show first page and leading ellipsis
    */
-  protected readonly showLeadingEllipsis = computed(() => this._currentPage() > 3);
-  protected readonly showLeadingFirstPage = computed(() => this._currentPage() > 3);
-  protected readonly showLeadingDots = computed(() => this._currentPage() > 4);
+  protected readonly showLeadingEllipsis = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
+  protected readonly showLeadingFirstPage = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
+  protected readonly showLeadingDots = computed(() => this._currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 2);
 
   /**
    * Check if we should show last page and trailing ellipsis
    */
-  protected readonly showTrailingEllipsis = computed(() => this._currentPage() < this._totalPages() - 2);
-  protected readonly showTrailingLastPage = computed(() => this._currentPage() < this._totalPages() - 2);
-  protected readonly showTrailingDots = computed(() => this._currentPage() < this._totalPages() - 3);
+  protected readonly showTrailingEllipsis = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
+  protected readonly showTrailingLastPage = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
+  protected readonly showTrailingDots = computed(() => this._currentPage() < this._totalPages() - PaginationComponent.PAGES_AROUND_CURRENT - 1);
 
   /**
    * Calculate range start

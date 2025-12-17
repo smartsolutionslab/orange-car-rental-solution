@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, input, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   getVehicleStatusClass,
@@ -20,8 +20,8 @@ import {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <span class="status-badge" [ngClass]="statusClass">
-      {{ statusLabel }}
+    <span class="status-badge" [ngClass]="statusClass()">
+      {{ statusLabel() }}
     </span>
   `,
   styles: [`
@@ -68,20 +68,20 @@ import {
   `]
 })
 export class StatusBadgeComponent {
-  @Input({ required: true }) status!: string;
-  @Input({ required: true }) type!: 'vehicle' | 'reservation';
+  readonly status = input.required<string>();
+  readonly type = input.required<'vehicle' | 'reservation'>();
 
-  get statusClass(): string {
-    if (this.type === 'vehicle') {
-      return getVehicleStatusClass(this.status) || 'status-default';
+  protected readonly statusClass = computed(() => {
+    if (this.type() === 'vehicle') {
+      return getVehicleStatusClass(this.status()) || 'status-default';
     }
-    return getReservationStatusClass(this.status) || 'status-default';
-  }
+    return getReservationStatusClass(this.status()) || 'status-default';
+  });
 
-  get statusLabel(): string {
-    if (this.type === 'vehicle') {
-      return getVehicleStatusLabel(this.status);
+  protected readonly statusLabel = computed(() => {
+    if (this.type() === 'vehicle') {
+      return getVehicleStatusLabel(this.status());
     }
-    return getReservationStatusLabel(this.status);
-  }
+    return getReservationStatusLabel(this.status());
+  });
 }

@@ -136,7 +136,7 @@ describe('RegisterComponent', () => {
     it('should validate phone number format', () => {
       const phoneControl = component.registerForm.get('phoneNumber');
       phoneControl?.setValue('invalid');
-      expect(phoneControl?.hasError('pattern')).toBeTruthy();
+      expect(phoneControl?.hasError('invalidPhone')).toBeTruthy();
     });
 
     it('should accept valid German phone number', () => {
