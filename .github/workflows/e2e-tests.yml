@@ -31,7 +31,7 @@ jobs:
           --health-retries 5
 
       keycloak:
-        image: quay.io/keycloak/keycloak:latest
+        image: quay.io/keycloak/keycloak:latest\n        command: start-dev
         env:
           KEYCLOAK_ADMIN: admin
           KEYCLOAK_ADMIN_PASSWORD: admin

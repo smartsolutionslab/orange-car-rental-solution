@@ -23,8 +23,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: src/frontend/apps/public-portal/package-lock.json
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
         run: npm ci
@@ -64,8 +64,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: src/frontend/apps/call-center-portal/package-lock.json
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
         run: npm ci

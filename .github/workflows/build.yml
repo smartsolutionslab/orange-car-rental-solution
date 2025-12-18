@@ -22,8 +22,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
         working-directory: src/frontend/apps/${{ matrix.app }}
@@ -54,8 +54,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: 'npm'
-          cache-dependency-path: src/frontend/apps/${{ matrix.app }}/package-lock.json
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
         working-directory: src/frontend/apps/${{ matrix.app }}
@@ -97,8 +97,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore
-
+        run: dotnet restore OrangeCarRental.sln --force-evaluate\n
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic
@@ -126,8 +125,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore
-
+        run: dotnet restore OrangeCarRental.sln --force-evaluate\n
       - name: Build
         working-directory: src/backend
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
