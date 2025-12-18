@@ -1,5 +1,5 @@
 {
-  "name": "shell",
+  "name": "@orange-car-rental/shell",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",

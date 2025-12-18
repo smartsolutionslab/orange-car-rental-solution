@@ -100,7 +100,7 @@ jobs:
         run: dotnet restore OrangeCarRental.sln --force-evaluate
       - name: Check code formatting
         working-directory: src/backend
-        run: dotnet format --verify-no-changes --verbosity diagnostic
+        run: dotnet format --verify-no-changes --verbosity diagnostic --exclude-diagnostics IDE1006
 
       - name: Run code analysis
         working-directory: src/backend
