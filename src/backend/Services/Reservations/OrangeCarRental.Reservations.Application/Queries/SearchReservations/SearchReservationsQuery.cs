@@ -1,7 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 

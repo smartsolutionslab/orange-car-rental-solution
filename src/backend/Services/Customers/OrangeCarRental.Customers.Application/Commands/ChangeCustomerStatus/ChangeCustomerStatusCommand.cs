@@ -1,4 +1,4 @@
-﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;

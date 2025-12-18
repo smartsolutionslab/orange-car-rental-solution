@@ -3,7 +3,6 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
@@ -14,6 +13,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCust
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
+using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
 

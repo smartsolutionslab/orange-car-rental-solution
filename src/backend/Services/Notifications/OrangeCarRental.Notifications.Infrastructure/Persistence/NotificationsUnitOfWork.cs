@@ -10,7 +10,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Notifications.Infrastructure.Persist
 public sealed class NotificationsUnitOfWork : INotificationsUnitOfWork
 {
     private readonly NotificationsDbContext _context;
-    private INotificationRepository? _notifications;
 
     public NotificationsUnitOfWork(NotificationsDbContext context)
     {
@@ -19,7 +18,7 @@ public sealed class NotificationsUnitOfWork : INotificationsUnitOfWork
 
     /// <inheritdoc />
     public INotificationRepository Notifications =>
-        _notifications ??= new NotificationRepository(_context);
+        field ??= new NotificationRepository(_context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

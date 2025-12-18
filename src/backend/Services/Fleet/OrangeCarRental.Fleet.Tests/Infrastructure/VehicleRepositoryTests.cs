@@ -255,7 +255,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
     public async Task GetByIdAsync_WithExistingId_ReturnsVehicle()
     {
         // Arrange
-        var vehicle = CreateTestVehicle("VW Polo", VehicleCategory.Kleinwagen.Code,Locations.BerlinHauptbahnhof, FuelType.Petrol, 4, 35.00m);
+        var vehicle = CreateTestVehicle("VW Polo", VehicleCategory.Kleinwagen.Code, Locations.BerlinHauptbahnhof, FuelType.Petrol, 4, 35.00m);
         await context.Vehicles.AddAsync(vehicle);
         await context.SaveChangesAsync();
 

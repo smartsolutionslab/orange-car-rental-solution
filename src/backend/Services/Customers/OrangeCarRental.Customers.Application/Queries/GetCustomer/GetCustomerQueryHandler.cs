@@ -1,4 +1,4 @@
-﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;

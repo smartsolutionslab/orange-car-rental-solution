@@ -12,8 +12,7 @@ public sealed class CancelReservationCommandHandler(
     IReservationsUnitOfWork unitOfWork)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
-    private IReservationRepository? reservations;
-    private IReservationRepository Reservations => reservations ??= unitOfWork.Reservations;
+    private IReservationRepository Reservations => field ??= unitOfWork.Reservations;
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
         CancellationToken cancellationToken = default)

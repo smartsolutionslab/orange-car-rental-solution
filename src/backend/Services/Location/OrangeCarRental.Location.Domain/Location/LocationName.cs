@@ -1,5 +1,5 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 

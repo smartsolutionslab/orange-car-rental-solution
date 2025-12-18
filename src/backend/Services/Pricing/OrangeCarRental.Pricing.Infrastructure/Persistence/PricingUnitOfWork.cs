@@ -11,7 +11,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 public sealed class PricingUnitOfWork : IPricingUnitOfWork
 {
     private readonly PricingDbContext _context;
-    private IPricingPolicyRepository? _pricingPolicies;
 
     public PricingUnitOfWork(PricingDbContext context)
     {
@@ -20,7 +19,7 @@ public sealed class PricingUnitOfWork : IPricingUnitOfWork
 
     /// <inheritdoc />
     public IPricingPolicyRepository PricingPolicies =>
-        _pricingPolicies ??= new PricingPolicyRepository(_context);
+        field ??= new PricingPolicyRepository(_context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

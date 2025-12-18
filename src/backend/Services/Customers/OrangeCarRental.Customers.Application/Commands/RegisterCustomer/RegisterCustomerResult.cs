@@ -1,4 +1,4 @@
-﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
 /// <summary>
 ///     Result of customer registration operation.

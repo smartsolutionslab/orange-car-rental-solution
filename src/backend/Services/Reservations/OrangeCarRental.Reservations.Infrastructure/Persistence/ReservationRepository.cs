@@ -99,7 +99,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
                 (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
                 // Period overlap check: reservation period overlaps if:
                 // reservation pickup <= requested return AND reservation return >= requested pickup
-                r.Period.PickupDate <=  period.ReturnDate &&
+                r.Period.PickupDate <= period.ReturnDate &&
                 r.Period.ReturnDate >= period.PickupDate)
             .Select(r => r.VehicleIdentifier.Value) // Extract Guid from value object
             .Distinct()

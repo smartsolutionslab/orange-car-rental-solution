@@ -3,7 +3,6 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Contracts;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
@@ -12,6 +11,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetRese
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetVehicleAvailability;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 using CustomerIdentifier = SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared.CustomerIdentifier;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
@@ -26,7 +26,7 @@ public static class ReservationEndpoints
         // POST /api/reservations - Create a new reservation
         reservations.MapPost("/", async (CreateReservationRequest request, CreateReservationCommandHandler handler) =>
             {
-                var (vehicleId, customerId, category, pickupDate, returnDate, pickupLocation, dropoffLocation, totalPriceNet ) = request;
+                var (vehicleId, customerId, category, pickupDate, returnDate, pickupLocation, dropoffLocation, totalPriceNet) = request;
 
                 var command = new CreateReservationCommand(
                     VehicleIdentifier.From(vehicleId),

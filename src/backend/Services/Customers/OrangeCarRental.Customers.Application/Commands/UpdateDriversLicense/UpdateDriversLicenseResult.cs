@@ -1,4 +1,4 @@
-﻿namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
+namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
 /// <summary>
 ///     Result of driver's license update operation.

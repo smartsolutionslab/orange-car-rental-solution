@@ -10,7 +10,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 public sealed class LocationsUnitOfWork : ILocationsUnitOfWork
 {
     private readonly LocationsDbContext _context;
-    private ILocationRepository? _locations;
 
     public LocationsUnitOfWork(LocationsDbContext context)
     {
@@ -19,7 +18,7 @@ public sealed class LocationsUnitOfWork : ILocationsUnitOfWork
 
     /// <inheritdoc />
     public ILocationRepository Locations =>
-        _locations ??= new LocationRepository(_context);
+        field ??= new LocationRepository(_context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

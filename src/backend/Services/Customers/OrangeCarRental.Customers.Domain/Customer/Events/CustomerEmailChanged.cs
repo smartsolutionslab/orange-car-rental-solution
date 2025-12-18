@@ -1,4 +1,4 @@
-﻿using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 

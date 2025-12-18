@@ -3,11 +3,11 @@ using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Repositories;
 

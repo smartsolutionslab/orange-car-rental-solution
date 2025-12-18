@@ -27,7 +27,7 @@ public class SearchVehiclesQueryHandlerTests
         var query = new SearchVehiclesQuery(
             PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
             ReturnDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
-            LocationCode:  "BER-HBF",
+            LocationCode: "BER-HBF",
             CategoryCode: "SUV",
             MinSeats: 5,
             FuelType: "Diesel",
@@ -267,7 +267,7 @@ public class SearchVehiclesQueryHandlerTests
         // Arrange
         var query = new SearchVehiclesQuery(
             PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
-            ReturnDate: DateOnly.FromDateTime(  DateTime.UtcNow.AddDays(3)),
+            ReturnDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
             LocationCode: Locations.BerlinHauptbahnhof.Value,
             CategoryCode: VehicleCategory.SUV.Code,
             MinSeats: 5,

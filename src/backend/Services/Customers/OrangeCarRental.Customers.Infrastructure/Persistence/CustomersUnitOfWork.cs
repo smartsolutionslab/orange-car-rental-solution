@@ -10,10 +10,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence
 /// </summary>
 public sealed class CustomersUnitOfWork(CustomersDbContext context) : ICustomersUnitOfWork
 {
-    private ICustomerRepository? customers;
-
     /// <inheritdoc />
-    public ICustomerRepository Customers => customers ??= new CustomerRepository(context);
+    public ICustomerRepository Customers => field ??= new CustomerRepository(context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

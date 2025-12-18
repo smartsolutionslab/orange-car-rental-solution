@@ -10,7 +10,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 public sealed class PaymentsUnitOfWork : IPaymentsUnitOfWork
 {
     private readonly PaymentsDbContext _context;
-    private IPaymentRepository? _payments;
 
     public PaymentsUnitOfWork(PaymentsDbContext context)
     {
@@ -19,7 +18,7 @@ public sealed class PaymentsUnitOfWork : IPaymentsUnitOfWork
 
     /// <inheritdoc />
     public IPaymentRepository Payments =>
-        _payments ??= new PaymentRepository(_context);
+        field ??= new PaymentRepository(_context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
