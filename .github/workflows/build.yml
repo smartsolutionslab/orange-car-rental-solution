@@ -141,7 +141,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: backend-release
-          path: src/backend/Api/publish/
+          path: src/backend/ApiGateway/OrangeCarRental.ApiGateway/publish/
           retention-days: 7
 
   docker-build:
@@ -160,7 +160,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./src/backend
-          file: ./src/backend/Api/Dockerfile
+          file: ./src/backend/ApiGateway/OrangeCarRental.ApiGateway/Dockerfile
           push: false
           tags: orange-car-rental-api:${{ github.sha }}
           cache-from: type=gha
