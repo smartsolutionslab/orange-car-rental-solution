@@ -26,16 +26,16 @@ jobs:
           cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
-        working-directory: src/frontend/apps/${{ matrix.app }}
-        run: npm ci
+        working-directory: src/frontend
+        run: yarn install --frozen-lockfile
 
       - name: Run ESLint
-        working-directory: src/frontend/apps/${{ matrix.app }}
-        run: npm run lint
+        working-directory: src/frontend
+        run: yarn workspace @orange-car-rental/${{ matrix.app }} lint
 
       - name: Check formatting
-        working-directory: src/frontend/apps/${{ matrix.app }}
-        run: npm run format:check
+        working-directory: src/frontend
+        run: yarn workspace @orange-car-rental/${{ matrix.app }} format:check
 
   build-frontend:
     name: Build Frontend
@@ -58,17 +58,17 @@ jobs:
           cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
-        working-directory: src/frontend/apps/${{ matrix.app }}
-        run: npm ci
+        working-directory: src/frontend
+        run: yarn install --frozen-lockfile
 
       - name: Build application
-        working-directory: src/frontend/apps/${{ matrix.app }}
-        run: npm run build:${{ matrix.environment }}
+        working-directory: src/frontend
+        run: yarn workspace @orange-car-rental/${{ matrix.app }} build${{ matrix.environment }}
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
       - name: Check bundle size
-        working-directory: src/frontend/apps/${{ matrix.app }}
+        working-directory: src/frontend
         run: |
           BUNDLE_SIZE=$(du -sh dist | cut -f1)
           echo "Bundle size: $BUNDLE_SIZE"
@@ -97,7 +97,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln --force-evaluate\n
+        run: dotnet restore OrangeCarRental.sln --force-evaluate
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic
@@ -125,7 +125,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln --force-evaluate\n
+        run: dotnet restore OrangeCarRental.sln --force-evaluate
       - name: Build
         working-directory: src/backend
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
