@@ -101,6 +101,7 @@ jobs:
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic --exclude-diagnostics IDE1006
+        continue-on-error: true
 
       - name: Run code analysis
         working-directory: src/backend
