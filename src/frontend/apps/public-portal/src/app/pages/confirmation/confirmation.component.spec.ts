@@ -21,11 +21,11 @@ describe('ConfirmationComponent', () => {
     returnDate: '2024-01-20T00:00:00Z',
     pickupLocationCode: 'BER-HBF',
     dropoffLocationCode: 'BER-HBF',
-    totalPriceNet: 250.00,
-    totalPriceVat: 47.50,
-    totalPriceGross: 297.50,
+    totalPriceNet: 250.0,
+    totalPriceVat: 47.5,
+    totalPriceGross: 297.5,
     currency: 'EUR',
-    status: 'Pending'
+    status: 'Pending',
   };
 
   beforeEach(async () => {
@@ -33,7 +33,7 @@ describe('ConfirmationComponent', () => {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     activatedRoute = {
-      queryParams: of({})
+      queryParams: of({}),
     };
 
     await TestBed.configureTestingModule({
@@ -42,8 +42,8 @@ describe('ConfirmationComponent', () => {
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: activatedRoute },
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
     reservationService = TestBed.inject(ReservationService) as jasmine.SpyObj<ReservationService>;
@@ -61,12 +61,14 @@ describe('ConfirmationComponent', () => {
     reservationService.getReservation.and.returnValue(of(mockReservation));
     activatedRoute.queryParams = of({
       reservationId: '987e6543-e89b-12d3-a456-426614174000',
-      customerId: '111e2222-e89b-12d3-a456-426614174000'
+      customerId: '111e2222-e89b-12d3-a456-426614174000',
     });
 
     fixture.detectChanges();
 
-    expect(reservationService.getReservation).toHaveBeenCalledWith('987e6543-e89b-12d3-a456-426614174000');
+    expect(reservationService.getReservation).toHaveBeenCalledWith(
+      '987e6543-e89b-12d3-a456-426614174000',
+    );
     expect(component['reservation']()).toEqual(mockReservation);
     expect(component['loading']()).toBeFalse();
   });

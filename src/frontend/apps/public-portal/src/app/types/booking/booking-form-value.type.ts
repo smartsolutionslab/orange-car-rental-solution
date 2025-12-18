@@ -22,4 +22,4 @@ export interface BookingFormValue {
   readonly licenseIssueDate: string;
   readonly licenseExpiryDate: string;
   readonly updateMyProfile: boolean;
-};
+}

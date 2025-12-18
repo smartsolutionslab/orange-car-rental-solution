@@ -2,7 +2,12 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { ReservationService } from './reservation.service';
 import { ConfigService } from './config.service';
-import type { GuestReservationRequest, GuestReservationResponse, Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  GuestReservationRequest,
+  GuestReservationResponse,
+  Reservation,
+  CustomerId,
+} from '@orange-car-rental/reservation-api';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -18,36 +23,36 @@ describe('ReservationService', () => {
       pickupDate: '2024-01-15',
       returnDate: '2024-01-20',
       pickupLocationCode: 'BER-HBF',
-      dropoffLocationCode: 'BER-HBF'
+      dropoffLocationCode: 'BER-HBF',
     },
     customer: {
       firstName: 'Max',
       lastName: 'Mustermann',
       email: 'max.mustermann@example.com',
       phoneNumber: '+49 30 12345678',
-      dateOfBirth: '1990-01-15'
+      dateOfBirth: '1990-01-15',
     },
     address: {
       street: 'Musterstraße 123',
       city: 'Berlin',
       postalCode: '10115',
-      country: 'Germany'
+      country: 'Germany',
     },
     driversLicense: {
       licenseNumber: 'B123456789',
       licenseIssueCountry: 'Germany',
       licenseIssueDate: '2010-06-01',
-      licenseExpiryDate: '2030-06-01'
-    }
+      licenseExpiryDate: '2030-06-01',
+    },
   };
 
   const mockGuestReservationResponse: GuestReservationResponse = {
     reservationId: '987e6543-e89b-12d3-a456-426614174000',
     customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    totalPriceNet: 250.00,
-    totalPriceVat: 47.50,
-    totalPriceGross: 297.50,
-    currency: 'EUR'
+    totalPriceNet: 250.0,
+    totalPriceVat: 47.5,
+    totalPriceGross: 297.5,
+    currency: 'EUR',
   };
 
   const mockReservation: Reservation = {
@@ -58,17 +63,17 @@ describe('ReservationService', () => {
     returnDate: '2024-01-20T00:00:00Z',
     pickupLocationCode: 'BER-HBF',
     dropoffLocationCode: 'BER-HBF',
-    totalPriceNet: 250.00,
-    totalPriceVat: 47.50,
-    totalPriceGross: 297.50,
+    totalPriceNet: 250.0,
+    totalPriceVat: 47.5,
+    totalPriceGross: 297.5,
     currency: 'EUR',
-    status: 'Pending'
+    status: 'Pending',
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [ReservationService, ConfigService]
+      providers: [ReservationService, ConfigService],
     });
 
     service = TestBed.inject(ReservationService);
@@ -87,11 +92,11 @@ describe('ReservationService', () => {
 
   describe('createGuestReservation', () => {
     it('should create a guest reservation successfully', () => {
-      service.createGuestReservation(mockGuestReservationRequest).subscribe(response => {
+      service.createGuestReservation(mockGuestReservationRequest).subscribe((response) => {
         expect(response).toEqual(mockGuestReservationResponse);
         expect(response.reservationId).toBe('987e6543-e89b-12d3-a456-426614174000');
         expect(response.customerId).toBe('111e2222-e89b-12d3-a456-426614174000');
-        expect(response.totalPriceGross).toBe(297.50);
+        expect(response.totalPriceGross).toBe(297.5);
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/guest`);
@@ -125,7 +130,7 @@ describe('ReservationService', () => {
 
     it('should handle validation errors (400 Bad Request)', () => {
       const errorResponse = {
-        message: 'Invalid driver license expiry date'
+        message: 'Invalid driver license expiry date',
       };
 
       service.createGuestReservation(mockGuestReservationRequest).subscribe({
@@ -133,7 +138,7 @@ describe('ReservationService', () => {
         error: (error) => {
           expect(error.status).toBe(400);
           expect(error.error.message).toBe('Invalid driver license expiry date');
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/guest`);
@@ -142,14 +147,14 @@ describe('ReservationService', () => {
 
     it('should handle conflict errors (409 Conflict)', () => {
       const errorResponse = {
-        message: 'Email already exists'
+        message: 'Email already exists',
       };
 
       service.createGuestReservation(mockGuestReservationRequest).subscribe({
         next: () => fail('should have failed with 409 error'),
         error: (error) => {
           expect(error.status).toBe(409);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/guest`);
@@ -161,7 +166,7 @@ describe('ReservationService', () => {
         next: () => fail('should have failed with 500 error'),
         error: (error) => {
           expect(error.status).toBe(500);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/guest`);
@@ -173,7 +178,7 @@ describe('ReservationService', () => {
     it('should get reservation by ID', () => {
       const reservationId = '987e6543-e89b-12d3-a456-426614174000';
 
-      service.getReservation(reservationId).subscribe(reservation => {
+      service.getReservation(reservationId).subscribe((reservation) => {
         expect(reservation).toEqual(mockReservation);
         expect(reservation.id).toBe(reservationId);
         expect(reservation.status).toBe('Pending');
@@ -191,7 +196,7 @@ describe('ReservationService', () => {
         next: () => fail('should have failed with 404 error'),
         error: (error) => {
           expect(error.status).toBe(404);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/${reservationId}`);
@@ -205,7 +210,7 @@ describe('ReservationService', () => {
         next: () => fail('should have failed with 400 error'),
         error: (error) => {
           expect(error.status).toBe(400);
-        }
+        },
       });
 
       const req = httpMock.expectOne(`${mockApiUrl}/api/reservations/${invalidId}`);

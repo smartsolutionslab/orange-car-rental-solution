@@ -2,7 +2,13 @@
  * Customer details (flat structure for call-center)
  */
 import type { CustomerId } from '@orange-car-rental/customer-api';
-import type { EmailAddress, PhoneNumber, ISODateString, PostalCode, CountryCode } from '@orange-car-rental/shared';
+import type {
+  EmailAddress,
+  PhoneNumber,
+  ISODateString,
+  PostalCode,
+  CountryCode,
+} from '@orange-car-rental/shared';
 import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 import type { CityName } from '@orange-car-rental/location-api';
 

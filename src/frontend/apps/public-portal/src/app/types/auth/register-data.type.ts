@@ -9,4 +9,4 @@ export interface RegisterData {
   readonly phoneNumber: string;
   readonly dateOfBirth: string;
   readonly acceptMarketing: boolean;
-};
+}

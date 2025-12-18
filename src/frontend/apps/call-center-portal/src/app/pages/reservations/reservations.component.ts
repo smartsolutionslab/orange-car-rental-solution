@@ -55,10 +55,10 @@ type GroupedReservations = Record<string, Reservation[]>;
     SelectPageSizeComponent,
     SuccessAlertComponent,
     ErrorAlertComponent,
-  IconComponent,
+    IconComponent,
   ],
   templateUrl: './reservations.component.html',
-  styleUrl: './reservations.component.css'
+  styleUrl: './reservations.component.css',
 })
 export class ReservationsComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
@@ -87,7 +87,9 @@ export class ReservationsComponent implements OnInit {
   protected readonly searchMaxPrice = signal<number | null>(null);
 
   // Sorting controls
-  protected readonly sortBy = signal<'PickupDate' | 'Price' | 'Status' | 'CreatedDate'>('PickupDate');
+  protected readonly sortBy = signal<'PickupDate' | 'Price' | 'Status' | 'CreatedDate'>(
+    'PickupDate',
+  );
   protected readonly sortOrder = signal<'asc' | 'desc'>('desc');
 
   // Grouping controls
@@ -97,9 +99,7 @@ export class ReservationsComponent implements OnInit {
   protected readonly currentPage = signal(1);
   protected readonly pageSize = signal<number>(DEFAULT_PAGE_SIZE.RESERVATIONS);
   protected readonly totalCount = signal(0);
-  protected readonly totalPages = computed(() =>
-    Math.ceil(this.totalCount() / this.pageSize())
-  );
+  protected readonly totalPages = computed(() => Math.ceil(this.totalCount() / this.pageSize()));
 
   // Stats
   protected readonly todayReservations = signal(0);
@@ -125,12 +125,12 @@ export class ReservationsComponent implements OnInit {
     const grouping = this.groupBy();
 
     if (grouping === 'none') {
-      return { 'all': reservations };
+      return { all: reservations };
     }
 
     const grouped: GroupedReservations = {};
 
-    reservations.forEach(reservation => {
+    reservations.forEach((reservation) => {
       let key: string;
 
       switch (grouping) {
@@ -163,7 +163,7 @@ export class ReservationsComponent implements OnInit {
     { value: 'PickupDate', label: 'Abholdatum' },
     { value: 'Price', label: 'Preis' },
     { value: 'Status', label: 'Status' },
-    { value: 'CreatedDate', label: 'Erstellungsdatum' }
+    { value: 'CreatedDate', label: 'Erstellungsdatum' },
   ];
 
   // Group options
@@ -171,7 +171,7 @@ export class ReservationsComponent implements OnInit {
     { value: 'none', label: 'Keine Gruppierung' },
     { value: 'status', label: 'Nach Status' },
     { value: 'pickupDate', label: 'Nach Abholdatum' },
-    { value: 'location', label: 'Nach Standort' }
+    { value: 'location', label: 'Nach Standort' },
   ];
 
   ngOnInit(): void {
@@ -184,7 +184,7 @@ export class ReservationsComponent implements OnInit {
    * Load filter values from URL query parameters
    */
   private loadFiltersFromUrl(): void {
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       if (params['status']) this.searchStatus.set(params['status']);
       if (params['customerId']) this.searchCustomerId.set(params['customerId']);
       if (params['dateFrom']) this.searchPickupDateFrom.set(params['dateFrom']);
@@ -192,7 +192,8 @@ export class ReservationsComponent implements OnInit {
       if (params['location']) this.searchLocation.set(params['location']);
       if (params['minPrice']) this.searchMinPrice.set(Number(params['minPrice']));
       if (params['maxPrice']) this.searchMaxPrice.set(Number(params['maxPrice']));
-      if (params['sortBy']) this.sortBy.set(params['sortBy'] as 'PickupDate' | 'Price' | 'Status' | 'CreatedDate');
+      if (params['sortBy'])
+        this.sortBy.set(params['sortBy'] as 'PickupDate' | 'Price' | 'Status' | 'CreatedDate');
       if (params['sortOrder']) this.sortOrder.set(params['sortOrder'] as 'asc' | 'desc');
       if (params['groupBy']) this.groupBy.set(params['groupBy'] as GroupBy);
       if (params['page']) this.currentPage.set(Number(params['page']));
@@ -235,7 +236,7 @@ export class ReservationsComponent implements OnInit {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams,
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge',
     });
   }
 
@@ -258,7 +259,7 @@ export class ReservationsComponent implements OnInit {
       sortBy: this.sortBy(),
       sortOrder: this.sortOrder(),
       pageNumber: this.currentPage(),
-      pageSize: this.pageSize()
+      pageSize: this.pageSize(),
     };
 
     this.reservationService.searchReservations(query).subscribe({
@@ -273,7 +274,7 @@ export class ReservationsComponent implements OnInit {
         logError('ReservationsComponent', 'Error loading reservations', err);
         this.error.set('Fehler beim Laden der Reservierungen');
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -283,16 +284,16 @@ export class ReservationsComponent implements OnInit {
   private calculateStats(reservations: Reservation[]): void {
     const today = new Date().toISOString().split('T')[0];
 
-    this.todayReservations.set(
-      reservations.filter(r => r.createdAt.startsWith(today)).length
-    );
+    this.todayReservations.set(reservations.filter((r) => r.createdAt.startsWith(today)).length);
 
     this.activeReservations.set(
-      reservations.filter(r => r.status === ReservationStatus.Confirmed || r.status === ReservationStatus.Active).length
+      reservations.filter(
+        (r) => r.status === ReservationStatus.Confirmed || r.status === ReservationStatus.Active,
+      ).length,
     );
 
     this.pendingReservations.set(
-      reservations.filter(r => r.status === ReservationStatus.Pending).length
+      reservations.filter((r) => r.status === ReservationStatus.Pending).length,
     );
   }
 
@@ -434,7 +435,10 @@ export class ReservationsComponent implements OnInit {
    * Check if reservation can be cancelled
    */
   protected canCancel(reservation: Reservation): boolean {
-    return reservation.status === ReservationStatus.Pending || reservation.status === ReservationStatus.Confirmed;
+    return (
+      reservation.status === ReservationStatus.Pending ||
+      reservation.status === ReservationStatus.Confirmed
+    );
   }
 
   /**
@@ -483,7 +487,7 @@ export class ReservationsComponent implements OnInit {
         logError('ReservationsComponent', 'Error confirming reservation', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Bestätigen der Reservierung');
-      }
+      },
     });
   }
 
@@ -539,7 +543,7 @@ export class ReservationsComponent implements OnInit {
         logError('ReservationsComponent', 'Error cancelling reservation', err);
         this.actionInProgress.set(false);
         this.error.set('Fehler beim Stornieren der Reservierung');
-      }
+      },
     });
   }
 }

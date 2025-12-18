@@ -35,30 +35,32 @@ import type { NavConfig } from '@orange-car-rental/shared-ui';
       </footer>
     </div>
   `,
-  styles: [`
-    .shell-container {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+  styles: [
+    `
+      .shell-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
 
-    .shell-main {
-      flex: 1;
-      padding: 2rem;
-      background-color: #f5f5f5;
-    }
+      .shell-main {
+        flex: 1;
+        padding: 2rem;
+        background-color: #f5f5f5;
+      }
 
-    .shell-footer {
-      background-color: #333;
-      color: white;
-      text-align: center;
-      padding: 1rem;
-    }
+      .shell-footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+        padding: 1rem;
+      }
 
-    .shell-footer p {
-      margin: 0;
-    }
-  `]
+      .shell-footer p {
+        margin: 0;
+      }
+    `,
+  ],
 })
 export class AppComponent implements OnInit {
   private readonly authService = inject(BaseAuthService);

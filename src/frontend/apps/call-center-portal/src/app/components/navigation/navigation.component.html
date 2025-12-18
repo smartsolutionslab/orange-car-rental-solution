@@ -13,7 +13,12 @@
           [routerLinkActiveOptions]="{ exact: item.exactMatch ?? false }"
           class="nav__link"
         >
-          <svg class="nav__link-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="item.icon"></svg>
+          <svg
+            class="nav__link-icon"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            [innerHTML]="item.icon"
+          ></svg>
           <span class="nav__link-text">{{ item.label }}</span>
         </a>
       </li>
@@ -24,12 +29,22 @@
     @if (isAuthenticated()) {
       <span class="nav__username">{{ username() }}</span>
       <button (click)="logout()" class="nav__auth-button nav__auth-button--logout">
-        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.logout"></svg>
+        <svg
+          class="nav__auth-icon"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          [innerHTML]="icons.logout"
+        ></svg>
         <span>Abmelden</span>
       </button>
     } @else {
       <button (click)="login()" class="nav__auth-button nav__auth-button--login">
-        <svg class="nav__auth-icon" viewBox="0 0 24 24" fill="currentColor" [innerHTML]="icons.login"></svg>
+        <svg
+          class="nav__auth-icon"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          [innerHTML]="icons.login"
+        ></svg>
         <span>Anmelden</span>
       </button>
     }

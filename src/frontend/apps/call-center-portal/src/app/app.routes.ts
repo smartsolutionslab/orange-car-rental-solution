@@ -16,26 +16,26 @@ export const routes: Routes = [
   {
     path: '',
     component: VehiclesComponent,
-    canActivate: [agentGuard]
+    canActivate: [agentGuard],
   },
   {
     path: 'reservations',
     component: ReservationsComponent,
-    canActivate: [agentGuard]
+    canActivate: [agentGuard],
   },
   {
     path: 'customers',
     component: CustomersComponent,
-    canActivate: [agentGuard]
+    canActivate: [agentGuard],
   },
   {
     path: 'locations',
     component: LocationsComponent,
-    canActivate: [agentGuard]
+    canActivate: [agentGuard],
   },
   {
     path: 'contact',
     component: ContactComponent,
-    canActivate: [agentGuard]
-  }
+    canActivate: [agentGuard],
+  },
 ];

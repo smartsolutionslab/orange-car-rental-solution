@@ -11,15 +11,15 @@ describe('LoginComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['loginWithPassword', 'getPostLoginRedirect']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'loginWithPassword',
+      'getPostLoginRedirect',
+    ]);
     authServiceSpy.getPostLoginRedirect.and.returnValue('/my-bookings');
 
     await TestBed.configureTestingModule({
       imports: [LoginComponent, ReactiveFormsModule],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        provideRouter([])
-      ]
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
@@ -91,7 +91,7 @@ describe('LoginComponent', () => {
     it('should mark form as valid when all fields are filled correctly', () => {
       component.loginForm.patchValue({
         email: 'test@example.com',
-        password: 'password123'
+        password: 'password123',
       });
       expect(component.loginForm.valid).toBeTruthy();
     });
@@ -116,7 +116,7 @@ describe('LoginComponent', () => {
       component.loginForm.patchValue({
         email: 'test@example.com',
         password: 'password123',
-        rememberMe: true
+        rememberMe: true,
       });
     });
 
@@ -132,7 +132,11 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(authService.loginWithPassword).toHaveBeenCalledWith('test@example.com', 'password123', true);
+      expect(authService.loginWithPassword).toHaveBeenCalledWith(
+        'test@example.com',
+        'password123',
+        true,
+      );
     });
 
     it('should navigate to redirect URL from auth service on successful login', async () => {
@@ -148,7 +152,9 @@ describe('LoginComponent', () => {
     it('should set loading state during submission', async () => {
       // Create a deferred promise to control resolution timing
       let resolveLogin!: () => void;
-      const deferredPromise = new Promise<void>(resolve => { resolveLogin = resolve; });
+      const deferredPromise = new Promise<void>((resolve) => {
+        resolveLogin = resolve;
+      });
       authService.loginWithPassword.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
@@ -185,7 +191,9 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
+      expect(component.errorMessage()).toBe(
+        'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.',
+      );
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -195,7 +203,9 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+      expect(component.errorMessage()).toBe(
+        'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+      );
       expect(component.isLoading()).toBeFalsy();
     });
 

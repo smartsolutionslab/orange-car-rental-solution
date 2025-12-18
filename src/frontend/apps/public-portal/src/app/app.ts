@@ -13,10 +13,12 @@ import { ToastContainerComponent } from '@orange-car-rental/shared';
     <router-outlet />
     <lib-toast-container />
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
-  `]
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class App {}

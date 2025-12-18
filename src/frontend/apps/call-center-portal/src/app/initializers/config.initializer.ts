@@ -13,9 +13,7 @@ export function initializeApp(http: HttpClient, configService: ConfigService): (
   return async () => {
     try {
       const config = await firstValueFrom(
-        http.get<ApiConfig>('/config.json').pipe(
-          catchError(() => of({ apiUrl: DEFAULT_API_URL }))
-        )
+        http.get<ApiConfig>('/config.json').pipe(catchError(() => of({ apiUrl: DEFAULT_API_URL }))),
       );
       configService.setConfig(config);
     } catch {

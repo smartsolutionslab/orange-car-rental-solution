@@ -5,7 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers, CustomValidators } from '@orange-car-rental/shared';
-import { SuccessAlertComponent, ErrorAlertComponent,
+import {
+  SuccessAlertComponent,
+  ErrorAlertComponent,
   IconComponent,
 } from '@orange-car-rental/ui-components';
 import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
@@ -19,11 +21,16 @@ import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, SuccessAlertComponent, ErrorAlertComponent,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    SuccessAlertComponent,
+    ErrorAlertComponent,
     IconComponent,
   ],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.css'
+  styleUrl: './register.component.css',
 })
 export class RegisterComponent {
   registerForm: FormGroup;
@@ -38,25 +45,34 @@ export class RegisterComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
-    this.registerForm = this.fb.group({
-      // Step 1: Account Information
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), CustomValidators.passwordStrength()]],
-      confirmPassword: ['', [Validators.required]],
+    this.registerForm = this.fb.group(
+      {
+        // Step 1: Account Information
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [Validators.required, Validators.minLength(8), CustomValidators.passwordStrength()],
+        ],
+        confirmPassword: ['', [Validators.required]],
 
-      // Step 2: Personal Information
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName: ['', [Validators.required, Validators.minLength(2)]],
-      phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
-      dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(BUSINESS_RULES.MINIMUM_RENTAL_AGE)]],
+        // Step 2: Personal Information
+        firstName: ['', [Validators.required, Validators.minLength(2)]],
+        lastName: ['', [Validators.required, Validators.minLength(2)]],
+        phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
+        dateOfBirth: [
+          '',
+          [Validators.required, CustomValidators.minimumAge(BUSINESS_RULES.MINIMUM_RENTAL_AGE)],
+        ],
 
-      // Step 3: Terms
-      acceptTerms: [false, [Validators.requiredTrue]],
-      acceptPrivacy: [false, [Validators.requiredTrue]],
-      acceptMarketing: [false]
-    }, { validators: CustomValidators.passwordMatch('password', 'confirmPassword') });
+        // Step 3: Terms
+        acceptTerms: [false, [Validators.requiredTrue]],
+        acceptPrivacy: [false, [Validators.requiredTrue]],
+        acceptMarketing: [false],
+      },
+      { validators: CustomValidators.passwordMatch('password', 'confirmPassword') },
+    );
   }
 
   async onSubmit(): Promise<void> {
@@ -78,7 +94,7 @@ export class RegisterComponent {
         lastName: formValue.lastName,
         phoneNumber: formValue.phoneNumber,
         dateOfBirth: formValue.dateOfBirth,
-        acceptMarketing: formValue.acceptMarketing
+        acceptMarketing: formValue.acceptMarketing,
       });
 
       this.successMessage.set('Registrierung erfolgreich! Sie werden in Kürze weitergeleitet...');
@@ -88,7 +104,6 @@ export class RegisterComponent {
         await this.authService.loginWithPassword(formValue.email, formValue.password);
         this.router.navigate(['/']);
       }, UI_TIMING.REDIRECT_DELAY);
-
     } catch (error: unknown) {
       logError('RegisterComponent', 'Registration error', error);
 
@@ -127,11 +142,19 @@ export class RegisterComponent {
   isCurrentStepValid(): boolean {
     switch (this.currentStep()) {
       case 1:
-        return !!(this.email?.valid && this.password?.valid && this.confirmPassword?.valid &&
-                  !this.registerForm.hasError('passwordMismatch'));
+        return !!(
+          this.email?.valid &&
+          this.password?.valid &&
+          this.confirmPassword?.valid &&
+          !this.registerForm.hasError('passwordMismatch')
+        );
       case 2:
-        return !!(this.firstName?.valid && this.lastName?.valid &&
-                  this.phoneNumber?.valid && this.dateOfBirth?.valid);
+        return !!(
+          this.firstName?.valid &&
+          this.lastName?.valid &&
+          this.phoneNumber?.valid &&
+          this.dateOfBirth?.valid
+        );
       case 3:
         return !!(this.acceptTerms?.valid && this.acceptPrivacy?.valid);
       default:
@@ -141,7 +164,7 @@ export class RegisterComponent {
 
   markCurrentStepTouched(): void {
     const controls = this.getCurrentStepControls();
-    controls.forEach(name => this.registerForm.get(name)?.markAsTouched());
+    controls.forEach((name) => this.registerForm.get(name)?.markAsTouched());
   }
 
   getCurrentStepControls(): string[] {
@@ -166,15 +189,33 @@ export class RegisterComponent {
   }
 
   // Convenience getters
-  get email() { return this.registerForm.get('email'); }
-  get password() { return this.registerForm.get('password'); }
-  get confirmPassword() { return this.registerForm.get('confirmPassword'); }
-  get firstName() { return this.registerForm.get('firstName'); }
-  get lastName() { return this.registerForm.get('lastName'); }
-  get phoneNumber() { return this.registerForm.get('phoneNumber'); }
-  get dateOfBirth() { return this.registerForm.get('dateOfBirth'); }
-  get acceptTerms() { return this.registerForm.get('acceptTerms'); }
-  get acceptPrivacy() { return this.registerForm.get('acceptPrivacy'); }
+  get email() {
+    return this.registerForm.get('email');
+  }
+  get password() {
+    return this.registerForm.get('password');
+  }
+  get confirmPassword() {
+    return this.registerForm.get('confirmPassword');
+  }
+  get firstName() {
+    return this.registerForm.get('firstName');
+  }
+  get lastName() {
+    return this.registerForm.get('lastName');
+  }
+  get phoneNumber() {
+    return this.registerForm.get('phoneNumber');
+  }
+  get dateOfBirth() {
+    return this.registerForm.get('dateOfBirth');
+  }
+  get acceptTerms() {
+    return this.registerForm.get('acceptTerms');
+  }
+  get acceptPrivacy() {
+    return this.registerForm.get('acceptPrivacy');
+  }
 
   // Error getters
   get emailError(): string | null {

@@ -3,14 +3,19 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ConfigService } from './config.service';
-import type { Customer, CustomerSearchQuery, CustomerSearchResult, UpdateCustomerRequest } from '../types';
+import type {
+  Customer,
+  CustomerSearchQuery,
+  CustomerSearchResult,
+  UpdateCustomerRequest,
+} from '../types';
 
 /**
  * Service for accessing the Customers API
  * Handles customer lookup and management operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomerService {
   private readonly http = inject(HttpClient);
@@ -41,7 +46,8 @@ export class CustomerService {
       if (query.email) params = params.set('email', query.email);
       if (query.phoneNumber) params = params.set('phoneNumber', query.phoneNumber);
       if (query.lastName) params = params.set('lastName', query.lastName);
-      if (query.pageNumber !== undefined) params = params.set('pageNumber', query.pageNumber.toString());
+      if (query.pageNumber !== undefined)
+        params = params.set('pageNumber', query.pageNumber.toString());
       if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
     }
 
@@ -60,30 +66,27 @@ export class CustomerService {
       profile: {
         firstName: request.firstName,
         lastName: request.lastName,
-        phoneNumber: request.phoneNumber
+        phoneNumber: request.phoneNumber,
       },
       address: {
         street: request.street,
         city: request.city,
         postalCode: request.postalCode,
-        country: request.country
-      }
+        country: request.country,
+      },
     };
 
     const licenseRequest = {
       licenseNumber: request.licenseNumber,
       issueCountry: request.licenseIssueCountry,
       issueDate: request.licenseIssueDate,
-      expiryDate: request.licenseExpiryDate
+      expiryDate: request.licenseExpiryDate,
     };
 
     // Update profile first, then license
-    return this.http.put<void>(`${this.apiUrl}/${id}/profile`, profileRequest)
-      .pipe(
+    return this.http.put<void>(`${this.apiUrl}/${id}/profile`, profileRequest).pipe(
       switchMap(() => this.http.put<void>(`${this.apiUrl}/${id}/license`, licenseRequest)),
-      switchMap(() => this.getCustomer(id)
-      )
+      switchMap(() => this.getCustomer(id)),
     );
   }
 }
-

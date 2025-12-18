@@ -31,10 +31,10 @@ describe('ReservationsComponent (Integration)', () => {
       rentalDays: 4,
       totalPriceNet: 336.13,
       totalPriceVat: 63.87,
-      totalPriceGross: 400.00,
+      totalPriceGross: 400.0,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: '2025-11-20T09:00:00Z'
+      createdAt: '2025-11-20T09:00:00Z',
     },
     {
       reservationId: '223e4567-e89b-12d3-a456-426614174001',
@@ -47,10 +47,10 @@ describe('ReservationsComponent (Integration)', () => {
       rentalDays: 2,
       totalPriceNet: 168.07,
       totalPriceVat: 31.93,
-      totalPriceGross: 200.00,
+      totalPriceGross: 200.0,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: '2025-11-20T09:00:00Z'
+      createdAt: '2025-11-20T09:00:00Z',
     },
     {
       reservationId: '323e4567-e89b-12d3-a456-426614174002',
@@ -61,12 +61,12 @@ describe('ReservationsComponent (Integration)', () => {
       pickupLocationCode: 'FRA',
       dropoffLocationCode: 'FRA',
       rentalDays: 5,
-      totalPriceNet: 504.20,
-      totalPriceVat: 95.80,
-      totalPriceGross: 600.00,
+      totalPriceNet: 504.2,
+      totalPriceVat: 95.8,
+      totalPriceGross: 600.0,
       currency: 'EUR',
       status: 'Active',
-      createdAt: '2025-11-19T14:30:00Z'
+      createdAt: '2025-11-19T14:30:00Z',
     },
     {
       reservationId: '423e4567-e89b-12d3-a456-426614174003',
@@ -79,35 +79,32 @@ describe('ReservationsComponent (Integration)', () => {
       rentalDays: 5,
       totalPriceNet: 420.17,
       totalPriceVat: 79.83,
-      totalPriceGross: 500.00,
+      totalPriceGross: 500.0,
       currency: 'EUR',
       status: 'Completed',
-      createdAt: '2025-10-10T11:00:00Z'
-    }
+      createdAt: '2025-10-10T11:00:00Z',
+    },
   ];
 
   beforeEach(async () => {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
     const configServiceSpy = jasmine.createSpyObj('ConfigService', [], {
-      apiUrl: apiUrl
+      apiUrl: apiUrl,
     });
 
     await TestBed.configureTestingModule({
-      imports: [
-        ReservationsComponent,
-        HttpClientTestingModule
-      ],
+      imports: [ReservationsComponent, HttpClientTestingModule],
       providers: [
         ReservationService,
         { provide: Router, useValue: routerSpy },
         {
           provide: ActivatedRoute,
           useValue: {
-            queryParams: of({})
-          }
+            queryParams: of({}),
+          },
         },
-        { provide: ConfigService, useValue: configServiceSpy }
-      ]
+        { provide: ConfigService, useValue: configServiceSpy },
+      ],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -127,9 +124,7 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request
-      const req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search')
-      );
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       expect(req.request.method).toBe('GET');
       expect(req.request.params.get('sortBy')).toBe('PickupDate');
       expect(req.request.params.get('sortOrder')).toBe('desc');
@@ -140,7 +135,7 @@ describe('ReservationsComponent (Integration)', () => {
         totalCount: 4,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -156,9 +151,7 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request fails
-      const req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search')
-      );
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
       tick();
 
@@ -173,8 +166,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Apply status filter
@@ -183,20 +182,21 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with filter
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('status') === 'Pending'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('status') === 'Pending',
       );
       expect(req.request.method).toBe('GET');
 
       // Respond with filtered data
-      const filteredReservations = mockReservations.filter(r => r.status === 'Pending');
+      const filteredReservations = mockReservations.filter((r) => r.status === 'Pending');
       req.flush({
         reservations: filteredReservations,
         totalCount: 1,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -209,15 +209,27 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange - Set filter
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       component['searchStatus'].set('Confirmed');
       component['applyFilters']();
       tick();
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: [mockReservations[0]!], totalCount: 1, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: [mockReservations[0]!],
+        totalCount: 1,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Clear filters
@@ -225,11 +237,17 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request without filter
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        !request.params.has('status')
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') && !request.params.has('status'),
       );
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Verify all results returned
@@ -243,8 +261,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Apply date range filter
@@ -254,15 +278,16 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with date range
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('pickupDateFrom') === '2025-11-01' &&
-        request.params.get('pickupDateTo') === '2025-11-30'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('pickupDateFrom') === '2025-11-01' &&
+          request.params.get('pickupDateTo') === '2025-11-30',
       );
       expect(req.request.method).toBe('GET');
 
       // Respond with filtered data (only November dates)
-      const filteredReservations = mockReservations.filter(r => {
+      const filteredReservations = mockReservations.filter((r) => {
         const date = new Date(r.pickupDate);
         return date >= new Date('2025-11-01') && date <= new Date('2025-11-30');
       });
@@ -271,7 +296,7 @@ describe('ReservationsComponent (Integration)', () => {
         totalCount: filteredReservations.length,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -286,8 +311,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Apply price range filter
@@ -297,29 +328,30 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with price range
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('minPrice') === '300' &&
-        request.params.get('maxPrice') === '500'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('minPrice') === '300' &&
+          request.params.get('maxPrice') === '500',
       );
       expect(req.request.method).toBe('GET');
 
       // Respond with filtered data
-      const filteredReservations = mockReservations.filter(r =>
-        r.totalPriceGross >= 300 && r.totalPriceGross <= 500
+      const filteredReservations = mockReservations.filter(
+        (r) => r.totalPriceGross >= 300 && r.totalPriceGross <= 500,
       );
       req.flush({
         reservations: filteredReservations,
         totalCount: filteredReservations.length,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
       // Verify filtered results
       expect(component['reservations']().length).toBe(2);
-      component['reservations']().forEach(r => {
+      component['reservations']().forEach((r) => {
         expect(r.totalPriceGross).toBeGreaterThanOrEqual(300);
         expect(r.totalPriceGross).toBeLessThanOrEqual(500);
       });
@@ -331,8 +363,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Apply location filter
@@ -341,26 +379,27 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with location
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('locationCode') === 'MUC'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('locationCode') === 'MUC',
       );
       expect(req.request.method).toBe('GET');
 
       // Respond with filtered data
-      const filteredReservations = mockReservations.filter(r => r.pickupLocationCode === 'MUC');
+      const filteredReservations = mockReservations.filter((r) => r.pickupLocationCode === 'MUC');
       req.flush({
         reservations: filteredReservations,
         totalCount: filteredReservations.length,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
       // Verify filtered results
       expect(component['reservations']().length).toBe(2);
-      component['reservations']().forEach(r => {
+      component['reservations']().forEach((r) => {
         expect(r.pickupLocationCode).toBe('MUC');
       });
     }));
@@ -371,8 +410,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Apply multiple filters
@@ -384,28 +429,30 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with all filters
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('status') === 'Confirmed' &&
-        request.params.get('locationCode') === 'MUC' &&
-        request.params.get('minPrice') === '300' &&
-        request.params.get('maxPrice') === '500'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('status') === 'Confirmed' &&
+          request.params.get('locationCode') === 'MUC' &&
+          request.params.get('minPrice') === '300' &&
+          request.params.get('maxPrice') === '500',
       );
       expect(req.request.method).toBe('GET');
 
       // Respond with filtered data
-      const filteredReservations = mockReservations.filter(r =>
-        r.status === 'Confirmed' &&
-        r.pickupLocationCode === 'MUC' &&
-        r.totalPriceGross >= 300 &&
-        r.totalPriceGross <= 500
+      const filteredReservations = mockReservations.filter(
+        (r) =>
+          r.status === 'Confirmed' &&
+          r.pickupLocationCode === 'MUC' &&
+          r.totalPriceGross >= 300 &&
+          r.totalPriceGross <= 500,
       );
       req.flush({
         reservations: filteredReservations,
         totalCount: filteredReservations.length,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -419,8 +466,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Change sort
@@ -428,12 +481,19 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request with sort
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('sortBy') === 'Price' &&
-        request.params.get('sortOrder') === 'desc'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('sortBy') === 'Price' &&
+          request.params.get('sortOrder') === 'desc',
       );
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Act - Toggle sort order
@@ -441,12 +501,19 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - Sort order toggled
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('sortBy') === 'Price' &&
-        request.params.get('sortOrder') === 'asc'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('sortBy') === 'Price' &&
+          request.params.get('sortOrder') === 'asc',
       );
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['sortOrder']()).toBe('asc');
@@ -456,15 +523,27 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Sort by Status
       component['changeSortBy']('Status');
       tick();
-      req = httpMock.expectOne(request => request.params.get('sortBy') === 'Status');
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.params.get('sortBy') === 'Status');
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['sortBy']()).toBe('Status');
@@ -472,8 +551,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Sort by CreatedDate
       component['changeSortBy']('CreatedDate');
       tick();
-      req = httpMock.expectOne(request => request.params.get('sortBy') === 'CreatedDate');
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.params.get('sortBy') === 'CreatedDate');
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['sortBy']()).toBe('CreatedDate');
@@ -485,8 +570,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 1, pageSize: 25, totalPages: 4 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 100,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 4,
+      });
       tick();
 
       // Act - Go to next page
@@ -494,11 +585,18 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request for page 2
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('pageNumber') === '2'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('pageNumber') === '2',
       );
-      req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 2, pageSize: 25, totalPages: 4 });
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 100,
+        pageNumber: 2,
+        pageSize: 25,
+        totalPages: 4,
+      });
       tick();
 
       expect(component['currentPage']()).toBe(2);
@@ -508,8 +606,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 1, pageSize: 25, totalPages: 4 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 100,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 4,
+      });
       tick();
 
       // Act - Go to page 3
@@ -517,11 +621,18 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request for page 3
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('pageNumber') === '3'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('pageNumber') === '3',
       );
-      req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 3, pageSize: 25, totalPages: 4 });
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 100,
+        pageNumber: 3,
+        pageSize: 25,
+        totalPages: 4,
+      });
       tick();
 
       expect(component['currentPage']()).toBe(3);
@@ -531,8 +642,14 @@ describe('ReservationsComponent (Integration)', () => {
       // Arrange
       component.ngOnInit();
       tick();
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 100, pageNumber: 1, pageSize: 25, totalPages: 4 });
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 100,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 4,
+      });
       tick();
 
       // Act - Try to go to page 10 (beyond total)
@@ -540,7 +657,7 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - No HTTP request made
-      httpMock.expectNone(request => request.params.get('pageNumber') === '10');
+      httpMock.expectNone((request) => request.params.get('pageNumber') === '10');
       expect(component['currentPage']()).toBe(1);
     }));
   });
@@ -549,8 +666,14 @@ describe('ReservationsComponent (Integration)', () => {
     beforeEach(fakeAsync(() => {
       component.ngOnInit();
       tick();
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
     }));
 
@@ -570,16 +693,25 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request to confirm
-      const req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${pendingReservation.reservationId}/confirm`) &&
-        request.method === 'PUT'
+      const req = httpMock.expectOne(
+        (request) =>
+          request.url.includes(`/api/reservations/${pendingReservation.reservationId}/confirm`) &&
+          request.method === 'PUT',
       );
       req.flush(null);
       tick();
 
       // Verify reload
-      const reloadReq = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      reloadReq.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      const reloadReq = httpMock.expectOne((request) =>
+        request.url.includes('/api/reservations/search'),
+      );
+      reloadReq.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
@@ -597,17 +729,26 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request to cancel
-      const req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${confirmedReservation.reservationId}/cancel`) &&
-        request.method === 'PUT'
+      const req = httpMock.expectOne(
+        (request) =>
+          request.url.includes(`/api/reservations/${confirmedReservation.reservationId}/cancel`) &&
+          request.method === 'PUT',
       );
       expect(req.request.body).toEqual({ cancellationReason: 'Customer request' });
       req.flush(null);
       tick();
 
       // Verify reload
-      const reloadReq = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      reloadReq.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      const reloadReq = httpMock.expectOne((request) =>
+        request.url.includes('/api/reservations/search'),
+      );
+      reloadReq.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['successMessage']()).toBe('Reservierung erfolgreich storniert');
@@ -625,8 +766,8 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request fails
-      const req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${pendingReservation.reservationId}/confirm`)
+      const req = httpMock.expectOne((request) =>
+        request.url.includes(`/api/reservations/${pendingReservation.reservationId}/confirm`),
       );
       req.flush('Confirmation failed', { status: 400, statusText: 'Bad Request' });
       tick();
@@ -642,8 +783,14 @@ describe('ReservationsComponent (Integration)', () => {
       component.ngOnInit();
       tick();
 
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['reservations']().length).toBe(4);
@@ -653,12 +800,19 @@ describe('ReservationsComponent (Integration)', () => {
       component['applyFilters']();
       tick();
 
-      req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('status') === 'Pending'
+      req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('status') === 'Pending',
       );
-      const pendingReservations = mockReservations.filter(r => r.status === 'Pending');
-      req.flush({ reservations: pendingReservations, totalCount: 1, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      const pendingReservations = mockReservations.filter((r) => r.status === 'Pending');
+      req.flush({
+        reservations: pendingReservations,
+        totalCount: 1,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       expect(component['reservations']().length).toBe(1);
@@ -668,8 +822,14 @@ describe('ReservationsComponent (Integration)', () => {
       component['changeSortBy']('Price');
       tick();
 
-      req = httpMock.expectOne(request => request.params.get('sortBy') === 'Price');
-      req.flush({ reservations: pendingReservations, totalCount: 1, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.params.get('sortBy') === 'Price');
+      req.flush({
+        reservations: pendingReservations,
+        totalCount: 1,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Step 4: Agent views reservation details
@@ -682,26 +842,28 @@ describe('ReservationsComponent (Integration)', () => {
       component['confirmReservation'](reservation);
       tick();
       expect(component['showConfirmModal']()).toBe(true);
-      
+
       component['executeConfirmation']();
       tick();
 
-      req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${reservation.reservationId}/confirm`)
+      req = httpMock.expectOne((request) =>
+        request.url.includes(`/api/reservations/${reservation.reservationId}/confirm`),
       );
       req.flush(null);
       tick();
 
       // Step 6: Reload shows updated status
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({
-        reservations: mockReservations.map(r =>
-          r.reservationId === reservation.reservationId ? { ...r, status: 'Confirmed' } : r
-        ).filter(r => r.status === 'Pending'),
+        reservations: mockReservations
+          .map((r) =>
+            r.reservationId === reservation.reservationId ? { ...r, status: 'Confirmed' } : r,
+          )
+          .filter((r) => r.status === 'Pending'),
         totalCount: 0,
         pageNumber: 1,
         pageSize: 25,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -714,8 +876,14 @@ describe('ReservationsComponent (Integration)', () => {
     it('should handle rapid filter changes', fakeAsync(() => {
       component.ngOnInit();
       tick();
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Rapid filter changes
@@ -723,16 +891,28 @@ describe('ReservationsComponent (Integration)', () => {
       component['applyFilters']();
       tick();
 
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       component['searchStatus'].set('Confirmed');
       component['applyFilters']();
       tick();
 
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ reservations: mockReservations, totalCount: 4, pageNumber: 1, pageSize: 25, totalPages: 1 });
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        reservations: mockReservations,
+        totalCount: 4,
+        pageNumber: 1,
+        pageSize: 25,
+        totalPages: 1,
+      });
       tick();
 
       // Should handle gracefully
@@ -742,7 +922,7 @@ describe('ReservationsComponent (Integration)', () => {
     it('should handle empty search results', fakeAsync(() => {
       component.ngOnInit();
       tick();
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({ reservations: [], totalCount: 0, pageNumber: 1, pageSize: 25, totalPages: 0 });
       tick();
 

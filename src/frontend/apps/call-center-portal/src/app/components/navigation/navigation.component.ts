@@ -18,7 +18,7 @@ import { CALL_CENTER_NAV_ITEMS } from '../../constants/navigation.config';
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './navigation.component.html',
-  styleUrl: './navigation.component.css'
+  styleUrl: './navigation.component.css',
 })
 export class NavigationComponent implements OnInit {
   private readonly authService = inject(AuthService);
@@ -40,7 +40,7 @@ export class NavigationComponent implements OnInit {
     const authenticated = this.isAuthenticated();
     const roles = this.userRoles();
 
-    return this.allNavItems.filter(item => {
+    return this.allNavItems.filter((item) => {
       // Hide items that require auth when not authenticated
       if (item.requiresAuth && !authenticated) {
         return false;
@@ -51,7 +51,7 @@ export class NavigationComponent implements OnInit {
       }
       // Check role-based access
       if (item.roles && item.roles.length > 0) {
-        const hasRequiredRole = item.roles.some(role => roles.includes(role));
+        const hasRequiredRole = item.roles.some((role) => roles.includes(role));
         if (!hasRequiredRole) {
           return false;
         }

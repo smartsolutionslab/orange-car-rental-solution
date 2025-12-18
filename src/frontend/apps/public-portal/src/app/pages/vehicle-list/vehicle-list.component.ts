@@ -30,7 +30,7 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
     IconComponent,
   ],
   templateUrl: './vehicle-list.component.html',
-  styleUrl: './vehicle-list.component.css'
+  styleUrl: './vehicle-list.component.css',
 })
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
@@ -56,18 +56,21 @@ export class VehicleListComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.vehicleService.searchVehicles(query).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result) => {
-        this.vehicles.set(result.vehicles);
-        this.totalCount.set(result.totalCount);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        logError('VehicleListComponent', 'Error loading vehicles', err);
-        this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
-        this.loading.set(false);
-      }
-    });
+    this.vehicleService
+      .searchVehicles(query)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.vehicles.set(result.vehicles);
+          this.totalCount.set(result.totalCount);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          logError('VehicleListComponent', 'Error loading vehicles', err);
+          this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
+          this.loading.set(false);
+        },
+      });
   }
 
   /**
@@ -82,8 +85,8 @@ export class VehicleListComponent implements OnInit {
         categoryCode: vehicle.categoryCode,
         pickupDate: query.pickupDate || '',
         returnDate: query.returnDate || '',
-        locationCode: query.locationCode || vehicle.locationCode
-      }
+        locationCode: query.locationCode || vehicle.locationCode,
+      },
     });
   }
 }

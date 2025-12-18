@@ -4,6 +4,6 @@ export const environment = {
   keycloak: {
     url: 'http://localhost:8080',
     realm: 'orange-car-rental',
-    clientId: 'call-center-portal'
-  }
+    clientId: 'call-center-portal',
+  },
 };

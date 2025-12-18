@@ -12,7 +12,7 @@ import type { Customer } from './customer.type';
  * Helper function to create display name
  */
 export const getCustomerDisplayName = (
-  customer: Pick<Customer, 'firstName' | 'lastName'>
+  customer: Pick<Customer, 'firstName' | 'lastName'>,
 ): CustomerDisplayName => `${customer.firstName} ${customer.lastName}`;
 
 /**
@@ -27,7 +27,7 @@ export const isLicenseExpired = (customer: Pick<Customer, 'licenseExpiryDate'>):
  */
 export const licenseExpiresSoon = (
   customer: Pick<Customer, 'licenseExpiryDate'>,
-  days = 30
+  days = 30,
 ): boolean => {
   return isLicenseExpiringSoon(customer.licenseExpiryDate, days);
 };

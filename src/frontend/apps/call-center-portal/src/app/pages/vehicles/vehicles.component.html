@@ -22,12 +22,7 @@
     [loading]="loading()"
     variant="warning"
   />
-  <ui-stat-card
-    label="Vermietet"
-    [value]="rentedVehicles()"
-    [loading]="loading()"
-    variant="info"
-  />
+  <ui-stat-card label="Vermietet" [value]="rentedVehicles()" [loading]="loading()" variant="info" />
 </div>
 
 <div class="content-section">
@@ -81,7 +76,11 @@
 
   <!-- Error State -->
   @if (error()) {
-    <ui-error-state [message]="error()!" [showRetry]="true" (retry)="loadVehicles()"></ui-error-state>
+    <ui-error-state
+      [message]="error()!"
+      [showRetry]="true"
+      (retry)="loadVehicles()"
+    ></ui-error-state>
   }
 
   <!-- Vehicles Table -->
@@ -115,7 +114,12 @@
               <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
               <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
               <td>
-                <button class="btn-icon" (click)="viewDetails(vehicle)" title="Details anzeigen" aria-label="Fahrzeugdetails anzeigen">
+                <button
+                  class="btn-icon"
+                  (click)="viewDetails(vehicle)"
+                  title="Details anzeigen"
+                  aria-label="Fahrzeugdetails anzeigen"
+                >
                   <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
               </td>
@@ -140,7 +144,12 @@
 </div>
 
 <!-- Vehicle Details Modal -->
-<ui-modal [isOpen]="showDetails() && !!selectedVehicle()" title="Fahrzeugdetails" size="lg" (close)="closeDetails()">
+<ui-modal
+  [isOpen]="showDetails() && !!selectedVehicle()"
+  title="Fahrzeugdetails"
+  size="lg"
+  (close)="closeDetails()"
+>
   <ng-container modal-body>
     @if (selectedVehicle()) {
       <!-- Vehicle Information -->
@@ -149,7 +158,9 @@
         <div class="detail-grid">
           <div class="detail-item">
             <label>Fahrzeug-ID</label>
-            <p><span class="id-badge">{{ selectedVehicle()!.id }}</span></p>
+            <p>
+              <span class="id-badge">{{ selectedVehicle()!.id }}</span>
+            </p>
           </div>
           <div class="detail-item">
             <label>Kennzeichen</label>
@@ -175,7 +186,12 @@
           </div>
           <div class="detail-item">
             <label>Status</label>
-            <p><ui-status-badge type="vehicle" [status]="selectedVehicle()!.status"></ui-status-badge></p>
+            <p>
+              <ui-status-badge
+                type="vehicle"
+                [status]="selectedVehicle()!.status"
+              ></ui-status-badge>
+            </p>
           </div>
         </div>
       </div>
@@ -190,15 +206,24 @@
           </div>
           <div class="detail-item">
             <label>Tagespreis (Netto)</label>
-            <p>{{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
+            <p>
+              {{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}
+            </p>
           </div>
           <div class="detail-item">
             <label>MwSt (19%)</label>
-            <p>{{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
+            <p>
+              {{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}
+            </p>
           </div>
           <div class="detail-item">
             <label>Tagespreis (Brutto)</label>
-            <p><strong>{{ selectedVehicle()!.dailyRateGross.toFixed(2) }} {{ selectedVehicle()!.currency }}</strong></p>
+            <p>
+              <strong
+                >{{ selectedVehicle()!.dailyRateGross.toFixed(2) }}
+                {{ selectedVehicle()!.currency }}</strong
+              >
+            </p>
           </div>
         </div>
       </div>
@@ -209,7 +234,9 @@
         <div class="detail-grid">
           <div class="detail-item">
             <label>Getriebe</label>
-            <p>{{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}</p>
+            <p>
+              {{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}
+            </p>
           </div>
           <div class="detail-item">
             <label>Kraftstoff</label>

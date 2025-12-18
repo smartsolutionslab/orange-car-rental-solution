@@ -30,7 +30,7 @@ import { ReservationService } from '../../services/reservation.service';
     IconComponent,
   ],
   templateUrl: './confirmation.component.html',
-  styleUrl: './confirmation.component.css'
+  styleUrl: './confirmation.component.css',
 })
 export class ConfirmationComponent implements OnInit {
   private readonly router = inject(Router);
@@ -46,7 +46,7 @@ export class ConfirmationComponent implements OnInit {
 
   ngOnInit(): void {
     // Get reservation ID from query params
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const reservationId = params['reservationId'];
       const customerId = params['customerId'];
 
@@ -69,17 +69,20 @@ export class ConfirmationComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.reservationService.getReservation(reservationId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (reservation) => {
-        this.reservation.set(reservation);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        logError('ConfirmationComponent', 'Error loading reservation', err);
-        this.error.set('Fehler beim Laden der Reservierung');
-        this.loading.set(false);
-      }
-    });
+    this.reservationService
+      .getReservation(reservationId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (reservation) => {
+          this.reservation.set(reservation);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          logError('ConfirmationComponent', 'Error loading reservation', err);
+          this.error.set('Fehler beim Laden der Reservierung');
+          this.loading.set(false);
+        },
+      });
   }
 
   /**

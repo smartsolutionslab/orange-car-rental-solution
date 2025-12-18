@@ -2,9 +2,21 @@ import { Component, inject, signal, computed, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import type { Vehicle, DailyRate, AddVehicleRequest } from '@orange-car-rental/vehicle-api';
-import { VehicleStatus, VehicleCategoryLabel, FuelType, TransmissionType, VehicleStatusLabel } from '@orange-car-rental/vehicle-api';
+import {
+  VehicleStatus,
+  VehicleCategoryLabel,
+  FuelType,
+  TransmissionType,
+  VehicleStatusLabel,
+} from '@orange-car-rental/vehicle-api';
 import type { Location, LocationCode } from '@orange-car-rental/location-api';
 import { LocationService } from '@orange-car-rental/location-api';
 import { logError } from '@orange-car-rental/util';
@@ -23,7 +35,12 @@ import {
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
-import { UI_TIMING, VEHICLE_DEFAULTS, VEHICLE_CONSTRAINTS, GERMAN_VAT_MULTIPLIER } from '../../constants/app.constants';
+import {
+  UI_TIMING,
+  VEHICLE_DEFAULTS,
+  VEHICLE_CONSTRAINTS,
+  GERMAN_VAT_MULTIPLIER,
+} from '../../constants/app.constants';
 
 /**
  * Vehicles management page for call center
@@ -48,7 +65,7 @@ import { UI_TIMING, VEHICLE_DEFAULTS, VEHICLE_CONSTRAINTS, GERMAN_VAT_MULTIPLIER
     IconComponent,
   ],
   templateUrl: './vehicles.component.html',
-  styleUrl: './vehicles.component.css'
+  styleUrl: './vehicles.component.css',
 })
 export class VehiclesComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
@@ -76,10 +93,16 @@ export class VehiclesComponent implements OnInit {
   protected readonly searchCategory = signal<string>('');
 
   // Reference data for dropdowns
-  protected readonly categories = Object.entries(VehicleCategoryLabel).map(([code, name]) => ({ code, name }));
+  protected readonly categories = Object.entries(VehicleCategoryLabel).map(([code, name]) => ({
+    code,
+    name,
+  }));
   protected readonly fuelTypes = Object.values(FuelType);
   protected readonly transmissionTypes = Object.values(TransmissionType);
-  protected readonly statuses = Object.entries(VehicleStatusLabel).map(([code, label]) => ({ code, label }));
+  protected readonly statuses = Object.entries(VehicleStatusLabel).map(([code, label]) => ({
+    code,
+    label,
+  }));
 
   // Forms
   protected addVehicleForm!: FormGroup;
@@ -101,27 +124,40 @@ export class VehiclesComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       manufacturer: [''],
       model: [''],
-      year: [new Date().getFullYear(), [Validators.min(VEHICLE_CONSTRAINTS.MIN_YEAR), Validators.max(new Date().getFullYear() + VEHICLE_CONSTRAINTS.MAX_YEAR_OFFSET)]],
+      year: [
+        new Date().getFullYear(),
+        [
+          Validators.min(VEHICLE_CONSTRAINTS.MIN_YEAR),
+          Validators.max(new Date().getFullYear() + VEHICLE_CONSTRAINTS.MAX_YEAR_OFFSET),
+        ],
+      ],
       imageUrl: [''],
       category: ['', Validators.required],
-      seats: [VEHICLE_DEFAULTS.SEATS, [Validators.required, Validators.min(VEHICLE_CONSTRAINTS.MIN_SEATS), Validators.max(VEHICLE_CONSTRAINTS.MAX_SEATS)]],
+      seats: [
+        VEHICLE_DEFAULTS.SEATS,
+        [
+          Validators.required,
+          Validators.min(VEHICLE_CONSTRAINTS.MIN_SEATS),
+          Validators.max(VEHICLE_CONSTRAINTS.MAX_SEATS),
+        ],
+      ],
       fuelType: ['Petrol', Validators.required],
       transmissionType: ['Manual', Validators.required],
       locationCode: ['', Validators.required],
       dailyRateNet: [VEHICLE_DEFAULTS.DAILY_RATE_NET, [Validators.required, Validators.min(1)]],
-      licensePlate: ['']
+      licensePlate: [''],
     });
 
     this.statusForm = this.fb.group({
-      status: [VehicleStatus.Available, Validators.required]
+      status: [VehicleStatus.Available, Validators.required],
     });
 
     this.locationForm = this.fb.group({
-      locationCode: ['', Validators.required]
+      locationCode: ['', Validators.required],
     });
 
     this.pricingForm = this.fb.group({
-      dailyRateNet: [VEHICLE_DEFAULTS.DAILY_RATE_NET, [Validators.required, Validators.min(1)]]
+      dailyRateNet: [VEHICLE_DEFAULTS.DAILY_RATE_NET, [Validators.required, Validators.min(1)]],
     });
   }
 
@@ -130,16 +166,19 @@ export class VehiclesComponent implements OnInit {
    */
   private loadLocations(): void {
     this.loadingLocations.set(true);
-    this.locationService.getAllLocations().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.loadingLocations.set(false);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error loading locations', err);
-        this.loadingLocations.set(false);
-      }
-    });
+    this.locationService
+      .getAllLocations()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (locations) => {
+          this.locations.set(locations);
+          this.loadingLocations.set(false);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error loading locations', err);
+          this.loadingLocations.set(false);
+        },
+      });
   }
 
   /**
@@ -149,7 +188,8 @@ export class VehiclesComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: string } = {};
+    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: string } =
+      {};
 
     if (this.searchStatus()) {
       query.status = this.searchStatus() as VehicleStatus;
@@ -161,17 +201,20 @@ export class VehiclesComponent implements OnInit {
       query.categoryCode = this.searchCategory();
     }
 
-    this.vehicleService.searchVehicles(query).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result) => {
-        this.vehicles.set(result.vehicles);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error loading vehicles', err);
-        this.error.set('Fehler beim Laden der Fahrzeuge');
-        this.loading.set(false);
-      }
-    });
+    this.vehicleService
+      .searchVehicles(query)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.vehicles.set(result.vehicles);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error loading vehicles', err);
+          this.error.set('Fehler beim Laden der Fahrzeuge');
+          this.loading.set(false);
+        },
+      });
   }
 
   /**
@@ -215,22 +258,22 @@ export class VehiclesComponent implements OnInit {
   /**
    * Number of available vehicles
    */
-  protected readonly availableVehicles = computed(() =>
-    this.vehicles().filter(v => v.status === VehicleStatus.Available).length
+  protected readonly availableVehicles = computed(
+    () => this.vehicles().filter((v) => v.status === VehicleStatus.Available).length,
   );
 
   /**
    * Number of vehicles in maintenance
    */
-  protected readonly maintenanceVehicles = computed(() =>
-    this.vehicles().filter(v => v.status === VehicleStatus.Maintenance).length
+  protected readonly maintenanceVehicles = computed(
+    () => this.vehicles().filter((v) => v.status === VehicleStatus.Maintenance).length,
   );
 
   /**
    * Number of rented vehicles
    */
-  protected readonly rentedVehicles = computed(() =>
-    this.vehicles().filter(v => v.status === VehicleStatus.Rented).length
+  protected readonly rentedVehicles = computed(
+    () => this.vehicles().filter((v) => v.status === VehicleStatus.Rented).length,
   );
 
   /**
@@ -247,7 +290,7 @@ export class VehiclesComponent implements OnInit {
    * Unique locations from vehicles
    */
   protected readonly uniqueLocations = computed(() => {
-    const locations = new Set(this.vehicles().map(v => v.locationCode));
+    const locations = new Set(this.vehicles().map((v) => v.locationCode));
     return Array.from(locations).sort();
   });
 
@@ -255,7 +298,7 @@ export class VehiclesComponent implements OnInit {
    * Unique categories from vehicles
    */
   protected readonly uniqueCategories = computed(() => {
-    const categories = new Set(this.vehicles().map(v => v.categoryCode));
+    const categories = new Set(this.vehicles().map((v) => v.categoryCode));
     return Array.from(categories).sort();
   });
 
@@ -272,7 +315,7 @@ export class VehiclesComponent implements OnInit {
       seats: VEHICLE_DEFAULTS.SEATS,
       fuelType: 'Petrol',
       transmissionType: 'Manual',
-      dailyRateNet: VEHICLE_DEFAULTS.DAILY_RATE_NET
+      dailyRateNet: VEHICLE_DEFAULTS.DAILY_RATE_NET,
     });
     this.showAddModal.set(true);
     this.error.set(null);
@@ -302,38 +345,41 @@ export class VehiclesComponent implements OnInit {
         manufacturer: formValue.manufacturer || undefined,
         model: formValue.model || undefined,
         year: formValue.year || undefined,
-        imageUrl: formValue.imageUrl || undefined
+        imageUrl: formValue.imageUrl || undefined,
       },
       specifications: {
         category: formValue.category,
         seats: formValue.seats,
         fuelType: formValue.fuelType,
-        transmissionType: formValue.transmissionType
+        transmissionType: formValue.transmissionType,
       },
       locationAndPricing: {
         locationCode: formValue.locationCode,
-        dailyRateNet: formValue.dailyRateNet
+        dailyRateNet: formValue.dailyRateNet,
       },
-      registration: formValue.licensePlate ? { licensePlate: formValue.licensePlate } : undefined
+      registration: formValue.licensePlate ? { licensePlate: formValue.licensePlate } : undefined,
     };
 
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.addVehicle(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result) => {
-        this.actionInProgress.set(false);
-        this.successMessage.set(`Fahrzeug "${result.name}" erfolgreich hinzugefügt`);
-        this.closeAddVehicleModal();
-        this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error adding vehicle', err);
-        this.actionInProgress.set(false);
-        this.error.set('Fehler beim Hinzufügen des Fahrzeugs');
-      }
-    });
+    this.vehicleService
+      .addVehicle(request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.actionInProgress.set(false);
+          this.successMessage.set(`Fahrzeug "${result.name}" erfolgreich hinzugefügt`);
+          this.closeAddVehicleModal();
+          this.loadVehicles();
+          setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error adding vehicle', err);
+          this.actionInProgress.set(false);
+          this.error.set('Fehler beim Hinzufügen des Fahrzeugs');
+        },
+      });
   }
 
   /**
@@ -365,20 +411,25 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleStatus(vehicle.id, newStatus).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.actionInProgress.set(false);
-        this.successMessage.set(`Status von "${vehicle.name}" auf "${this.getStatusText(newStatus)}" aktualisiert`);
-        this.closeStatusModal();
-        this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error updating status', err);
-        this.actionInProgress.set(false);
-        this.error.set('Fehler beim Aktualisieren des Status');
-      }
-    });
+    this.vehicleService
+      .updateVehicleStatus(vehicle.id, newStatus)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.actionInProgress.set(false);
+          this.successMessage.set(
+            `Status von "${vehicle.name}" auf "${this.getStatusText(newStatus)}" aktualisiert`,
+          );
+          this.closeStatusModal();
+          this.loadVehicles();
+          setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error updating status', err);
+          this.actionInProgress.set(false);
+          this.error.set('Fehler beim Aktualisieren des Status');
+        },
+      });
   }
 
   /**
@@ -410,20 +461,23 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleLocation(vehicle.id, newLocation).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.actionInProgress.set(false);
-        this.successMessage.set(`Standort von "${vehicle.name}" erfolgreich aktualisiert`);
-        this.closeLocationModal();
-        this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error updating location', err);
-        this.actionInProgress.set(false);
-        this.error.set('Fehler beim Aktualisieren des Standorts');
-      }
-    });
+    this.vehicleService
+      .updateVehicleLocation(vehicle.id, newLocation)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.actionInProgress.set(false);
+          this.successMessage.set(`Standort von "${vehicle.name}" erfolgreich aktualisiert`);
+          this.closeLocationModal();
+          this.loadVehicles();
+          setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error updating location', err);
+          this.actionInProgress.set(false);
+          this.error.set('Fehler beim Aktualisieren des Standorts');
+        },
+      });
   }
 
   /**
@@ -455,20 +509,23 @@ export class VehiclesComponent implements OnInit {
     this.actionInProgress.set(true);
     this.error.set(null);
 
-    this.vehicleService.updateVehicleDailyRate(vehicle.id, newRate).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.actionInProgress.set(false);
-        this.successMessage.set(`Tagespreis von "${vehicle.name}" erfolgreich aktualisiert`);
-        this.closePricingModal();
-        this.loadVehicles();
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
-      },
-      error: (err) => {
-        logError('VehiclesComponent', 'Error updating pricing', err);
-        this.actionInProgress.set(false);
-        this.error.set('Fehler beim Aktualisieren des Preises');
-      }
-    });
+    this.vehicleService
+      .updateVehicleDailyRate(vehicle.id, newRate)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.actionInProgress.set(false);
+          this.successMessage.set(`Tagespreis von "${vehicle.name}" erfolgreich aktualisiert`);
+          this.closePricingModal();
+          this.loadVehicles();
+          setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
+        },
+        error: (err) => {
+          logError('VehiclesComponent', 'Error updating pricing', err);
+          this.actionInProgress.set(false);
+          this.error.set('Fehler beim Aktualisieren des Preises');
+        },
+      });
   }
 
   /**

@@ -13,14 +13,23 @@
 
 <!-- Error State -->
 @if (error()) {
-  <ui-error-state [message]="error()!" [showRetry]="true" (retry)="onSearch(currentSearchQuery())"></ui-error-state>
+  <ui-error-state
+    [message]="error()!"
+    [showRetry]="true"
+    (retry)="onSearch(currentSearchQuery())"
+  ></ui-error-state>
 }
 
 <!-- Results Count -->
 @if (!loading() && !error() && totalCount() > 0) {
   <div class="results-count">
     <lib-icon name="car-filled" variant="filled" size="sm" />
-    <span><strong>{{ totalCount() }}</strong> Fahrzeug{{ totalCount() === 1 ? '' : 'e' }} gefunden</span>
+    <span
+      ><strong>{{ totalCount() }}</strong> Fahrzeug{{
+        totalCount() === 1 ? '' : 'e'
+      }}
+      gefunden</span
+    >
   </div>
 }
 
@@ -60,7 +69,9 @@
           </div>
           <div class="vehicle-pricing">
             <div class="price-main">
-              <span class="price-amount">{{ vehicle.dailyRateGross | number:'1.2-2':'de-DE' }} €</span>
+              <span class="price-amount"
+                >{{ vehicle.dailyRateGross | number: '1.2-2' : 'de-DE' }} €</span
+              >
               <span class="price-period">pro Tag</span>
             </div>
             <div class="price-details">

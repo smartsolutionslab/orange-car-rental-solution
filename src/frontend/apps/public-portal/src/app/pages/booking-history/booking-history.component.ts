@@ -46,7 +46,7 @@ import type { GroupedReservations } from '../../types';
     ErrorAlertComponent,
   ],
   templateUrl: './booking-history.component.html',
-  styleUrls: ['./booking-history.component.css']
+  styleUrls: ['./booking-history.component.css'],
 })
 export class BookingHistoryComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
@@ -62,13 +62,13 @@ export class BookingHistoryComponent implements OnInit {
   groupedReservations = signal<GroupedReservations>({
     upcoming: [],
     past: [],
-    pending: []
+    pending: [],
   });
 
   // Guest lookup form
   guestLookupForm = {
     reservationId: '',
-    email: ''
+    email: '',
   };
   guestReservation = signal<Reservation | null>(null);
   guestLookupError = signal<string | null>(null);
@@ -82,7 +82,7 @@ export class BookingHistoryComponent implements OnInit {
     'Found alternative transportation',
     'Trip cancelled',
     'Booking error',
-    'Other'
+    'Other',
   ];
 
   // Detail modal
@@ -117,7 +117,7 @@ export class BookingHistoryComponent implements OnInit {
       customerId: createCustomerId(userProfile.id),
       sortBy: 'PickupDate',
       sortOrder: 'desc',
-      pageSize: DEFAULT_PAGE_SIZE.BOOKING_HISTORY
+      pageSize: DEFAULT_PAGE_SIZE.BOOKING_HISTORY,
     };
 
     try {
@@ -136,15 +136,18 @@ export class BookingHistoryComponent implements OnInit {
     const grouped: GroupedReservations = {
       upcoming: [],
       past: [],
-      pending: []
+      pending: [],
     };
 
-    reservations.forEach(reservation => {
+    reservations.forEach((reservation) => {
       const pickupDate = new Date(reservation.pickupDate);
 
       if (reservation.status === ReservationStatus.Pending) {
         grouped.pending.push(reservation);
-      } else if (reservation.status === ReservationStatus.Confirmed || reservation.status === ReservationStatus.Active) {
+      } else if (
+        reservation.status === ReservationStatus.Confirmed ||
+        reservation.status === ReservationStatus.Active
+      ) {
         if (pickupDate >= now) {
           grouped.upcoming.push(reservation);
         } else {
@@ -172,20 +175,22 @@ export class BookingHistoryComponent implements OnInit {
     this.guestLookupError.set(null);
     this.guestReservation.set(null);
 
-    this.reservationService.lookupGuestReservation(
-      reservationId,
-      email
-    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (reservation) => {
-        this.guestReservation.set(reservation);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        logError('BookingHistoryComponent', 'Guest lookup error', err);
-        this.guestLookupError.set('Reservation not found. Please check your Reservation ID and Email.');
-        this.isLoading.set(false);
-      }
-    });
+    this.reservationService
+      .lookupGuestReservation(reservationId, email)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (reservation) => {
+          this.guestReservation.set(reservation);
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          logError('BookingHistoryComponent', 'Guest lookup error', err);
+          this.guestLookupError.set(
+            'Reservation not found. Please check your Reservation ID and Email.',
+          );
+          this.isLoading.set(false);
+        },
+      });
   }
 
   // View details
@@ -201,7 +206,10 @@ export class BookingHistoryComponent implements OnInit {
 
   // Cancellation
   canCancel(reservation: Reservation): boolean {
-    if (reservation.status !== ReservationStatus.Confirmed && reservation.status !== ReservationStatus.Pending) {
+    if (
+      reservation.status !== ReservationStatus.Confirmed &&
+      reservation.status !== ReservationStatus.Pending
+    ) {
       return false;
     }
 
@@ -233,28 +241,33 @@ export class BookingHistoryComponent implements OnInit {
 
     this.isLoading.set(true);
 
-    this.reservationService.cancelReservation(reservation.id, this.cancellationReason).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: () => {
-        this.closeCancelModal();
-        this.isLoading.set(false);
+    this.reservationService
+      .cancelReservation(reservation.id, this.cancellationReason)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.closeCancelModal();
+          this.isLoading.set(false);
 
-        // Reload reservations
-        if (this.isAuthenticated()) {
-          this.loadCustomerReservations();
-        } else {
-          // For guest, just update the status locally
-          const updated: Reservation = { ...reservation, status: ReservationStatus.Cancelled };
-          this.guestReservation.set(updated);
-        }
+          // Reload reservations
+          if (this.isAuthenticated()) {
+            this.loadCustomerReservations();
+          } else {
+            // For guest, just update the status locally
+            const updated: Reservation = { ...reservation, status: ReservationStatus.Cancelled };
+            this.guestReservation.set(updated);
+          }
 
-        this.toast.success('Reservierung erfolgreich storniert!');
-      },
-      error: (err) => {
-        logError('BookingHistoryComponent', 'Cancellation error', err);
-        this.isLoading.set(false);
-        this.toast.error('Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.');
-      }
-    });
+          this.toast.success('Reservierung erfolgreich storniert!');
+        },
+        error: (err) => {
+          logError('BookingHistoryComponent', 'Cancellation error', err);
+          this.isLoading.set(false);
+          this.toast.error(
+            'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
+          );
+        },
+      });
   }
 
   // Helpers - using shared utilities

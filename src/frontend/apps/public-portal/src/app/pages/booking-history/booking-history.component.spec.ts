@@ -37,10 +37,10 @@ describe('BookingHistoryComponent', () => {
       dropoffLocationCode: 'MUC',
       totalPriceNet: 336.13,
       totalPriceVat: 63.87,
-      totalPriceGross: 400.00,
+      totalPriceGross: 400.0,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: getPastDate(15)
+      createdAt: getPastDate(15),
     },
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
@@ -52,10 +52,10 @@ describe('BookingHistoryComponent', () => {
       dropoffLocationCode: 'BER',
       totalPriceNet: 168.07,
       totalPriceVat: 31.93,
-      totalPriceGross: 200.00,
+      totalPriceGross: 200.0,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: getPastDate(15)
+      createdAt: getPastDate(15),
     },
     {
       id: '323e4567-e89b-12d3-a456-426614174002',
@@ -65,32 +65,32 @@ describe('BookingHistoryComponent', () => {
       returnDate: getPastDate(58), // 58 days ago
       pickupLocationCode: 'FRA',
       dropoffLocationCode: 'FRA',
-      totalPriceNet: 252.10,
-      totalPriceVat: 47.90,
-      totalPriceGross: 300.00,
+      totalPriceNet: 252.1,
+      totalPriceVat: 47.9,
+      totalPriceGross: 300.0,
       currency: 'EUR',
       status: 'Completed',
-      createdAt: getPastDate(75)
-    }
+      createdAt: getPastDate(75),
+    },
   ];
 
   beforeEach(async () => {
     const reservationServiceSpy = jasmine.createSpyObj('ReservationService', [
       'searchReservations',
       'cancelReservation',
-      'lookupGuestReservation'
+      'lookupGuestReservation',
     ]);
 
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
       'isAuthenticated',
-      'getUserProfile'
+      'getUserProfile',
     ]);
 
     const toastServiceSpy = jasmine.createSpyObj('ToastService', [
       'success',
       'error',
       'info',
-      'warning'
+      'warning',
     ]);
 
     await TestBed.configureTestingModule({
@@ -99,11 +99,13 @@ describe('BookingHistoryComponent', () => {
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
-    mockReservationService = TestBed.inject(ReservationService) as jasmine.SpyObj<ReservationService>;
+    mockReservationService = TestBed.inject(
+      ReservationService,
+    ) as jasmine.SpyObj<ReservationService>;
     mockAuthService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
     mockToastService = TestBed.inject(ToastService) as jasmine.SpyObj<ToastService>;
 
@@ -118,15 +120,21 @@ describe('BookingHistoryComponent', () => {
   describe('Authenticated User Flow', () => {
     beforeEach(() => {
       mockAuthService.isAuthenticated.and.returnValue(true);
-      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser', email: 'test@example.com' }));
+      mockAuthService.getUserProfile.and.returnValue(
+        Promise.resolve({
+          id: '11111111-1111-1111-1111-111111111111',
+          username: 'testuser',
+          email: 'test@example.com',
+        }),
+      );
       mockReservationService.searchReservations.and.returnValue(
         of({
           items: mockReservations,
           totalCount: 3,
           pageNumber: 1,
           pageSize: 100,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
     });
 
@@ -139,8 +147,8 @@ describe('BookingHistoryComponent', () => {
         jasmine.objectContaining({
           customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
           sortBy: 'PickupDate',
-          sortOrder: 'desc'
-        })
+          sortOrder: 'desc',
+        }),
       );
     });
 
@@ -167,8 +175,8 @@ describe('BookingHistoryComponent', () => {
           totalCount: 0,
           pageNumber: 1,
           pageSize: 100,
-          totalPages: 0
-        })
+          totalPages: 0,
+        }),
       );
 
       await component.ngOnInit();
@@ -179,7 +187,6 @@ describe('BookingHistoryComponent', () => {
       expect(grouped.pending.length).toBe(0);
       expect(grouped.past.length).toBe(0);
     });
-
   });
 
   describe('Error Handling', () => {
@@ -189,18 +196,22 @@ describe('BookingHistoryComponent', () => {
     // The component code works correctly in production.
     xit('should handle reservation loading error', async () => {
       mockAuthService.isAuthenticated.and.returnValue(true);
-      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({
-        id: '11111111-1111-1111-1111-111111111111',
-        username: 'testuser'
-      }));
+      mockAuthService.getUserProfile.and.returnValue(
+        Promise.resolve({
+          id: '11111111-1111-1111-1111-111111111111',
+          username: 'testuser',
+        }),
+      );
       mockReservationService.searchReservations.and.returnValue(
-        throwError(() => new Error('Network error'))
+        throwError(() => new Error('Network error')),
       );
 
       await component.ngOnInit();
       fixture.detectChanges();
 
-      expect(component.error()).toBe('Failed to load your booking history. Please try again later.');
+      expect(component.error()).toBe(
+        'Failed to load your booking history. Please try again later.',
+      );
       expect(component.isLoading()).toBe(false);
     });
   });
@@ -229,7 +240,7 @@ describe('BookingHistoryComponent', () => {
 
       expect(mockReservationService.lookupGuestReservation).toHaveBeenCalledWith(
         '123e4567-e89b-12d3-a456-426614174000',
-        'guest@example.com'
+        'guest@example.com',
       );
       expect(component.guestReservation()).toEqual(guestReservation);
       expect(component.guestLookupError()).toBeNull();
@@ -237,14 +248,16 @@ describe('BookingHistoryComponent', () => {
 
     it('should show error when guest lookup fails', () => {
       mockReservationService.lookupGuestReservation.and.returnValue(
-        throwError(() => new Error('Not found'))
+        throwError(() => new Error('Not found')),
       );
 
       component.guestLookupForm.reservationId = 'invalid-id';
       component.guestLookupForm.email = 'wrong@example.com';
       component.onGuestLookup();
 
-      expect(component.guestLookupError()).toBe('Reservation not found. Please check your Reservation ID and Email.');
+      expect(component.guestLookupError()).toBe(
+        'Reservation not found. Please check your Reservation ID and Email.',
+      );
       expect(component.guestReservation()).toBeNull();
     });
 
@@ -261,15 +274,17 @@ describe('BookingHistoryComponent', () => {
   describe('Cancellation Flow', () => {
     beforeEach(() => {
       mockAuthService.isAuthenticated.and.returnValue(true);
-      mockAuthService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      mockAuthService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
       mockReservationService.searchReservations.and.returnValue(
         of({
           items: mockReservations,
           totalCount: 3,
           pageNumber: 1,
           pageSize: 100,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
     });
 
@@ -277,7 +292,7 @@ describe('BookingHistoryComponent', () => {
       const futureReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
-        status: 'Confirmed'
+        status: 'Confirmed',
       };
 
       expect(component.canCancel(futureReservation)).toBe(true);
@@ -287,7 +302,7 @@ describe('BookingHistoryComponent', () => {
       const soonReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
-        status: 'Confirmed'
+        status: 'Confirmed',
       };
 
       expect(component.canCancel(soonReservation)).toBe(false);
@@ -296,7 +311,7 @@ describe('BookingHistoryComponent', () => {
     it('should not allow cancellation of completed reservations', () => {
       const completedReservation: Reservation = {
         ...mockReservations[2],
-        status: 'Completed'
+        status: 'Completed',
       };
 
       expect(component.canCancel(completedReservation)).toBe(false);
@@ -333,7 +348,7 @@ describe('BookingHistoryComponent', () => {
 
       expect(mockReservationService.cancelReservation).toHaveBeenCalledWith(
         mockReservations[0].id,
-        'Change of plans'
+        'Change of plans',
       );
       expect(mockToastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
     });
@@ -349,7 +364,7 @@ describe('BookingHistoryComponent', () => {
 
     it('should handle cancellation error', () => {
       mockReservationService.cancelReservation.and.returnValue(
-        throwError(() => new Error('Cancellation failed'))
+        throwError(() => new Error('Cancellation failed')),
       );
 
       component.selectedReservation.set(mockReservations[0]);
@@ -358,7 +373,7 @@ describe('BookingHistoryComponent', () => {
       component.confirmCancellation();
 
       expect(mockToastService.error).toHaveBeenCalledWith(
-        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.'
+        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
       );
     });
   });
@@ -392,7 +407,7 @@ describe('BookingHistoryComponent', () => {
     });
 
     it('should format price correctly', () => {
-      const price = 400.00;
+      const price = 400.0;
       const formatted = component.formatPrice(price);
 
       expect(formatted).toContain('400');
@@ -434,7 +449,7 @@ describe('BookingHistoryComponent', () => {
       const invalidReservation: Reservation = {
         ...mockReservations[0],
         pickupDate: '',
-        returnDate: ''
+        returnDate: '',
       };
 
       expect(() => component.canCancel(invalidReservation)).not.toThrow();

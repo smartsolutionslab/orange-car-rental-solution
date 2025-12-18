@@ -33,9 +33,9 @@ describe('BookingComponent', () => {
     categoryName: 'Mittelklasse',
     locationCode: 'BER-HBF',
     city: 'Berlin',
-    dailyRateNet: 50.00,
-    dailyRateVat: 9.50,
-    dailyRateGross: 59.50,
+    dailyRateNet: 50.0,
+    dailyRateVat: 9.5,
+    dailyRateGross: 59.5,
     currency: 'EUR',
     seats: 5,
     fuelType: 'Petrol',
@@ -45,16 +45,16 @@ describe('BookingComponent', () => {
     manufacturer: 'Volkswagen',
     model: 'Golf 8',
     year: 2023,
-    imageUrl: null
+    imageUrl: null,
   };
 
   const mockReservationResponse: GuestReservationResponse = {
     reservationId: '987e6543-e89b-12d3-a456-426614174000',
     customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    totalPriceNet: 250.00,
-    totalPriceVat: 47.50,
-    totalPriceGross: 297.50,
-    currency: 'EUR'
+    totalPriceNet: 250.0,
+    totalPriceVat: 47.5,
+    totalPriceGross: 297.5,
+    currency: 'EUR',
   };
 
   const mockCustomerProfile: CustomerProfile = {
@@ -68,25 +68,30 @@ describe('BookingComponent', () => {
       street: 'Musterstraße 123',
       city: 'Berlin',
       postalCode: '10115',
-      country: 'Deutschland'
+      country: 'Deutschland',
     },
     driversLicense: {
       licenseNumber: 'B12345678',
       licenseIssueCountry: 'Deutschland',
       licenseIssueDate: '2015-03-01',
-      licenseExpiryDate: '2035-03-01'
-    }
+      licenseExpiryDate: '2035-03-01',
+    },
   };
 
   beforeEach(async () => {
     const vehicleServiceSpy = jasmine.createSpyObj('VehicleService', ['getVehicleById']);
-    const reservationServiceSpy = jasmine.createSpyObj('ReservationService', ['createGuestReservation']);
+    const reservationServiceSpy = jasmine.createSpyObj('ReservationService', [
+      'createGuestReservation',
+    ]);
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['isAuthenticated']);
-    const customerServiceSpy = jasmine.createSpyObj('CustomerService', ['getMyProfile', 'updateMyProfile']);
+    const customerServiceSpy = jasmine.createSpyObj('CustomerService', [
+      'getMyProfile',
+      'updateMyProfile',
+    ]);
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     activatedRoute = {
-      queryParams: of({})
+      queryParams: of({}),
     };
 
     await TestBed.configureTestingModule({
@@ -100,8 +105,8 @@ describe('BookingComponent', () => {
         { provide: CustomerService, useValue: customerServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: activatedRoute },
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
     vehicleService = TestBed.inject(VehicleService) as jasmine.SpyObj<VehicleService>;
@@ -140,7 +145,9 @@ describe('BookingComponent', () => {
 
     fixture.detectChanges();
 
-    expect(vehicleService.getVehicleById).toHaveBeenCalledWith('123e4567-e89b-12d3-a456-426614174000');
+    expect(vehicleService.getVehicleById).toHaveBeenCalledWith(
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
   });
 
   it('should populate form fields from query params', () => {
@@ -149,12 +156,14 @@ describe('BookingComponent', () => {
       vehicleId: '123e4567-e89b-12d3-a456-426614174000',
       pickupDate: '2024-01-15',
       returnDate: '2024-01-20',
-      locationCode: 'BER-HBF'
+      locationCode: 'BER-HBF',
     });
 
     fixture.detectChanges();
 
-    expect(component['bookingForm'].get('vehicleId')?.value).toBe('123e4567-e89b-12d3-a456-426614174000');
+    expect(component['bookingForm'].get('vehicleId')?.value).toBe(
+      '123e4567-e89b-12d3-a456-426614174000',
+    );
     expect(component['bookingForm'].get('pickupDate')?.value).toBe('2024-01-15');
     expect(component['bookingForm'].get('returnDate')?.value).toBe('2024-01-20');
   });
@@ -209,7 +218,7 @@ describe('BookingComponent', () => {
         pickupDate: '2024-01-15',
         returnDate: '2024-01-20',
         pickupLocationCode: 'BER-HBF',
-        dropoffLocationCode: 'BER-HBF'
+        dropoffLocationCode: 'BER-HBF',
       });
 
       component['nextStep']();
@@ -219,7 +228,7 @@ describe('BookingComponent', () => {
     it('should not move to next step when current step is invalid', () => {
       component['bookingForm'].patchValue({
         vehicleId: '',
-        categoryCode: 'MITTEL'
+        categoryCode: 'MITTEL',
       });
 
       component['nextStep']();
@@ -260,7 +269,7 @@ describe('BookingComponent', () => {
         licenseNumber: 'B123456789',
         licenseIssueCountry: 'Deutschland',
         licenseIssueDate: '2010-06-01',
-        licenseExpiryDate: '2030-06-01'
+        licenseExpiryDate: '2030-06-01',
       });
 
       component['onSubmit']();
@@ -295,7 +304,7 @@ describe('BookingComponent', () => {
         licenseNumber: 'B123456789',
         licenseIssueCountry: 'Deutschland',
         licenseIssueDate: '2010-06-01',
-        licenseExpiryDate: '2030-06-01'
+        licenseExpiryDate: '2030-06-01',
       });
 
       component['onSubmit']();
@@ -303,8 +312,8 @@ describe('BookingComponent', () => {
       expect(router.navigate).toHaveBeenCalledWith(['/confirmation'], {
         queryParams: {
           reservationId: mockReservationResponse.reservationId,
-          customerId: mockReservationResponse.customerId
-        }
+          customerId: mockReservationResponse.customerId,
+        },
       });
     });
 
@@ -331,7 +340,7 @@ describe('BookingComponent', () => {
         licenseNumber: 'B123456789',
         licenseIssueCountry: 'Deutschland',
         licenseIssueDate: '2010-06-01',
-        licenseExpiryDate: '2030-06-01'
+        licenseExpiryDate: '2030-06-01',
       });
 
       component['onSubmit']();
@@ -349,7 +358,7 @@ describe('BookingComponent', () => {
     it('should calculate rental days correctly', () => {
       component['bookingForm'].patchValue({
         pickupDate: '2024-01-15',
-        returnDate: '2024-01-20'
+        returnDate: '2024-01-20',
       });
 
       expect(component['getRentalDays']()).toBe(5);
@@ -358,7 +367,7 @@ describe('BookingComponent', () => {
     it('should return 0 when dates are missing', () => {
       component['bookingForm'].patchValue({
         pickupDate: '',
-        returnDate: ''
+        returnDate: '',
       });
 
       expect(component['getRentalDays']()).toBe(0);
@@ -409,7 +418,7 @@ describe('BookingComponent', () => {
       expect(component['bookingForm'].get('country')?.value).toBe('Deutschland');
     });
 
-    it('should pre-fill driver\'s license fields when available', () => {
+    it("should pre-fill driver's license fields when available", () => {
       fixture.detectChanges();
 
       expect(component['bookingForm'].get('licenseNumber')?.value).toBe('B12345678');
@@ -432,7 +441,7 @@ describe('BookingComponent', () => {
 
       component['bookingForm'].patchValue({
         firstName: 'Updated',
-        email: 'new@example.com'
+        email: 'new@example.com',
       });
 
       expect(component['bookingForm'].get('firstName')?.value).toBe('Updated');
@@ -440,7 +449,9 @@ describe('BookingComponent', () => {
     });
 
     it('should handle profile loading errors gracefully', () => {
-      customerService.getMyProfile.and.returnValue(throwError(() => new Error('Profile not found')));
+      customerService.getMyProfile.and.returnValue(
+        throwError(() => new Error('Profile not found')),
+      );
 
       fixture.detectChanges();
 
@@ -496,16 +507,18 @@ describe('BookingComponent', () => {
         licenseNumber: 'N87654321',
         licenseIssueCountry: 'Deutschland',
         licenseIssueDate: '2020-01-01',
-        licenseExpiryDate: '2040-01-01'
+        licenseExpiryDate: '2040-01-01',
       });
 
       component['onSubmit']();
 
-      expect(customerService.updateMyProfile).toHaveBeenCalledWith(jasmine.objectContaining({
-        firstName: 'Updated',
-        lastName: 'Name',
-        email: 'updated@example.com'
-      }));
+      expect(customerService.updateMyProfile).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          firstName: 'Updated',
+          lastName: 'Name',
+          email: 'updated@example.com',
+        }),
+      );
     });
 
     it('should not update profile when checkbox is unchecked', () => {
@@ -518,7 +531,7 @@ describe('BookingComponent', () => {
         pickupLocationCode: 'BER-HBF',
         dropoffLocationCode: 'BER-HBF',
         firstName: 'Test',
-        lastName: 'User'
+        lastName: 'User',
       });
 
       component['onSubmit']();
@@ -531,7 +544,7 @@ describe('BookingComponent', () => {
       component['isAuthenticated'].set(false);
 
       component['bookingForm'].patchValue({
-        updateMyProfile: true
+        updateMyProfile: true,
       });
 
       component['onSubmit']();
@@ -562,7 +575,7 @@ describe('BookingComponent', () => {
         licenseNumber: 'TEST123',
         licenseIssueCountry: 'Deutschland',
         licenseIssueDate: '2020-01-01',
-        licenseExpiryDate: '2040-01-01'
+        licenseExpiryDate: '2040-01-01',
       });
 
       component['onSubmit']();
@@ -583,7 +596,7 @@ describe('BookingComponent', () => {
         returnDate: '2024-01-20',
         pickupLocationCode: 'BER-HBF',
         dropoffLocationCode: 'BER-HBF',
-        firstName: 'Updated'
+        firstName: 'Updated',
       });
 
       component['onSubmit']();

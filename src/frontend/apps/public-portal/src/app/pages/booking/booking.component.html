@@ -2,22 +2,38 @@
   <!-- Header -->
   <div class="booking-header">
     <h1>Fahrzeug buchen</h1>
-    <p class="subtitle">Vervollständigen Sie Ihre Buchung in {{ totalSteps }} einfachen Schritten</p>
+    <p class="subtitle">
+      Vervollständigen Sie Ihre Buchung in {{ totalSteps }} einfachen Schritten
+    </p>
   </div>
 
   <!-- Progress Bar -->
   <div class="progress-bar">
     <div class="progress-steps">
       @for (step of [1, 2, 3, 4, 5]; track step) {
-        <div class="progress-step" [class.active]="currentStep() >= step" [class.current]="currentStep() === step">
+        <div
+          class="progress-step"
+          [class.active]="currentStep() >= step"
+          [class.current]="currentStep() === step"
+        >
           <div class="step-circle">{{ step }}</div>
           <div class="step-label">
             @switch (step) {
-              @case (1) { Buchungsdetails }
-              @case (2) { Persönliche Daten }
-              @case (3) { Adresse }
-              @case (4) { Führerschein }
-              @case (5) { Überprüfung }
+              @case (1) {
+                Buchungsdetails
+              }
+              @case (2) {
+                Persönliche Daten
+              }
+              @case (3) {
+                Adresse
+              }
+              @case (4) {
+                Führerschein
+              }
+              @case (5) {
+                Überprüfung
+              }
             }
           </div>
         </div>
@@ -32,7 +48,6 @@
 
   <!-- Form -->
   <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form">
-
     <!-- Step 1: Vehicle and Booking Details -->
     @if (currentStep() === 1) {
       <div class="form-step">
@@ -47,7 +62,9 @@
               id="pickupDate"
               formControlName="pickupDate"
               [min]="today"
-              [class.invalid]="bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched"
+              [class.invalid]="
+                bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched
+              "
             />
             @if (bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched) {
               <span class="error-text">Bitte wählen Sie ein gültiges Abholdatum</span>
@@ -61,7 +78,9 @@
               id="returnDate"
               formControlName="returnDate"
               [min]="minReturnDate()"
-              [class.invalid]="bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched"
+              [class.invalid]="
+                bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched
+              "
             />
             @if (bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched) {
               <span class="error-text">Bitte wählen Sie ein gültiges Rückgabedatum</span>
@@ -82,9 +101,15 @@
               formControlName="pickupLocationCode"
               placeholder="Bitte wählen..."
               [showCity]="true"
-              [class.invalid]="bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched"
+              [class.invalid]="
+                bookingForm.get('pickupLocationCode')?.invalid &&
+                bookingForm.get('pickupLocationCode')?.touched
+              "
             />
-            @if (bookingForm.get('pickupLocationCode')?.invalid && bookingForm.get('pickupLocationCode')?.touched) {
+            @if (
+              bookingForm.get('pickupLocationCode')?.invalid &&
+              bookingForm.get('pickupLocationCode')?.touched
+            ) {
               <span class="error-text">Bitte wählen Sie eine Abholstation</span>
             }
           </div>
@@ -96,9 +121,15 @@
               formControlName="dropoffLocationCode"
               placeholder="Bitte wählen..."
               [showCity]="true"
-              [class.invalid]="bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched"
+              [class.invalid]="
+                bookingForm.get('dropoffLocationCode')?.invalid &&
+                bookingForm.get('dropoffLocationCode')?.touched
+              "
             />
-            @if (bookingForm.get('dropoffLocationCode')?.invalid && bookingForm.get('dropoffLocationCode')?.touched) {
+            @if (
+              bookingForm.get('dropoffLocationCode')?.invalid &&
+              bookingForm.get('dropoffLocationCode')?.touched
+            ) {
               <span class="error-text">Bitte wählen Sie eine Rückgabestation</span>
             }
           </div>
@@ -120,7 +151,9 @@
               id="firstName"
               formControlName="firstName"
               placeholder="Max"
-              [class.invalid]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched"
+              [class.invalid]="
+                bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched
+              "
             />
             @if (bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched) {
               <span class="error-text">Mindestens 2 Zeichen erforderlich</span>
@@ -134,7 +167,9 @@
               id="lastName"
               formControlName="lastName"
               placeholder="Mustermann"
-              [class.invalid]="bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched"
+              [class.invalid]="
+                bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched
+              "
             />
             @if (bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched) {
               <span class="error-text">Mindestens 2 Zeichen erforderlich</span>
@@ -148,7 +183,9 @@
               id="email"
               formControlName="email"
               placeholder="max.mustermann@beispiel.de"
-              [class.invalid]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched"
+              [class.invalid]="
+                bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched
+              "
             />
             @if (bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched) {
               <span class="error-text">Bitte geben Sie eine gültige E-Mail-Adresse ein</span>
@@ -162,9 +199,13 @@
               id="phoneNumber"
               formControlName="phoneNumber"
               placeholder="+49 123 456789"
-              [class.invalid]="bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched"
+              [class.invalid]="
+                bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched
+              "
             />
-            @if (bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched) {
+            @if (
+              bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched
+            ) {
               <span class="error-text">Bitte geben Sie eine gültige Telefonnummer ein</span>
             }
           </div>
@@ -176,9 +217,13 @@
               id="dateOfBirth"
               formControlName="dateOfBirth"
               [max]="today"
-              [class.invalid]="bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched"
+              [class.invalid]="
+                bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched
+              "
             />
-            @if (bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched) {
+            @if (
+              bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched
+            ) {
               <span class="error-text">Bitte geben Sie Ihr Geburtsdatum ein</span>
             }
           </div>
@@ -200,7 +245,9 @@
               id="street"
               formControlName="street"
               placeholder="Musterstraße 123"
-              [class.invalid]="bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched"
+              [class.invalid]="
+                bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched
+              "
             />
             @if (bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched) {
               <span class="error-text">Mindestens 5 Zeichen erforderlich</span>
@@ -215,7 +262,9 @@
               formControlName="postalCode"
               placeholder="12345"
               maxlength="5"
-              [class.invalid]="bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched"
+              [class.invalid]="
+                bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched
+              "
             />
             @if (bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched) {
               <span class="error-text">Bitte geben Sie eine 5-stellige Postleitzahl ein</span>
@@ -242,7 +291,9 @@
               type="text"
               id="country"
               formControlName="country"
-              [class.invalid]="bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched"
+              [class.invalid]="
+                bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched
+              "
             />
             @if (bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched) {
               <span class="error-text">Bitte geben Sie Ihr Land ein</span>
@@ -266,9 +317,14 @@
               id="licenseNumber"
               formControlName="licenseNumber"
               placeholder="B12345678"
-              [class.invalid]="bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched"
+              [class.invalid]="
+                bookingForm.get('licenseNumber')?.invalid &&
+                bookingForm.get('licenseNumber')?.touched
+              "
             />
-            @if (bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched) {
+            @if (
+              bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched
+            ) {
               <span class="error-text">Mindestens 5 Zeichen erforderlich</span>
             }
           </div>
@@ -279,9 +335,15 @@
               type="text"
               id="licenseIssueCountry"
               formControlName="licenseIssueCountry"
-              [class.invalid]="bookingForm.get('licenseIssueCountry')?.invalid && bookingForm.get('licenseIssueCountry')?.touched"
+              [class.invalid]="
+                bookingForm.get('licenseIssueCountry')?.invalid &&
+                bookingForm.get('licenseIssueCountry')?.touched
+              "
             />
-            @if (bookingForm.get('licenseIssueCountry')?.invalid && bookingForm.get('licenseIssueCountry')?.touched) {
+            @if (
+              bookingForm.get('licenseIssueCountry')?.invalid &&
+              bookingForm.get('licenseIssueCountry')?.touched
+            ) {
               <span class="error-text">Bitte geben Sie das Ausstellungsland ein</span>
             }
           </div>
@@ -293,9 +355,15 @@
               id="licenseIssueDate"
               formControlName="licenseIssueDate"
               [max]="maxLicenseIssueDate()"
-              [class.invalid]="bookingForm.get('licenseIssueDate')?.invalid && bookingForm.get('licenseIssueDate')?.touched"
+              [class.invalid]="
+                bookingForm.get('licenseIssueDate')?.invalid &&
+                bookingForm.get('licenseIssueDate')?.touched
+              "
             />
-            @if (bookingForm.get('licenseIssueDate')?.invalid && bookingForm.get('licenseIssueDate')?.touched) {
+            @if (
+              bookingForm.get('licenseIssueDate')?.invalid &&
+              bookingForm.get('licenseIssueDate')?.touched
+            ) {
               <span class="error-text">Bitte geben Sie das Ausstellungsdatum ein</span>
             }
           </div>
@@ -307,9 +375,15 @@
               id="licenseExpiryDate"
               formControlName="licenseExpiryDate"
               [min]="minLicenseExpiryDate()"
-              [class.invalid]="bookingForm.get('licenseExpiryDate')?.invalid && bookingForm.get('licenseExpiryDate')?.touched"
+              [class.invalid]="
+                bookingForm.get('licenseExpiryDate')?.invalid &&
+                bookingForm.get('licenseExpiryDate')?.touched
+              "
             />
-            @if (bookingForm.get('licenseExpiryDate')?.invalid && bookingForm.get('licenseExpiryDate')?.touched) {
+            @if (
+              bookingForm.get('licenseExpiryDate')?.invalid &&
+              bookingForm.get('licenseExpiryDate')?.touched
+            ) {
               <span class="error-text">Bitte geben Sie das Ablaufdatum ein</span>
             }
           </div>
@@ -336,7 +410,9 @@
             </div>
             <div class="review-item">
               <span class="review-label">Mietdauer:</span>
-              <span class="review-value">{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span>
+              <span class="review-value"
+                >{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span
+              >
             </div>
           </div>
         </div>
@@ -346,7 +422,10 @@
           <div class="review-grid">
             <div class="review-item">
               <span class="review-label">Name:</span>
-              <span class="review-value">{{ bookingForm.get('firstName')?.value }} {{ bookingForm.get('lastName')?.value }}</span>
+              <span class="review-value"
+                >{{ bookingForm.get('firstName')?.value }}
+                {{ bookingForm.get('lastName')?.value }}</span
+              >
             </div>
             <div class="review-item">
               <span class="review-label">E-Mail:</span>
@@ -365,8 +444,8 @@
             <div class="review-item full-width">
               <span class="review-label">Adresse:</span>
               <span class="review-value">
-                {{ bookingForm.get('street')?.value }},
-                {{ bookingForm.get('postalCode')?.value }} {{ bookingForm.get('city')?.value }},
+                {{ bookingForm.get('street')?.value }}, {{ bookingForm.get('postalCode')?.value }}
+                {{ bookingForm.get('city')?.value }},
                 {{ bookingForm.get('country')?.value }}
               </span>
             </div>
@@ -392,12 +471,11 @@
           <div class="profile-update-option">
             <label class="checkbox-label">
               <input type="checkbox" formControlName="updateMyProfile" class="checkbox-input" />
-              <span class="checkbox-text">
-                Diese Änderungen in meinem Profil speichern
-              </span>
+              <span class="checkbox-text"> Diese Änderungen in meinem Profil speichern </span>
             </label>
             <p class="profile-update-hint">
-              Wenn aktiviert, werden Ihre persönlichen Daten, Adresse und Führerscheininformationen in Ihrem Profil aktualisiert.
+              Wenn aktiviert, werden Ihre persönlichen Daten, Adresse und Führerscheininformationen
+              in Ihrem Profil aktualisiert.
             </p>
           </div>
         }
@@ -407,7 +485,12 @@
     <!-- Navigation Buttons -->
     <div class="form-navigation">
       @if (currentStep() > 1) {
-        <button type="button" class="btn btn-secondary" (click)="previousStep()" [disabled]="submitting()">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="previousStep()"
+          [disabled]="submitting()"
+        >
           <lib-icon name="chevron-left-filled" variant="filled" size="sm" />
           Zurück
         </button>

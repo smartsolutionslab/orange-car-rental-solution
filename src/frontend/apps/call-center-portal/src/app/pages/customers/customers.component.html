@@ -56,10 +56,7 @@
     </div>
 
     @if (error()) {
-      <ui-error-state
-        [message]="error()!"
-        variant="inline"
-      ></ui-error-state>
+      <ui-error-state [message]="error()!" variant="inline"></ui-error-state>
     }
   </div>
 
@@ -98,7 +95,12 @@
               <td>{{ customer.city }}</td>
               <td>{{ formatDate(customer.createdAt) }}</td>
               <td>
-                <button class="btn-icon" (click)="viewDetails(customer)" title="Details anzeigen" aria-label="Kundendetails anzeigen">
+                <button
+                  class="btn-icon"
+                  (click)="viewDetails(customer)"
+                  title="Details anzeigen"
+                  aria-label="Kundendetails anzeigen"
+                >
                   <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
               </td>
@@ -128,7 +130,6 @@
   }
 </div>
 
-
 <!-- Customer Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedCustomer()"
@@ -138,288 +139,306 @@
 >
   <ng-container modal-body>
     @if (selectedCustomer()) {
-        <!-- Success Message -->
-        @if (successMessage()) {
-          <ui-success-alert [message]="successMessage()!"></ui-success-alert>
+      <!-- Success Message -->
+      @if (successMessage()) {
+        <ui-success-alert [message]="successMessage()!"></ui-success-alert>
+      }
+      <!-- Customer Information -->
+      <div class="info-section">
+        <h3>Persönliche Informationen</h3>
+
+        @if (!editMode()) {
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Kunden-ID</label>
+              <p>
+                <span class="id-badge">{{ selectedCustomer()!.id }}</span>
+              </p>
+            </div>
+            <div class="detail-item">
+              <label>Name</label>
+              <p>{{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
+            </div>
+            <div class="detail-item">
+              <label>E-Mail</label>
+              <p>{{ selectedCustomer()!.email }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Telefon</label>
+              <p>{{ selectedCustomer()!.phoneNumber }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Geburtsdatum</label>
+              <p>
+                {{ formatDate(selectedCustomer()!.dateOfBirth) }} ({{
+                  calculateAge(selectedCustomer()!.dateOfBirth)
+                }}
+                Jahre)
+              </p>
+            </div>
+            <div class="detail-item">
+              <label>Registriert seit</label>
+              <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editFirstName">Vorname *</label>
+              <input
+                type="text"
+                id="editFirstName"
+                [ngModel]="editForm().firstName"
+                (ngModelChange)="updateEditForm('firstName', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLastName">Nachname *</label>
+              <input
+                type="text"
+                id="editLastName"
+                [ngModel]="editForm().lastName"
+                (ngModelChange)="updateEditForm('lastName', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editEmail">E-Mail *</label>
+              <input
+                type="email"
+                id="editEmail"
+                [ngModel]="editForm().email"
+                (ngModelChange)="updateEditForm('email', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editPhone">Telefon *</label>
+              <input
+                type="tel"
+                id="editPhone"
+                [ngModel]="editForm().phoneNumber"
+                (ngModelChange)="updateEditForm('phoneNumber', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editDateOfBirth">Geburtsdatum *</label>
+              <input
+                type="date"
+                id="editDateOfBirth"
+                [ngModel]="editForm().dateOfBirth"
+                (ngModelChange)="updateEditForm('dateOfBirth', $event)"
+                required
+              />
+            </div>
+          </div>
         }
-        <!-- Customer Information -->
-        <div class="info-section">
-          <h3>Persönliche Informationen</h3>
+      </div>
 
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Kunden-ID</label>
-                <p><span class="id-badge">{{ selectedCustomer()!.id }}</span></p>
-              </div>
-              <div class="detail-item">
-                <label>Name</label>
-                <p>{{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
-              </div>
-              <div class="detail-item">
-                <label>E-Mail</label>
-                <p>{{ selectedCustomer()!.email }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Telefon</label>
-                <p>{{ selectedCustomer()!.phoneNumber }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Geburtsdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.dateOfBirth) }} ({{ calculateAge(selectedCustomer()!.dateOfBirth) }} Jahre)</p>
-              </div>
-              <div class="detail-item">
-                <label>Registriert seit</label>
-                <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
-              </div>
+      <!-- Address Information -->
+      <div class="info-section">
+        <h3>Adresse</h3>
+
+        @if (!editMode()) {
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Straße</label>
+              <p>{{ selectedCustomer()!.street }}</p>
             </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editFirstName">Vorname *</label>
-                <input
-                  type="text"
-                  id="editFirstName"
-                  [ngModel]="editForm().firstName"
-                  (ngModelChange)="updateEditForm('firstName', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLastName">Nachname *</label>
-                <input
-                  type="text"
-                  id="editLastName"
-                  [ngModel]="editForm().lastName"
-                  (ngModelChange)="updateEditForm('lastName', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editEmail">E-Mail *</label>
-                <input
-                  type="email"
-                  id="editEmail"
-                  [ngModel]="editForm().email"
-                  (ngModelChange)="updateEditForm('email', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editPhone">Telefon *</label>
-                <input
-                  type="tel"
-                  id="editPhone"
-                  [ngModel]="editForm().phoneNumber"
-                  (ngModelChange)="updateEditForm('phoneNumber', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editDateOfBirth">Geburtsdatum *</label>
-                <input
-                  type="date"
-                  id="editDateOfBirth"
-                  [ngModel]="editForm().dateOfBirth"
-                  (ngModelChange)="updateEditForm('dateOfBirth', $event)"
-                  required
-                />
-              </div>
+            <div class="detail-item">
+              <label>Stadt</label>
+              <p>{{ selectedCustomer()!.city }}</p>
             </div>
-          }
-        </div>
-
-        <!-- Address Information -->
-        <div class="info-section">
-          <h3>Adresse</h3>
-
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Straße</label>
-                <p>{{ selectedCustomer()!.street }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Stadt</label>
-                <p>{{ selectedCustomer()!.city }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Postleitzahl</label>
-                <p>{{ selectedCustomer()!.postalCode }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Land</label>
-                <p>{{ selectedCustomer()!.country }}</p>
-              </div>
+            <div class="detail-item">
+              <label>Postleitzahl</label>
+              <p>{{ selectedCustomer()!.postalCode }}</p>
             </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editStreet">Straße</label>
-                <input
-                  type="text"
-                  id="editStreet"
-                  [ngModel]="editForm().street"
-                  (ngModelChange)="updateEditForm('street', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editCity">Stadt</label>
-                <input
-                  type="text"
-                  id="editCity"
-                  [ngModel]="editForm().city"
-                  (ngModelChange)="updateEditForm('city', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editPostalCode">Postleitzahl</label>
-                <input
-                  type="text"
-                  id="editPostalCode"
-                  [ngModel]="editForm().postalCode"
-                  (ngModelChange)="updateEditForm('postalCode', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editCountry">Land</label>
-                <input
-                  type="text"
-                  id="editCountry"
-                  [ngModel]="editForm().country"
-                  (ngModelChange)="updateEditForm('country', $event)"
-                />
-              </div>
+            <div class="detail-item">
+              <label>Land</label>
+              <p>{{ selectedCustomer()!.country }}</p>
             </div>
-          }
-        </div>
-
-        <!-- Driver's License Information -->
-        <div class="info-section">
-          <h3>Führerschein</h3>
-
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Führerscheinnummer</label>
-                <p>{{ selectedCustomer()!.licenseNumber }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ausstellungsland</label>
-                <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ausstellungsdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ablaufdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
-              </div>
+          </div>
+        } @else {
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editStreet">Straße</label>
+              <input
+                type="text"
+                id="editStreet"
+                [ngModel]="editForm().street"
+                (ngModelChange)="updateEditForm('street', $event)"
+              />
             </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editLicenseNumber">Führerscheinnummer *</label>
-                <input
-                  type="text"
-                  id="editLicenseNumber"
-                  [ngModel]="editForm().licenseNumber"
-                  (ngModelChange)="updateEditForm('licenseNumber', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseCountry">Ausstellungsland</label>
-                <input
-                  type="text"
-                  id="editLicenseCountry"
-                  [ngModel]="editForm().licenseIssueCountry"
-                  (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseIssueDate">Ausstellungsdatum</label>
-                <input
-                  type="date"
-                  id="editLicenseIssueDate"
-                  [ngModel]="editForm().licenseIssueDate"
-                  (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseExpiryDate">Ablaufdatum</label>
-                <input
-                  type="date"
-                  id="editLicenseExpiryDate"
-                  [ngModel]="editForm().licenseExpiryDate"
-                  (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
-                />
-              </div>
+            <div class="form-field">
+              <label for="editCity">Stadt</label>
+              <input
+                type="text"
+                id="editCity"
+                [ngModel]="editForm().city"
+                (ngModelChange)="updateEditForm('city', $event)"
+              />
             </div>
-          }
-        </div>
+            <div class="form-field">
+              <label for="editPostalCode">Postleitzahl</label>
+              <input
+                type="text"
+                id="editPostalCode"
+                [ngModel]="editForm().postalCode"
+                (ngModelChange)="updateEditForm('postalCode', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editCountry">Land</label>
+              <input
+                type="text"
+                id="editCountry"
+                [ngModel]="editForm().country"
+                (ngModelChange)="updateEditForm('country', $event)"
+              />
+            </div>
+          </div>
+        }
+      </div>
 
-        <!-- Customer Reservations -->
-        <div class="info-section">
-          <h3>Reservierungen ({{ customerReservations().length }})</h3>
+      <!-- Driver's License Information -->
+      <div class="info-section">
+        <h3>Führerschein</h3>
 
-          @if (loadingReservations()) {
-            <ui-loading-state size="sm" message="Lade Reservierungen..."></ui-loading-state>
-          }
+        @if (!editMode()) {
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Führerscheinnummer</label>
+              <p>{{ selectedCustomer()!.licenseNumber }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Ausstellungsland</label>
+              <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Ausstellungsdatum</label>
+              <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
+            </div>
+            <div class="detail-item">
+              <label>Ablaufdatum</label>
+              <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editLicenseNumber">Führerscheinnummer *</label>
+              <input
+                type="text"
+                id="editLicenseNumber"
+                [ngModel]="editForm().licenseNumber"
+                (ngModelChange)="updateEditForm('licenseNumber', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseCountry">Ausstellungsland</label>
+              <input
+                type="text"
+                id="editLicenseCountry"
+                [ngModel]="editForm().licenseIssueCountry"
+                (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseIssueDate">Ausstellungsdatum</label>
+              <input
+                type="date"
+                id="editLicenseIssueDate"
+                [ngModel]="editForm().licenseIssueDate"
+                (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseExpiryDate">Ablaufdatum</label>
+              <input
+                type="date"
+                id="editLicenseExpiryDate"
+                [ngModel]="editForm().licenseExpiryDate"
+                (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
+              />
+            </div>
+          </div>
+        }
+      </div>
 
-          @if (!loadingReservations() && customerReservations().length > 0) {
-            <div class="reservations-list">
-              @for (reservation of customerReservations(); track reservation.reservationId) {
-                <div class="reservation-card">
-                  <div class="reservation-header">
-                    <span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span>
-                    <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
+      <!-- Customer Reservations -->
+      <div class="info-section">
+        <h3>Reservierungen ({{ customerReservations().length }})</h3>
+
+        @if (loadingReservations()) {
+          <ui-loading-state size="sm" message="Lade Reservierungen..."></ui-loading-state>
+        }
+
+        @if (!loadingReservations() && customerReservations().length > 0) {
+          <div class="reservations-list">
+            @for (reservation of customerReservations(); track reservation.reservationId) {
+              <div class="reservation-card">
+                <div class="reservation-header">
+                  <span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span>
+                  <ui-status-badge
+                    type="reservation"
+                    [status]="reservation.status"
+                  ></ui-status-badge>
+                </div>
+                <div class="reservation-details">
+                  <div class="reservation-row">
+                    <span class="label">Zeitraum:</span>
+                    <span
+                      >{{ formatDate(reservation.pickupDate) }} -
+                      {{ formatDate(reservation.returnDate) }}</span
+                    >
                   </div>
-                  <div class="reservation-details">
-                    <div class="reservation-row">
-                      <span class="label">Zeitraum:</span>
-                      <span>{{ formatDate(reservation.pickupDate) }} - {{ formatDate(reservation.returnDate) }}</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Dauer:</span>
-                      <span>{{ reservation.rentalDays }} Tag(e)</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Abholort:</span>
-                      <span>{{ reservation.pickupLocationCode }}</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Preis:</span>
-                      <span><strong>{{ reservation.totalPriceGross.toFixed(2) }} {{ reservation.currency }}</strong></span>
-                    </div>
+                  <div class="reservation-row">
+                    <span class="label">Dauer:</span>
+                    <span>{{ reservation.rentalDays }} Tag(e)</span>
+                  </div>
+                  <div class="reservation-row">
+                    <span class="label">Abholort:</span>
+                    <span>{{ reservation.pickupLocationCode }}</span>
+                  </div>
+                  <div class="reservation-row">
+                    <span class="label">Preis:</span>
+                    <span
+                      ><strong
+                        >{{ reservation.totalPriceGross.toFixed(2) }}
+                        {{ reservation.currency }}</strong
+                      ></span
+                    >
                   </div>
                 </div>
-              }
-            </div>
-          }
+              </div>
+            }
+          </div>
+        }
 
-          @if (!loadingReservations() && customerReservations().length === 0) {
-            <p class="no-data">Keine Reservierungen gefunden</p>
-          }
-        </div>
+        @if (!loadingReservations() && customerReservations().length === 0) {
+          <p class="no-data">Keine Reservierungen gefunden</p>
+        }
+      </div>
     }
   </ng-container>
   <ng-container modal-footer>
-        @if (!editMode()) {
-          <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
-          <button class="btn-primary" (click)="enterEditMode()">
-            <lib-icon name="pencil-filled" variant="filled" size="sm" aria-hidden="true" />
-            Bearbeiten
-          </button>
-        } @else {
-          <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">Abbrechen</button>
-          <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
-            @if (saving()) {
-              <span class="loading-spinner-small"></span>
-            }
-            Speichern
-          </button>
+    @if (!editMode()) {
+      <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+      <button class="btn-primary" (click)="enterEditMode()">
+        <lib-icon name="pencil-filled" variant="filled" size="sm" aria-hidden="true" />
+        Bearbeiten
+      </button>
+    } @else {
+      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">Abbrechen</button>
+      <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
+        @if (saving()) {
+          <span class="loading-spinner-small"></span>
         }
+        Speichern
+      </button>
+    }
   </ng-container>
 </ui-modal>

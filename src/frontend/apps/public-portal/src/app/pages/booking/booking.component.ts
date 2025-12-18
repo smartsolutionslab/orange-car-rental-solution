@@ -7,7 +7,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
-import type { CustomerProfile, UpdateCustomerProfileRequest } from '@orange-car-rental/customer-api';
+import type {
+  CustomerProfile,
+  UpdateCustomerProfileRequest,
+} from '@orange-car-rental/customer-api';
 import { logError } from '@orange-car-rental/util';
 import {
   SelectLocationComponent,
@@ -38,11 +41,16 @@ import type { BookingFormValue } from '../../types';
 @Component({
   selector: 'app-booking',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, SimilarVehiclesComponent, SelectLocationComponent, ErrorAlertComponent,
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    SimilarVehiclesComponent,
+    SelectLocationComponent,
+    ErrorAlertComponent,
     IconComponent,
   ],
   templateUrl: './booking.component.html',
-  styleUrl: './booking.component.css'
+  styleUrl: './booking.component.css',
 })
 export class BookingComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -108,7 +116,7 @@ export class BookingComponent implements OnInit {
       licenseExpiryDate: ['', Validators.required],
 
       // Profile update option (only for authenticated users)
-      updateMyProfile: [false]
+      updateMyProfile: [false],
     });
   }
 
@@ -120,7 +128,7 @@ export class BookingComponent implements OnInit {
     }
 
     // Get vehicle ID from route query params
-    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const vehicleId = params['vehicleId'];
       const pickupDate = params['pickupDate'];
       const returnDate = params['returnDate'];
@@ -133,7 +141,7 @@ export class BookingComponent implements OnInit {
           pickupDate: pickupDate || '',
           returnDate: returnDate || '',
           pickupLocationCode: locationCode || '',
-          dropoffLocationCode: locationCode || ''
+          dropoffLocationCode: locationCode || '',
         });
       }
     });
@@ -146,24 +154,27 @@ export class BookingComponent implements OnInit {
    * Load vehicle details and similar vehicles
    */
   private loadVehicle(vehicleId: string): void {
-    this.vehicleService.getVehicleById(vehicleId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (vehicle) => {
-        this.selectedVehicle.set(vehicle);
-        // Auto-populate categoryCode from loaded vehicle
-        this.bookingForm.patchValue({
-          categoryCode: vehicle.categoryCode
-        });
+    this.vehicleService
+      .getVehicleById(vehicleId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (vehicle) => {
+          this.selectedVehicle.set(vehicle);
+          // Auto-populate categoryCode from loaded vehicle
+          this.bookingForm.patchValue({
+            categoryCode: vehicle.categoryCode,
+          });
 
-        // Load similar vehicles
-        this.loadSimilarVehicles(vehicle);
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error loading vehicle', err);
-        this.showVehicleUnavailableWarning.set(true);
-        // Don't show error to user, just log it
-        // The form will require manual categoryCode entry if vehicle load fails
-      }
-    });
+          // Load similar vehicles
+          this.loadSimilarVehicles(vehicle);
+        },
+        error: (err) => {
+          logError('BookingComponent', 'Error loading vehicle', err);
+          this.showVehicleUnavailableWarning.set(true);
+          // Don't show error to user, just log it
+          // The form will require manual categoryCode entry if vehicle load fails
+        },
+      });
   }
 
   /**
@@ -173,15 +184,18 @@ export class BookingComponent implements OnInit {
     const pickupDate = this.bookingForm.get('pickupDate')?.value;
     const returnDate = this.bookingForm.get('returnDate')?.value;
 
-    this.vehicleService.getSimilarVehicles(vehicle, pickupDate, returnDate).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (similar) => {
-        this.similarVehicles.set(similar);
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error loading similar vehicles', err);
-        // Non-critical error, just log it
-      }
-    });
+    this.vehicleService
+      .getSimilarVehicles(vehicle, pickupDate, returnDate)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (similar) => {
+          this.similarVehicles.set(similar);
+        },
+        error: (err) => {
+          logError('BookingComponent', 'Error loading similar vehicles', err);
+          // Non-critical error, just log it
+        },
+      });
   }
 
   /**
@@ -191,41 +205,44 @@ export class BookingComponent implements OnInit {
   private loadCustomerProfile(): void {
     this.profileLoading.set(true);
 
-    this.customerService.getMyProfile().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (profile) => {
-        this.customerProfile.set(profile);
-        this.profileLoading.set(false);
+    this.customerService
+      .getMyProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (profile) => {
+          this.customerProfile.set(profile);
+          this.profileLoading.set(false);
 
-        // Pre-fill customer information
-        this.bookingForm.patchValue({
-          firstName: profile.firstName,
-          lastName: profile.lastName,
-          email: profile.email,
-          phoneNumber: profile.phoneNumber,
-          dateOfBirth: profile.dateOfBirth,
+          // Pre-fill customer information
+          this.bookingForm.patchValue({
+            firstName: profile.firstName,
+            lastName: profile.lastName,
+            email: profile.email,
+            phoneNumber: profile.phoneNumber,
+            dateOfBirth: profile.dateOfBirth,
 
-          // Pre-fill address
-          street: profile.address.street,
-          city: profile.address.city,
-          postalCode: profile.address.postalCode,
-          country: profile.address.country,
+            // Pre-fill address
+            street: profile.address.street,
+            city: profile.address.city,
+            postalCode: profile.address.postalCode,
+            country: profile.address.country,
 
-          // Pre-fill driver's license if available
-          ...(profile.driversLicense && {
-            licenseNumber: profile.driversLicense.licenseNumber,
-            licenseIssueCountry: profile.driversLicense.licenseIssueCountry,
-            licenseIssueDate: profile.driversLicense.licenseIssueDate,
-            licenseExpiryDate: profile.driversLicense.licenseExpiryDate
-          })
-        });
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error loading customer profile', err);
-        this.profileLoading.set(false);
-        // Don't show error to user, just log it
-        // User can still fill the form manually
-      }
-    });
+            // Pre-fill driver's license if available
+            ...(profile.driversLicense && {
+              licenseNumber: profile.driversLicense.licenseNumber,
+              licenseIssueCountry: profile.driversLicense.licenseIssueCountry,
+              licenseIssueDate: profile.driversLicense.licenseIssueDate,
+              licenseExpiryDate: profile.driversLicense.licenseExpiryDate,
+            }),
+          });
+        },
+        error: (err) => {
+          logError('BookingComponent', 'Error loading customer profile', err);
+          this.profileLoading.set(false);
+          // Don't show error to user, just log it
+          // User can still fill the form manually
+        },
+      });
   }
 
   /**
@@ -233,36 +250,42 @@ export class BookingComponent implements OnInit {
    */
   private setupDateValidation(): void {
     // Update min return date when pickup date changes
-    this.bookingForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate: string) => {
-      if (pickupDate) {
-        const minReturn = addDays(pickupDate, 1);
-        this.minReturnDate.set(minReturn);
+    this.bookingForm
+      .get('pickupDate')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((pickupDate: string) => {
+        if (pickupDate) {
+          const minReturn = addDays(pickupDate, 1);
+          this.minReturnDate.set(minReturn);
 
-        // Ensure return date is after pickup date
-        const currentReturnDate = this.bookingForm.get('returnDate')?.value;
-        if (currentReturnDate && currentReturnDate <= pickupDate) {
-          this.bookingForm.patchValue({
-            returnDate: minReturn
-          });
+          // Ensure return date is after pickup date
+          const currentReturnDate = this.bookingForm.get('returnDate')?.value;
+          if (currentReturnDate && currentReturnDate <= pickupDate) {
+            this.bookingForm.patchValue({
+              returnDate: minReturn,
+            });
+          }
         }
-      }
-    });
+      });
 
     // Update min expiry date when issue date changes
-    this.bookingForm.get('licenseIssueDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((issueDate: string) => {
-      if (issueDate) {
-        const minExpiry = addDays(issueDate, 1);
-        this.minLicenseExpiryDate.set(minExpiry);
+    this.bookingForm
+      .get('licenseIssueDate')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((issueDate: string) => {
+        if (issueDate) {
+          const minExpiry = addDays(issueDate, 1);
+          this.minLicenseExpiryDate.set(minExpiry);
 
-        // Ensure expiry date is after issue date
-        const currentExpiryDate = this.bookingForm.get('licenseExpiryDate')?.value;
-        if (currentExpiryDate && currentExpiryDate <= issueDate) {
-          this.bookingForm.patchValue({
-            licenseExpiryDate: minExpiry
-          });
+          // Ensure expiry date is after issue date
+          const currentExpiryDate = this.bookingForm.get('licenseExpiryDate')?.value;
+          if (currentExpiryDate && currentExpiryDate <= issueDate) {
+            this.bookingForm.patchValue({
+              licenseExpiryDate: minExpiry,
+            });
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -339,7 +362,7 @@ export class BookingComponent implements OnInit {
   protected onSubmit(): void {
     if (this.bookingForm.invalid) {
       // Mark all fields as touched to show validation errors
-      Object.keys(this.bookingForm.controls).forEach(key => {
+      Object.keys(this.bookingForm.controls).forEach((key) => {
         this.bookingForm.get(key)?.markAsTouched();
       });
       return;
@@ -358,54 +381,57 @@ export class BookingComponent implements OnInit {
         pickupDate: formValue.pickupDate,
         returnDate: formValue.returnDate,
         pickupLocationCode: formValue.pickupLocationCode,
-        dropoffLocationCode: formValue.dropoffLocationCode
+        dropoffLocationCode: formValue.dropoffLocationCode,
       },
       customer: {
         firstName: formValue.firstName,
         lastName: formValue.lastName,
         email: formValue.email,
         phoneNumber: formValue.phoneNumber,
-        dateOfBirth: formValue.dateOfBirth
+        dateOfBirth: formValue.dateOfBirth,
       },
       address: {
         street: formValue.street,
         city: formValue.city,
         postalCode: formValue.postalCode,
-        country: formValue.country
+        country: formValue.country,
       },
       driversLicense: {
         licenseNumber: formValue.licenseNumber,
         licenseIssueCountry: formValue.licenseIssueCountry,
         licenseIssueDate: formValue.licenseIssueDate,
-        licenseExpiryDate: formValue.licenseExpiryDate
-      }
+        licenseExpiryDate: formValue.licenseExpiryDate,
+      },
     };
 
-    this.reservationService.createGuestReservation(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (response) => {
-        // Update profile if checkbox is checked and user is authenticated
-        if (this.isAuthenticated() && this.bookingForm.get('updateMyProfile')?.value) {
-          this.updateProfileAfterBooking(formValue);
-        }
-
-        this.submitting.set(false);
-        // Navigate to confirmation page with reservation details
-        this.router.navigate(['/confirmation'], {
-          queryParams: {
-            reservationId: response.reservationId,
-            customerId: response.customerId
+    this.reservationService
+      .createGuestReservation(request)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          // Update profile if checkbox is checked and user is authenticated
+          if (this.isAuthenticated() && this.bookingForm.get('updateMyProfile')?.value) {
+            this.updateProfileAfterBooking(formValue);
           }
-        });
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error creating reservation', err);
-        this.submitting.set(false);
-        this.error.set(
-          'Fehler beim Erstellen der Reservierung. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.'
-        );
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    });
+
+          this.submitting.set(false);
+          // Navigate to confirmation page with reservation details
+          this.router.navigate(['/confirmation'], {
+            queryParams: {
+              reservationId: response.reservationId,
+              customerId: response.customerId,
+            },
+          });
+        },
+        error: (err) => {
+          logError('BookingComponent', 'Error creating reservation', err);
+          this.submitting.set(false);
+          this.error.set(
+            'Fehler beim Erstellen der Reservierung. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.',
+          );
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        },
+      });
   }
 
   /**
@@ -428,26 +454,29 @@ export class BookingComponent implements OnInit {
         street: formValue.street,
         city: formValue.city,
         postalCode: formValue.postalCode,
-        country: formValue.country
+        country: formValue.country,
       },
       driversLicense: {
         licenseNumber: formValue.licenseNumber,
         licenseIssueCountry: formValue.licenseIssueCountry,
         licenseIssueDate: formValue.licenseIssueDate,
-        licenseExpiryDate: formValue.licenseExpiryDate
-      }
+        licenseExpiryDate: formValue.licenseExpiryDate,
+      },
     };
 
-    this.customerService.updateMyProfile(updateRequest).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (updatedProfile) => {
-        this.customerProfile.set(updatedProfile);
-      },
-      error: (err) => {
-        logError('BookingComponent', 'Error updating profile', err);
-        // Don't show error to user since booking was successful
-        // Profile update failure should not block the booking flow
-      }
-    });
+    this.customerService
+      .updateMyProfile(updateRequest)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (updatedProfile) => {
+          this.customerProfile.set(updatedProfile);
+        },
+        error: (err) => {
+          logError('BookingComponent', 'Error updating profile', err);
+          // Don't show error to user since booking was successful
+          // Profile update failure should not block the booking flow
+        },
+      });
   }
 
   /**
@@ -456,7 +485,7 @@ export class BookingComponent implements OnInit {
   protected getRentalDays(): number {
     return calculateRentalDays(
       this.bookingForm.get('pickupDate')?.value,
-      this.bookingForm.get('returnDate')?.value
+      this.bookingForm.get('returnDate')?.value,
     );
   }
 
@@ -471,7 +500,7 @@ export class BookingComponent implements OnInit {
     // Update form with new vehicle details
     this.bookingForm.patchValue({
       vehicleId: vehicle.id,
-      categoryCode: vehicle.categoryCode
+      categoryCode: vehicle.categoryCode,
     });
 
     // Clear unavailable warning if it was shown

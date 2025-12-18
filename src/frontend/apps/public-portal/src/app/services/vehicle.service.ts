@@ -1,7 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-import type { Vehicle, VehicleId, VehicleSearchQuery, VehicleSearchResult } from '@orange-car-rental/vehicle-api';
+import type {
+  Vehicle,
+  VehicleId,
+  VehicleSearchQuery,
+  VehicleSearchResult,
+} from '@orange-car-rental/vehicle-api';
 import type { ISODateString } from '@orange-car-rental/shared';
 import { HttpParamsBuilder } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
@@ -12,7 +17,7 @@ import { DEFAULT_PAGE_SIZE } from '../constants/app.constants';
  * Handles vehicle search and related operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VehicleService {
   private readonly http = inject(HttpClient);
@@ -53,27 +58,27 @@ export class VehicleService {
     currentVehicle: Vehicle,
     pickupDate?: ISODateString,
     returnDate?: ISODateString,
-    maxResults = DEFAULT_PAGE_SIZE.MAX_SIMILAR_VEHICLES
+    maxResults = DEFAULT_PAGE_SIZE.MAX_SIMILAR_VEHICLES,
   ): Observable<Vehicle[]> {
     // Search for vehicles with similar criteria
     const query: VehicleSearchQuery = {
       locationCode: currentVehicle.locationCode,
       pickupDate,
       returnDate,
-      pageSize: DEFAULT_PAGE_SIZE.SIMILAR_VEHICLES
+      pageSize: DEFAULT_PAGE_SIZE.SIMILAR_VEHICLES,
     };
 
     return this.searchVehicles(query).pipe(
-      map(result => {
+      map((result) => {
         // Filter out the current vehicle and find similar ones
-        const candidates = result.vehicles.filter(v => v.id !== currentVehicle.id);
+        const candidates = result.vehicles.filter((v) => v.id !== currentVehicle.id);
 
         // Category hierarchy for similarity matching
         const categories = ['KLEIN', 'KOMPAKT', 'MITTEL', 'OBER', 'SUV', 'KOMBI', 'TRANS', 'LUXUS'];
         const currentCategoryIndex = categories.indexOf(currentVehicle.categoryCode);
 
         // Score and sort vehicles by similarity
-        const scored = candidates.map(vehicle => {
+        const scored = candidates.map((vehicle) => {
           let score = 0;
 
           // Category similarity (same = 100, +/- 1 = 50, +/- 2 = 25)
@@ -105,8 +110,8 @@ export class VehicleService {
         return scored
           .sort((a, b) => b.score - a.score)
           .slice(0, maxResults)
-          .map(item => item.vehicle);
-      })
+          .map((item) => item.vehicle);
+      }),
     );
   }
 }

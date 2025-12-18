@@ -14,10 +14,7 @@ describe('ForgotPasswordComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [ForgotPasswordComponent, ReactiveFormsModule],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        provideRouter([])
-      ]
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
@@ -86,7 +83,7 @@ describe('ForgotPasswordComponent', () => {
   describe('Form Submission', () => {
     beforeEach(() => {
       component.forgotPasswordForm.patchValue({
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
 
@@ -138,7 +135,9 @@ describe('ForgotPasswordComponent', () => {
     it('should set loading state during submission', async () => {
       // Create a deferred promise to control resolution timing
       let resolveReset!: () => void;
-      const deferredPromise = new Promise<void>(resolve => { resolveReset = resolve; });
+      const deferredPromise = new Promise<void>((resolve) => {
+        resolveReset = resolve;
+      });
       authService.resetPassword.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
@@ -164,7 +163,7 @@ describe('ForgotPasswordComponent', () => {
   describe('Error Handling', () => {
     beforeEach(() => {
       component.forgotPasswordForm.patchValue({
-        email: 'test@example.com'
+        email: 'test@example.com',
       });
     });
 
@@ -176,7 +175,9 @@ describe('ForgotPasswordComponent', () => {
 
       // Should not reveal if email exists for security
       expect(component.emailSent()).toBeTruthy();
-      expect(component.successMessage()).toContain('Wenn ein Konto mit dieser E-Mail-Adresse existiert');
+      expect(component.successMessage()).toContain(
+        'Wenn ein Konto mit dieser E-Mail-Adresse existiert',
+      );
     });
 
     it('should show network error message', async () => {
@@ -185,7 +186,9 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
+      expect(component.errorMessage()).toBe(
+        'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.',
+      );
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -195,7 +198,9 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.');
+      expect(component.errorMessage()).toBe(
+        'Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
+      );
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -206,7 +211,10 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(console.error).toHaveBeenCalledWith('[ForgotPasswordComponent] Password reset error', error);
+      expect(console.error).toHaveBeenCalledWith(
+        '[ForgotPasswordComponent] Password reset error',
+        error,
+      );
     });
   });
 

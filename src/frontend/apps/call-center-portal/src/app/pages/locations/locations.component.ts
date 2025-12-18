@@ -41,7 +41,7 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
     IconComponent,
   ],
   templateUrl: './locations.component.html',
-  styleUrl: './locations.component.css'
+  styleUrl: './locations.component.css',
 })
 export class LocationsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
@@ -65,10 +65,11 @@ export class LocationsComponent implements OnInit {
     const search = this.searchCity().toLowerCase();
     if (!search) return this.locations();
 
-    return this.locations().filter(loc =>
-      loc.city.toLowerCase().includes(search) ||
-      loc.name.toLowerCase().includes(search) ||
-      loc.code.toLowerCase().includes(search)
+    return this.locations().filter(
+      (loc) =>
+        loc.city.toLowerCase().includes(search) ||
+        loc.name.toLowerCase().includes(search) ||
+        loc.code.toLowerCase().includes(search),
     );
   });
 
@@ -77,13 +78,17 @@ export class LocationsComponent implements OnInit {
     const stats = new Map<string, LocationStatistics>();
     const vehicles = this.allVehicles();
 
-    this.locations().forEach(location => {
-      const locationVehicles = vehicles.filter(v => v.locationCode === location.code);
-      const available = locationVehicles.filter(v => v.status === VehicleStatus.Available).length;
-      const rented = locationVehicles.filter(v => v.status === VehicleStatus.Rented).length;
-      const maintenance = locationVehicles.filter(v => v.status === VehicleStatus.Maintenance).length;
-      const outOfService = locationVehicles.filter(v => v.status === VehicleStatus.OutOfService).length;
-      const reserved = locationVehicles.filter(v => v.status === VehicleStatus.Reserved).length;
+    this.locations().forEach((location) => {
+      const locationVehicles = vehicles.filter((v) => v.locationCode === location.code);
+      const available = locationVehicles.filter((v) => v.status === VehicleStatus.Available).length;
+      const rented = locationVehicles.filter((v) => v.status === VehicleStatus.Rented).length;
+      const maintenance = locationVehicles.filter(
+        (v) => v.status === VehicleStatus.Maintenance,
+      ).length;
+      const outOfService = locationVehicles.filter(
+        (v) => v.status === VehicleStatus.OutOfService,
+      ).length;
+      const reserved = locationVehicles.filter((v) => v.status === VehicleStatus.Reserved).length;
       const total = locationVehicles.length;
 
       stats.set(location.code, {
@@ -94,7 +99,7 @@ export class LocationsComponent implements OnInit {
         rentedVehicles: rented,
         maintenanceVehicles: maintenance,
         outOfServiceVehicles: outOfService,
-        utilizationRate: total > 0 ? Math.round(((rented + reserved) / total) * 100) : 0
+        utilizationRate: total > 0 ? Math.round(((rented + reserved) / total) * 100) : 0,
       });
     });
 
@@ -109,32 +114,38 @@ export class LocationsComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.locationService.getAllLocations().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (locations) => {
-        this.locations.set(locations);
-        this.loading.set(false);
-        this.loadVehicleCounts();
-      },
-      error: (err) => {
-        logError('LocationsComponent', 'Error loading locations', err);
-        this.error.set('Fehler beim Laden der Standorte');
-        this.loading.set(false);
-      }
-    });
+    this.locationService
+      .getAllLocations()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (locations) => {
+          this.locations.set(locations);
+          this.loading.set(false);
+          this.loadVehicleCounts();
+        },
+        error: (err) => {
+          logError('LocationsComponent', 'Error loading locations', err);
+          this.error.set('Fehler beim Laden der Standorte');
+          this.loading.set(false);
+        },
+      });
   }
 
   /**
    * Load all vehicles for statistics
    */
   private loadVehicleCounts(): void {
-    this.vehicleService.searchVehicles({ pageSize: DEFAULT_PAGE_SIZE.VEHICLES }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result) => {
-        this.allVehicles.set(result.vehicles);
-      },
-      error: (err) => {
-        logError('LocationsComponent', 'Error loading vehicles', err);
-      }
-    });
+    this.vehicleService
+      .searchVehicles({ pageSize: DEFAULT_PAGE_SIZE.VEHICLES })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.allVehicles.set(result.vehicles);
+        },
+        error: (err) => {
+          logError('LocationsComponent', 'Error loading vehicles', err);
+        },
+      });
   }
 
   /**
@@ -158,7 +169,7 @@ export class LocationsComponent implements OnInit {
       rented: stats.rentedVehicles,
       maintenance: stats.maintenanceVehicles,
       outOfService: stats.outOfServiceVehicles,
-      reserved: 0 // Reserved is included in utilizationRate calculation
+      reserved: 0, // Reserved is included in utilizationRate calculation
     };
   }
 
@@ -193,16 +204,19 @@ export class LocationsComponent implements OnInit {
   private loadLocationVehicles(locationCode: string): void {
     this.loadingVehicles.set(true);
 
-    this.vehicleService.searchVehicles({ locationCode }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (result) => {
-        this.locationVehicles.set(result.vehicles);
-        this.loadingVehicles.set(false);
-      },
-      error: (err) => {
-        logError('LocationsComponent', 'Error loading location vehicles', err);
-        this.loadingVehicles.set(false);
-      }
-    });
+    this.vehicleService
+      .searchVehicles({ locationCode })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.locationVehicles.set(result.vehicles);
+          this.loadingVehicles.set(false);
+        },
+        error: (err) => {
+          logError('LocationsComponent', 'Error loading location vehicles', err);
+          this.loadingVehicles.set(false);
+        },
+      });
   }
 
   /**
@@ -226,8 +240,8 @@ export class LocationsComponent implements OnInit {
    * Get number of active locations (locations with vehicles)
    */
   protected get activeLocations(): number {
-    return Array.from(this.locationStats().values())
-      .filter(stat => stat.totalVehicles > 0).length;
+    return Array.from(this.locationStats().values()).filter((stat) => stat.totalVehicles > 0)
+      .length;
   }
 
   /**
@@ -241,14 +255,14 @@ export class LocationsComponent implements OnInit {
    * Get total available vehicles across all locations
    */
   protected get totalAvailableVehicles(): number {
-    return this.allVehicles().filter(v => v.status === VehicleStatus.Available).length;
+    return this.allVehicles().filter((v) => v.status === VehicleStatus.Available).length;
   }
 
   /**
    * Get total rented vehicles across all locations
    */
   protected get totalRentedVehicles(): number {
-    return this.allVehicles().filter(v => v.status === VehicleStatus.Rented).length;
+    return this.allVehicles().filter((v) => v.status === VehicleStatus.Rented).length;
   }
 
   /**
@@ -269,7 +283,7 @@ export class LocationsComponent implements OnInit {
     if (stats.length === 0) return null;
 
     return stats.reduce((prev, current) =>
-      (current.utilizationRate > prev.utilizationRate) ? current : prev
+      current.utilizationRate > prev.utilizationRate ? current : prev,
     );
   }
 

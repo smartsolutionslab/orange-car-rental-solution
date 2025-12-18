@@ -3,7 +3,6 @@
   <p class="subtitle">Verwalten Sie alle Mietstandorte</p>
 </div>
 
-
 <div class="dashboard-grid">
   <ui-stat-card
     label="Gesamt Standorte"
@@ -48,18 +47,35 @@
               <h3>{{ location.name }}</h3>
               <span class="location-code">{{ location.code }}</span>
             </div>
-            <button class="btn-icon" (click)="viewDetails(location)" title="Details anzeigen" aria-label="Standortdetails anzeigen">
+            <button
+              class="btn-icon"
+              (click)="viewDetails(location)"
+              title="Details anzeigen"
+              aria-label="Standortdetails anzeigen"
+            >
               <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
             </button>
           </div>
 
           <div class="location-body">
             <div class="detail-row">
-              <lib-icon name="location-marker-filled" variant="filled" size="sm" class="detail-icon" aria-hidden="true" />
+              <lib-icon
+                name="location-marker-filled"
+                variant="filled"
+                size="sm"
+                class="detail-icon"
+                aria-hidden="true"
+              />
               <span>{{ location.street }}</span>
             </div>
             <div class="detail-row">
-              <lib-icon name="check-circle-filled" variant="filled" size="sm" class="detail-icon" aria-hidden="true" />
+              <lib-icon
+                name="check-circle-filled"
+                variant="filled"
+                size="sm"
+                class="detail-icon"
+                aria-hidden="true"
+              />
               <span>{{ location.postalCode }} {{ location.city }}</span>
             </div>
 
@@ -85,7 +101,12 @@
 </div>
 
 <!-- Location Details Modal -->
-<ui-modal [isOpen]="showDetails() && !!selectedLocation()" title="Standortdetails" size="lg" (close)="closeDetails()">
+<ui-modal
+  [isOpen]="showDetails() && !!selectedLocation()"
+  title="Standortdetails"
+  size="lg"
+  (close)="closeDetails()"
+>
   <ng-container modal-body>
     @if (selectedLocation()) {
       <!-- Location Information -->
@@ -94,7 +115,9 @@
         <div class="detail-grid">
           <div class="detail-item">
             <label>Standortcode</label>
-            <p><span class="location-code-badge">{{ selectedLocation()!.code }}</span></p>
+            <p>
+              <span class="location-code-badge">{{ selectedLocation()!.code }}</span>
+            </p>
           </div>
           <div class="detail-item">
             <label>Name</label>
@@ -152,7 +175,9 @@
                     <td>{{ vehicle.manufacturer }} {{ vehicle.model }}</td>
                     <td>{{ vehicle.categoryCode }}</td>
                     <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
-                    <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
+                    <td>
+                      <ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge>
+                    </td>
                   </tr>
                 }
               </tbody>

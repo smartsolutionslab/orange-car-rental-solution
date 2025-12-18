@@ -7,7 +7,7 @@ import type { ApiConfig } from '@orange-car-rental/shared';
  * Implements ApiConfig interface for use with shared services
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConfigService implements ApiConfig {
   private config: ApiConfig = { apiUrl: '' };

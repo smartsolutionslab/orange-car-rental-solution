@@ -7,7 +7,11 @@ import localeDe from '@angular/common/locales/de';
 import { of, throwError } from 'rxjs';
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleService } from '../../services/vehicle.service';
-import type { Vehicle, VehicleSearchResult, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
+import type {
+  Vehicle,
+  VehicleSearchResult,
+  VehicleSearchQuery,
+} from '@orange-car-rental/vehicle-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
 
 // Register German locale for DecimalPipe
@@ -26,9 +30,9 @@ describe('VehicleListComponent', () => {
     categoryName: 'Mittelklasse',
     locationCode: 'BER-HBF',
     city: 'Berlin',
-    dailyRateNet: 50.00,
-    dailyRateVat: 9.50,
-    dailyRateGross: 59.50,
+    dailyRateNet: 50.0,
+    dailyRateVat: 9.5,
+    dailyRateGross: 59.5,
     currency: 'EUR',
     seats: 5,
     fuelType: 'Petrol',
@@ -38,7 +42,7 @@ describe('VehicleListComponent', () => {
     manufacturer: 'Volkswagen',
     model: 'Golf 8',
     year: 2023,
-    imageUrl: null
+    imageUrl: null,
   };
 
   const mockSearchResult: VehicleSearchResult = {
@@ -46,7 +50,7 @@ describe('VehicleListComponent', () => {
     totalCount: 1,
     pageNumber: 1,
     pageSize: 10,
-    totalPages: 1
+    totalPages: 1,
   };
 
   beforeEach(async () => {
@@ -60,8 +64,8 @@ describe('VehicleListComponent', () => {
         { provide: Router, useValue: routerSpy },
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
     vehicleService = TestBed.inject(VehicleService) as jasmine.SpyObj<VehicleService>;
@@ -109,7 +113,7 @@ describe('VehicleListComponent', () => {
 
     it('should search vehicles with location filter', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF'
+        locationCode: 'BER-HBF',
       };
 
       component['onSearch'](query);
@@ -120,7 +124,7 @@ describe('VehicleListComponent', () => {
     it('should search vehicles with date range filter', () => {
       const query: VehicleSearchQuery = {
         pickupDate: '2024-01-15',
-        returnDate: '2024-01-20'
+        returnDate: '2024-01-20',
       };
 
       component['onSearch'](query);
@@ -136,7 +140,7 @@ describe('VehicleListComponent', () => {
         categoryCode: 'MITTEL',
         minSeats: 5,
         fuelType: 'Petrol',
-        transmissionType: 'Manual'
+        transmissionType: 'Manual',
       };
 
       component['onSearch'](query);
@@ -149,7 +153,7 @@ describe('VehicleListComponent', () => {
       const query: VehicleSearchQuery = {
         locationCode: 'BER-HBF',
         pickupDate: '2024-01-15',
-        returnDate: '2024-01-20'
+        returnDate: '2024-01-20',
       };
 
       component['onSearch'](query);
@@ -163,7 +167,7 @@ describe('VehicleListComponent', () => {
         totalCount: 0,
         pageNumber: 1,
         pageSize: 10,
-        totalPages: 0
+        totalPages: 0,
       };
 
       vehicleService.searchVehicles.and.returnValue(of(emptyResult));
@@ -203,7 +207,7 @@ describe('VehicleListComponent', () => {
       const query: VehicleSearchQuery = {
         pickupDate: '2024-01-15',
         returnDate: '2024-01-20',
-        locationCode: 'BER-HBF'
+        locationCode: 'BER-HBF',
       };
 
       component['currentSearchQuery'].set(query);
@@ -215,15 +219,15 @@ describe('VehicleListComponent', () => {
           categoryCode: 'MITTEL',
           pickupDate: '2024-01-15',
           returnDate: '2024-01-20',
-          locationCode: 'BER-HBF'
-        }
+          locationCode: 'BER-HBF',
+        },
       });
     });
 
     it('should navigate to booking with vehicle location when search has no location', () => {
       const query: VehicleSearchQuery = {
         pickupDate: '2024-01-15',
-        returnDate: '2024-01-20'
+        returnDate: '2024-01-20',
       };
 
       component['currentSearchQuery'].set(query);
@@ -235,14 +239,14 @@ describe('VehicleListComponent', () => {
           categoryCode: 'MITTEL',
           pickupDate: '2024-01-15',
           returnDate: '2024-01-20',
-          locationCode: 'BER-HBF'
-        }
+          locationCode: 'BER-HBF',
+        },
       });
     });
 
     it('should navigate to booking with empty dates when search has no dates', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF'
+        locationCode: 'BER-HBF',
       };
 
       component['currentSearchQuery'].set(query);
@@ -254,8 +258,8 @@ describe('VehicleListComponent', () => {
           categoryCode: 'MITTEL',
           pickupDate: '',
           returnDate: '',
-          locationCode: 'BER-HBF'
-        }
+          locationCode: 'BER-HBF',
+        },
       });
     });
 
@@ -269,8 +273,8 @@ describe('VehicleListComponent', () => {
           categoryCode: 'MITTEL',
           pickupDate: '',
           returnDate: '',
-          locationCode: 'BER-HBF'
-        }
+          locationCode: 'BER-HBF',
+        },
       });
     });
   });
@@ -288,7 +292,7 @@ describe('VehicleListComponent', () => {
         totalCount: 2,
         pageNumber: 1,
         pageSize: 10,
-        totalPages: 1
+        totalPages: 1,
       };
 
       vehicleService.searchVehicles.and.returnValue(of(multiVehicleResult));

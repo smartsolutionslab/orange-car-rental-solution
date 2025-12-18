@@ -5,9 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers } from '@orange-car-rental/shared';
-import { ErrorAlertComponent,
-  IconComponent,
-} from '@orange-car-rental/ui-components';
+import { ErrorAlertComponent, IconComponent } from '@orange-car-rental/ui-components';
 
 /**
  * Login Component
@@ -18,11 +16,9 @@ import { ErrorAlertComponent,
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorAlertComponent,
-    IconComponent,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorAlertComponent, IconComponent],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css'
+  styleUrl: './login.component.css',
 })
 export class LoginComponent {
   loginForm: FormGroup;
@@ -33,12 +29,12 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      rememberMe: [false]
+      rememberMe: [false],
     });
   }
 

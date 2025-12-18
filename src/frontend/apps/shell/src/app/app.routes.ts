@@ -27,16 +27,16 @@ export const routes: Routes = [
   // Public portal routes at root (vehicle search is home page)
   {
     path: '',
-    loadChildren: loadPublicPortalRoutes
+    loadChildren: loadPublicPortalRoutes,
   },
   // Call center portal at /admin (requires agent role)
   {
     path: 'admin',
-    loadChildren: loadCallCenterPortalRoutes
+    loadChildren: loadCallCenterPortalRoutes,
   },
   // Catch-all redirect to home
   {
     path: '**',
-    redirectTo: ''
-  }
+    redirectTo: '',
+  },
 ];

@@ -44,10 +44,10 @@ describe('BookingHistoryComponent (Integration)', () => {
       dropoffLocationCode: 'MUC',
       totalPriceNet: 336.13,
       totalPriceVat: 63.87,
-      totalPriceGross: 400.00,
+      totalPriceGross: 400.0,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: getPastDate(15)
+      createdAt: getPastDate(15),
     },
     {
       id: '223e4567-e89b-12d3-a456-426614174001',
@@ -59,42 +59,39 @@ describe('BookingHistoryComponent (Integration)', () => {
       dropoffLocationCode: 'BER',
       totalPriceNet: 168.07,
       totalPriceVat: 31.93,
-      totalPriceGross: 200.00,
+      totalPriceGross: 200.0,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: getPastDate(15)
-    }
+      createdAt: getPastDate(15),
+    },
   ];
 
   beforeEach(async () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', [
       'isAuthenticated',
-      'getUserProfile'
+      'getUserProfile',
     ]);
 
     const toastServiceSpy = jasmine.createSpyObj('ToastService', [
       'success',
       'error',
       'info',
-      'warning'
+      'warning',
     ]);
 
     const configServiceSpy = jasmine.createSpyObj('ConfigService', [], {
-      apiUrl: apiUrl
+      apiUrl: apiUrl,
     });
 
     await TestBed.configureTestingModule({
-      imports: [
-        BookingHistoryComponent,
-        HttpClientTestingModule
-      ],
+      imports: [BookingHistoryComponent, HttpClientTestingModule],
       providers: [
         ReservationService,
         { provide: AuthService, useValue: authServiceSpy },
         { provide: ConfigService, useValue: configServiceSpy },
         { provide: ToastService, useValue: toastServiceSpy },
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
     httpMock = TestBed.inject(HttpTestingController);
@@ -113,22 +110,25 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should load and display user reservations with real HTTP calls', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({
-        id: '11111111-1111-1111-1111-111111111111',
-        username: 'testuser',
-        email: 'test@example.com',
-        firstName: 'Test',
-        lastName: 'User'
-      }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({
+          id: '11111111-1111-1111-1111-111111111111',
+          username: 'testuser',
+          email: 'test@example.com',
+          firstName: 'Test',
+          lastName: 'User',
+        }),
+      );
 
       // Act
       component.ngOnInit();
       tick();
 
       // Assert - HTTP Request
-      const req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search') &&
-        request.params.get('customerId') === '11111111-1111-1111-1111-111111111111'
+      const req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/search') &&
+          request.params.get('customerId') === '11111111-1111-1111-1111-111111111111',
       );
       expect(req.request.method).toBe('GET');
 
@@ -138,7 +138,7 @@ describe('BookingHistoryComponent (Integration)', () => {
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -152,34 +152,38 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should handle HTTP error gracefully', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
 
       // Act
       component.ngOnInit();
       tick();
 
       // Assert - HTTP Request fails
-      const req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/search')
-      );
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush('Server error', { status: 500, statusText: 'Internal Server Error' });
       tick();
 
       // Verify error handling
-      expect(component.error()).toBe('Failed to load your booking history. Please try again later.');
+      expect(component.error()).toBe(
+        'Failed to load your booking history. Please try again later.',
+      );
       expect(component.isLoading()).toBe(false);
     }));
 
     it('should retry loading after error', fakeAsync(() => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
 
       component.ngOnInit();
       tick();
 
       // First request fails
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush('Error', { status: 500, statusText: 'Server Error' });
       tick();
 
@@ -190,13 +194,13 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Second request succeeds
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({
         items: mockReservations,
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -225,10 +229,11 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request
-      const req = httpMock.expectOne(request =>
-        request.url.includes('/api/reservations/lookup') &&
-        request.params.get('reservationId') === '123e4567-e89b-12d3-a456-426614174000' &&
-        request.params.get('email') === 'guest@example.com'
+      const req = httpMock.expectOne(
+        (request) =>
+          request.url.includes('/api/reservations/lookup') &&
+          request.params.get('reservationId') === '123e4567-e89b-12d3-a456-426614174000' &&
+          request.params.get('email') === 'guest@example.com',
       );
       expect(req.request.method).toBe('GET');
 
@@ -255,12 +260,14 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request fails with 404
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/lookup'));
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/lookup'));
       req.flush('Not found', { status: 404, statusText: 'Not Found' });
       tick();
 
       // Verify error
-      expect(component.guestLookupError()).toBe('Reservation not found. Please check your Reservation ID and Email.');
+      expect(component.guestLookupError()).toBe(
+        'Reservation not found. Please check your Reservation ID and Email.',
+      );
       expect(component.guestReservation()).toBeNull();
     }));
   });
@@ -268,18 +275,20 @@ describe('BookingHistoryComponent (Integration)', () => {
   describe('Cancellation Flow with Real HTTP', () => {
     beforeEach(fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
 
       component.ngOnInit();
       tick();
 
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({
         items: mockReservations,
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
     }));
@@ -295,9 +304,10 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request
-      const req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${reservation.id}/cancel`) &&
-        request.method === 'PUT'
+      const req = httpMock.expectOne(
+        (request) =>
+          request.url.includes(`/api/reservations/${reservation.id}/cancel`) &&
+          request.method === 'PUT',
       );
       expect(req.request.body).toEqual({ reason: 'Change of plans' });
 
@@ -306,15 +316,17 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify reload request
-      const reloadReq = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const reloadReq = httpMock.expectOne((request) =>
+        request.url.includes('/api/reservations/search'),
+      );
       reloadReq.flush({
-        items: mockReservations.map(r =>
-          r.id === reservation.id ? { ...r, status: 'Cancelled' } : r
+        items: mockReservations.map((r) =>
+          r.id === reservation.id ? { ...r, status: 'Cancelled' } : r,
         ),
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -334,14 +346,16 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Assert - HTTP Request fails
-      const req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${reservation.id}/cancel`)
+      const req = httpMock.expectOne((request) =>
+        request.url.includes(`/api/reservations/${reservation.id}/cancel`),
       );
       req.flush('Cancellation not allowed', { status: 400, statusText: 'Bad Request' });
       tick();
 
       // Verify error
-      expect(toastService.error).toHaveBeenCalledWith('Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.');
+      expect(toastService.error).toHaveBeenCalledWith(
+        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
+      );
       expect(component.isLoading()).toBe(false);
     }));
   });
@@ -350,23 +364,25 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should complete full user journey: login -> view bookings -> cancel -> verify', fakeAsync(() => {
       // Step 1: User logs in
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({
-        id: '11111111-1111-1111-1111-111111111111',
-        username: 'testuser',
-        email: 'user@example.com'
-      }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({
+          id: '11111111-1111-1111-1111-111111111111',
+          username: 'testuser',
+          email: 'user@example.com',
+        }),
+      );
 
       component.ngOnInit();
       tick();
 
       // Step 2: Load initial bookings
-      let req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      let req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({
         items: mockReservations,
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
@@ -391,28 +407,32 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Step 6: Cancel HTTP request
-      req = httpMock.expectOne(request =>
-        request.url.includes(`/api/reservations/${reservation.id}/cancel`)
+      req = httpMock.expectOne((request) =>
+        request.url.includes(`/api/reservations/${reservation.id}/cancel`),
       );
       req.flush(null);
       tick();
 
       // Step 7: Reload bookings
-      req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
       req.flush({
-        items: mockReservations.map(r =>
-          r.id === reservation.id ? { ...r, status: 'Cancelled' } : r
+        items: mockReservations.map((r) =>
+          r.id === reservation.id ? { ...r, status: 'Cancelled' } : r,
         ),
         totalCount: 2,
         pageNumber: 1,
         pageSize: 100,
-        totalPages: 1
+        totalPages: 1,
       });
       tick();
 
       // Step 8: Verify final state
       expect(toastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
-      expect(component.groupedReservations().past.some(r => r.id === reservation.id && r.status === 'Cancelled')).toBe(true);
+      expect(
+        component
+          .groupedReservations()
+          .past.some((r) => r.id === reservation.id && r.status === 'Cancelled'),
+      ).toBe(true);
       expect(component.showCancelModal()).toBe(false);
     }));
   });
@@ -420,23 +440,41 @@ describe('BookingHistoryComponent (Integration)', () => {
   describe('Performance and Concurrency', () => {
     it('should handle multiple concurrent requests', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
 
       // Start multiple operations
       component.ngOnInit();
       tick();
 
-      const req1 = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
+      const req1 = httpMock.expectOne((request) =>
+        request.url.includes('/api/reservations/search'),
+      );
 
       // Simulate user navigating away and back quickly
       component['loadCustomerReservations']();
       tick();
 
       // Both requests complete
-      req1.flush({ items: mockReservations, totalCount: 2, pageNumber: 1, pageSize: 100, totalPages: 1 });
+      req1.flush({
+        items: mockReservations,
+        totalCount: 2,
+        pageNumber: 1,
+        pageSize: 100,
+        totalPages: 1,
+      });
 
-      const req2 = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req2.flush({ items: mockReservations, totalCount: 2, pageNumber: 1, pageSize: 100, totalPages: 1 });
+      const req2 = httpMock.expectOne((request) =>
+        request.url.includes('/api/reservations/search'),
+      );
+      req2.flush({
+        items: mockReservations,
+        totalCount: 2,
+        pageNumber: 1,
+        pageSize: 100,
+        totalPages: 1,
+      });
       tick();
 
       // Should handle gracefully
@@ -446,7 +484,9 @@ describe('BookingHistoryComponent (Integration)', () => {
 
     it('should handle slow network gracefully', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
-      authService.getUserProfile.and.returnValue(Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }));
+      authService.getUserProfile.and.returnValue(
+        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+      );
 
       component.ngOnInit();
       tick();
@@ -458,8 +498,14 @@ describe('BookingHistoryComponent (Integration)', () => {
       expect(component.isLoading()).toBe(true);
 
       // Finally respond
-      const req = httpMock.expectOne(request => request.url.includes('/api/reservations/search'));
-      req.flush({ items: mockReservations, totalCount: 2, pageNumber: 1, pageSize: 100, totalPages: 1 });
+      const req = httpMock.expectOne((request) => request.url.includes('/api/reservations/search'));
+      req.flush({
+        items: mockReservations,
+        totalCount: 2,
+        pageNumber: 1,
+        pageSize: 100,
+        totalPages: 1,
+      });
       tick();
 
       expect(component.isLoading()).toBe(false);

@@ -3,7 +3,11 @@ import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import type { VehicleSearchQuery, FuelType, TransmissionType } from '@orange-car-rental/vehicle-api';
+import type {
+  VehicleSearchQuery,
+  FuelType,
+  TransmissionType,
+} from '@orange-car-rental/vehicle-api';
 import {
   SelectLocationComponent,
   SelectCategoryComponent,
@@ -37,10 +41,10 @@ import {
     SelectCategoryComponent,
     SelectFuelTypeComponent,
     SelectTransmissionComponent,
-    IconComponent
+    IconComponent,
   ],
   templateUrl: './vehicle-search.component.html',
-  styleUrl: './vehicle-search.component.css'
+  styleUrl: './vehicle-search.component.css',
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
@@ -66,7 +70,7 @@ export class VehicleSearchComponent implements OnInit {
       categoryCode: [''],
       fuelType: [''],
       transmissionType: [''],
-      minSeats: [null]
+      minSeats: [null],
     });
   }
 
@@ -77,24 +81,27 @@ export class VehicleSearchComponent implements OnInit {
 
     this.searchForm.patchValue({
       pickupDate: tomorrow,
-      returnDate: defaultReturn
+      returnDate: defaultReturn,
     });
 
     // Update min return date when pickup date changes
-    this.searchForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate: string) => {
-      if (pickupDate) {
-        const minReturn = addDays(pickupDate, 1);
-        this.minReturnDate.set(minReturn);
+    this.searchForm
+      .get('pickupDate')
+      ?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((pickupDate: string) => {
+        if (pickupDate) {
+          const minReturn = addDays(pickupDate, 1);
+          this.minReturnDate.set(minReturn);
 
-        // Ensure return date is after pickup date
-        const currentReturnDate = this.searchForm.get('returnDate')?.value;
-        if (currentReturnDate && currentReturnDate <= pickupDate) {
-          this.searchForm.patchValue({
-            returnDate: minReturn
-          });
+          // Ensure return date is after pickup date
+          const currentReturnDate = this.searchForm.get('returnDate')?.value;
+          if (currentReturnDate && currentReturnDate <= pickupDate) {
+            this.searchForm.patchValue({
+              returnDate: minReturn,
+            });
+          }
         }
-      }
-    });
+      });
   }
 
   /**
@@ -115,8 +122,10 @@ export class VehicleSearchComponent implements OnInit {
       ...(formValue.locationCode && { locationCode: formValue.locationCode }),
       ...(formValue.categoryCode && { categoryCode: formValue.categoryCode }),
       ...(formValue.fuelType && { fuelType: formValue.fuelType as FuelType }),
-      ...(formValue.transmissionType && { transmissionType: formValue.transmissionType as TransmissionType }),
-      ...(formValue.minSeats && { minSeats: formValue.minSeats })
+      ...(formValue.transmissionType && {
+        transmissionType: formValue.transmissionType as TransmissionType,
+      }),
+      ...(formValue.minSeats && { minSeats: formValue.minSeats }),
     };
 
     this.searchSubmit.emit(query);
@@ -133,7 +142,7 @@ export class VehicleSearchComponent implements OnInit {
       categoryCode: '',
       fuelType: '',
       transmissionType: '',
-      minSeats: null
+      minSeats: null,
     });
 
     this.ngOnInit(); // Reinitialize default dates

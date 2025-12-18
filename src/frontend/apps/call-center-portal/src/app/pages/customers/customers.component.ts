@@ -27,9 +27,19 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule, ModalComponent, LoadingStateComponent, EmptyStateComponent, ErrorStateComponent, StatusBadgeComponent, SuccessAlertComponent, IconComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    StatusBadgeComponent,
+    SuccessAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './customers.component.html',
-  styleUrl: './customers.component.css'
+  styleUrl: './customers.component.css',
 })
 export class CustomersComponent {
   private readonly customerService = inject(CustomerService);
@@ -60,7 +70,7 @@ export class CustomersComponent {
     licenseNumber: '',
     licenseIssueCountry: '',
     licenseIssueDate: '',
-    licenseExpiryDate: ''
+    licenseExpiryDate: '',
   });
 
   // Search filters
@@ -93,7 +103,7 @@ export class CustomersComponent {
       ...(email && { email }),
       ...(phone && { phoneNumber: phone }),
       ...(lastName && { lastName }),
-      pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS
+      pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS,
     };
 
     this.customerService.searchCustomers(query).subscribe({
@@ -106,7 +116,7 @@ export class CustomersComponent {
         logError('CustomersComponent', 'Error searching customers', err);
         this.error.set('Fehler bei der Kundensuche');
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -148,16 +158,21 @@ export class CustomersComponent {
   private loadCustomerReservations(customerId: string): void {
     this.loadingReservations.set(true);
 
-    this.reservationService.searchReservations({ customerId: createCustomerId(customerId), pageSize: DEFAULT_PAGE_SIZE.CUSTOMER_RESERVATIONS }).subscribe({
-      next: (result) => {
-        this.customerReservations.set(result.reservations);
-        this.loadingReservations.set(false);
-      },
-      error: (err) => {
-        logError('CustomersComponent', 'Error loading customer reservations', err);
-        this.loadingReservations.set(false);
-      }
-    });
+    this.reservationService
+      .searchReservations({
+        customerId: createCustomerId(customerId),
+        pageSize: DEFAULT_PAGE_SIZE.CUSTOMER_RESERVATIONS,
+      })
+      .subscribe({
+        next: (result) => {
+          this.customerReservations.set(result.reservations);
+          this.loadingReservations.set(false);
+        },
+        error: (err) => {
+          logError('CustomersComponent', 'Error loading customer reservations', err);
+          this.loadingReservations.set(false);
+        },
+      });
   }
 
   // Helpers - using shared utilities
@@ -169,9 +184,9 @@ export class CustomersComponent {
    * Update edit form field
    */
   protected updateEditForm(field: keyof UpdateCustomerRequest, value: string): void {
-    this.editForm.update(form => ({
+    this.editForm.update((form) => ({
       ...form,
-      [field]: value
+      [field]: value,
     }));
   }
 
@@ -194,7 +209,7 @@ export class CustomersComponent {
         licenseNumber: customer.licenseNumber ?? '',
         licenseIssueCountry: customer.licenseIssueCountry ?? '',
         licenseIssueDate: customer.licenseIssueDate ?? '',
-        licenseExpiryDate: customer.licenseExpiryDate ?? ''
+        licenseExpiryDate: customer.licenseExpiryDate ?? '',
       });
       this.editMode.set(true);
     }
@@ -231,7 +246,7 @@ export class CustomersComponent {
         logError('CustomersComponent', 'Error updating customer', err);
         this.error.set('Fehler beim Speichern der Kundendaten');
         this.saving.set(false);
-      }
+      },
     });
   }
 }

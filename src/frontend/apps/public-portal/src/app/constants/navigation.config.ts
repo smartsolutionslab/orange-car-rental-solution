@@ -1,9 +1,4 @@
-import {
-  ICON_CAR,
-  ICON_CALENDAR,
-  ICON_LOCATION,
-  ICON_EMAIL,
-} from '@orange-car-rental/util';
+import { ICON_CAR, ICON_CALENDAR, ICON_LOCATION, ICON_EMAIL } from '@orange-car-rental/util';
 import type { NavItem } from '@orange-car-rental/shared';
 
 /**

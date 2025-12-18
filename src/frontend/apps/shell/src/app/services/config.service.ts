@@ -7,7 +7,7 @@ export type { AppConfig } from '../types';
  * Loaded via APP_INITIALIZER before the app starts
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ConfigService {
   private config: AppConfig = { apiUrl: '' };

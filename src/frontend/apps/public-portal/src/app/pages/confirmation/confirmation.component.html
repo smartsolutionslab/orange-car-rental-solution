@@ -55,7 +55,9 @@
               </div>
               <div class="detail-item">
                 <span class="detail-label">Mietdauer:</span>
-                <span class="detail-value">{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span>
+                <span class="detail-value"
+                  >{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span
+                >
               </div>
             </div>
           </div>
@@ -87,15 +89,22 @@
             <div class="price-breakdown">
               <div class="price-row">
                 <span>Netto-Gesamtpreis:</span>
-                <span>{{ reservation()!.totalPriceNet.toFixed(2) }} {{ reservation()!.currency }}</span>
+                <span
+                  >{{ reservation()!.totalPriceNet.toFixed(2) }} {{ reservation()!.currency }}</span
+                >
               </div>
               <div class="price-row">
                 <span>MwSt. (19%):</span>
-                <span>{{ reservation()!.totalPriceVat.toFixed(2) }} {{ reservation()!.currency }}</span>
+                <span
+                  >{{ reservation()!.totalPriceVat.toFixed(2) }} {{ reservation()!.currency }}</span
+                >
               </div>
               <div class="price-row price-total">
                 <span>Brutto-Gesamtpreis:</span>
-                <span>{{ reservation()!.totalPriceGross.toFixed(2) }} {{ reservation()!.currency }}</span>
+                <span
+                  >{{ reservation()!.totalPriceGross.toFixed(2) }}
+                  {{ reservation()!.currency }}</span
+                >
               </div>
             </div>
           </div>
@@ -119,7 +128,9 @@
         </h3>
         <ul>
           <li>Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet</li>
-          <li>Bitte bringen Sie einen gültigen Führerschein und Personalausweis zur Abholung mit</li>
+          <li>
+            Bitte bringen Sie einen gültigen Führerschein und Personalausweis zur Abholung mit
+          </li>
           <li>Die Fahrzeugübergabe erfolgt nach Prüfung Ihrer Dokumente</li>
           <li>Bei Fragen kontaktieren Sie bitte unseren Kundenservice</li>
         </ul>

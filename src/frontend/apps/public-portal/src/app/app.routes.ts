@@ -13,32 +13,32 @@ import { authGuard } from '@orange-car-rental/auth';
 export const routes: Routes = [
   {
     path: '',
-    component: VehicleListComponent
+    component: VehicleListComponent,
   },
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
   },
   {
     path: 'register',
-    component: RegisterComponent
+    component: RegisterComponent,
   },
   {
     path: 'forgot-password',
-    component: ForgotPasswordComponent
+    component: ForgotPasswordComponent,
   },
   {
     path: 'booking',
     component: BookingComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'confirmation',
     component: ConfirmationComponent,
-    canActivate: [authGuard]
+    canActivate: [authGuard],
   },
   {
     path: 'my-bookings',
-    component: BookingHistoryComponent
-  }
+    component: BookingHistoryComponent,
+  },
 ];

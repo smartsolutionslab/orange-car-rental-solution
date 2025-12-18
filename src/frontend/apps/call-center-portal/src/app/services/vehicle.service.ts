@@ -8,7 +8,7 @@ import type {
   VehicleSearchQuery,
   VehicleSearchResult,
   AddVehicleRequest,
-  AddVehicleResult
+  AddVehicleResult,
 } from '@orange-car-rental/vehicle-api';
 import { VehicleStatus } from '@orange-car-rental/vehicle-api';
 import type { LocationCode } from '@orange-car-rental/location-api';
@@ -20,7 +20,7 @@ import { ConfigService } from './config.service';
  * Handles vehicle search and related operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VehicleService {
   private readonly http = inject(HttpClient);
@@ -75,7 +75,10 @@ export class VehicleService {
    * @returns Observable of void
    */
   updateVehicleLocation(vehicleId: VehicleId, locationCode: LocationCode): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`, {});
+    return this.http.put<void>(
+      `${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`,
+      {},
+    );
   }
 
   /**
@@ -85,6 +88,9 @@ export class VehicleService {
    * @returns Observable of void
    */
   updateVehicleDailyRate(vehicleId: VehicleId, dailyRateNet: DailyRate): Observable<void> {
-    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`, {});
+    return this.http.put<void>(
+      `${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`,
+      {},
+    );
   }
 }

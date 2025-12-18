@@ -1,7 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import type { CustomerProfile, UpdateCustomerProfileRequest, CustomerId } from '@orange-car-rental/customer-api';
+import type {
+  CustomerProfile,
+  UpdateCustomerProfileRequest,
+  CustomerId,
+} from '@orange-car-rental/customer-api';
 import { ConfigService } from './config.service';
 
 /**
@@ -9,7 +13,7 @@ import { ConfigService } from './config.service';
  * Handles customer profile operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomerService {
   private readonly http = inject(HttpClient);
@@ -43,7 +47,10 @@ export class CustomerService {
    * @param profile Updated profile data
    * @returns Observable of updated customer profile
    */
-  updateCustomerProfile(customerId: CustomerId, profile: UpdateCustomerProfileRequest): Observable<CustomerProfile> {
+  updateCustomerProfile(
+    customerId: CustomerId,
+    profile: UpdateCustomerProfileRequest,
+  ): Observable<CustomerProfile> {
     return this.http.put<CustomerProfile>(`${this.apiUrl}/${customerId}/profile`, profile);
   }
 

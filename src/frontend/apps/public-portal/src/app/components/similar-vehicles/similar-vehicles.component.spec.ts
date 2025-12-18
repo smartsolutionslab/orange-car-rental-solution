@@ -14,9 +14,9 @@ describe('SimilarVehiclesComponent', () => {
     categoryName: 'Mittelklasse',
     locationCode: 'BER-HBF',
     city: 'Berlin',
-    dailyRateNet: 50.00,
-    dailyRateVat: 9.50,
-    dailyRateGross: 59.50,
+    dailyRateNet: 50.0,
+    dailyRateVat: 9.5,
+    dailyRateGross: 59.5,
     currency: 'EUR',
     seats: 5,
     fuelType: 'Petrol',
@@ -26,7 +26,7 @@ describe('SimilarVehiclesComponent', () => {
     manufacturer: 'Volkswagen',
     model: 'Golf 8',
     year: 2023,
-    imageUrl: null
+    imageUrl: null,
   };
 
   const mockSimilarVehicles: Vehicle[] = [
@@ -37,7 +37,7 @@ describe('SimilarVehiclesComponent', () => {
       categoryName: 'Mittelklasse',
       locationCode: 'BER-HBF',
       city: 'Berlin',
-      dailyRateNet: 45.00,
+      dailyRateNet: 45.0,
       dailyRateVat: 8.55,
       dailyRateGross: 53.55,
       currency: 'EUR',
@@ -49,7 +49,7 @@ describe('SimilarVehiclesComponent', () => {
       manufacturer: 'Opel',
       model: 'Astra',
       year: 2023,
-      imageUrl: null
+      imageUrl: null,
     },
     {
       id: '111e2222-e89b-12d3-a456-426614174002',
@@ -58,9 +58,9 @@ describe('SimilarVehiclesComponent', () => {
       categoryName: 'Kompaktklasse',
       locationCode: 'BER-HBF',
       city: 'Berlin',
-      dailyRateNet: 40.00,
-      dailyRateVat: 7.60,
-      dailyRateGross: 47.60,
+      dailyRateNet: 40.0,
+      dailyRateVat: 7.6,
+      dailyRateGross: 47.6,
       currency: 'EUR',
       seats: 5,
       fuelType: 'Diesel',
@@ -70,16 +70,14 @@ describe('SimilarVehiclesComponent', () => {
       manufacturer: 'Ford',
       model: 'Focus',
       year: 2022,
-      imageUrl: null
-    }
+      imageUrl: null,
+    },
   ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [SimilarVehiclesComponent],
-      providers: [
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+      providers: [{ provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(SimilarVehiclesComponent);
@@ -105,7 +103,7 @@ describe('SimilarVehiclesComponent', () => {
     it('should calculate price difference correctly for more expensive vehicle', () => {
       const expensive: Vehicle = {
         ...mockCurrentVehicle,
-        dailyRateGross: 70.00
+        dailyRateGross: 70.0,
       };
       const result = component['getPriceDifference'](expensive);
 
@@ -116,7 +114,7 @@ describe('SimilarVehiclesComponent', () => {
     it('should handle same price', () => {
       const samePrice: Vehicle = {
         ...mockCurrentVehicle,
-        id: 'different-id'
+        id: 'different-id',
       };
       const result = component['getPriceDifference'](samePrice);
 

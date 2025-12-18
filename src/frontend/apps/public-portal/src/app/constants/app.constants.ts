@@ -6,7 +6,7 @@
 export const PAGE_SIZES = {
   SMALL: 10,
   MEDIUM: 20,
-  LARGE: 100
+  LARGE: 100,
 } as const;
 
 // UI timing constants (in milliseconds)
@@ -14,7 +14,7 @@ export const UI_TIMING = {
   SUCCESS_MESSAGE_DURATION: 3000,
   ERROR_MESSAGE_DURATION: 5000,
   DEBOUNCE_TIME: 300,
-  REDIRECT_DELAY: 2000
+  REDIRECT_DELAY: 2000,
 } as const;
 
 // Default page size for different contexts
@@ -22,11 +22,11 @@ export const DEFAULT_PAGE_SIZE = {
   VEHICLE_SEARCH: PAGE_SIZES.SMALL,
   SIMILAR_VEHICLES: PAGE_SIZES.MEDIUM,
   BOOKING_HISTORY: PAGE_SIZES.LARGE,
-  MAX_SIMILAR_VEHICLES: 4
+  MAX_SIMILAR_VEHICLES: 4,
 } as const;
 
 // Business logic constants
 export const BUSINESS_RULES = {
   FREE_CANCELLATION_HOURS: 48,
-  MINIMUM_RENTAL_AGE: 18
+  MINIMUM_RENTAL_AGE: 18,
 } as const;

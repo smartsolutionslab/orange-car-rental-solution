@@ -15,7 +15,7 @@ export type { RegisterData } from '../types';
  * - Password reset
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService extends BaseAuthService {
   private readonly http = inject(HttpClient);
@@ -41,11 +41,11 @@ export class AuthService extends BaseAuthService {
       body.set('grant_type', 'password');
 
       const headers = new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
       });
 
       const response = await firstValueFrom(
-        this.http.post<TokenResponse>(tokenUrl, body.toString(), { headers })
+        this.http.post<TokenResponse>(tokenUrl, body.toString(), { headers }),
       );
 
       // Store tokens and reinitialize Keycloak
@@ -53,7 +53,7 @@ export class AuthService extends BaseAuthService {
         await this.keycloak.init({
           token: response.access_token,
           refreshToken: response.refresh_token,
-          checkLoginIframe: false
+          checkLoginIframe: false,
         });
       }
     } catch (error: unknown) {
@@ -75,28 +75,28 @@ export class AuthService extends BaseAuthService {
         lastName: userData.lastName,
         enabled: true,
         emailVerified: false,
-        credentials: [{
-          type: 'password',
-          value: userData.password,
-          temporary: false
-        }],
+        credentials: [
+          {
+            type: 'password',
+            value: userData.password,
+            temporary: false,
+          },
+        ],
         attributes: {
           phoneNumber: [userData.phoneNumber],
           dateOfBirth: [userData.dateOfBirth],
-          acceptMarketing: [userData.acceptMarketing.toString()]
-        }
+          acceptMarketing: [userData.acceptMarketing.toString()],
+        },
       };
 
       // Use Keycloak registration endpoint (requires realm setting: registrationAllowed=true)
       const registerUrl = `${this.keycloakUrl}/realms/${this.realm}/protocol/openid-connect/registrations`;
 
       const headers = new HttpHeaders({
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       });
 
-      await firstValueFrom(
-        this.http.post(registerUrl, userPayload, { headers })
-      );
+      await firstValueFrom(this.http.post(registerUrl, userPayload, { headers }));
 
       // After successful registration, log the user in
       await this.loginWithPassword(userData.email, userData.password, false);
@@ -118,15 +118,13 @@ export class AuthService extends BaseAuthService {
       const resetUrl = `${this.keycloakUrl}/realms/${this.realm}/login-actions/reset-credentials`;
 
       const headers = new HttpHeaders({
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
       });
 
       const body = new URLSearchParams();
       body.set('username', email);
 
-      await firstValueFrom(
-        this.http.post(resetUrl, body.toString(), { headers })
-      );
+      await firstValueFrom(this.http.post(resetUrl, body.toString(), { headers }));
     } catch (error: unknown) {
       logError('AuthService', 'Password reset error', error);
       throw error;

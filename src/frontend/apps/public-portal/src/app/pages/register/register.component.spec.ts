@@ -15,10 +15,7 @@ describe('RegisterComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [RegisterComponent, ReactiveFormsModule],
-      providers: [
-        { provide: AuthService, useValue: authServiceSpy },
-        provideRouter([])
-      ]
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
     authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
@@ -95,7 +92,7 @@ describe('RegisterComponent', () => {
     it('should validate password match', () => {
       component.registerForm.patchValue({
         password: 'StrongP@ssw0rd!',
-        confirmPassword: 'DifferentP@ssw0rd!'
+        confirmPassword: 'DifferentP@ssw0rd!',
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeTruthy();
     });
@@ -103,7 +100,7 @@ describe('RegisterComponent', () => {
     it('should pass validation when passwords match', () => {
       component.registerForm.patchValue({
         password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!'
+        confirmPassword: 'StrongP@ssw0rd!',
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeFalsy();
     });
@@ -111,7 +108,7 @@ describe('RegisterComponent', () => {
     it('should show password mismatch error', () => {
       component.registerForm.patchValue({
         password: 'StrongP@ssw0rd!',
-        confirmPassword: 'Different'
+        confirmPassword: 'Different',
       });
       component.confirmPassword?.markAsTouched();
       expect(component.confirmPasswordError).toBe('Passwörter stimmen nicht überein');
@@ -203,7 +200,7 @@ describe('RegisterComponent', () => {
       component.registerForm.patchValue({
         email: 'test@example.com',
         password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!'
+        confirmPassword: 'StrongP@ssw0rd!',
       });
       component.nextStep();
       expect(component.currentStep()).toBe(2);
@@ -225,7 +222,7 @@ describe('RegisterComponent', () => {
       component.registerForm.patchValue({
         email: 'test@example.com',
         password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!'
+        confirmPassword: 'StrongP@ssw0rd!',
       });
       expect(component.isCurrentStepValid()).toBeTruthy();
     });
@@ -274,7 +271,7 @@ describe('RegisterComponent', () => {
         dateOfBirth: validDate.toISOString().split('T')[0],
         acceptTerms: true,
         acceptPrivacy: true,
-        acceptMarketing: false
+        acceptMarketing: false,
       });
     });
 
@@ -300,13 +297,15 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(authService.register).toHaveBeenCalledWith(jasmine.objectContaining({
-        email: 'test@example.com',
-        firstName: 'Max',
-        lastName: 'Mustermann',
-        phoneNumber: '+49 123 456789',
-        acceptMarketing: false
-      }));
+      expect(authService.register).toHaveBeenCalledWith(
+        jasmine.objectContaining({
+          email: 'test@example.com',
+          firstName: 'Max',
+          lastName: 'Mustermann',
+          phoneNumber: '+49 123 456789',
+          acceptMarketing: false,
+        }),
+      );
     });
 
     it('should show success message on successful registration', async () => {
@@ -323,7 +322,9 @@ describe('RegisterComponent', () => {
       component.currentStep.set(3);
       // Create a deferred promise to control resolution timing
       let resolveRegister!: () => void;
-      const deferredPromise = new Promise<void>(resolve => { resolveRegister = resolve; });
+      const deferredPromise = new Promise<void>((resolve) => {
+        resolveRegister = resolve;
+      });
       authService.register.and.returnValue(deferredPromise);
 
       const submitPromise = component.onSubmit();
@@ -351,7 +352,9 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Das Passwort erfüllt nicht die Sicherheitsanforderungen.');
+      expect(component.errorMessage()).toBe(
+        'Das Passwort erfüllt nicht die Sicherheitsanforderungen.',
+      );
     });
 
     it('should show generic error message on unknown error', async () => {
@@ -361,7 +364,9 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+      expect(component.errorMessage()).toBe(
+        'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.',
+      );
     });
   });
 

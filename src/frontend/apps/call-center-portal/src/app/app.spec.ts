@@ -14,7 +14,7 @@ describe('App', () => {
       'loadUserProfile',
       'getToken',
       'getUserRoles',
-      'isUserInRole'
+      'isUserInRole',
     ]);
     keycloakServiceSpy.isLoggedIn.and.returnValue(false);
 
@@ -22,7 +22,7 @@ describe('App', () => {
       'isAuthenticated',
       'getUsername',
       'login',
-      'logout'
+      'logout',
     ]);
     authServiceSpy.isAuthenticated.and.returnValue(false);
     authServiceSpy.getUsername.and.returnValue('');
@@ -32,8 +32,8 @@ describe('App', () => {
       providers: [
         provideRouter([]),
         { provide: KeycloakService, useValue: keycloakServiceSpy },
-        { provide: AuthService, useValue: authServiceSpy }
-      ]
+        { provide: AuthService, useValue: authServiceSpy },
+      ],
     }).compileComponents();
   });
 

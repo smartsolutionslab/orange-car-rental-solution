@@ -6,7 +6,7 @@ import { BaseAuthService } from '@orange-car-rental/auth';
  * Extends BaseAuthService with all common Keycloak authentication methods
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService extends BaseAuthService {
   // All methods inherited from BaseAuthService:

@@ -10,6 +10,6 @@ import { NavigationComponent } from './components/navigation/navigation.componen
   selector: 'app-root',
   imports: [RouterOutlet, NavigationComponent],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {}

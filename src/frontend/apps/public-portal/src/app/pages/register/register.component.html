@@ -9,12 +9,22 @@
     <!-- Progress Steps -->
     <div class="progress-steps">
       @for (step of [1, 2, 3]; track step) {
-        <div class="progress-step" [class.active]="step <= currentStep()" [class.current]="step === currentStep()">
+        <div
+          class="progress-step"
+          [class.active]="step <= currentStep()"
+          [class.current]="step === currentStep()"
+        >
           <div class="step-number">{{ step }}</div>
           <div class="step-label">
-            @if (step === 1) { <span>Konto</span> }
-            @if (step === 2) { <span>Persönlich</span> }
-            @if (step === 3) { <span>Bestätigung</span> }
+            @if (step === 1) {
+              <span>Konto</span>
+            }
+            @if (step === 2) {
+              <span>Persönlich</span>
+            }
+            @if (step === 3) {
+              <span>Bestätigung</span>
+            }
           </div>
         </div>
       }
@@ -31,13 +41,20 @@
 
     <!-- Registration Form -->
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
-
       <!-- Step 1: Account Information -->
       @if (currentStep() === 1) {
         <div class="form-step">
           <div class="form-group">
             <label for="email" class="form-label">E-Mail-Adresse *</label>
-            <input id="email" type="email" formControlName="email" class="form-input" [class.input-error]="emailError" placeholder="ihre-email@beispiel.de" autocomplete="email" />
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              class="form-input"
+              [class.input-error]="emailError"
+              placeholder="ihre-email@beispiel.de"
+              autocomplete="email"
+            />
             @if (emailError) {
               <span class="field-error">{{ emailError }}</span>
             }
@@ -46,8 +63,20 @@
           <div class="form-group">
             <label for="password" class="form-label">Passwort *</label>
             <div class="password-wrapper">
-              <input id="password" [type]="showPassword() ? 'text' : 'password'" formControlName="password" class="form-input" [class.input-error]="passwordError" placeholder="••••••••" autocomplete="new-password" />
-              <button type="button" class="password-toggle" (click)="togglePasswordVisibility('password')">
+              <input
+                id="password"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                class="form-input"
+                [class.input-error]="passwordError"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility('password')"
+              >
                 @if (showPassword()) {
                   <lib-icon name="eye-off" variant="outline" size="sm" />
                 } @else {
@@ -58,14 +87,28 @@
             @if (passwordError) {
               <span class="field-error">{{ passwordError }}</span>
             }
-            <span class="field-hint">Mindestens 8 Zeichen, mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen</span>
+            <span class="field-hint"
+              >Mindestens 8 Zeichen, mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen</span
+            >
           </div>
 
           <div class="form-group">
             <label for="confirmPassword" class="form-label">Passwort bestätigen *</label>
             <div class="password-wrapper">
-              <input id="confirmPassword" [type]="showConfirmPassword() ? 'text' : 'password'" formControlName="confirmPassword" class="form-input" [class.input-error]="confirmPasswordError" placeholder="••••••••" autocomplete="new-password" />
-              <button type="button" class="password-toggle" (click)="togglePasswordVisibility('confirmPassword')">
+              <input
+                id="confirmPassword"
+                [type]="showConfirmPassword() ? 'text' : 'password'"
+                formControlName="confirmPassword"
+                class="form-input"
+                [class.input-error]="confirmPasswordError"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                type="button"
+                class="password-toggle"
+                (click)="togglePasswordVisibility('confirmPassword')"
+              >
                 @if (showConfirmPassword()) {
                   <lib-icon name="eye-off" variant="outline" size="sm" />
                 } @else {
@@ -86,7 +129,15 @@
           <div class="form-row">
             <div class="form-group">
               <label for="firstName" class="form-label">Vorname *</label>
-              <input id="firstName" type="text" formControlName="firstName" class="form-input" [class.input-error]="firstNameError" placeholder="Max" autocomplete="given-name" />
+              <input
+                id="firstName"
+                type="text"
+                formControlName="firstName"
+                class="form-input"
+                [class.input-error]="firstNameError"
+                placeholder="Max"
+                autocomplete="given-name"
+              />
               @if (firstNameError) {
                 <span class="field-error">{{ firstNameError }}</span>
               }
@@ -94,7 +145,15 @@
 
             <div class="form-group">
               <label for="lastName" class="form-label">Nachname *</label>
-              <input id="lastName" type="text" formControlName="lastName" class="form-input" [class.input-error]="lastNameError" placeholder="Mustermann" autocomplete="family-name" />
+              <input
+                id="lastName"
+                type="text"
+                formControlName="lastName"
+                class="form-input"
+                [class.input-error]="lastNameError"
+                placeholder="Mustermann"
+                autocomplete="family-name"
+              />
               @if (lastNameError) {
                 <span class="field-error">{{ lastNameError }}</span>
               }
@@ -103,7 +162,15 @@
 
           <div class="form-group">
             <label for="phoneNumber" class="form-label">Telefonnummer *</label>
-            <input id="phoneNumber" type="tel" formControlName="phoneNumber" class="form-input" [class.input-error]="phoneNumberError" placeholder="+49 123 456789" autocomplete="tel" />
+            <input
+              id="phoneNumber"
+              type="tel"
+              formControlName="phoneNumber"
+              class="form-input"
+              [class.input-error]="phoneNumberError"
+              placeholder="+49 123 456789"
+              autocomplete="tel"
+            />
             @if (phoneNumberError) {
               <span class="field-error">{{ phoneNumberError }}</span>
             }
@@ -111,7 +178,14 @@
 
           <div class="form-group">
             <label for="dateOfBirth" class="form-label">Geburtsdatum *</label>
-            <input id="dateOfBirth" type="date" formControlName="dateOfBirth" class="form-input" [class.input-error]="dateOfBirthError" autocomplete="bday" />
+            <input
+              id="dateOfBirth"
+              type="date"
+              formControlName="dateOfBirth"
+              class="form-input"
+              [class.input-error]="dateOfBirthError"
+              autocomplete="bday"
+            />
             @if (dateOfBirthError) {
               <span class="field-error">{{ dateOfBirthError }}</span>
             }
@@ -126,14 +200,24 @@
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptTerms" class="checkbox-input" />
-              <span>Ich akzeptiere die <a href="/terms" target="_blank" class="terms-link">Allgemeinen Geschäftsbedingungen</a> *</span>
+              <span
+                >Ich akzeptiere die
+                <a href="/terms" target="_blank" class="terms-link"
+                  >Allgemeinen Geschäftsbedingungen</a
+                >
+                *</span
+              >
             </label>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptPrivacy" class="checkbox-input" />
-              <span>Ich akzeptiere die <a href="/privacy" target="_blank" class="terms-link">Datenschutzerklärung</a> *</span>
+              <span
+                >Ich akzeptiere die
+                <a href="/privacy" target="_blank" class="terms-link">Datenschutzerklärung</a>
+                *</span
+              >
             </label>
           </div>
 
@@ -148,7 +232,10 @@
             <lib-icon name="information-circle" variant="outline" size="sm" class="info-icon" />
             <div>
               <p class="info-title">Datenschutz ist uns wichtig</p>
-              <p class="info-text">Ihre Daten werden gemäß DSGVO gespeichert und verarbeitet. Sie können Ihre Einwilligung jederzeit widerrufen.</p>
+              <p class="info-text">
+                Ihre Daten werden gemäß DSGVO gespeichert und verarbeitet. Sie können Ihre
+                Einwilligung jederzeit widerrufen.
+              </p>
             </div>
           </div>
         </div>
@@ -157,13 +244,16 @@
       <!-- Navigation Buttons -->
       <div class="form-actions">
         @if (currentStep() > 1) {
-          <button type="button" class="secondary-button" (click)="previousStep()">
-            Zurück
-          </button>
+          <button type="button" class="secondary-button" (click)="previousStep()">Zurück</button>
         }
 
         @if (currentStep() < totalSteps) {
-          <button type="button" class="primary-button" (click)="nextStep()" [class.full-width]="currentStep() === 1">
+          <button
+            type="button"
+            class="primary-button"
+            (click)="nextStep()"
+            [class.full-width]="currentStep() === 1"
+          >
             Weiter
           </button>
         }
@@ -172,7 +262,15 @@
           <button type="submit" class="primary-button" [disabled]="isLoading()">
             @if (isLoading()) {
               <svg class="spinner" viewBox="0 0 24 24">
-                <circle class="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <circle
+                  class="spinner-circle"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                  fill="none"
+                ></circle>
               </svg>
               <span>Registrierung läuft...</span>
             } @else {

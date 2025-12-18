@@ -4,7 +4,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
-import { FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent,
+import {
+  FormFieldComponent,
+  SuccessAlertComponent,
+  ErrorAlertComponent,
   IconComponent,
 } from '@orange-car-rental/ui-components';
 
@@ -17,11 +20,17 @@ import { FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent,
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormFieldComponent, SuccessAlertComponent, ErrorAlertComponent,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    FormFieldComponent,
+    SuccessAlertComponent,
+    ErrorAlertComponent,
     IconComponent,
   ],
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css'
+  styleUrl: './forgot-password.component.css',
 })
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
@@ -32,10 +41,10 @@ export class ForgotPasswordComponent {
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
     });
   }
 
@@ -57,12 +66,11 @@ export class ForgotPasswordComponent {
       this.emailSent.set(true);
       this.successMessage.set(
         `Ein Link zum Zurücksetzen des Passworts wurde an ${email} gesendet. ` +
-        `Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen.`
+          `Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen.`,
       );
 
       // Reset form
       this.forgotPasswordForm.reset();
-
     } catch (error: unknown) {
       logError('ForgotPasswordComponent', 'Password reset error', error);
 
@@ -71,13 +79,13 @@ export class ForgotPasswordComponent {
         // Don't reveal if email exists or not for security
         this.emailSent.set(true);
         this.successMessage.set(
-          `Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.`
+          `Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.`,
         );
       } else if (httpError.message?.includes('Network')) {
         this.errorMessage.set('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
       } else {
         this.errorMessage.set(
-          'Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.'
+          'Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
         );
       }
     } finally {

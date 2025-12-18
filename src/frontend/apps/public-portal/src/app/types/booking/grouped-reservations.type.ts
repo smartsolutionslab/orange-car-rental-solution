@@ -7,4 +7,4 @@ export interface GroupedReservations {
   readonly upcoming: Reservation[];
   readonly past: Reservation[];
   readonly pending: Reservation[];
-};
+}

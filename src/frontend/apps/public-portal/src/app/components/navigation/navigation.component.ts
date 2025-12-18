@@ -18,7 +18,7 @@ import { PUBLIC_PORTAL_NAV_ITEMS } from '../../constants/navigation.config';
   standalone: true,
   imports: [RouterLink, RouterLinkActive, CommonModule],
   templateUrl: './navigation.component.html',
-  styleUrl: './navigation.component.css'
+  styleUrl: './navigation.component.css',
 })
 export class NavigationComponent implements OnInit {
   private readonly authService = inject(AuthService);
@@ -35,7 +35,7 @@ export class NavigationComponent implements OnInit {
   /** Filtered navigation items based on auth state */
   protected readonly navItems = computed(() => {
     const authenticated = this.isAuthenticated();
-    return this.allNavItems.filter(item => {
+    return this.allNavItems.filter((item) => {
       // Hide items that require auth when not authenticated
       if (item.requiresAuth && !authenticated) {
         return false;

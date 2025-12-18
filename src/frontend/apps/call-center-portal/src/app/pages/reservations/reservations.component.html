@@ -3,7 +3,6 @@
   <p class="subtitle">Verwalten Sie alle Reservierungen und Buchungen</p>
 </div>
 
-
 <!-- Statistics Dashboard -->
 <div class="dashboard-grid">
   <ui-stat-card
@@ -93,21 +92,13 @@
       <!-- Pickup Date From -->
       <div class="filter-group">
         <label for="dateFromFilter">Abholung von</label>
-        <input
-          type="date"
-          id="dateFromFilter"
-          [(ngModel)]="searchPickupDateFrom"
-        />
+        <input type="date" id="dateFromFilter" [(ngModel)]="searchPickupDateFrom" />
       </div>
 
       <!-- Pickup Date To -->
       <div class="filter-group">
         <label for="dateToFilter">Abholung bis</label>
-        <input
-          type="date"
-          id="dateToFilter"
-          [(ngModel)]="searchPickupDateTo"
-        />
+        <input type="date" id="dateToFilter" [(ngModel)]="searchPickupDateTo" />
       </div>
 
       <!-- Location Filter -->
@@ -168,12 +159,26 @@
             class="btn-icon"
             (click)="changeSortBy(sortBy())"
             [title]="sortOrder() === 'asc' ? 'Aufsteigend' : 'Absteigend'"
-            [attr.aria-label]="sortOrder() === 'asc' ? 'Sortierung umkehren (aktuell aufsteigend)' : 'Sortierung umkehren (aktuell absteigend)'"
+            [attr.aria-label]="
+              sortOrder() === 'asc'
+                ? 'Sortierung umkehren (aktuell aufsteigend)'
+                : 'Sortierung umkehren (aktuell absteigend)'
+            "
           >
             @if (sortOrder() === 'asc') {
-              <lib-icon name="chevron-up-filled" variant="filled" [customSize]="20" aria-hidden="true" />
+              <lib-icon
+                name="chevron-up-filled"
+                variant="filled"
+                [customSize]="20"
+                aria-hidden="true"
+              />
             } @else {
-              <lib-icon name="chevron-down-filled" variant="filled" [customSize]="20" aria-hidden="true" />
+              <lib-icon
+                name="chevron-down-filled"
+                variant="filled"
+                [customSize]="20"
+                aria-hidden="true"
+              />
             }
           </button>
         </div>
@@ -192,10 +197,7 @@
       <!-- Page Size -->
       <div class="control-group">
         <label>Einträge pro Seite</label>
-        <ui-select-page-size
-          [(ngModel)]="pageSize"
-          (ngModelChange)="applyFilters()"
-        />
+        <ui-select-page-size [(ngModel)]="pageSize" (ngModelChange)="applyFilters()" />
       </div>
     </div>
 
@@ -223,7 +225,9 @@
           <div class="group-section">
             <div class="group-header">
               <h3>{{ groupKey }}</h3>
-              <span class="group-count">{{ groupedReservations()[groupKey].length }} Buchungen</span>
+              <span class="group-count"
+                >{{ groupedReservations()[groupKey].length }} Buchungen</span
+              >
             </div>
             <div class="reservations-table">
               <table>
@@ -240,7 +244,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @for (reservation of groupedReservations()[groupKey]; track reservation.reservationId) {
+                  @for (
+                    reservation of groupedReservations()[groupKey];
+                    track reservation.reservationId
+                  ) {
                     <tr>
                       <td>
                         <span class="reservation-id" [title]="reservation.reservationId">
@@ -253,15 +260,27 @@
                       <td>{{ reservation.pickupLocationCode }}</td>
                       <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
                       <td>
-                        <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
+                        <ui-status-badge
+                          type="reservation"
+                          [status]="reservation.status"
+                        ></ui-status-badge>
                       </td>
                       <td class="actions-cell">
-                        <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                        <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
+                          Details
+                        </button>
                         @if (canConfirm(reservation)) {
-                          <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">Bestätigen</button>
+                          <button
+                            class="btn-sm btn-success"
+                            (click)="confirmReservation(reservation)"
+                          >
+                            Bestätigen
+                          </button>
                         }
                         @if (canCancel(reservation)) {
-                          <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">Stornieren</button>
+                          <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
+                            Stornieren
+                          </button>
                         }
                       </td>
                     </tr>
@@ -304,15 +323,24 @@
                 <td>{{ reservation.pickupLocationCode }}</td>
                 <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
                 <td>
-                  <ui-status-badge type="reservation" [status]="reservation.status"></ui-status-badge>
+                  <ui-status-badge
+                    type="reservation"
+                    [status]="reservation.status"
+                  ></ui-status-badge>
                 </td>
                 <td class="actions-cell">
-                  <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">Details</button>
+                  <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
+                    Details
+                  </button>
                   @if (canConfirm(reservation)) {
-                    <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">Bestätigen</button>
+                    <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">
+                      Bestätigen
+                    </button>
                   }
                   @if (canCancel(reservation)) {
-                    <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">Stornieren</button>
+                    <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
+                      Stornieren
+                    </button>
                   }
                 </td>
               </tr>
@@ -321,7 +349,6 @@
         </table>
       </div>
     }
-
 
     <!-- Pagination -->
     <ui-pagination
@@ -350,7 +377,12 @@
 </div>
 
 <!-- Details Modal -->
-<ui-modal [isOpen]="showDetails() && !!selectedReservation()" title="Reservierungsdetails" size="lg" (close)="closeDetails()">
+<ui-modal
+  [isOpen]="showDetails() && !!selectedReservation()"
+  title="Reservierungsdetails"
+  size="lg"
+  (close)="closeDetails()"
+>
   <ng-container modal-body>
     @if (selectedReservation()) {
       <div class="detail-grid">
@@ -369,7 +401,10 @@
         <div class="detail-item">
           <label>Status</label>
           <p>
-            <ui-status-badge type="reservation" [status]="selectedReservation()!.status"></ui-status-badge>
+            <ui-status-badge
+              type="reservation"
+              [status]="selectedReservation()!.status"
+            ></ui-status-badge>
           </p>
         </div>
         <div class="detail-item">
@@ -411,7 +446,9 @@
           </div>
           <div class="price-row total">
             <span><strong>Gesamtbetrag:</strong></span>
-            <span><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span>
+            <span
+              ><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span
+            >
           </div>
         </div>
       </div>
@@ -419,12 +456,20 @@
   </ng-container>
   <ng-container modal-footer>
     @if (selectedReservation() && canConfirm(selectedReservation()!)) {
-      <button class="btn-success" (click)="confirmReservation(selectedReservation()!)" [disabled]="actionInProgress()">
+      <button
+        class="btn-success"
+        (click)="confirmReservation(selectedReservation()!)"
+        [disabled]="actionInProgress()"
+      >
         Bestätigen
       </button>
     }
     @if (selectedReservation() && canCancel(selectedReservation()!)) {
-      <button class="btn-danger" (click)="showCancelDialog(selectedReservation()!)" [disabled]="actionInProgress()">
+      <button
+        class="btn-danger"
+        (click)="showCancelDialog(selectedReservation()!)"
+        [disabled]="actionInProgress()"
+      >
         Stornieren
       </button>
     }
@@ -433,11 +478,19 @@
 </ui-modal>
 
 <!-- Cancel Modal -->
-<ui-modal [isOpen]="showCancelModal() && !!selectedReservation()" title="Reservierung stornieren" size="sm" (close)="closeCancelModal()">
+<ui-modal
+  [isOpen]="showCancelModal() && !!selectedReservation()"
+  title="Reservierung stornieren"
+  size="sm"
+  (close)="closeCancelModal()"
+>
   <ng-container modal-body>
     @if (selectedReservation()) {
       <p>Möchten Sie diese Reservierung wirklich stornieren?</p>
-      <p><strong>Reservierungs-ID:</strong> {{ selectedReservation()!.reservationId.substring(0, 8) }}...</p>
+      <p>
+        <strong>Reservierungs-ID:</strong>
+        {{ selectedReservation()!.reservationId.substring(0, 8) }}...
+      </p>
 
       <div class="form-group">
         <label for="cancelReason">Stornierungsgrund *</label>
@@ -468,11 +521,19 @@
 </ui-modal>
 
 <!-- Confirm Modal -->
-<ui-modal [isOpen]="showConfirmModal() && !!selectedReservation()" title="Reservierung bestätigen" size="sm" (close)="closeConfirmModal()">
+<ui-modal
+  [isOpen]="showConfirmModal() && !!selectedReservation()"
+  title="Reservierung bestätigen"
+  size="sm"
+  (close)="closeConfirmModal()"
+>
   <ng-container modal-body>
     @if (selectedReservation()) {
       <p>Möchten Sie diese Reservierung wirklich bestätigen?</p>
-      <p><strong>Reservierungs-ID:</strong> {{ selectedReservation()!.reservationId.substring(0, 8) }}...</p>
+      <p>
+        <strong>Reservierungs-ID:</strong>
+        {{ selectedReservation()!.reservationId.substring(0, 8) }}...
+      </p>
       <p><strong>Kunde:</strong> {{ selectedReservation()!.customerId.substring(0, 8) }}...</p>
       <p><strong>Abholdatum:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
       <p><strong>Gesamtpreis:</strong> {{ formatPrice(selectedReservation()!.totalPriceGross) }}</p>
@@ -484,11 +545,7 @@
   </ng-container>
   <ng-container modal-footer>
     <button class="btn-secondary" (click)="closeConfirmModal()">Abbrechen</button>
-    <button
-      class="btn-success"
-      (click)="executeConfirmation()"
-      [disabled]="actionInProgress()"
-    >
+    <button class="btn-success" (click)="executeConfirmation()" [disabled]="actionInProgress()">
       {{ actionInProgress() ? 'Wird bestätigt...' : 'Bestätigung durchführen' }}
     </button>
   </ng-container>

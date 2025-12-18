@@ -14,7 +14,7 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './similar-vehicles.component.html',
-  styleUrl: './similar-vehicles.component.css'
+  styleUrl: './similar-vehicles.component.css',
 })
 export class SimilarVehiclesComponent {
   readonly currentVehicle = input<Vehicle | null>(null);
@@ -38,17 +38,17 @@ export class SimilarVehiclesComponent {
     if (difference > 0) {
       return {
         amount: difference,
-        text: `€${absDifference.toFixed(2)}/Tag günstiger`
+        text: `€${absDifference.toFixed(2)}/Tag günstiger`,
       };
     } else if (difference < 0) {
       return {
         amount: difference,
-        text: `€${absDifference.toFixed(2)}/Tag teurer`
+        text: `€${absDifference.toFixed(2)}/Tag teurer`,
       };
     } else {
       return {
         amount: 0,
-        text: 'Gleicher Preis'
+        text: 'Gleicher Preis',
       };
     }
   }
@@ -103,10 +103,10 @@ export class SimilarVehiclesComponent {
    */
   protected formatFuelType(fuelType: string): string {
     const fuelTypes: Record<string, string> = {
-      'Petrol': 'Benzin',
-      'Diesel': 'Diesel',
-      'Electric': 'Elektro',
-      'Hybrid': 'Hybrid'
+      Petrol: 'Benzin',
+      Diesel: 'Diesel',
+      Electric: 'Elektro',
+      Hybrid: 'Hybrid',
     };
     return fuelTypes[fuelType] || fuelType;
   }
@@ -116,8 +116,8 @@ export class SimilarVehiclesComponent {
    */
   protected formatTransmissionType(transmissionType: string): string {
     const transmissionTypes: Record<string, string> = {
-      'Manual': 'Manuell',
-      'Automatic': 'Automatik'
+      Manual: 'Manuell',
+      Automatic: 'Automatik',
     };
     return transmissionTypes[transmissionType] || transmissionType;
   }

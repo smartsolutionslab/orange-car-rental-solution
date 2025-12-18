@@ -8,7 +8,7 @@ import type {
   ReservationId,
   ReservationSearchFilters,
   ReservationSearchResponse,
-  CancelReservationRequest
+  CancelReservationRequest,
 } from '@orange-car-rental/reservation-api';
 import type { EmailAddress } from '@orange-car-rental/shared';
 import { HttpParamsBuilder } from '@orange-car-rental/shared';
@@ -19,7 +19,7 @@ import { ConfigService } from './config.service';
  * Handles creating and managing reservations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReservationService {
   private readonly http = inject(HttpClient);
@@ -74,7 +74,10 @@ export class ReservationService {
    * @param email Email address used during booking
    * @returns Observable of reservation details
    */
-  lookupGuestReservation(reservationId: ReservationId, email: EmailAddress): Observable<Reservation> {
+  lookupGuestReservation(
+    reservationId: ReservationId,
+    email: EmailAddress,
+  ): Observable<Reservation> {
     const params = HttpParamsBuilder.fromObject({ reservationId, email });
     return this.http.get<Reservation>(`${this.apiUrl}/lookup`, { params });
   }

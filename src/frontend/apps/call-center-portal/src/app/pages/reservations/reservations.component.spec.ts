@@ -26,10 +26,10 @@ describe('ReservationsComponent', () => {
       rentalDays: 4,
       totalPriceNet: 336.13,
       totalPriceVat: 63.87,
-      totalPriceGross: 400.00,
+      totalPriceGross: 400.0,
       currency: 'EUR',
       status: 'Confirmed',
-      createdAt: '2025-11-20'
+      createdAt: '2025-11-20',
     },
     {
       reservationId: '223e4567-e89b-12d3-a456-426614174001',
@@ -42,10 +42,10 @@ describe('ReservationsComponent', () => {
       rentalDays: 2,
       totalPriceNet: 168.07,
       totalPriceVat: 31.93,
-      totalPriceGross: 200.00,
+      totalPriceGross: 200.0,
       currency: 'EUR',
       status: 'Pending',
-      createdAt: '2025-11-20'
+      createdAt: '2025-11-20',
     },
     {
       reservationId: '323e4567-e89b-12d3-a456-426614174002',
@@ -56,26 +56,26 @@ describe('ReservationsComponent', () => {
       pickupLocationCode: 'FRA',
       dropoffLocationCode: 'FRA',
       rentalDays: 2,
-      totalPriceNet: 252.10,
-      totalPriceVat: 47.90,
-      totalPriceGross: 300.00,
+      totalPriceNet: 252.1,
+      totalPriceVat: 47.9,
+      totalPriceGross: 300.0,
       currency: 'EUR',
       status: 'Completed',
-      createdAt: '2025-09-25'
-    }
+      createdAt: '2025-09-25',
+    },
   ];
 
   beforeEach(async () => {
     const reservationServiceSpy = jasmine.createSpyObj('ReservationService', [
       'searchReservations',
       'confirmReservation',
-      'cancelReservation'
+      'cancelReservation',
     ]);
 
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
 
     mockActivatedRoute = {
-      queryParams: of({})
+      queryParams: of({}),
     };
 
     await TestBed.configureTestingModule({
@@ -84,11 +84,13 @@ describe('ReservationsComponent', () => {
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: Router, useValue: routerSpy },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }
-      ]
+        { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
+      ],
     }).compileComponents();
 
-    mockReservationService = TestBed.inject(ReservationService) as jasmine.SpyObj<ReservationService>;
+    mockReservationService = TestBed.inject(
+      ReservationService,
+    ) as jasmine.SpyObj<ReservationService>;
     mockRouter = TestBed.inject(Router) as jasmine.SpyObj<Router>;
 
     fixture = TestBed.createComponent(ReservationsComponent);
@@ -107,8 +109,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
 
       component.ngOnInit();
@@ -131,7 +133,7 @@ describe('ReservationsComponent', () => {
         sortOrder: 'asc',
         groupBy: 'status',
         page: '2',
-        pageSize: '50'
+        pageSize: '50',
       });
 
       mockReservationService.searchReservations.and.returnValue(
@@ -140,8 +142,8 @@ describe('ReservationsComponent', () => {
           totalCount: 0,
           pageNumber: 2,
           pageSize: 50,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
 
       component.ngOnInit();
@@ -162,7 +164,7 @@ describe('ReservationsComponent', () => {
 
     it('should handle loading error', () => {
       mockReservationService.searchReservations.and.returnValue(
-        throwError(() => new Error('Network error'))
+        throwError(() => new Error('Network error')),
       );
 
       component.ngOnInit();
@@ -180,8 +182,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
     });
 
@@ -191,8 +193,8 @@ describe('ReservationsComponent', () => {
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          status: 'Confirmed'
-        })
+          status: 'Confirmed',
+        }),
       );
     });
 
@@ -202,8 +204,8 @@ describe('ReservationsComponent', () => {
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          customerId: '11111111-1111-1111-1111-111111111111'
-        })
+          customerId: '11111111-1111-1111-1111-111111111111',
+        }),
       );
     });
 
@@ -215,8 +217,8 @@ describe('ReservationsComponent', () => {
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
           pickupDateFrom: '2025-11-01',
-          pickupDateTo: '2025-11-30'
-        })
+          pickupDateTo: '2025-11-30',
+        }),
       );
     });
 
@@ -226,8 +228,8 @@ describe('ReservationsComponent', () => {
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          locationCode: 'MUC'
-        })
+          locationCode: 'MUC',
+        }),
       );
     });
 
@@ -239,8 +241,8 @@ describe('ReservationsComponent', () => {
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
           minPrice: 100,
-          maxPrice: 500
-        })
+          maxPrice: 500,
+        }),
       );
     });
 
@@ -293,8 +295,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
     });
 
@@ -327,8 +329,8 @@ describe('ReservationsComponent', () => {
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
           sortBy: 'Price',
-          sortOrder: 'asc'
-        })
+          sortOrder: 'asc',
+        }),
       );
     });
   });
@@ -389,8 +391,8 @@ describe('ReservationsComponent', () => {
           totalCount: 150,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 6
-        })
+          totalPages: 6,
+        }),
       );
     });
 
@@ -454,18 +456,18 @@ describe('ReservationsComponent', () => {
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          pageSize: 50
-        })
+          pageSize: 50,
+        }),
       );
     });
   });
 
   describe('Statistics', () => {
-    it('should calculate today\'s reservations', () => {
+    it("should calculate today's reservations", () => {
       const today = new Date().toISOString().split('T')[0];
       const reservationsToday = [
         { ...mockReservations[0], createdAt: today },
-        { ...mockReservations[1], createdAt: today }
+        { ...mockReservations[1], createdAt: today },
       ];
 
       mockReservationService.searchReservations.and.returnValue(
@@ -474,8 +476,8 @@ describe('ReservationsComponent', () => {
           totalCount: 2,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
 
       component.ngOnInit();
@@ -490,8 +492,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
 
       component.ngOnInit();
@@ -506,8 +508,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
 
       component.ngOnInit();
@@ -524,8 +526,8 @@ describe('ReservationsComponent', () => {
           totalCount: 3,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 1
-        })
+          totalPages: 1,
+        }),
       );
     });
 
@@ -561,7 +563,7 @@ describe('ReservationsComponent', () => {
       component['executeConfirmation']();
 
       expect(mockReservationService.confirmReservation).toHaveBeenCalledWith(
-        mockReservations[1].reservationId
+        mockReservations[1].reservationId,
       );
       expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
       expect(component['showConfirmModal']()).toBe(false);
@@ -579,7 +581,7 @@ describe('ReservationsComponent', () => {
 
     it('should handle confirm error', () => {
       mockReservationService.confirmReservation.and.returnValue(
-        throwError(() => new Error('Confirmation failed'))
+        throwError(() => new Error('Confirmation failed')),
       );
 
       component['selectedReservation'].set(mockReservations[1]);
@@ -617,7 +619,7 @@ describe('ReservationsComponent', () => {
 
       expect(mockReservationService.cancelReservation).toHaveBeenCalledWith(
         mockReservations[0].reservationId,
-        'Test reason'
+        'Test reason',
       );
       expect(component['successMessage']()).toBe('Reservierung erfolgreich storniert');
     });
@@ -661,7 +663,7 @@ describe('ReservationsComponent', () => {
     });
 
     it('should format price correctly', () => {
-      const price = 400.00;
+      const price = 400.0;
       const formatted = component['formatPrice'](price);
 
       expect(formatted).toContain('400');
@@ -696,8 +698,8 @@ describe('ReservationsComponent', () => {
           totalCount: 0,
           pageNumber: 1,
           pageSize: 25,
-          totalPages: 0
-        })
+          totalPages: 0,
+        }),
       );
 
       component['applyFilters']();

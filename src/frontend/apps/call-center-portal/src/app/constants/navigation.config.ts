@@ -21,6 +21,12 @@ export const CALL_CENTER_NAV_ITEMS: readonly NavItem[] = [
   { path: '', label: 'Fahrzeuge', icon: ICON_CAR, exactMatch: true, requiresAuth: true },
   { path: 'reservations', label: 'Buchungen', icon: ICON_CALENDAR, requiresAuth: true },
   { path: 'customers', label: 'Kunden', icon: ICON_PERSON, requiresAuth: true },
-  { path: 'locations', label: 'Standorte', icon: ICON_LOCATION, requiresAuth: true, roles: [CALL_CENTER_ROLES.SUPERVISOR, CALL_CENTER_ROLES.ADMIN] },
+  {
+    path: 'locations',
+    label: 'Standorte',
+    icon: ICON_LOCATION,
+    requiresAuth: true,
+    roles: [CALL_CENTER_ROLES.SUPERVISOR, CALL_CENTER_ROLES.ADMIN],
+  },
   { path: 'contact', label: 'Kontakt', icon: ICON_EMAIL },
 ] as const;

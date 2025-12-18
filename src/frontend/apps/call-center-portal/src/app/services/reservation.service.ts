@@ -10,7 +10,7 @@ import type {
   CreateReservationResponse,
   GuestReservationRequest,
   ReservationSearchQuery,
-  ReservationSearchResult
+  ReservationSearchResult,
 } from '../types';
 
 /**
@@ -18,7 +18,7 @@ import type {
  * Handles creating and managing reservations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReservationService {
   private readonly http = inject(HttpClient);
