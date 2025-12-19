@@ -184,6 +184,17 @@ jobs:
           name: call-center-portal-production
           path: src/frontend/apps/call-center-portal/dist/
 
+      - name: Debug - List downloaded artifacts
+        run: |
+          echo "=== Shell dist structure ==="
+          ls -laR src/frontend/apps/shell/dist/ || echo "Shell dist not found"
+          echo ""
+          echo "=== Public Portal dist structure ==="
+          ls -laR src/frontend/apps/public-portal/dist/ || echo "Public Portal dist not found"
+          echo ""
+          echo "=== Call Center Portal dist structure ==="
+          ls -laR src/frontend/apps/call-center-portal/dist/ || echo "Call Center Portal dist not found"
+
       - name: Build Shell Docker image
         uses: docker/build-push-action@v6
         with:
