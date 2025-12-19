@@ -133,7 +133,7 @@ jobs:
 
       - name: Publish
         if: matrix.configuration == 'Release'
-        working-directory: src/backend/Api
+        working-directory: src/backend/ApiGateway/OrangeCarRental.ApiGateway
         run: dotnet publish --no-build --configuration Release --output ./publish
 
       - name: Upload publish artifacts
