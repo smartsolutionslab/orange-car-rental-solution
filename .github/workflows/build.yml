@@ -166,11 +166,29 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+      - name: Download Shell production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: shell-production
+          path: src/frontend/apps/shell/dist/
+
+      - name: Download Public Portal production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: public-portal-production
+          path: src/frontend/apps/public-portal/dist/
+
+      - name: Download Call Center Portal production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: call-center-portal-production
+          path: src/frontend/apps/call-center-portal/dist/
+
       - name: Build Shell Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend
-          file: ./src/frontend/apps/shell/Dockerfile
+          context: ./src/frontend/apps/shell
+          file: ./src/frontend/apps/shell/Dockerfile.runtime
           push: false
           tags: orange-car-rental-shell:${{ github.sha }}
           cache-from: type=gha
@@ -179,8 +197,8 @@ jobs:
       - name: Build Public Portal Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend
-          file: ./src/frontend/apps/public-portal/Dockerfile
+          context: ./src/frontend/apps/public-portal
+          file: ./src/frontend/apps/public-portal/Dockerfile.runtime
           push: false
           tags: orange-car-rental-public:${{ github.sha }}
           cache-from: type=gha
@@ -189,8 +207,8 @@ jobs:
       - name: Build Call Center Portal Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend
-          file: ./src/frontend/apps/call-center-portal/Dockerfile
+          context: ./src/frontend/apps/call-center-portal
+          file: ./src/frontend/apps/call-center-portal/Dockerfile.runtime
           push: false
           tags: orange-car-rental-callcenter:${{ github.sha }}
           cache-from: type=gha
