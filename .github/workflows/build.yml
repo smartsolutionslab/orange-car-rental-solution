@@ -160,7 +160,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./src/backend
-          file: ./src/backend/ApiGateway/OrangeCarRental.ApiGateway/Dockerfile
+          file: ./src/backend/ApiGateway/Dockerfile
           push: false
           tags: orange-car-rental-api:${{ github.sha }}
           cache-from: type=gha
