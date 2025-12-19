@@ -2,26 +2,31 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install yarn
+RUN corepack enable && corepack prepare yarn@1.22.22 --activate
+
+# Copy package files from monorepo root
+COPY package.json yarn.lock ./
+COPY apps/shell/package.json ./apps/shell/
 
 # Install dependencies
-RUN npm ci
+RUN yarn install --frozen-lockfile
 
 # Copy source code
-COPY . .
+COPY apps/shell/ ./apps/shell/
 
 # Build application
-RUN npm run build
+WORKDIR /app/apps/shell
+RUN yarn build
 
 # Runtime stage with nginx
 FROM nginx:alpine AS final
 
 # Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY apps/shell/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/apps/shell/dist /usr/share/nginx/html
 
 # Create non-root user
 RUN addgroup -g 1001 -S appuser && \

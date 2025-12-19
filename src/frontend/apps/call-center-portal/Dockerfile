@@ -2,26 +2,31 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Install yarn
+RUN corepack enable && corepack prepare yarn@1.22.22 --activate
+
+# Copy package files from monorepo root
+COPY package.json yarn.lock ./
+COPY apps/call-center-portal/package.json ./apps/call-center-portal/
 
 # Install dependencies
-RUN npm ci
+RUN yarn install --frozen-lockfile
 
 # Copy source code
-COPY . .
+COPY apps/call-center-portal/ ./apps/call-center-portal/
 
 # Build application
-RUN npm run build
+WORKDIR /app/apps/call-center-portal
+RUN yarn build
 
 # Runtime stage with nginx
 FROM nginx:alpine AS final
 
 # Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY apps/call-center-portal/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built app
-COPY --from=build /app/dist/call-center-portal /usr/share/nginx/html
+COPY --from=build /app/apps/call-center-portal/dist/call-center-portal /usr/share/nginx/html
 
 # Create non-root user
 RUN addgroup -g 1001 -S appuser && \

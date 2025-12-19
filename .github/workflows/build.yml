@@ -169,7 +169,7 @@ jobs:
       - name: Build Shell Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend/apps/shell
+          context: ./src/frontend
           file: ./src/frontend/apps/shell/Dockerfile
           push: false
           tags: orange-car-rental-shell:${{ github.sha }}
@@ -179,7 +179,7 @@ jobs:
       - name: Build Public Portal Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend/apps/public-portal
+          context: ./src/frontend
           file: ./src/frontend/apps/public-portal/Dockerfile
           push: false
           tags: orange-car-rental-public:${{ github.sha }}
@@ -189,7 +189,7 @@ jobs:
       - name: Build Call Center Portal Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/frontend/apps/call-center-portal
+          context: ./src/frontend
           file: ./src/frontend/apps/call-center-portal/Dockerfile
           push: false
           tags: orange-car-rental-callcenter:${{ github.sha }}
