@@ -63,7 +63,7 @@ jobs:
 
       - name: Build application
         working-directory: src/frontend
-        run: yarn workspace @orange-car-rental/${{ matrix.app }} build${{ matrix.environment }}
+        run: yarn workspace @orange-car-rental/${{ matrix.app }} build:${{ matrix.environment }}
         env:
           NODE_OPTIONS: --max_old_space_size=4096
 
@@ -134,7 +134,7 @@ jobs:
       - name: Publish
         if: matrix.configuration == 'Release'
         working-directory: src/backend/ApiGateway/OrangeCarRental.ApiGateway
-        run: dotnet publish --no-build --configuration Release --output ./publish
+        run: dotnet publish --configuration Release --output ./publish
 
       - name: Upload publish artifacts
         if: matrix.configuration == 'Release'
