@@ -6,7 +6,7 @@ yarn-error.log*
 package-lock.json.bak
 
 # Build output
-dist
+# dist is NOT ignored - needed for runtime Dockerfile
 .angular
 .nx
 
