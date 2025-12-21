@@ -18,8 +18,9 @@ public class CustomerBuilder
     public CustomerBuilder()
     {
         // Default license: issued 5 years ago, expires in 5 years
-        var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-5));
-        var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));
+        // Use UtcNow to match DriversLicense validation which uses UtcNow
+        var issueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5));
+        var expiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(5));
         _license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
     }
 
@@ -85,13 +86,14 @@ public class CustomerBuilder
     /// </summary>
     public CustomerBuilder WithAge(int years)
     {
-        var birthDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-years));
+        // Use UtcNow to match DriversLicense validation which uses UtcNow
+        var birthDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-years));
         _birthDate = BirthDate.Of(birthDate);
 
         // Adjust license dates to be valid for the age
         // License should be issued after the person turned 18
         var earliestLicenseDate = birthDate.AddYears(18);
-        var now = DateOnly.FromDateTime(DateTime.Now);
+        var now = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Calculate issue date:
         // - If person just turned 18, issue the license recently
@@ -122,7 +124,7 @@ public class CustomerBuilder
             }
         }
 
-        var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddYears(5));
+        var expiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(5));
         _license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
 
         return this;
@@ -185,8 +187,8 @@ public class CustomerBuilder
     /// </summary>
     public CustomerBuilder WithExpiredLicense()
     {
-        var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-10));
-        var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddDays(-1));
+        var issueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-10));
+        var expiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(-1));
         _license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
         return this;
     }
@@ -196,8 +198,8 @@ public class CustomerBuilder
     /// </summary>
     public CustomerBuilder WithLicenseExpiringIn(int days)
     {
-        var issueDate = DateOnly.FromDateTime(DateTime.Now.AddYears(-5));
-        var expiryDate = DateOnly.FromDateTime(DateTime.Now.AddDays(days));
+        var issueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5));
+        var expiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(days));
         _license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
         return this;
     }
