@@ -15,8 +15,7 @@ public readonly partial record struct LicensePlate(string Value) : IValueObject
     private const int MaxLength = 20;
 
     [GeneratedRegex(@"^[A-ZÄÖÜ]{1,3}[\s-]?[A-ZÄÖÜ]{1,2}[\s-]?\d{1,4}[EH]?$", RegexOptions.IgnoreCase)]
-    private static partial Regex continue
-    GermanLicensePlatePattern();
+    private static partial Regex GermanLicensePlatePattern();
 
     public static LicensePlate From(string value)
     {
