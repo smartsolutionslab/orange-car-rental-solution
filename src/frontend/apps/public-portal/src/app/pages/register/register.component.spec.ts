@@ -4,6 +4,12 @@ import { Router, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
+import {
+  TEST_EMAILS,
+  TEST_PASSWORDS,
+  TEST_PERSONAL_INFO,
+  createValidRegistrationData,
+} from '@orange-car-rental/shared/testing';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -67,48 +73,48 @@ describe('RegisterComponent', () => {
 
     it('should validate email format', () => {
       const emailControl = component.registerForm.get('email');
-      emailControl?.setValue('invalid-email');
+      emailControl?.setValue(TEST_EMAILS.INVALID);
       emailControl?.markAsTouched();
       expect(emailControl?.hasError('email')).toBeTruthy();
     });
 
     it('should require password with minimum length', () => {
       const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue('short');
+      passwordControl?.setValue(TEST_PASSWORDS.SHORT);
       expect(passwordControl?.hasError('minlength')).toBeTruthy();
     });
 
     it('should validate password strength', () => {
       const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue('weakpassword');
+      passwordControl?.setValue(TEST_PASSWORDS.WEAK);
       expect(passwordControl?.hasError('weakPassword')).toBeTruthy();
     });
 
     it('should accept strong password', () => {
       const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue('StrongP@ssw0rd!');
+      passwordControl?.setValue(TEST_PASSWORDS.STRONG);
       expect(passwordControl?.valid).toBeTruthy();
     });
 
     it('should validate password match', () => {
       component.registerForm.patchValue({
-        password: 'StrongP@ssw0rd!',
-        confirmPassword: 'DifferentP@ssw0rd!',
+        password: TEST_PASSWORDS.STRONG,
+        confirmPassword: TEST_PASSWORDS.MISMATCH,
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeTruthy();
     });
 
     it('should pass validation when passwords match', () => {
       component.registerForm.patchValue({
-        password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!',
+        password: TEST_PASSWORDS.STRONG,
+        confirmPassword: TEST_PASSWORDS.STRONG,
       });
       expect(component.registerForm.hasError('passwordMismatch')).toBeFalsy();
     });
 
     it('should show password mismatch error', () => {
       component.registerForm.patchValue({
-        password: 'StrongP@ssw0rd!',
+        password: TEST_PASSWORDS.STRONG,
         confirmPassword: 'Different',
       });
       component.confirmPassword?.markAsTouched();
@@ -133,13 +139,13 @@ describe('RegisterComponent', () => {
 
     it('should validate phone number format', () => {
       const phoneControl = component.registerForm.get('phoneNumber');
-      phoneControl?.setValue('invalid');
+      phoneControl?.setValue(TEST_PERSONAL_INFO.PHONE_INVALID);
       expect(phoneControl?.hasError('invalidPhone')).toBeTruthy();
     });
 
     it('should accept valid German phone number', () => {
       const phoneControl = component.registerForm.get('phoneNumber');
-      phoneControl?.setValue('+49 123 456789');
+      phoneControl?.setValue(TEST_PERSONAL_INFO.PHONE);
       expect(phoneControl?.valid).toBeTruthy();
     });
 
@@ -152,19 +158,13 @@ describe('RegisterComponent', () => {
 
     it('should validate minimum age of 18', () => {
       const dobControl = component.registerForm.get('dateOfBirth');
-      const today = new Date();
-      const underageDate = new Date(today.getFullYear() - 17, today.getMonth(), today.getDate());
-      const dateString = underageDate.toISOString().split('T')[0];
-      dobControl?.setValue(dateString);
+      dobControl?.setValue(TEST_PERSONAL_INFO.DATE_OF_BIRTH_UNDERAGE);
       expect(dobControl?.hasError('underage')).toBeTruthy();
     });
 
     it('should accept valid age (18+)', () => {
       const dobControl = component.registerForm.get('dateOfBirth');
-      const today = new Date();
-      const validDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
-      const dateString = validDate.toISOString().split('T')[0];
-      dobControl?.setValue(dateString);
+      dobControl?.setValue(TEST_PERSONAL_INFO.DATE_OF_BIRTH_VALID);
       expect(dobControl?.valid).toBeTruthy();
     });
   });
@@ -199,9 +199,9 @@ describe('RegisterComponent', () => {
 
     it('should advance to step 2 with valid step 1', () => {
       component.registerForm.patchValue({
-        email: 'test@example.com',
-        password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!',
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.STRONG,
+        confirmPassword: TEST_PASSWORDS.STRONG,
       });
       component.nextStep();
       expect(component.currentStep()).toBe(2);
@@ -221,9 +221,9 @@ describe('RegisterComponent', () => {
 
     it('should validate current step correctly', () => {
       component.registerForm.patchValue({
-        email: 'test@example.com',
-        password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!',
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.STRONG,
+        confirmPassword: TEST_PASSWORDS.STRONG,
       });
       expect(component.isCurrentStepValid()).toBeTruthy();
     });
@@ -258,22 +258,8 @@ describe('RegisterComponent', () => {
 
   describe('Form Submission', () => {
     beforeEach(() => {
-      // Fill in all required fields
-      const today = new Date();
-      const validDate = new Date(today.getFullYear() - 25, today.getMonth(), today.getDate());
-
-      component.registerForm.patchValue({
-        email: 'test@example.com',
-        password: 'StrongP@ssw0rd!',
-        confirmPassword: 'StrongP@ssw0rd!',
-        firstName: 'Max',
-        lastName: 'Mustermann',
-        phoneNumber: '+49 123 456789',
-        dateOfBirth: validDate.toISOString().split('T')[0],
-        acceptTerms: true,
-        acceptPrivacy: true,
-        acceptMarketing: false,
-      });
+      // Use shared test fixtures for valid registration data
+      component.registerForm.patchValue(createValidRegistrationData());
     });
 
     it('should not submit if form is invalid regardless of step', async () => {
@@ -300,10 +286,10 @@ describe('RegisterComponent', () => {
 
       expect(authService.register).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          email: 'test@example.com',
-          firstName: 'Max',
-          lastName: 'Mustermann',
-          phoneNumber: '+49 123 456789',
+          email: TEST_EMAILS.VALID,
+          firstName: TEST_PERSONAL_INFO.FIRST_NAME,
+          lastName: TEST_PERSONAL_INFO.LAST_NAME,
+          phoneNumber: TEST_PERSONAL_INFO.PHONE,
           acceptMarketing: false,
         }),
       );

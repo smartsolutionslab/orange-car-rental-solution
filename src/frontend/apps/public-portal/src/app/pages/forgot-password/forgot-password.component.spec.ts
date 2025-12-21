@@ -4,6 +4,7 @@ import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '../../services/auth.service';
+import { TEST_EMAILS } from '@orange-car-rental/shared/testing';
 
 describe('ForgotPasswordComponent', () => {
   let component: ForgotPasswordComponent;
@@ -61,7 +62,7 @@ describe('ForgotPasswordComponent', () => {
 
     it('should validate email format', () => {
       const emailControl = component.forgotPasswordForm.get('email');
-      emailControl?.setValue('invalid-email');
+      emailControl?.setValue(TEST_EMAILS.INVALID);
       emailControl?.markAsTouched();
       expect(emailControl?.hasError('email')).toBeTruthy();
       expect(component.emailError).toBe('auth.validation.emailInvalid');
@@ -69,7 +70,7 @@ describe('ForgotPasswordComponent', () => {
 
     it('should accept valid email', () => {
       const emailControl = component.forgotPasswordForm.get('email');
-      emailControl?.setValue('test@example.com');
+      emailControl?.setValue(TEST_EMAILS.VALID);
       expect(emailControl?.valid).toBeTruthy();
       expect(component.emailError).toBeNull();
     });
@@ -84,7 +85,7 @@ describe('ForgotPasswordComponent', () => {
   describe('Form Submission', () => {
     beforeEach(() => {
       component.forgotPasswordForm.patchValue({
-        email: 'test@example.com',
+        email: TEST_EMAILS.VALID,
       });
     });
 
@@ -105,7 +106,7 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(authService.resetPassword).toHaveBeenCalledWith('test@example.com');
+      expect(authService.resetPassword).toHaveBeenCalledWith(TEST_EMAILS.VALID);
     });
 
     it('should set emailSent to true on success', async () => {
@@ -164,7 +165,7 @@ describe('ForgotPasswordComponent', () => {
   describe('Error Handling', () => {
     beforeEach(() => {
       component.forgotPasswordForm.patchValue({
-        email: 'test@example.com',
+        email: TEST_EMAILS.VALID,
       });
     });
 
@@ -223,7 +224,7 @@ describe('ForgotPasswordComponent', () => {
 
     it('should hide form after successful email sent', async () => {
       authService.resetPassword.and.returnValue(Promise.resolve());
-      component.forgotPasswordForm.patchValue({ email: 'test@example.com' });
+      component.forgotPasswordForm.patchValue({ email: TEST_EMAILS.VALID });
 
       await component.onSubmit();
       fixture.detectChanges();
@@ -243,7 +244,7 @@ describe('ForgotPasswordComponent', () => {
 
     it('should show info box when email sent', async () => {
       authService.resetPassword.and.returnValue(Promise.resolve());
-      component.forgotPasswordForm.patchValue({ email: 'test@example.com' });
+      component.forgotPasswordForm.patchValue({ email: TEST_EMAILS.VALID });
 
       await component.onSubmit();
       fixture.detectChanges();
@@ -254,7 +255,7 @@ describe('ForgotPasswordComponent', () => {
 
     it('should show resend button when email sent', async () => {
       authService.resetPassword.and.returnValue(Promise.resolve());
-      component.forgotPasswordForm.patchValue({ email: 'test@example.com' });
+      component.forgotPasswordForm.patchValue({ email: TEST_EMAILS.VALID });
 
       await component.onSubmit();
       fixture.detectChanges();

@@ -4,6 +4,7 @@ import { Router, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
+import { TEST_EMAILS, TEST_PASSWORDS } from '@orange-car-rental/shared/testing';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -53,7 +54,7 @@ describe('LoginComponent', () => {
 
     it('should validate email format', () => {
       const emailControl = component.loginForm.get('email');
-      emailControl?.setValue('invalid-email');
+      emailControl?.setValue(TEST_EMAILS.INVALID);
       emailControl?.markAsTouched();
       // Trigger the computed signal to re-run by setting the internal signal
       component['emailTouched'].set(true);
@@ -63,7 +64,7 @@ describe('LoginComponent', () => {
 
     it('should accept valid email', () => {
       const emailControl = component.loginForm.get('email');
-      emailControl?.setValue('test@example.com');
+      emailControl?.setValue(TEST_EMAILS.VALID);
       expect(emailControl?.hasError('email')).toBeFalsy();
     });
 
@@ -97,8 +98,8 @@ describe('LoginComponent', () => {
 
     it('should mark form as valid when all fields are filled correctly', () => {
       component.loginForm.patchValue({
-        email: 'test@example.com',
-        password: 'password123',
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.VALID,
       });
       expect(component.loginForm.valid).toBeTruthy();
     });
@@ -121,8 +122,8 @@ describe('LoginComponent', () => {
   describe('Form Submission', () => {
     beforeEach(() => {
       component.loginForm.patchValue({
-        email: 'test@example.com',
-        password: 'password123',
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.VALID,
         rememberMe: true,
       });
     });
@@ -140,8 +141,8 @@ describe('LoginComponent', () => {
       await component.onSubmit();
 
       expect(authService.loginWithPassword).toHaveBeenCalledWith(
-        'test@example.com',
-        'password123',
+        TEST_EMAILS.VALID,
+        TEST_PASSWORDS.VALID,
         true,
       );
     });

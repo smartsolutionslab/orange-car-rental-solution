@@ -7,6 +7,8 @@
  *   MOCK_VEHICLES,
  *   MOCK_RESERVATIONS,
  *   MOCK_CUSTOMERS,
+ *   TEST_EMAILS,
+ *   TEST_PASSWORDS,
  *   createMockVehicle,
  *   getFutureDate,
  * } from '@orange-car-rental/shared/testing';
@@ -21,3 +23,4 @@ export * from './mock-vehicles';
 export * from './mock-reservations';
 export * from './mock-customers';
 export * from './mock-locations';
+export * from './mock-auth';
