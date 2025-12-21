@@ -1,95 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { TranslateModule } from '@ngx-translate/core';
 import { SimilarVehiclesComponent } from './similar-vehicles.component';
-import type {
-  Vehicle,
-  VehicleId,
-  VehicleName,
-  CategoryCode,
-  CategoryName,
-  SeatingCapacity,
-  DailyRate,
-  FuelType,
-  TransmissionType,
-  VehicleStatus,
-  LicensePlate,
-  Manufacturer,
-  VehicleModel,
-  ManufacturingYear,
-} from '@orange-car-rental/vehicle-api';
-import type { LocationCode, CityName } from '@orange-car-rental/location-api';
+import type { Vehicle, VehicleId, DailyRate } from '@orange-car-rental/vehicle-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
-import type { Currency } from '@orange-car-rental/shared';
+import { MOCK_VEHICLES } from '@orange-car-rental/shared/testing';
 
 describe('SimilarVehiclesComponent', () => {
   let component: SimilarVehiclesComponent;
   let fixture: ComponentFixture<SimilarVehiclesComponent>;
 
-  const mockCurrentVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    name: 'VW Golf' as VehicleName,
-    categoryCode: 'MITTEL' as CategoryCode,
-    categoryName: 'Mittelklasse' as CategoryName,
-    locationCode: 'BER-HBF' as LocationCode,
-    city: 'Berlin' as CityName,
-    dailyRateNet: 50.0 as DailyRate,
-    dailyRateVat: 9.5 as DailyRate,
-    dailyRateGross: 59.5 as DailyRate,
-    currency: 'EUR' as Currency,
-    seats: 5 as SeatingCapacity,
-    fuelType: 'Petrol' as FuelType,
-    transmissionType: 'Manual' as TransmissionType,
-    status: 'Available' as VehicleStatus,
-    licensePlate: 'B-AB 1234' as LicensePlate,
-    manufacturer: 'Volkswagen' as Manufacturer,
-    model: 'Golf 8' as VehicleModel,
-    year: 2023 as ManufacturingYear,
-    imageUrl: null,
-  };
+  // Use shared mock vehicles
+  const mockCurrentVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockSimilarVehicles: Vehicle[] = [
-    {
-      id: '987e6543-e89b-12d3-a456-426614174001' as VehicleId,
-      name: 'Opel Astra' as VehicleName,
-      categoryCode: 'MITTEL' as CategoryCode,
-      categoryName: 'Mittelklasse' as CategoryName,
-      locationCode: 'BER-HBF' as LocationCode,
-      city: 'Berlin' as CityName,
-      dailyRateNet: 45.0 as DailyRate,
-      dailyRateVat: 8.55 as DailyRate,
-      dailyRateGross: 53.55 as DailyRate,
-      currency: 'EUR' as Currency,
-      seats: 5 as SeatingCapacity,
-      fuelType: 'Petrol' as FuelType,
-      transmissionType: 'Manual' as TransmissionType,
-      status: 'Available' as VehicleStatus,
-      licensePlate: 'B-CD 5678' as LicensePlate,
-      manufacturer: 'Opel' as Manufacturer,
-      model: 'Astra' as VehicleModel,
-      year: 2023 as ManufacturingYear,
-      imageUrl: null,
-    },
-    {
-      id: '111e2222-e89b-12d3-a456-426614174002' as VehicleId,
-      name: 'Ford Focus' as VehicleName,
-      categoryCode: 'KOMPAKT' as CategoryCode,
-      categoryName: 'Kompaktklasse' as CategoryName,
-      locationCode: 'BER-HBF' as LocationCode,
-      city: 'Berlin' as CityName,
-      dailyRateNet: 40.0 as DailyRate,
-      dailyRateVat: 7.6 as DailyRate,
-      dailyRateGross: 47.6 as DailyRate,
-      currency: 'EUR' as Currency,
-      seats: 5 as SeatingCapacity,
-      fuelType: 'Diesel' as FuelType,
-      transmissionType: 'Manual' as TransmissionType,
-      status: 'Available' as VehicleStatus,
-      licensePlate: 'B-EF 9012' as LicensePlate,
-      manufacturer: 'Ford' as Manufacturer,
-      model: 'Focus' as VehicleModel,
-      year: 2022 as ManufacturingYear,
-      imageUrl: null,
-    },
+    MOCK_VEHICLES.OPEL_ASTRA,
+    MOCK_VEHICLES.BMW_3ER,
   ];
 
   beforeEach(async () => {

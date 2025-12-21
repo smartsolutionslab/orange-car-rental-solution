@@ -12,29 +12,9 @@ import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { CustomerService } from '../../services/customer.service';
-import type {
-  Vehicle,
-  VehicleId,
-  VehicleName,
-  CategoryCode,
-  CategoryName,
-  SeatingCapacity,
-  DailyRate,
-  FuelType,
-  TransmissionType,
-  VehicleStatus,
-  LicensePlate,
-  Manufacturer,
-  VehicleModel,
-  ManufacturingYear,
-} from '@orange-car-rental/vehicle-api';
-import type { LocationCode, CityName, StreetAddress } from '@orange-car-rental/location-api';
-import type {
-  GuestReservationResponse,
-  CustomerId,
-  ReservationId,
-  LicenseNumber,
-} from '@orange-car-rental/reservation-api';
+import type { Vehicle, VehicleId } from '@orange-car-rental/vehicle-api';
+import type { StreetAddress, CityName } from '@orange-car-rental/location-api';
+import type { GuestReservationResponse, LicenseNumber } from '@orange-car-rental/reservation-api';
 import type { CustomerProfile } from '@orange-car-rental/customer-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import type {
@@ -48,6 +28,11 @@ import type {
   PostalCode,
   CountryCode,
 } from '@orange-car-rental/shared';
+import {
+  MOCK_VEHICLES,
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+} from '@orange-car-rental/shared/testing';
 
 describe('BookingComponent', () => {
   let component: BookingComponent;
@@ -59,31 +44,12 @@ describe('BookingComponent', () => {
   let router: jasmine.SpyObj<Router>;
   let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
-  const mockVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    name: 'VW Golf' as VehicleName,
-    categoryCode: 'MITTEL' as CategoryCode,
-    categoryName: 'Mittelklasse' as CategoryName,
-    locationCode: 'BER-HBF' as LocationCode,
-    city: 'Berlin' as CityName,
-    dailyRateNet: 50.0 as DailyRate,
-    dailyRateVat: 9.5 as DailyRate,
-    dailyRateGross: 59.5 as DailyRate,
-    currency: 'EUR' as Currency,
-    seats: 5 as SeatingCapacity,
-    fuelType: 'Petrol' as FuelType,
-    transmissionType: 'Manual' as TransmissionType,
-    status: 'Available' as VehicleStatus,
-    licensePlate: 'B-AB 1234' as LicensePlate,
-    manufacturer: 'Volkswagen' as Manufacturer,
-    model: 'Golf 8' as VehicleModel,
-    year: 2023 as ManufacturingYear,
-    imageUrl: null,
-  };
+  // Use shared mock vehicle
+  const mockVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockReservationResponse: GuestReservationResponse = {
-    reservationId: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
-    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
+    reservationId: TEST_RESERVATION_IDS.PENDING,
+    customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
     totalPriceNet: 250.0 as Price,
     totalPriceVat: 47.5 as Price,
     totalPriceGross: 297.5 as Price,
@@ -91,7 +57,7 @@ describe('BookingComponent', () => {
   };
 
   const mockCustomerProfile: CustomerProfile = {
-    id: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
+    id: TEST_CUSTOMER_IDS.HANS_MUELLER,
     firstName: 'Max' as FirstName,
     lastName: 'Mustermann' as LastName,
     email: 'max.mustermann@example.com' as EmailAddress,
