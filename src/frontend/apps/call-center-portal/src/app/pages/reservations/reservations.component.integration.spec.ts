@@ -5,16 +5,16 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ConfigService } from '../../services/config.service';
-import type {
-  CustomerId,
-  ReservationId,
-  ReservationStatus,
-} from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { ReservationStatus } from '@orange-car-rental/reservation-api';
 import type { LocationCode } from '@orange-car-rental/location-api';
 import type { Reservation } from '../../types';
 import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
 import { of } from 'rxjs';
+import {
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+  TEST_VEHICLE_IDS,
+} from '@orange-car-rental/shared/testing';
 
 /**
  * Integration Tests for Reservations Component (Call Center Portal)
@@ -27,11 +27,12 @@ describe('ReservationsComponent (Integration)', () => {
 
   const apiUrl = 'http://localhost:5000';
 
+  // Use shared test IDs with call-center-portal specific reservation structure
   const mockReservations: Reservation[] = [
     {
-      reservationId: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
-      vehicleId: 'veh-001' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      reservationId: TEST_RESERVATION_IDS.CONFIRMED,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: '2025-12-01T10:00:00Z' as ISODateString,
       returnDate: '2025-12-05T10:00:00Z' as ISODateString,
       pickupLocationCode: 'MUC' as LocationCode,
@@ -45,9 +46,9 @@ describe('ReservationsComponent (Integration)', () => {
       createdAt: '2025-11-20T09:00:00Z' as ISODateString,
     },
     {
-      reservationId: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
-      vehicleId: 'veh-002' as VehicleId,
-      customerId: '22222222-2222-2222-2222-222222222222' as CustomerId,
+      reservationId: TEST_RESERVATION_IDS.PENDING,
+      vehicleId: TEST_VEHICLE_IDS.BMW_3ER,
+      customerId: TEST_CUSTOMER_IDS.ANNA_SCHMIDT,
       pickupDate: '2025-11-25T10:00:00Z' as ISODateString,
       returnDate: '2025-11-27T10:00:00Z' as ISODateString,
       pickupLocationCode: 'BER' as LocationCode,
@@ -61,9 +62,9 @@ describe('ReservationsComponent (Integration)', () => {
       createdAt: '2025-11-20T09:00:00Z' as ISODateString,
     },
     {
-      reservationId: '323e4567-e89b-12d3-a456-426614174002' as ReservationId,
-      vehicleId: 'veh-003' as VehicleId,
-      customerId: '33333333-3333-3333-3333-333333333333' as CustomerId,
+      reservationId: TEST_RESERVATION_IDS.ACTIVE,
+      vehicleId: TEST_VEHICLE_IDS.AUDI_A4,
+      customerId: TEST_CUSTOMER_IDS.MAX_WEBER,
       pickupDate: '2025-12-10T10:00:00Z' as ISODateString,
       returnDate: '2025-12-15T10:00:00Z' as ISODateString,
       pickupLocationCode: 'FRA' as LocationCode,
@@ -77,9 +78,9 @@ describe('ReservationsComponent (Integration)', () => {
       createdAt: '2025-11-19T14:30:00Z' as ISODateString,
     },
     {
-      reservationId: '423e4567-e89b-12d3-a456-426614174003' as ReservationId,
-      vehicleId: 'veh-004' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      reservationId: TEST_RESERVATION_IDS.COMPLETED,
+      vehicleId: TEST_VEHICLE_IDS.OPEL_ASTRA,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: '2025-10-15T10:00:00Z' as ISODateString,
       returnDate: '2025-10-20T10:00:00Z' as ISODateString,
       pickupLocationCode: 'MUC' as LocationCode,
