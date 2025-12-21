@@ -5,16 +5,17 @@ import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
-import type {
-  Reservation,
-  CustomerId,
-  ReservationId,
-  ReservationStatus,
-} from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { Reservation, ReservationStatus } from '@orange-car-rental/reservation-api';
 import type { LocationCode } from '@orange-car-rental/location-api';
 import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
-import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
+import type { Price, Currency } from '@orange-car-rental/shared';
+import {
+  getFutureDate,
+  getPastDate,
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+  TEST_VEHICLE_IDS,
+} from '@orange-car-rental/shared/testing';
 
 /**
  * Integration Tests for Booking History Component
@@ -29,24 +30,12 @@ describe('BookingHistoryComponent (Integration)', () => {
 
   const apiUrl = 'http://localhost:5000';
 
-  // Use dynamic dates to ensure tests work regardless of when they run
-  const getFutureDate = (daysFromNow: number): ISODateString => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString() as ISODateString;
-  };
-
-  const getPastDate = (daysAgo: number): ISODateString => {
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    return date.toISOString() as ISODateString;
-  };
-
+  // Use shared test fixtures with short location codes for integration tests
   const mockReservations: Reservation[] = [
     {
-      id: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
-      vehicleId: 'veh-001' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      id: TEST_RESERVATION_IDS.CONFIRMED,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: getFutureDate(7), // 7 days from now - upcoming
       returnDate: getFutureDate(11), // 11 days from now
       pickupLocationCode: 'MUC' as LocationCode,
@@ -59,9 +48,9 @@ describe('BookingHistoryComponent (Integration)', () => {
       createdAt: getPastDate(15),
     },
     {
-      id: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
-      vehicleId: 'veh-002' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      id: TEST_RESERVATION_IDS.PENDING,
+      vehicleId: TEST_VEHICLE_IDS.BMW_3ER,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: getFutureDate(14), // 14 days from now - pending
       returnDate: getFutureDate(16), // 16 days from now
       pickupLocationCode: 'BER' as LocationCode,
@@ -121,7 +110,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
         Promise.resolve({
-          id: '11111111-1111-1111-1111-111111111111',
+          id: TEST_CUSTOMER_IDS.HANS_MUELLER as string,
           username: 'testuser',
           email: 'test@example.com',
           firstName: 'Test',
@@ -137,7 +126,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       const req = httpMock.expectOne(
         (request) =>
           request.url.includes('/api/reservations/search') &&
-          request.params.get('customerId') === '11111111-1111-1111-1111-111111111111',
+          request.params.get('customerId') === TEST_CUSTOMER_IDS.HANS_MUELLER,
       );
       expect(req.request.method).toBe('GET');
 
@@ -162,7 +151,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
-        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+        Promise.resolve({ id: TEST_CUSTOMER_IDS.HANS_MUELLER as string, username: 'testuser' }),
       );
 
       // Act
@@ -184,7 +173,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       // Arrange
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
-        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+        Promise.resolve({ id: TEST_CUSTOMER_IDS.HANS_MUELLER as string, username: 'testuser' }),
       );
 
       component.ngOnInit();
@@ -229,7 +218,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
       fixture.detectChanges();
 
-      component.guestLookupForm.reservationId = '123e4567-e89b-12d3-a456-426614174000';
+      component.guestLookupForm.reservationId = TEST_RESERVATION_IDS.CONFIRMED as string;
       component.guestLookupForm.email = 'guest@example.com';
 
       // Act
@@ -240,7 +229,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       const req = httpMock.expectOne(
         (request) =>
           request.url.includes('/api/reservations/lookup') &&
-          request.params.get('reservationId') === '123e4567-e89b-12d3-a456-426614174000' &&
+          request.params.get('reservationId') === TEST_RESERVATION_IDS.CONFIRMED &&
           request.params.get('email') === 'guest@example.com',
       );
       expect(req.request.method).toBe('GET');
@@ -282,7 +271,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     beforeEach(fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
-        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+        Promise.resolve({ id: TEST_CUSTOMER_IDS.HANS_MUELLER as string, username: 'testuser' }),
       );
 
       component.ngOnInit();
@@ -370,7 +359,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
         Promise.resolve({
-          id: '11111111-1111-1111-1111-111111111111',
+          id: TEST_CUSTOMER_IDS.HANS_MUELLER as string,
           username: 'testuser',
           email: 'user@example.com',
         }),
@@ -445,7 +434,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should handle multiple concurrent requests', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
-        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+        Promise.resolve({ id: TEST_CUSTOMER_IDS.HANS_MUELLER as string, username: 'testuser' }),
       );
 
       // Start multiple operations
@@ -489,7 +478,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     it('should handle slow network gracefully', fakeAsync(() => {
       authService.isAuthenticated.and.returnValue(true);
       authService.getUserProfile.and.returnValue(
-        Promise.resolve({ id: '11111111-1111-1111-1111-111111111111', username: 'testuser' }),
+        Promise.resolve({ id: TEST_CUSTOMER_IDS.HANS_MUELLER as string, username: 'testuser' }),
       );
 
       component.ngOnInit();
