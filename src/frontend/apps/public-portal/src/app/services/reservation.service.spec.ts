@@ -6,9 +6,7 @@ import type {
   GuestReservationRequest,
   GuestReservationResponse,
   Reservation,
-  CustomerId,
   ReservationId,
-  ReservationStatus,
   LicenseNumber,
 } from '@orange-car-rental/reservation-api';
 import type {
@@ -22,8 +20,17 @@ import type {
   PostalCode,
   CountryCode,
 } from '@orange-car-rental/shared';
-import type { LocationCode, StreetAddress, CityName } from '@orange-car-rental/location-api';
-import type { VehicleId, CategoryCode } from '@orange-car-rental/vehicle-api';
+import type { StreetAddress, CityName } from '@orange-car-rental/location-api';
+import type { CategoryCode } from '@orange-car-rental/vehicle-api';
+import {
+  MOCK_RESERVATIONS,
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+  TEST_VEHICLE_IDS,
+  TEST_LOCATION_CODES,
+  getFutureDate,
+  getPastDate,
+} from '@orange-car-rental/shared/testing';
 
 describe('ReservationService', () => {
   let service: ReservationService;
@@ -34,12 +41,12 @@ describe('ReservationService', () => {
 
   const mockGuestReservationRequest: GuestReservationRequest = {
     reservation: {
-      vehicleId: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
       categoryCode: 'MITTEL' as CategoryCode,
-      pickupDate: '2024-01-15' as ISODateString,
-      returnDate: '2024-01-20' as ISODateString,
-      pickupLocationCode: 'BER-HBF' as LocationCode,
-      dropoffLocationCode: 'BER-HBF' as LocationCode,
+      pickupDate: getFutureDate(7),
+      returnDate: getFutureDate(12),
+      pickupLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+      dropoffLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
     },
     customer: {
       firstName: 'Max' as FirstName,
@@ -57,34 +64,22 @@ describe('ReservationService', () => {
     driversLicense: {
       licenseNumber: 'B123456789' as LicenseNumber,
       licenseIssueCountry: 'DE' as CountryCode,
-      licenseIssueDate: '2010-06-01' as ISODateString,
-      licenseExpiryDate: '2030-06-01' as ISODateString,
+      licenseIssueDate: getPastDate(365 * 14), // 14 years ago
+      licenseExpiryDate: getFutureDate(365 * 5), // 5 years from now
     },
   };
 
   const mockGuestReservationResponse: GuestReservationResponse = {
-    reservationId: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
-    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
+    reservationId: TEST_RESERVATION_IDS.PENDING,
+    customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
     totalPriceNet: 250.0 as Price,
     totalPriceVat: 47.5 as Price,
     totalPriceGross: 297.5 as Price,
     currency: 'EUR' as Currency,
   };
 
-  const mockReservation: Reservation = {
-    id: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
-    vehicleId: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    pickupDate: '2024-01-15T00:00:00Z' as ISODateString,
-    returnDate: '2024-01-20T00:00:00Z' as ISODateString,
-    pickupLocationCode: 'BER-HBF' as LocationCode,
-    dropoffLocationCode: 'BER-HBF' as LocationCode,
-    totalPriceNet: 250.0 as Price,
-    totalPriceVat: 47.5 as Price,
-    totalPriceGross: 297.5 as Price,
-    currency: 'EUR' as Currency,
-    status: 'Pending' as ReservationStatus,
-  };
+  // Use shared mock reservation
+  const mockReservation: Reservation = MOCK_RESERVATIONS.PENDING;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -110,8 +105,8 @@ describe('ReservationService', () => {
     it('should create a guest reservation successfully', () => {
       service.createGuestReservation(mockGuestReservationRequest).subscribe((response) => {
         expect(response).toEqual(mockGuestReservationResponse);
-        expect(response.reservationId).toBe('987e6543-e89b-12d3-a456-426614174000');
-        expect(response.customerId).toBe('111e2222-e89b-12d3-a456-426614174000');
+        expect(response.reservationId).toBe(TEST_RESERVATION_IDS.PENDING);
+        expect(response.customerId).toBe(TEST_CUSTOMER_IDS.HANS_MUELLER);
         expect(response.totalPriceGross).toBe(297.5 as Price);
       });
 
@@ -133,7 +128,7 @@ describe('ReservationService', () => {
       expect(req.request.body.driversLicense).toBeDefined();
 
       // Verify reservation details
-      expect(req.request.body.reservation.vehicleId).toBe('123e4567-e89b-12d3-a456-426614174000');
+      expect(req.request.body.reservation.vehicleId).toBe(TEST_VEHICLE_IDS.VW_GOLF);
       expect(req.request.body.reservation.categoryCode).toBe('MITTEL');
 
       // Verify customer details
@@ -192,7 +187,7 @@ describe('ReservationService', () => {
 
   describe('getReservation', () => {
     it('should get reservation by ID', () => {
-      const reservationId = '987e6543-e89b-12d3-a456-426614174000' as ReservationId;
+      const reservationId = TEST_RESERVATION_IDS.PENDING;
 
       service.getReservation(reservationId).subscribe((reservation) => {
         expect(reservation).toEqual(mockReservation);

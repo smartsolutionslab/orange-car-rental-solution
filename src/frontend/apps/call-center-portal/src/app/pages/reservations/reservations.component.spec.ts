@@ -4,16 +4,18 @@ import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
-import type {
-  CustomerId,
-  ReservationId,
-  ReservationStatus,
-} from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
-import type { LocationCode } from '@orange-car-rental/location-api';
+import type { ReservationStatus } from '@orange-car-rental/reservation-api';
 import type { Reservation } from '../../types';
 import { API_CONFIG } from '@orange-car-rental/shared';
-import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
+import type { Price, ISODateString } from '@orange-car-rental/shared';
+import {
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+  TEST_VEHICLE_IDS,
+  TEST_LOCATION_CODES,
+  getFutureDate,
+  getPastDate,
+} from '@orange-car-rental/shared/testing';
 
 describe('ReservationsComponent', () => {
   let component: ReservationsComponent;
@@ -22,54 +24,55 @@ describe('ReservationsComponent', () => {
   let mockRouter: jasmine.SpyObj<Router>;
   let mockActivatedRoute: { queryParams: Observable<Record<string, string>> };
 
+  // Use shared test IDs where possible
   const mockReservations: Reservation[] = [
     {
-      reservationId: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
-      vehicleId: 'veh-001' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-12-01' as ISODateString,
-      returnDate: '2025-12-05' as ISODateString,
-      pickupLocationCode: 'MUC' as LocationCode,
-      dropoffLocationCode: 'MUC' as LocationCode,
+      reservationId: TEST_RESERVATION_IDS.CONFIRMED,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
+      pickupDate: getFutureDate(10),
+      returnDate: getFutureDate(14),
+      pickupLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
+      dropoffLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
       rentalDays: 4,
       totalPriceNet: 336.13 as Price,
       totalPriceVat: 63.87 as Price,
       totalPriceGross: 400.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Confirmed' as ReservationStatus,
-      createdAt: '2025-11-20' as ISODateString,
+      createdAt: getPastDate(10),
     },
     {
-      reservationId: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
-      vehicleId: 'veh-002' as VehicleId,
-      customerId: '22222222-2222-2222-2222-222222222222' as CustomerId,
-      pickupDate: '2025-11-25' as ISODateString,
-      returnDate: '2025-11-27' as ISODateString,
-      pickupLocationCode: 'BER' as LocationCode,
-      dropoffLocationCode: 'BER' as LocationCode,
+      reservationId: TEST_RESERVATION_IDS.PENDING,
+      vehicleId: TEST_VEHICLE_IDS.BMW_3ER,
+      customerId: TEST_CUSTOMER_IDS.ANNA_SCHMIDT,
+      pickupDate: getFutureDate(5),
+      returnDate: getFutureDate(7),
+      pickupLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+      dropoffLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       rentalDays: 2,
       totalPriceNet: 168.07 as Price,
       totalPriceVat: 31.93 as Price,
       totalPriceGross: 200.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Pending' as ReservationStatus,
-      createdAt: '2025-11-20' as ISODateString,
+      createdAt: getPastDate(10),
     },
     {
-      reservationId: '323e4567-e89b-12d3-a456-426614174002' as ReservationId,
-      vehicleId: 'veh-003' as VehicleId,
-      customerId: '33333333-3333-3333-3333-333333333333' as CustomerId,
-      pickupDate: '2025-10-01' as ISODateString,
-      returnDate: '2025-10-03' as ISODateString,
-      pickupLocationCode: 'FRA' as LocationCode,
-      dropoffLocationCode: 'FRA' as LocationCode,
+      reservationId: TEST_RESERVATION_IDS.COMPLETED,
+      vehicleId: TEST_VEHICLE_IDS.AUDI_A4,
+      customerId: TEST_CUSTOMER_IDS.MAX_WEBER,
+      pickupDate: getPastDate(60),
+      returnDate: getPastDate(58),
+      pickupLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
+      dropoffLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
       rentalDays: 2,
       totalPriceNet: 252.1 as Price,
       totalPriceVat: 47.9 as Price,
       totalPriceGross: 300.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Completed' as ReservationStatus,
-      createdAt: '2025-09-25' as ISODateString,
+      createdAt: getPastDate(65),
     },
   ];
 
@@ -131,10 +134,10 @@ describe('ReservationsComponent', () => {
     it('should load filters from URL parameters', () => {
       mockActivatedRoute.queryParams = of({
         status: 'Confirmed',
-        customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+        customerId: TEST_CUSTOMER_IDS.HANS_MUELLER as string,
         dateFrom: '2025-11-01',
         dateTo: '2025-11-30',
-        location: 'MUC',
+        location: TEST_LOCATION_CODES.MUNICH_AIRPORT as string,
         minPrice: '100',
         maxPrice: '500',
         sortBy: 'Price',
@@ -157,10 +160,10 @@ describe('ReservationsComponent', () => {
       component.ngOnInit();
 
       expect(component['searchStatus']()).toBe('Confirmed');
-      expect(component['searchCustomerId']()).toBe('11111111-1111-1111-1111-111111111111');
+      expect(component['searchCustomerId']()).toBe(TEST_CUSTOMER_IDS.HANS_MUELLER);
       expect(component['searchPickupDateFrom']()).toBe('2025-11-01');
       expect(component['searchPickupDateTo']()).toBe('2025-11-30');
-      expect(component['searchLocation']()).toBe('MUC');
+      expect(component['searchLocation']()).toBe(TEST_LOCATION_CODES.MUNICH_AIRPORT);
       expect(component['searchMinPrice']()).toBe(100);
       expect(component['searchMaxPrice']()).toBe(500);
       expect(component['sortBy']()).toBe('Price');
@@ -207,12 +210,12 @@ describe('ReservationsComponent', () => {
     });
 
     it('should apply customer ID filter', () => {
-      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
+      component['searchCustomerId'].set(TEST_CUSTOMER_IDS.HANS_MUELLER as string);
       component['applyFilters']();
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          customerId: '11111111-1111-1111-1111-111111111111',
+          customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
         }),
       );
     });
@@ -231,12 +234,12 @@ describe('ReservationsComponent', () => {
     });
 
     it('should apply location filter', () => {
-      component['searchLocation'].set('MUC');
+      component['searchLocation'].set(TEST_LOCATION_CODES.MUNICH_AIRPORT as string);
       component['applyFilters']();
 
       expect(mockReservationService.searchReservations).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          locationCode: 'MUC',
+          locationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
         }),
       );
     });
@@ -260,7 +263,7 @@ describe('ReservationsComponent', () => {
       component['searchStatus'].set('Confirmed');
       expect(component['activeFiltersCount']()).toBe(1);
 
-      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
+      component['searchCustomerId'].set(TEST_CUSTOMER_IDS.HANS_MUELLER as string);
       expect(component['activeFiltersCount']()).toBe(2);
 
       component['searchPickupDateFrom'].set('2025-11-01');
@@ -269,9 +272,9 @@ describe('ReservationsComponent', () => {
 
     it('should clear all filters', () => {
       component['searchStatus'].set('Confirmed');
-      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
+      component['searchCustomerId'].set(TEST_CUSTOMER_IDS.HANS_MUELLER as string);
       component['searchPickupDateFrom'].set('2025-11-01');
-      component['searchLocation'].set('MUC');
+      component['searchLocation'].set(TEST_LOCATION_CODES.MUNICH_AIRPORT as string);
       component['sortBy'].set('Price');
       component['groupBy'].set('status');
 
@@ -369,9 +372,9 @@ describe('ReservationsComponent', () => {
       component['groupBy'].set('location');
       const grouped = component['groupedReservations']();
 
-      expect(grouped['MUC'].length).toBe(1);
-      expect(grouped['BER'].length).toBe(1);
-      expect(grouped['FRA'].length).toBe(1);
+      expect(grouped[TEST_LOCATION_CODES.MUNICH_AIRPORT].length).toBe(1);
+      expect(grouped[TEST_LOCATION_CODES.BERLIN_HBF].length).toBe(1);
+      expect(grouped[TEST_LOCATION_CODES.FRANKFURT_CITY].length).toBe(1);
     });
 
     it('should group by pickup date', () => {
@@ -697,7 +700,7 @@ describe('ReservationsComponent', () => {
   describe('URL Parameter Sync', () => {
     it('should update URL when filters change', () => {
       component['searchStatus'].set('Confirmed');
-      component['searchCustomerId'].set('11111111-1111-1111-1111-111111111111');
+      component['searchCustomerId'].set(TEST_CUSTOMER_IDS.HANS_MUELLER as string);
       component['sortBy'].set('Price');
 
       mockReservationService.searchReservations.and.returnValue(

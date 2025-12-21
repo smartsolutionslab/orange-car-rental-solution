@@ -11,24 +11,20 @@ import { VehicleService } from '../../services/vehicle.service';
 import type {
   Vehicle,
   VehicleId,
-  VehicleName,
   VehicleSearchResult,
   VehicleSearchQuery,
   CategoryCode,
-  CategoryName,
   SeatingCapacity,
-  DailyRate,
   FuelType,
   TransmissionType,
-  VehicleStatus,
-  LicensePlate,
-  Manufacturer,
-  VehicleModel,
-  ManufacturingYear,
 } from '@orange-car-rental/vehicle-api';
-import type { LocationCode, CityName } from '@orange-car-rental/location-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
-import type { Currency, ISODateString } from '@orange-car-rental/shared';
+import {
+  MOCK_VEHICLES,
+  TEST_VEHICLE_IDS,
+  TEST_LOCATION_CODES,
+  getFutureDate,
+} from '@orange-car-rental/shared/testing';
 
 // Register German locale for DecimalPipe
 registerLocaleData(localeDe);
@@ -39,27 +35,8 @@ describe('VehicleListComponent', () => {
   let vehicleService: jasmine.SpyObj<VehicleService>;
   let router: jasmine.SpyObj<Router>;
 
-  const mockVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    name: 'VW Golf' as VehicleName,
-    categoryCode: 'MITTEL' as CategoryCode,
-    categoryName: 'Mittelklasse' as CategoryName,
-    locationCode: 'BER-HBF' as LocationCode,
-    city: 'Berlin' as CityName,
-    dailyRateNet: 50.0 as DailyRate,
-    dailyRateVat: 9.5 as DailyRate,
-    dailyRateGross: 59.5 as DailyRate,
-    currency: 'EUR' as Currency,
-    seats: 5 as SeatingCapacity,
-    fuelType: 'Petrol' as FuelType,
-    transmissionType: 'Manual' as TransmissionType,
-    status: 'Available' as VehicleStatus,
-    licensePlate: 'B-AB 1234' as LicensePlate,
-    manufacturer: 'Volkswagen' as Manufacturer,
-    model: 'Golf 8' as VehicleModel,
-    year: 2023 as ManufacturingYear,
-    imageUrl: null,
-  };
+  // Use shared mock vehicle
+  const mockVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockSearchResult: VehicleSearchResult = {
     vehicles: [mockVehicle],
@@ -108,7 +85,7 @@ describe('VehicleListComponent', () => {
   it('should set loading state while searching', () => {
     fixture.detectChanges();
 
-    component['onSearch']({ locationCode: 'BER-HBF' as LocationCode });
+    component['onSearch']({ locationCode: TEST_LOCATION_CODES.BERLIN_HBF });
 
     expect(component['loading']()).toBeFalse(); // After subscribe completes
   });
@@ -129,7 +106,7 @@ describe('VehicleListComponent', () => {
 
     it('should search vehicles with location filter', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF' as LocationCode,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       };
 
       component['onSearch'](query);
@@ -139,8 +116,8 @@ describe('VehicleListComponent', () => {
 
     it('should search vehicles with date range filter', () => {
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
+        pickupDate: getFutureDate(7),
+        returnDate: getFutureDate(12),
       };
 
       component['onSearch'](query);
@@ -150,9 +127,9 @@ describe('VehicleListComponent', () => {
 
     it('should search vehicles with multiple filters', () => {
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
-        locationCode: 'BER-HBF' as LocationCode,
+        pickupDate: getFutureDate(7),
+        returnDate: getFutureDate(12),
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
         categoryCode: 'MITTEL' as CategoryCode,
         minSeats: 5 as SeatingCapacity,
         fuelType: 'Petrol' as FuelType,
@@ -167,9 +144,9 @@ describe('VehicleListComponent', () => {
 
     it('should update current search query on search', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF' as LocationCode,
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+        pickupDate: getFutureDate(7),
+        returnDate: getFutureDate(12),
       };
 
       component['onSearch'](query);
@@ -220,10 +197,12 @@ describe('VehicleListComponent', () => {
     });
 
     it('should navigate to booking page with vehicle details', () => {
+      const pickupDate = getFutureDate(7);
+      const returnDate = getFutureDate(12);
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
-        locationCode: 'BER-HBF' as LocationCode,
+        pickupDate,
+        returnDate,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       };
 
       component['currentSearchQuery'].set(query);
@@ -231,19 +210,21 @@ describe('VehicleListComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/booking'], {
         queryParams: {
-          vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-          categoryCode: 'MITTEL' as CategoryCode,
-          pickupDate: '2024-01-15' as ISODateString,
-          returnDate: '2024-01-20' as ISODateString,
-          locationCode: 'BER-HBF' as LocationCode,
+          vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+          categoryCode: mockVehicle.categoryCode,
+          pickupDate,
+          returnDate,
+          locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
         },
       });
     });
 
     it('should navigate to booking with vehicle location when search has no location', () => {
+      const pickupDate = getFutureDate(7);
+      const returnDate = getFutureDate(12);
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
+        pickupDate,
+        returnDate,
       };
 
       component['currentSearchQuery'].set(query);
@@ -251,18 +232,18 @@ describe('VehicleListComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/booking'], {
         queryParams: {
-          vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-          categoryCode: 'MITTEL' as CategoryCode,
-          pickupDate: '2024-01-15' as ISODateString,
-          returnDate: '2024-01-20' as ISODateString,
-          locationCode: 'BER-HBF' as LocationCode,
+          vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+          categoryCode: mockVehicle.categoryCode,
+          pickupDate,
+          returnDate,
+          locationCode: mockVehicle.locationCode,
         },
       });
     });
 
     it('should navigate to booking with empty dates when search has no dates', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF' as LocationCode,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       };
 
       component['currentSearchQuery'].set(query);
@@ -270,11 +251,11 @@ describe('VehicleListComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/booking'], {
         queryParams: {
-          vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-          categoryCode: 'MITTEL' as CategoryCode,
+          vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+          categoryCode: mockVehicle.categoryCode,
           pickupDate: '',
           returnDate: '',
-          locationCode: 'BER-HBF' as LocationCode,
+          locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
         },
       });
     });
@@ -285,11 +266,11 @@ describe('VehicleListComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['/booking'], {
         queryParams: {
-          vehicleId: '123e4567-e89b-12d3-a456-426614174000',
-          categoryCode: 'MITTEL' as CategoryCode,
+          vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+          categoryCode: mockVehicle.categoryCode,
           pickupDate: '',
           returnDate: '',
-          locationCode: 'BER-HBF' as LocationCode,
+          locationCode: mockVehicle.locationCode,
         },
       });
     });
@@ -297,8 +278,6 @@ describe('VehicleListComponent', () => {
 
   describe('State Management', () => {
     it('should create component through TestBed with proper dependencies', () => {
-      // These initialization tests are covered by the 'should create' test
-      // Cannot test with 'new VehicleListComponent()' due to inject() usage
       expect(component).toBeTruthy();
     });
 
@@ -331,9 +310,9 @@ describe('VehicleListComponent', () => {
     it('should handle rapid sequential searches', () => {
       fixture.detectChanges();
 
-      component['onSearch']({ locationCode: 'BER-HBF' as LocationCode });
-      component['onSearch']({ locationCode: 'MUC-FLG' as LocationCode });
-      component['onSearch']({ locationCode: 'HAM-CTY' as LocationCode });
+      component['onSearch']({ locationCode: TEST_LOCATION_CODES.BERLIN_HBF });
+      component['onSearch']({ locationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT });
+      component['onSearch']({ locationCode: TEST_LOCATION_CODES.HAMBURG_CITY });
 
       expect(vehicleService.searchVehicles).toHaveBeenCalledTimes(4); // 1 from init + 3 manual
     });

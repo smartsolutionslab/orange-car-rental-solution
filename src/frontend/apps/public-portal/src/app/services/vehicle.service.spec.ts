@@ -5,23 +5,20 @@ import { ConfigService } from './config.service';
 import type {
   Vehicle,
   VehicleId,
-  VehicleName,
   VehicleSearchQuery,
   VehicleSearchResult,
   CategoryCode,
-  CategoryName,
   SeatingCapacity,
   DailyRate,
   FuelType,
   TransmissionType,
-  VehicleStatus,
-  LicensePlate,
-  Manufacturer,
-  VehicleModel,
-  ManufacturingYear,
 } from '@orange-car-rental/vehicle-api';
-import type { ISODateString, Currency } from '@orange-car-rental/shared';
-import type { LocationCode, CityName } from '@orange-car-rental/location-api';
+import {
+  MOCK_VEHICLES,
+  TEST_VEHICLE_IDS,
+  TEST_LOCATION_CODES,
+  getFutureDate,
+} from '@orange-car-rental/shared/testing';
 
 describe('VehicleService', () => {
   let service: VehicleService;
@@ -30,27 +27,8 @@ describe('VehicleService', () => {
 
   const mockApiUrl = 'https://api.example.com';
 
-  const mockVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    name: 'VW Golf' as VehicleName,
-    categoryCode: 'MITTEL' as CategoryCode,
-    categoryName: 'Mittelklasse' as CategoryName,
-    locationCode: 'BER-HBF' as LocationCode,
-    city: 'Berlin' as CityName,
-    dailyRateNet: 50.0 as DailyRate,
-    dailyRateVat: 9.5 as DailyRate,
-    dailyRateGross: 59.5 as DailyRate,
-    currency: 'EUR' as Currency,
-    seats: 5 as SeatingCapacity,
-    fuelType: 'Petrol' as FuelType,
-    transmissionType: 'Manual' as TransmissionType,
-    status: 'Available' as VehicleStatus,
-    licensePlate: 'B-AB 1234' as LicensePlate,
-    manufacturer: 'Volkswagen' as Manufacturer,
-    model: 'Golf 8' as VehicleModel,
-    year: 2023 as ManufacturingYear,
-    imageUrl: null,
-  };
+  // Use shared mock vehicle
+  const mockVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockSearchResult: VehicleSearchResult = {
     vehicles: [mockVehicle],
@@ -96,25 +74,7 @@ describe('VehicleService', () => {
 
     it('should search vehicles with location filter', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF' as LocationCode,
-      };
-
-      service.searchVehicles(query).subscribe((result) => {
-        expect(result).toEqual(mockSearchResult);
-      });
-
-      const req = httpMock.expectOne(
-        (req) =>
-          req.url === `${mockApiUrl}/api/vehicles` && req.params.get('locationCode') === 'BER-HBF',
-      );
-      expect(req.request.method).toBe('GET');
-      req.flush(mockSearchResult);
-    });
-
-    it('should search vehicles with date range filter', () => {
-      const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       };
 
       service.searchVehicles(query).subscribe((result) => {
@@ -124,18 +84,41 @@ describe('VehicleService', () => {
       const req = httpMock.expectOne(
         (req) =>
           req.url === `${mockApiUrl}/api/vehicles` &&
-          req.params.get('pickupDate') === '2024-01-15' &&
-          req.params.get('returnDate') === '2024-01-20',
+          req.params.get('locationCode') === TEST_LOCATION_CODES.BERLIN_HBF,
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockSearchResult);
+    });
+
+    it('should search vehicles with date range filter', () => {
+      const pickupDate = getFutureDate(7);
+      const returnDate = getFutureDate(12);
+      const query: VehicleSearchQuery = {
+        pickupDate,
+        returnDate,
+      };
+
+      service.searchVehicles(query).subscribe((result) => {
+        expect(result).toEqual(mockSearchResult);
+      });
+
+      const req = httpMock.expectOne(
+        (req) =>
+          req.url === `${mockApiUrl}/api/vehicles` &&
+          req.params.get('pickupDate') === pickupDate &&
+          req.params.get('returnDate') === returnDate,
       );
       expect(req.request.method).toBe('GET');
       req.flush(mockSearchResult);
     });
 
     it('should search vehicles with all filters', () => {
+      const pickupDate = getFutureDate(7);
+      const returnDate = getFutureDate(12);
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15' as ISODateString,
-        returnDate: '2024-01-20' as ISODateString,
-        locationCode: 'BER-HBF' as LocationCode,
+        pickupDate,
+        returnDate,
+        locationCode: TEST_LOCATION_CODES.BERLIN_HBF,
         categoryCode: 'MITTEL' as CategoryCode,
         minSeats: 5 as SeatingCapacity,
         fuelType: 'Petrol' as FuelType,
@@ -152,7 +135,7 @@ describe('VehicleService', () => {
       const req = httpMock.expectOne(
         (req) =>
           req.url === `${mockApiUrl}/api/vehicles` &&
-          req.params.get('locationCode') === 'BER-HBF' &&
+          req.params.get('locationCode') === TEST_LOCATION_CODES.BERLIN_HBF &&
           req.params.get('categoryCode') === 'MITTEL' &&
           req.params.get('minSeats') === '5' &&
           req.params.get('fuelType') === 'Petrol' &&
@@ -198,7 +181,7 @@ describe('VehicleService', () => {
 
   describe('getVehicleById', () => {
     it('should get vehicle by ID', () => {
-      const vehicleId = '123e4567-e89b-12d3-a456-426614174000' as VehicleId;
+      const vehicleId = TEST_VEHICLE_IDS.VW_GOLF;
 
       service.getVehicleById(vehicleId).subscribe((vehicle) => {
         expect(vehicle).toEqual(mockVehicle);
