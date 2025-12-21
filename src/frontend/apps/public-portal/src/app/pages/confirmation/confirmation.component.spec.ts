@@ -4,16 +4,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of, throwError, Observable } from 'rxjs';
 import { ConfirmationComponent } from './confirmation.component';
 import { ReservationService } from '../../services/reservation.service';
-import type {
-  Reservation,
-  CustomerId,
-  ReservationId,
-  ReservationStatus,
-} from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
-import type { LocationCode } from '@orange-car-rental/location-api';
+import type { Reservation } from '@orange-car-rental/reservation-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
-import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
+import { MOCK_RESERVATIONS, TEST_RESERVATION_IDS } from '@orange-car-rental/shared/testing';
 
 describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
@@ -22,20 +15,8 @@ describe('ConfirmationComponent', () => {
   let router: jasmine.SpyObj<Router>;
   let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
-  const mockReservation: Reservation = {
-    id: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
-    vehicleId: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
-    customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    pickupDate: '2024-01-15T00:00:00Z' as ISODateString,
-    returnDate: '2024-01-20T00:00:00Z' as ISODateString,
-    pickupLocationCode: 'BER-HBF' as LocationCode,
-    dropoffLocationCode: 'BER-HBF' as LocationCode,
-    totalPriceNet: 250.0 as Price,
-    totalPriceVat: 47.5 as Price,
-    totalPriceGross: 297.5 as Price,
-    currency: 'EUR' as Currency,
-    status: 'Pending' as ReservationStatus,
-  };
+  // Use shared mock reservation
+  const mockReservation: Reservation = MOCK_RESERVATIONS.PENDING;
 
   beforeEach(async () => {
     const reservationServiceSpy = jasmine.createSpyObj('ReservationService', ['getReservation']);
@@ -69,15 +50,13 @@ describe('ConfirmationComponent', () => {
   it('should load reservation when reservationId is in query params', () => {
     reservationService.getReservation.and.returnValue(of(mockReservation));
     activatedRoute.queryParams = of({
-      reservationId: '987e6543-e89b-12d3-a456-426614174000',
-      customerId: '111e2222-e89b-12d3-a456-426614174000',
+      reservationId: TEST_RESERVATION_IDS.PENDING as string,
+      customerId: mockReservation.customerId as string,
     });
 
     fixture.detectChanges();
 
-    expect(reservationService.getReservation).toHaveBeenCalledWith(
-      '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
-    );
+    expect(reservationService.getReservation).toHaveBeenCalledWith(TEST_RESERVATION_IDS.PENDING);
     expect(component['reservation']()).toEqual(mockReservation);
     expect(component['loading']()).toBeFalse();
   });
@@ -95,7 +74,7 @@ describe('ConfirmationComponent', () => {
   it('should handle reservation loading error', () => {
     const error = new Error('Not found');
     reservationService.getReservation.and.returnValue(throwError(() => error));
-    activatedRoute.queryParams = of({ reservationId: '987e6543-e89b-12d3-a456-426614174000' });
+    activatedRoute.queryParams = of({ reservationId: TEST_RESERVATION_IDS.PENDING as string });
 
     fixture.detectChanges();
 
@@ -118,7 +97,9 @@ describe('ConfirmationComponent', () => {
   it('should calculate rental days correctly', () => {
     component['reservation'].set(mockReservation);
     const days = component['getRentalDays']();
-    expect(days).toBe(5);
+    // MOCK_RESERVATIONS.PENDING has pickupDate=getFutureDate(14) and returnDate=getFutureDate(17)
+    // which is a 3-day rental period
+    expect(days).toBe(3);
   });
 
   it('should return 0 rental days when reservation is null', () => {

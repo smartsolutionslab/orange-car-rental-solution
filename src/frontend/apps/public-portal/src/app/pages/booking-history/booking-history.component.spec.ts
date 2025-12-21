@@ -5,15 +5,21 @@ import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import type {
   Reservation,
+  ReservationStatus,
   CustomerId,
   ReservationId,
-  ReservationStatus,
 } from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
-import type { LocationCode } from '@orange-car-rental/location-api';
 import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
-import type { Price, Currency, ISODateString, EmailAddress } from '@orange-car-rental/shared';
+import type { Price, EmailAddress, ISODateString } from '@orange-car-rental/shared';
 import { of, throwError } from 'rxjs';
+import {
+  TEST_RESERVATION_IDS,
+  TEST_CUSTOMER_IDS,
+  TEST_VEHICLE_IDS,
+  TEST_LOCATION_CODES,
+  getFutureDate,
+  getPastDate,
+} from '@orange-car-rental/shared/testing';
 
 describe('BookingHistoryComponent', () => {
   let component: BookingHistoryComponent;
@@ -22,62 +28,50 @@ describe('BookingHistoryComponent', () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockToastService: jasmine.SpyObj<ToastService>;
 
-  // Use dynamic dates to ensure tests work regardless of when they run
-  const getFutureDate = (daysFromNow: number): ISODateString => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString().split('T')[0]! as ISODateString;
-  };
-
-  const getPastDate = (daysAgo: number): ISODateString => {
-    const date = new Date();
-    date.setDate(date.getDate() - daysAgo);
-    return date.toISOString().split('T')[0]! as ISODateString;
-  };
-
+  // Use shared test fixtures
   const mockReservations: Reservation[] = [
     {
-      id: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
-      vehicleId: 'veh-001' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      id: TEST_RESERVATION_IDS.CONFIRMED,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: getFutureDate(7), // 7 days from now - upcoming
       returnDate: getFutureDate(11), // 11 days from now
-      pickupLocationCode: 'MUC' as LocationCode,
-      dropoffLocationCode: 'MUC' as LocationCode,
+      pickupLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
+      dropoffLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
       totalPriceNet: 336.13 as Price,
       totalPriceVat: 63.87 as Price,
       totalPriceGross: 400.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Confirmed' as ReservationStatus,
       createdAt: getPastDate(15),
     },
     {
-      id: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
-      vehicleId: 'veh-002' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      id: TEST_RESERVATION_IDS.PENDING,
+      vehicleId: TEST_VEHICLE_IDS.BMW_3ER,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: getFutureDate(14), // 14 days from now - pending
       returnDate: getFutureDate(16), // 16 days from now
-      pickupLocationCode: 'BER' as LocationCode,
-      dropoffLocationCode: 'BER' as LocationCode,
+      pickupLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+      dropoffLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       totalPriceNet: 168.07 as Price,
       totalPriceVat: 31.93 as Price,
       totalPriceGross: 200.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Pending' as ReservationStatus,
       createdAt: getPastDate(15),
     },
     {
-      id: '323e4567-e89b-12d3-a456-426614174002' as ReservationId,
-      vehicleId: 'veh-003' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      id: TEST_RESERVATION_IDS.COMPLETED,
+      vehicleId: TEST_VEHICLE_IDS.AUDI_A4,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: getPastDate(60), // 60 days ago - past
       returnDate: getPastDate(58), // 58 days ago
-      pickupLocationCode: 'FRA' as LocationCode,
-      dropoffLocationCode: 'FRA' as LocationCode,
+      pickupLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
+      dropoffLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
       totalPriceNet: 252.1 as Price,
       totalPriceVat: 47.9 as Price,
       totalPriceGross: 300.0 as Price,
-      currency: 'EUR' as Currency,
+      currency: 'EUR',
       status: 'Completed' as ReservationStatus,
       createdAt: getPastDate(75),
     },
