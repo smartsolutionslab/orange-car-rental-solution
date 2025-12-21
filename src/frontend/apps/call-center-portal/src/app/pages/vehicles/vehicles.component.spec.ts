@@ -31,6 +31,7 @@ import type {
 import { API_CONFIG } from '@orange-car-rental/shared';
 import type { Currency, PostalCode } from '@orange-car-rental/shared';
 import { UI_TIMING, GERMAN_VAT_MULTIPLIER } from '../../constants/app.constants';
+import { TEST_VEHICLE_IDS, SHORT_LOCATION_CODES } from '@orange-car-rental/shared/testing';
 
 describe('VehiclesComponent', () => {
   let component: VehiclesComponent;
@@ -38,9 +39,10 @@ describe('VehiclesComponent', () => {
   let mockVehicleService: jasmine.SpyObj<VehicleService>;
   let mockLocationService: jasmine.SpyObj<LocationService>;
 
+  // Use shared test fixtures
   const mockVehicles: Vehicle[] = [
     {
-      id: 'veh-001' as VehicleId,
+      id: TEST_VEHICLE_IDS.BMW_3ER,
       name: 'BMW 3er' as VehicleName,
       manufacturer: 'BMW' as Manufacturer,
       model: '320i' as VehicleModel,
@@ -50,7 +52,7 @@ describe('VehiclesComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Petrol' as FuelType,
       transmissionType: 'Automatic' as TransmissionType,
-      locationCode: 'MUC' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.MUNICH,
       city: 'München' as CityName,
       licensePlate: 'M-AB 1234' as LicensePlate,
       dailyRateNet: 84.03 as DailyRate,
@@ -61,7 +63,7 @@ describe('VehiclesComponent', () => {
       imageUrl: 'https://example.com/bmw.jpg' as ImageUrl,
     },
     {
-      id: 'veh-002' as VehicleId,
+      id: TEST_VEHICLE_IDS.AUDI_A4,
       name: 'Audi A4' as VehicleName,
       manufacturer: 'Audi' as Manufacturer,
       model: 'A4 Avant' as VehicleModel,
@@ -71,7 +73,7 @@ describe('VehiclesComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Diesel' as FuelType,
       transmissionType: 'Automatic' as TransmissionType,
-      locationCode: 'BER' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.BERLIN,
       city: 'Berlin' as CityName,
       licensePlate: 'B-CD 5678' as LicensePlate,
       dailyRateNet: 100.84 as DailyRate,
@@ -82,7 +84,7 @@ describe('VehiclesComponent', () => {
       imageUrl: 'https://example.com/audi.jpg' as ImageUrl,
     },
     {
-      id: 'veh-003' as VehicleId,
+      id: TEST_VEHICLE_IDS.VW_GOLF,
       name: 'VW Golf' as VehicleName,
       manufacturer: 'Volkswagen' as Manufacturer,
       model: 'Golf 8' as VehicleModel,
@@ -92,7 +94,7 @@ describe('VehiclesComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Hybrid' as FuelType,
       transmissionType: 'Manual' as TransmissionType,
-      locationCode: 'MUC' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.MUNICH,
       city: 'München' as CityName,
       licensePlate: 'M-EF 9012' as LicensePlate,
       dailyRateNet: 58.82 as DailyRate,
@@ -106,7 +108,7 @@ describe('VehiclesComponent', () => {
 
   const mockLocations: Location[] = [
     {
-      code: 'MUC' as LocationCode,
+      code: SHORT_LOCATION_CODES.MUNICH,
       name: 'München Flughafen' as LocationName,
       city: 'München' as CityName,
       street: 'Flughafenstraße 1' as StreetAddress,
@@ -114,7 +116,7 @@ describe('VehiclesComponent', () => {
       fullAddress: 'Flughafenstraße 1, 85356 München',
     },
     {
-      code: 'BER' as LocationCode,
+      code: SHORT_LOCATION_CODES.BERLIN,
       name: 'Berlin Brandenburg' as LocationName,
       city: 'Berlin' as CityName,
       street: 'Willy Brandt Platz 1' as StreetAddress,

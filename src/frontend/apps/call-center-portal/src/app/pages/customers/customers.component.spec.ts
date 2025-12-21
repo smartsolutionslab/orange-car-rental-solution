@@ -4,15 +4,8 @@ import { CustomersComponent } from './customers.component';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
 import { of, throwError } from 'rxjs';
-import { createCustomerId } from '@orange-car-rental/reservation-api';
-import type {
-  CustomerId,
-  ReservationId,
-  ReservationStatus,
-  LicenseNumber,
-} from '@orange-car-rental/reservation-api';
-import type { VehicleId } from '@orange-car-rental/vehicle-api';
-import type { LocationCode, CityName, StreetAddress } from '@orange-car-rental/location-api';
+import type { ReservationStatus, LicenseNumber } from '@orange-car-rental/reservation-api';
+import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
 import type { Customer, Reservation } from '../../types';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import type {
@@ -27,6 +20,12 @@ import type {
   CountryCode,
 } from '@orange-car-rental/shared';
 import { UI_TIMING } from '../../constants/app.constants';
+import {
+  TEST_CUSTOMER_IDS,
+  TEST_RESERVATION_IDS,
+  TEST_VEHICLE_IDS,
+  SHORT_LOCATION_CODES,
+} from '@orange-car-rental/shared/testing';
 
 describe('CustomersComponent', () => {
   let component: CustomersComponent;
@@ -34,9 +33,10 @@ describe('CustomersComponent', () => {
   let mockCustomerService: jasmine.SpyObj<CustomerService>;
   let mockReservationService: jasmine.SpyObj<ReservationService>;
 
+  // Use shared test fixtures
   const mockCustomers: Customer[] = [
     {
-      id: createCustomerId('11111111-1111-1111-1111-111111111111'),
+      id: TEST_CUSTOMER_IDS.HANS_MUELLER,
       firstName: 'Hans' as FirstName,
       lastName: 'Müller' as LastName,
       email: 'hans.mueller@example.de' as EmailAddress,
@@ -53,7 +53,7 @@ describe('CustomersComponent', () => {
       createdAt: '2025-01-01' as ISODateString,
     },
     {
-      id: createCustomerId('22222222-2222-2222-2222-222222222222'),
+      id: TEST_CUSTOMER_IDS.ANNA_SCHMIDT,
       firstName: 'Anna' as FirstName,
       lastName: 'Schmidt' as LastName,
       email: 'anna.schmidt@example.de' as EmailAddress,
@@ -73,13 +73,13 @@ describe('CustomersComponent', () => {
 
   const mockReservations: Reservation[] = [
     {
-      reservationId: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
-      vehicleId: 'veh-001' as VehicleId,
-      customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
+      reservationId: TEST_RESERVATION_IDS.CONFIRMED,
+      vehicleId: TEST_VEHICLE_IDS.VW_GOLF,
+      customerId: TEST_CUSTOMER_IDS.HANS_MUELLER,
       pickupDate: '2025-12-01' as ISODateString,
       returnDate: '2025-12-05' as ISODateString,
-      pickupLocationCode: 'MUC' as LocationCode,
-      dropoffLocationCode: 'MUC' as LocationCode,
+      pickupLocationCode: SHORT_LOCATION_CODES.MUNICH,
+      dropoffLocationCode: SHORT_LOCATION_CODES.MUNICH,
       rentalDays: 4,
       totalPriceNet: 336.13 as Price,
       totalPriceVat: 63.87 as Price,

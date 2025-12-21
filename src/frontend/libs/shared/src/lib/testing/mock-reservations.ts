@@ -34,13 +34,23 @@ export const TEST_CUSTOMER_IDS = {
 } as const;
 
 /**
- * Test location codes
+ * Test location codes (extended format with suffix)
  */
 export const TEST_LOCATION_CODES = {
   BERLIN_HBF: 'BER-HBF' as LocationCode,
   MUNICH_AIRPORT: 'MUC-FLG' as LocationCode,
   FRANKFURT_CITY: 'FRA-CTY' as LocationCode,
   HAMBURG_CITY: 'HAM-CTY' as LocationCode,
+} as const;
+
+/**
+ * Short location codes (for call-center-portal and integration tests)
+ */
+export const SHORT_LOCATION_CODES = {
+  MUNICH: 'MUC' as LocationCode,
+  BERLIN: 'BER' as LocationCode,
+  FRANKFURT: 'FRA' as LocationCode,
+  HAMBURG: 'HAM' as LocationCode,
 } as const;
 
 /**

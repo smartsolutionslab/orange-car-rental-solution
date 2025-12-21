@@ -13,7 +13,6 @@ import type {
 } from '@orange-car-rental/location-api';
 import type {
   Vehicle,
-  VehicleId,
   VehicleName,
   CategoryCode,
   CategoryName,
@@ -30,6 +29,7 @@ import { VehicleStatus } from '@orange-car-rental/vehicle-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import type { Currency, PostalCode } from '@orange-car-rental/shared';
 import { UTILIZATION_THRESHOLDS } from '../../constants/app.constants';
+import { TEST_VEHICLE_IDS, SHORT_LOCATION_CODES } from '@orange-car-rental/shared/testing';
 
 describe('LocationsComponent', () => {
   let component: LocationsComponent;
@@ -37,9 +37,10 @@ describe('LocationsComponent', () => {
   let mockLocationService: jasmine.SpyObj<LocationService>;
   let mockVehicleService: jasmine.SpyObj<VehicleService>;
 
+  // Use shared test fixtures
   const mockLocations: Location[] = [
     {
-      code: 'MUC' as LocationCode,
+      code: SHORT_LOCATION_CODES.MUNICH,
       name: 'München Flughafen' as LocationName,
       city: 'München' as CityName,
       street: 'Flughafenstraße 1' as StreetAddress,
@@ -47,7 +48,7 @@ describe('LocationsComponent', () => {
       fullAddress: 'Flughafenstraße 1, 85356 München',
     },
     {
-      code: 'BER' as LocationCode,
+      code: SHORT_LOCATION_CODES.BERLIN,
       name: 'Berlin Brandenburg' as LocationName,
       city: 'Berlin' as CityName,
       street: 'Willy Brandt Platz 1' as StreetAddress,
@@ -55,7 +56,7 @@ describe('LocationsComponent', () => {
       fullAddress: 'Willy Brandt Platz 1, 12529 Berlin',
     },
     {
-      code: 'FRA' as LocationCode,
+      code: SHORT_LOCATION_CODES.FRANKFURT,
       name: 'Frankfurt Flughafen' as LocationName,
       city: 'Frankfurt' as CityName,
       street: 'Flughafenring 1' as StreetAddress,
@@ -66,7 +67,7 @@ describe('LocationsComponent', () => {
 
   const mockVehicles: Vehicle[] = [
     {
-      id: 'veh-001' as VehicleId,
+      id: TEST_VEHICLE_IDS.BMW_3ER,
       name: 'BMW 3er' as VehicleName,
       manufacturer: 'BMW' as Manufacturer,
       model: '320i' as VehicleModel,
@@ -76,7 +77,7 @@ describe('LocationsComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Petrol' as FuelType,
       transmissionType: 'Automatic' as TransmissionType,
-      locationCode: 'MUC' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.MUNICH,
       city: 'München' as CityName,
       licensePlate: 'M-AB 1234' as LicensePlate,
       dailyRateNet: 84.03 as DailyRate,
@@ -87,7 +88,7 @@ describe('LocationsComponent', () => {
       imageUrl: null,
     },
     {
-      id: 'veh-002' as VehicleId,
+      id: TEST_VEHICLE_IDS.AUDI_A4,
       name: 'Audi A4' as VehicleName,
       manufacturer: 'Audi' as Manufacturer,
       model: 'A4 Avant' as VehicleModel,
@@ -97,7 +98,7 @@ describe('LocationsComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Diesel' as FuelType,
       transmissionType: 'Automatic' as TransmissionType,
-      locationCode: 'MUC' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.MUNICH,
       city: 'München' as CityName,
       licensePlate: 'M-CD 5678' as LicensePlate,
       dailyRateNet: 100.84 as DailyRate,
@@ -108,7 +109,7 @@ describe('LocationsComponent', () => {
       imageUrl: null,
     },
     {
-      id: 'veh-003' as VehicleId,
+      id: TEST_VEHICLE_IDS.VW_GOLF,
       name: 'VW Golf' as VehicleName,
       manufacturer: 'Volkswagen' as Manufacturer,
       model: 'Golf 8' as VehicleModel,
@@ -118,7 +119,7 @@ describe('LocationsComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Hybrid' as FuelType,
       transmissionType: 'Manual' as TransmissionType,
-      locationCode: 'BER' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.BERLIN,
       city: 'Berlin' as CityName,
       licensePlate: 'B-EF 9012' as LicensePlate,
       dailyRateNet: 58.82 as DailyRate,
@@ -129,7 +130,7 @@ describe('LocationsComponent', () => {
       imageUrl: null,
     },
     {
-      id: 'veh-004' as VehicleId,
+      id: TEST_VEHICLE_IDS.OPEL_ASTRA,
       name: 'Mercedes C-Klasse' as VehicleName,
       manufacturer: 'Mercedes-Benz' as Manufacturer,
       model: 'C 200' as VehicleModel,
@@ -139,7 +140,7 @@ describe('LocationsComponent', () => {
       seats: 5 as SeatingCapacity,
       fuelType: 'Petrol' as FuelType,
       transmissionType: 'Automatic' as TransmissionType,
-      locationCode: 'BER' as LocationCode,
+      locationCode: SHORT_LOCATION_CODES.BERLIN,
       city: 'Berlin' as CityName,
       licensePlate: 'B-GH 3456' as LicensePlate,
       dailyRateNet: 92.44 as DailyRate,
