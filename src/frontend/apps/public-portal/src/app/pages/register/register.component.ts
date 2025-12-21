@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers, CustomValidators } from '@orange-car-rental/shared';
@@ -28,11 +29,14 @@ import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
     SuccessAlertComponent,
     ErrorAlertComponent,
     IconComponent,
+    TranslateModule,
   ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css',
 })
 export class RegisterComponent {
+  private readonly translate = inject(TranslateService);
+
   registerForm: FormGroup;
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -97,7 +101,7 @@ export class RegisterComponent {
         acceptMarketing: formValue.acceptMarketing,
       });
 
-      this.successMessage.set('Registrierung erfolgreich! Sie werden in Kürze weitergeleitet...');
+      this.successMessage.set(this.translate.instant('auth.register.success'));
 
       // Auto-login after registration
       setTimeout(async () => {
@@ -109,13 +113,13 @@ export class RegisterComponent {
 
       const httpError = error as { status?: number; message?: string };
       if (httpError.status === 409) {
-        this.errorMessage.set('Diese E-Mail-Adresse ist bereits registriert.');
+        this.errorMessage.set(this.translate.instant('auth.register.errors.emailExists'));
       } else if (httpError.message?.includes('password')) {
-        this.errorMessage.set('Das Passwort erfüllt nicht die Sicherheitsanforderungen.');
+        this.errorMessage.set(this.translate.instant('auth.register.errors.passwordWeak'));
       } else if (httpError.message?.includes('email')) {
-        this.errorMessage.set('Bitte geben Sie eine gültige E-Mail-Adresse ein.');
+        this.errorMessage.set(this.translate.instant('auth.register.errors.invalidEmail'));
       } else {
-        this.errorMessage.set('Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        this.errorMessage.set(this.translate.instant('auth.register.errors.generic'));
       }
     } finally {
       this.isLoading.set(false);
@@ -220,73 +224,74 @@ export class RegisterComponent {
   // Error getters
   get emailError(): string | null {
     if (this.email?.hasError('required') && this.email?.touched) {
-      return 'E-Mail-Adresse ist erforderlich';
+      return this.translate.instant('auth.validation.emailRequired');
     }
     if (this.email?.hasError('email') && this.email?.touched) {
-      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+      return this.translate.instant('auth.validation.emailInvalid');
     }
     return null;
   }
 
   get passwordError(): string | null {
     if (this.password?.hasError('required') && this.password?.touched) {
-      return 'Passwort ist erforderlich';
+      return this.translate.instant('auth.validation.passwordRequired');
     }
     if (this.password?.hasError('minlength') && this.password?.touched) {
-      return 'Passwort muss mindestens 8 Zeichen lang sein';
+      return this.translate.instant('auth.validation.passwordMinLength');
     }
     if (this.password?.hasError('weakPassword') && this.password?.touched) {
-      return 'Passwort muss Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen enthalten';
+      return this.translate.instant('auth.register.validation.passwordWeak');
     }
     return null;
   }
 
   get confirmPasswordError(): string | null {
     if (this.confirmPassword?.hasError('required') && this.confirmPassword?.touched) {
-      return 'Passwortbestätigung ist erforderlich';
+      return this.translate.instant('auth.register.validation.confirmPasswordRequired');
     }
     if (this.registerForm.hasError('passwordMismatch') && this.confirmPassword?.touched) {
-      return 'Passwörter stimmen nicht überein';
+      return this.translate.instant('auth.register.validation.passwordMismatch');
     }
     return null;
   }
 
   get firstNameError(): string | null {
     if (this.firstName?.hasError('required') && this.firstName?.touched) {
-      return 'Vorname ist erforderlich';
+      return this.translate.instant('auth.register.validation.firstNameRequired');
     }
     if (this.firstName?.hasError('minlength') && this.firstName?.touched) {
-      return 'Vorname muss mindestens 2 Zeichen lang sein';
+      return this.translate.instant('auth.register.validation.firstNameMinLength');
     }
     return null;
   }
 
   get lastNameError(): string | null {
     if (this.lastName?.hasError('required') && this.lastName?.touched) {
-      return 'Nachname ist erforderlich';
+      return this.translate.instant('auth.register.validation.lastNameRequired');
     }
     if (this.lastName?.hasError('minlength') && this.lastName?.touched) {
-      return 'Nachname muss mindestens 2 Zeichen lang sein';
+      return this.translate.instant('auth.register.validation.lastNameMinLength');
     }
     return null;
   }
 
   get phoneNumberError(): string | null {
     if (this.phoneNumber?.hasError('required') && this.phoneNumber?.touched) {
-      return 'Telefonnummer ist erforderlich';
+      return this.translate.instant('auth.register.validation.phoneRequired');
     }
     if (this.phoneNumber?.hasError('invalidPhone') && this.phoneNumber?.touched) {
-      return 'Bitte geben Sie eine gültige Telefonnummer ein';
+      return this.translate.instant('auth.register.validation.phoneInvalid');
     }
     return null;
   }
 
   get dateOfBirthError(): string | null {
     if (this.dateOfBirth?.hasError('required') && this.dateOfBirth?.touched) {
-      return 'Geburtsdatum ist erforderlich';
+      return this.translate.instant('auth.register.validation.dateOfBirthRequired');
     }
     if (this.dateOfBirth?.hasError('underage') && this.dateOfBirth?.touched) {
-      return `Sie müssen mindestens ${this.dateOfBirth.errors?.['underage'].minAge} Jahre alt sein`;
+      const minAge = this.dateOfBirth.errors?.['underage'].minAge;
+      return this.translate.instant('auth.register.validation.minAge', { minAge });
     }
     return null;
   }

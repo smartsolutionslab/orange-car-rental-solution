@@ -1,6 +1,6 @@
 <div class="hero">
-  <h1>Finden Sie Ihr perfektes Fahrzeug</h1>
-  <p class="subtitle">Günstige Mietwagen in ganz Deutschland</p>
+  <h1>{{ 'vehicles.title' | translate }}</h1>
+  <p class="subtitle">{{ 'vehicles.subtitle' | translate }}</p>
 </div>
 
 <!-- Reusable Vehicle Search Component -->
@@ -8,7 +8,7 @@
 
 <!-- Loading State -->
 @if (loading()) {
-  <ui-loading-state message="Lade Fahrzeuge..."></ui-loading-state>
+  <ui-loading-state [message]="'common.messages.loading' | translate"></ui-loading-state>
 }
 
 <!-- Error State -->
@@ -24,12 +24,13 @@
 @if (!loading() && !error() && totalCount() > 0) {
   <div class="results-count">
     <lib-icon name="car-filled" variant="filled" size="sm" />
-    <span
-      ><strong>{{ totalCount() }}</strong> Fahrzeug{{
-        totalCount() === 1 ? '' : 'e'
-      }}
-      gefunden</span
-    >
+    <span>
+      @if (totalCount() === 1) {
+        {{ 'vehicles.results.found' | translate:{ count: totalCount() } }}
+      } @else {
+        {{ 'vehicles.results.foundPlural' | translate:{ count: totalCount() } }}
+      }
+    </span>
   </div>
 }
 
@@ -56,7 +57,7 @@
           <div class="vehicle-specs">
             <span class="spec">
               <lib-icon name="seats" variant="filled" size="sm" />
-              {{ vehicle.seats }} Sitze
+              {{ 'vehicles.card.seats' | translate:{ count: vehicle.seats } }}
             </span>
             <span class="spec">
               <lib-icon name="transmission" variant="filled" size="sm" />
@@ -72,13 +73,13 @@
               <span class="price-amount"
                 >{{ vehicle.dailyRateGross | number: '1.2-2' : 'de-DE' }} €</span
               >
-              <span class="price-period">pro Tag</span>
+              <span class="price-period">{{ 'vehicles.card.perDay' | translate }}</span>
             </div>
             <div class="price-details">
-              <span>inkl. 19% MwSt.</span>
+              <span>{{ 'vehicles.card.inclVat' | translate }}</span>
             </div>
           </div>
-          <button class="btn-book" (click)="onBookVehicle(vehicle)">Jetzt buchen</button>
+          <button class="btn-book" (click)="onBookVehicle(vehicle)">{{ 'common.actions.bookNow' | translate }}</button>
         </div>
       </div>
     }
@@ -89,7 +90,7 @@
 @if (!loading() && vehicles().length === 0 && !error()) {
   <ui-empty-state
     icon="search"
-    title="Keine Fahrzeuge gefunden"
-    description="Bitte ändern Sie Ihre Suchkriterien und versuchen Sie es erneut."
+    [title]="'vehicles.results.noResults' | translate"
+    [description]="'vehicles.results.noResultsHint' | translate"
   ></ui-empty-state>
 }

@@ -3,6 +3,7 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
 import { logError } from '@orange-car-rental/util';
 import {
@@ -23,6 +24,7 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
   standalone: true,
   imports: [
     DecimalPipe,
+    TranslateModule,
     VehicleSearchComponent,
     LoadingStateComponent,
     EmptyStateComponent,
@@ -36,6 +38,7 @@ export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
@@ -67,7 +70,7 @@ export class VehicleListComponent implements OnInit {
         },
         error: (err) => {
           logError('VehicleListComponent', 'Error loading vehicles', err);
-          this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
+          this.error.set(this.translate.instant('errors.generic'));
           this.loading.set(false);
         },
       });

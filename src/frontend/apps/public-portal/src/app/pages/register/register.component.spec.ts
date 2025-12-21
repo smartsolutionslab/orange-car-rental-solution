@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -14,7 +15,7 @@ describe('RegisterComponent', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['register']);
 
     await TestBed.configureTestingModule({
-      imports: [RegisterComponent, ReactiveFormsModule],
+      imports: [RegisterComponent, ReactiveFormsModule, TranslateModule.forRoot()],
       providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
@@ -111,7 +112,7 @@ describe('RegisterComponent', () => {
         confirmPassword: 'Different',
       });
       component.confirmPassword?.markAsTouched();
-      expect(component.confirmPasswordError).toBe('Passwörter stimmen nicht überein');
+      expect(component.confirmPasswordError).toBe('auth.register.validation.passwordMismatch');
     });
   });
 
@@ -314,8 +315,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      // Component shows German message on success
-      expect(component.successMessage()).toContain('Registrierung erfolgreich');
+      expect(component.successMessage()).toBe('auth.register.success');
     });
 
     it('should set loading state during submission', async () => {
@@ -342,7 +342,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Diese E-Mail-Adresse ist bereits registriert.');
+      expect(component.errorMessage()).toBe('auth.register.errors.emailExists');
     });
 
     it('should show error message on password error', async () => {
@@ -352,9 +352,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Das Passwort erfüllt nicht die Sicherheitsanforderungen.',
-      );
+      expect(component.errorMessage()).toBe('auth.register.errors.passwordWeak');
     });
 
     it('should show generic error message on unknown error', async () => {
@@ -364,9 +362,7 @@ describe('RegisterComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.',
-      );
+      expect(component.errorMessage()).toBe('auth.register.errors.generic');
     });
   });
 

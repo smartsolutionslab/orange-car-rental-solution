@@ -1,10 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { of, throwError, Observable } from 'rxjs';
 import { ConfirmationComponent } from './confirmation.component';
 import { ReservationService } from '../../services/reservation.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  Reservation,
+  CustomerId,
+  ReservationId,
+  ReservationStatus,
+} from '@orange-car-rental/reservation-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
+import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
 
 describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
@@ -14,18 +23,18 @@ describe('ConfirmationComponent', () => {
   let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
   const mockReservation: Reservation = {
-    id: '987e6543-e89b-12d3-a456-426614174000',
-    vehicleId: '123e4567-e89b-12d3-a456-426614174000',
+    id: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
+    vehicleId: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
     customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    pickupDate: '2024-01-15T00:00:00Z',
-    returnDate: '2024-01-20T00:00:00Z',
-    pickupLocationCode: 'BER-HBF',
-    dropoffLocationCode: 'BER-HBF',
-    totalPriceNet: 250.0,
-    totalPriceVat: 47.5,
-    totalPriceGross: 297.5,
-    currency: 'EUR',
-    status: 'Pending',
+    pickupDate: '2024-01-15T00:00:00Z' as ISODateString,
+    returnDate: '2024-01-20T00:00:00Z' as ISODateString,
+    pickupLocationCode: 'BER-HBF' as LocationCode,
+    dropoffLocationCode: 'BER-HBF' as LocationCode,
+    totalPriceNet: 250.0 as Price,
+    totalPriceVat: 47.5 as Price,
+    totalPriceGross: 297.5 as Price,
+    currency: 'EUR' as Currency,
+    status: 'Pending' as ReservationStatus,
   };
 
   beforeEach(async () => {
@@ -37,7 +46,7 @@ describe('ConfirmationComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ConfirmationComponent],
+      imports: [ConfirmationComponent, TranslateModule.forRoot()],
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: Router, useValue: routerSpy },
@@ -67,7 +76,7 @@ describe('ConfirmationComponent', () => {
     fixture.detectChanges();
 
     expect(reservationService.getReservation).toHaveBeenCalledWith(
-      '987e6543-e89b-12d3-a456-426614174000',
+      '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
     );
     expect(component['reservation']()).toEqual(mockReservation);
     expect(component['loading']()).toBeFalse();
@@ -78,7 +87,7 @@ describe('ConfirmationComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component['error']()).toBe('Keine Reservierungs-ID gefunden');
+    expect(component['error']()).toBe('errors.notFound');
     expect(component['loading']()).toBeFalse();
     expect(reservationService.getReservation).not.toHaveBeenCalled();
   });
@@ -92,7 +101,7 @@ describe('ConfirmationComponent', () => {
 
     expect(component['reservation']()).toBeNull();
     expect(component['loading']()).toBeFalse();
-    expect(component['error']()).toBe('Fehler beim Laden der Reservierung');
+    expect(component['error']()).toBe('confirmation.error');
   });
 
   it('should navigate to home page', () => {

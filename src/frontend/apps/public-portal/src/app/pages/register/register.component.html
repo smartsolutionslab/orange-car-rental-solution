@@ -2,8 +2,8 @@
   <div class="register-card">
     <!-- Header -->
     <div class="register-header">
-      <h1 class="register-title">Konto erstellen</h1>
-      <p class="register-subtitle">Erstellen Sie Ihr kostenloses Konto in wenigen Schritten</p>
+      <h1 class="register-title">{{ 'auth.register.title' | translate }}</h1>
+      <p class="register-subtitle">{{ 'auth.register.subtitle' | translate }}</p>
     </div>
 
     <!-- Progress Steps -->
@@ -17,13 +17,13 @@
           <div class="step-number">{{ step }}</div>
           <div class="step-label">
             @if (step === 1) {
-              <span>Konto</span>
+              <span>{{ 'auth.register.steps.account' | translate }}</span>
             }
             @if (step === 2) {
-              <span>Persönlich</span>
+              <span>{{ 'auth.register.steps.personal' | translate }}</span>
             }
             @if (step === 3) {
-              <span>Bestätigung</span>
+              <span>{{ 'auth.register.steps.confirmation' | translate }}</span>
             }
           </div>
         </div>
@@ -45,14 +45,14 @@
       @if (currentStep() === 1) {
         <div class="form-step">
           <div class="form-group">
-            <label for="email" class="form-label">E-Mail-Adresse *</label>
+            <label for="email" class="form-label">{{ 'common.labels.email' | translate }} *</label>
             <input
               id="email"
               type="email"
               formControlName="email"
               class="form-input"
               [class.input-error]="emailError"
-              placeholder="ihre-email@beispiel.de"
+              [placeholder]="'common.placeholders.email' | translate"
               autocomplete="email"
             />
             @if (emailError) {
@@ -61,7 +61,7 @@
           </div>
 
           <div class="form-group">
-            <label for="password" class="form-label">Passwort *</label>
+            <label for="password" class="form-label">{{ 'common.labels.password' | translate }} *</label>
             <div class="password-wrapper">
               <input
                 id="password"
@@ -87,13 +87,11 @@
             @if (passwordError) {
               <span class="field-error">{{ passwordError }}</span>
             }
-            <span class="field-hint"
-              >Mindestens 8 Zeichen, mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen</span
-            >
+            <span class="field-hint">{{ 'auth.register.passwordHint' | translate }}</span>
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword" class="form-label">Passwort bestätigen *</label>
+            <label for="confirmPassword" class="form-label">{{ 'auth.register.confirmPassword' | translate }} *</label>
             <div class="password-wrapper">
               <input
                 id="confirmPassword"
@@ -128,14 +126,14 @@
         <div class="form-step">
           <div class="form-row">
             <div class="form-group">
-              <label for="firstName" class="form-label">Vorname *</label>
+              <label for="firstName" class="form-label">{{ 'common.labels.firstName' | translate }} *</label>
               <input
                 id="firstName"
                 type="text"
                 formControlName="firstName"
                 class="form-input"
                 [class.input-error]="firstNameError"
-                placeholder="Max"
+                [placeholder]="'common.placeholders.firstName' | translate"
                 autocomplete="given-name"
               />
               @if (firstNameError) {
@@ -144,14 +142,14 @@
             </div>
 
             <div class="form-group">
-              <label for="lastName" class="form-label">Nachname *</label>
+              <label for="lastName" class="form-label">{{ 'common.labels.lastName' | translate }} *</label>
               <input
                 id="lastName"
                 type="text"
                 formControlName="lastName"
                 class="form-input"
                 [class.input-error]="lastNameError"
-                placeholder="Mustermann"
+                [placeholder]="'common.placeholders.lastName' | translate"
                 autocomplete="family-name"
               />
               @if (lastNameError) {
@@ -161,7 +159,7 @@
           </div>
 
           <div class="form-group">
-            <label for="phoneNumber" class="form-label">Telefonnummer *</label>
+            <label for="phoneNumber" class="form-label">{{ 'common.labels.phone' | translate }} *</label>
             <input
               id="phoneNumber"
               type="tel"
@@ -177,7 +175,7 @@
           </div>
 
           <div class="form-group">
-            <label for="dateOfBirth" class="form-label">Geburtsdatum *</label>
+            <label for="dateOfBirth" class="form-label">{{ 'common.labels.dateOfBirth' | translate }} *</label>
             <input
               id="dateOfBirth"
               type="date"
@@ -189,7 +187,7 @@
             @if (dateOfBirthError) {
               <span class="field-error">{{ dateOfBirthError }}</span>
             }
-            <span class="field-hint">Sie müssen mindestens 18 Jahre alt sein</span>
+            <span class="field-hint">{{ 'auth.register.ageHint' | translate }}</span>
           </div>
         </div>
       }
@@ -200,42 +198,33 @@
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptTerms" class="checkbox-input" />
-              <span
-                >Ich akzeptiere die
-                <a href="/terms" target="_blank" class="terms-link"
-                  >Allgemeinen Geschäftsbedingungen</a
-                >
-                *</span
-              >
+              <span>{{ 'auth.register.acceptTermsPrefix' | translate }}
+                <a href="/terms" target="_blank" class="terms-link">{{ 'auth.register.termsLink' | translate }}</a>
+                *</span>
             </label>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptPrivacy" class="checkbox-input" />
-              <span
-                >Ich akzeptiere die
-                <a href="/privacy" target="_blank" class="terms-link">Datenschutzerklärung</a>
-                *</span
-              >
+              <span>{{ 'auth.register.acceptPrivacyPrefix' | translate }}
+                <a href="/privacy" target="_blank" class="terms-link">{{ 'auth.register.privacyLink' | translate }}</a>
+                *</span>
             </label>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label">
               <input type="checkbox" formControlName="acceptMarketing" class="checkbox-input" />
-              <span>Ich möchte Werbe-E-Mails und Sonderangebote erhalten (optional)</span>
+              <span>{{ 'auth.register.acceptMarketing' | translate }}</span>
             </label>
           </div>
 
           <div class="info-box">
             <lib-icon name="information-circle" variant="outline" size="sm" class="info-icon" />
             <div>
-              <p class="info-title">Datenschutz ist uns wichtig</p>
-              <p class="info-text">
-                Ihre Daten werden gemäß DSGVO gespeichert und verarbeitet. Sie können Ihre
-                Einwilligung jederzeit widerrufen.
-              </p>
+              <p class="info-title">{{ 'auth.register.privacyInfoTitle' | translate }}</p>
+              <p class="info-text">{{ 'auth.register.privacyInfoText' | translate }}</p>
             </div>
           </div>
         </div>
@@ -244,7 +233,7 @@
       <!-- Navigation Buttons -->
       <div class="form-actions">
         @if (currentStep() > 1) {
-          <button type="button" class="secondary-button" (click)="previousStep()">Zurück</button>
+          <button type="button" class="secondary-button" (click)="previousStep()">{{ 'common.actions.back' | translate }}</button>
         }
 
         @if (currentStep() < totalSteps) {
@@ -254,7 +243,7 @@
             (click)="nextStep()"
             [class.full-width]="currentStep() === 1"
           >
-            Weiter
+            {{ 'common.actions.next' | translate }}
           </button>
         }
 
@@ -272,9 +261,9 @@
                   fill="none"
                 ></circle>
               </svg>
-              <span>Registrierung läuft...</span>
+              <span>{{ 'auth.register.submitting' | translate }}</span>
             } @else {
-              <span>Konto erstellen</span>
+              <span>{{ 'auth.register.submit' | translate }}</span>
             }
           </button>
         }
@@ -284,8 +273,8 @@
     <!-- Login Link -->
     <div class="login-section">
       <p class="login-text">
-        Bereits registriert?
-        <a routerLink="/login" class="login-link">Jetzt anmelden</a>
+        {{ 'auth.register.hasAccount' | translate }}
+        <a routerLink="/login" class="login-link">{{ 'auth.register.loginNow' | translate }}</a>
       </p>
     </div>
   </div>

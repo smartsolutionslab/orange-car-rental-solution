@@ -1,11 +1,19 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ReservationsComponent } from './reservations.component';
 import { ReservationService } from '../../services/reservation.service';
 import { ConfigService } from '../../services/config.service';
-import type { CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  CustomerId,
+  ReservationId,
+  ReservationStatus,
+} from '@orange-car-rental/reservation-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
 import type { Reservation } from '../../types';
+import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
 import { of } from 'rxjs';
 
 /**
@@ -21,68 +29,68 @@ describe('ReservationsComponent (Integration)', () => {
 
   const mockReservations: Reservation[] = [
     {
-      reservationId: '123e4567-e89b-12d3-a456-426614174000',
-      vehicleId: 'veh-001',
+      reservationId: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
+      vehicleId: 'veh-001' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-12-01T10:00:00Z',
-      returnDate: '2025-12-05T10:00:00Z',
-      pickupLocationCode: 'MUC',
-      dropoffLocationCode: 'MUC',
+      pickupDate: '2025-12-01T10:00:00Z' as ISODateString,
+      returnDate: '2025-12-05T10:00:00Z' as ISODateString,
+      pickupLocationCode: 'MUC' as LocationCode,
+      dropoffLocationCode: 'MUC' as LocationCode,
       rentalDays: 4,
-      totalPriceNet: 336.13,
-      totalPriceVat: 63.87,
-      totalPriceGross: 400.0,
-      currency: 'EUR',
-      status: 'Confirmed',
-      createdAt: '2025-11-20T09:00:00Z',
+      totalPriceNet: 336.13 as Price,
+      totalPriceVat: 63.87 as Price,
+      totalPriceGross: 400.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Confirmed' as ReservationStatus,
+      createdAt: '2025-11-20T09:00:00Z' as ISODateString,
     },
     {
-      reservationId: '223e4567-e89b-12d3-a456-426614174001',
-      vehicleId: 'veh-002',
+      reservationId: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
+      vehicleId: 'veh-002' as VehicleId,
       customerId: '22222222-2222-2222-2222-222222222222' as CustomerId,
-      pickupDate: '2025-11-25T10:00:00Z',
-      returnDate: '2025-11-27T10:00:00Z',
-      pickupLocationCode: 'BER',
-      dropoffLocationCode: 'BER',
+      pickupDate: '2025-11-25T10:00:00Z' as ISODateString,
+      returnDate: '2025-11-27T10:00:00Z' as ISODateString,
+      pickupLocationCode: 'BER' as LocationCode,
+      dropoffLocationCode: 'BER' as LocationCode,
       rentalDays: 2,
-      totalPriceNet: 168.07,
-      totalPriceVat: 31.93,
-      totalPriceGross: 200.0,
-      currency: 'EUR',
-      status: 'Pending',
-      createdAt: '2025-11-20T09:00:00Z',
+      totalPriceNet: 168.07 as Price,
+      totalPriceVat: 31.93 as Price,
+      totalPriceGross: 200.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Pending' as ReservationStatus,
+      createdAt: '2025-11-20T09:00:00Z' as ISODateString,
     },
     {
-      reservationId: '323e4567-e89b-12d3-a456-426614174002',
-      vehicleId: 'veh-003',
+      reservationId: '323e4567-e89b-12d3-a456-426614174002' as ReservationId,
+      vehicleId: 'veh-003' as VehicleId,
       customerId: '33333333-3333-3333-3333-333333333333' as CustomerId,
-      pickupDate: '2025-12-10T10:00:00Z',
-      returnDate: '2025-12-15T10:00:00Z',
-      pickupLocationCode: 'FRA',
-      dropoffLocationCode: 'FRA',
+      pickupDate: '2025-12-10T10:00:00Z' as ISODateString,
+      returnDate: '2025-12-15T10:00:00Z' as ISODateString,
+      pickupLocationCode: 'FRA' as LocationCode,
+      dropoffLocationCode: 'FRA' as LocationCode,
       rentalDays: 5,
-      totalPriceNet: 504.2,
-      totalPriceVat: 95.8,
-      totalPriceGross: 600.0,
-      currency: 'EUR',
-      status: 'Active',
-      createdAt: '2025-11-19T14:30:00Z',
+      totalPriceNet: 504.2 as Price,
+      totalPriceVat: 95.8 as Price,
+      totalPriceGross: 600.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Active' as ReservationStatus,
+      createdAt: '2025-11-19T14:30:00Z' as ISODateString,
     },
     {
-      reservationId: '423e4567-e89b-12d3-a456-426614174003',
-      vehicleId: 'veh-004',
+      reservationId: '423e4567-e89b-12d3-a456-426614174003' as ReservationId,
+      vehicleId: 'veh-004' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-10-15T10:00:00Z',
-      returnDate: '2025-10-20T10:00:00Z',
-      pickupLocationCode: 'MUC',
-      dropoffLocationCode: 'MUC',
+      pickupDate: '2025-10-15T10:00:00Z' as ISODateString,
+      returnDate: '2025-10-20T10:00:00Z' as ISODateString,
+      pickupLocationCode: 'MUC' as LocationCode,
+      dropoffLocationCode: 'MUC' as LocationCode,
       rentalDays: 5,
-      totalPriceNet: 420.17,
-      totalPriceVat: 79.83,
-      totalPriceGross: 500.0,
-      currency: 'EUR',
-      status: 'Completed',
-      createdAt: '2025-10-10T11:00:00Z',
+      totalPriceNet: 420.17 as Price,
+      totalPriceVat: 79.83 as Price,
+      totalPriceGross: 500.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Completed' as ReservationStatus,
+      createdAt: '2025-10-10T11:00:00Z' as ISODateString,
     },
   ];
 
@@ -93,7 +101,7 @@ describe('ReservationsComponent (Integration)', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [ReservationsComponent, HttpClientTestingModule],
+      imports: [ReservationsComponent, HttpClientTestingModule, TranslateModule.forRoot()],
       providers: [
         ReservationService,
         { provide: Router, useValue: routerSpy },
@@ -156,7 +164,7 @@ describe('ReservationsComponent (Integration)', () => {
       tick();
 
       // Verify error handling
-      expect(component['error']()).toBe('Fehler beim Laden der Reservierungen');
+      expect(component['error']()).toBe('errors.generic');
       expect(component['loading']()).toBe(false);
     }));
   });
@@ -714,7 +722,7 @@ describe('ReservationsComponent (Integration)', () => {
       });
       tick();
 
-      expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
+      expect(component['successMessage']()).toBe('common.messages.success');
       expect(component['showConfirmModal']()).toBe(false);
     }));
 
@@ -751,7 +759,7 @@ describe('ReservationsComponent (Integration)', () => {
       });
       tick();
 
-      expect(component['successMessage']()).toBe('Reservierung erfolgreich storniert');
+      expect(component['successMessage']()).toBe('common.messages.success');
       expect(component['showCancelModal']()).toBe(false);
     }));
 
@@ -772,7 +780,7 @@ describe('ReservationsComponent (Integration)', () => {
       req.flush('Confirmation failed', { status: 400, statusText: 'Bad Request' });
       tick();
 
-      expect(component['error']()).toBe('Fehler beim Bestätigen der Reservierung');
+      expect(component['error']()).toBe('errors.generic');
       expect(component['actionInProgress']()).toBe(false);
     }));
   });
@@ -867,7 +875,7 @@ describe('ReservationsComponent (Integration)', () => {
       });
       tick();
 
-      expect(component['successMessage']()).toBe('Reservierung erfolgreich bestätigt');
+      expect(component['successMessage']()).toBe('common.messages.success');
       expect(component['showDetails']()).toBe(false);
     }));
   });

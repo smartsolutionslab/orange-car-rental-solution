@@ -1,7 +1,7 @@
 <div class="booking-history-container">
   <div class="page-header">
-    <h1>Meine Buchungen</h1>
-    <p class="subtitle">Verwalten Sie Ihre Reservierungen</p>
+    <h1>{{ 'bookingHistory.title' | translate }}</h1>
+    <p class="subtitle">{{ 'bookingHistory.subtitle' | translate }}</p>
   </div>
 
   <!-- Authenticated User View -->
@@ -9,7 +9,7 @@
     <div class="reservations-content">
       <!-- Loading State -->
       @if (isLoading()) {
-        <ui-loading-state message="Buchungen werden geladen..."></ui-loading-state>
+        <ui-loading-state [message]="'bookingHistory.loading' | translate"></ui-loading-state>
       }
 
       <!-- Error State -->
@@ -26,7 +26,7 @@
         <!-- Upcoming Bookings -->
         @if (groupedReservations().upcoming.length > 0) {
           <section class="reservations-section">
-            <h2>Bevorstehende Buchungen</h2>
+            <h2>{{ 'bookingHistory.sections.upcoming' | translate }}</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().upcoming; track reservation.id) {
                 <ui-reservation-card
@@ -44,7 +44,7 @@
         <!-- Pending Bookings -->
         @if (groupedReservations().pending.length > 0) {
           <section class="reservations-section">
-            <h2>Ausstehende Bestätigungen</h2>
+            <h2>{{ 'bookingHistory.sections.pending' | translate }}</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().pending; track reservation.id) {
                 <ui-reservation-card
@@ -62,7 +62,7 @@
         <!-- Past Bookings -->
         @if (groupedReservations().past.length > 0) {
           <section class="reservations-section">
-            <h2>Vergangene Buchungen</h2>
+            <h2>{{ 'bookingHistory.sections.past' | translate }}</h2>
             <div class="reservations-grid">
               @for (reservation of groupedReservations().past; track reservation.id) {
                 <ui-reservation-card
@@ -84,10 +84,10 @@
         ) {
           <ui-empty-state
             icon="reservation"
-            title="Keine Buchungen vorhanden"
-            description="Sie haben noch keine Buchungen. Stöbern Sie in unseren Fahrzeugen und buchen Sie jetzt!"
+            [title]="'bookingHistory.empty.title' | translate"
+            [description]="'bookingHistory.empty.description' | translate"
             [showAction]="true"
-            actionLabel="Fahrzeuge durchsuchen"
+            [actionLabel]="'bookingHistory.empty.action' | translate"
             (action)="navigateToVehicles()"
           ></ui-empty-state>
         }
@@ -98,28 +98,28 @@
   <!-- Guest Lookup View -->
   @else {
     <div class="guest-lookup">
-      <h2>Buchung suchen</h2>
-      <p>Geben Sie Ihre Reservierungsnummer und E-Mail-Adresse ein, um Ihre Buchung zu finden.</p>
+      <h2>{{ 'bookingHistory.guestLookup.title' | translate }}</h2>
+      <p>{{ 'bookingHistory.guestLookup.description' | translate }}</p>
 
       <form class="lookup-form" (ngSubmit)="onGuestLookup()">
-        <ui-form-field label="Reservierungsnummer" inputId="reservationId" [required]="true">
+        <ui-form-field [label]="'bookingHistory.guestLookup.reservationId' | translate" inputId="reservationId" [required]="true">
           <input
             type="text"
             id="reservationId"
             name="reservationId"
             [(ngModel)]="guestLookupForm.reservationId"
-            placeholder="z.B. 550e8400-e29b-41d4"
+            [placeholder]="'bookingHistory.guestLookup.reservationIdPlaceholder' | translate"
             required
           />
         </ui-form-field>
 
-        <ui-form-field label="E-Mail-Adresse" inputId="email" [required]="true">
+        <ui-form-field [label]="'common.labels.email' | translate" inputId="email" [required]="true">
           <input
             type="email"
             id="email"
             name="email"
             [(ngModel)]="guestLookupForm.email"
-            placeholder="ihre@email.de"
+            [placeholder]="'common.placeholders.email' | translate"
             required
           />
         </ui-form-field>
@@ -129,14 +129,14 @@
         }
 
         <button type="submit" class="btn-primary" [disabled]="isLoading()">
-          {{ isLoading() ? 'Suche läuft...' : 'Buchung suchen' }}
+          {{ isLoading() ? ('bookingHistory.guestLookup.searching' | translate) : ('bookingHistory.guestLookup.searchButton' | translate) }}
         </button>
       </form>
 
       <!-- Guest Reservation Result -->
       @if (guestReservation()) {
         <div class="guest-result">
-          <h3>Ihre Buchung</h3>
+          <h3>{{ 'bookingHistory.guestLookup.result' | translate }}</h3>
           <ui-reservation-card
             [reservation]="guestReservation()!"
             variant="guest"
@@ -154,19 +154,19 @@
   <!-- Detail Modal -->
   <ui-modal
     [isOpen]="showDetailModal() && !!detailReservation()"
-    title="Buchungsdetails"
+    [title]="'bookingHistory.details.title' | translate"
     size="lg"
     (close)="closeDetailModal()"
   >
     <ng-container modal-body>
       @if (detailReservation()) {
         <div class="detail-section">
-          <h3>Reservierung</h3>
+          <h3>{{ 'bookingHistory.details.reservation' | translate }}</h3>
           <ui-detail-row
-            label="Reservierungsnummer:"
+            [label]="'bookingHistory.details.reservationNumber' | translate"
             [value]="detailReservation()!.id"
           ></ui-detail-row>
-          <ui-detail-row label="Status:">
+          <ui-detail-row [label]="'common.labels.status' | translate">
             <ui-status-badge
               type="reservation"
               [status]="detailReservation()!.status"
@@ -175,9 +175,9 @@
         </div>
 
         <div class="detail-section">
-          <h3>Mietzeitraum</h3>
+          <h3>{{ 'bookingHistory.details.rentalPeriod' | translate }}</h3>
           <ui-detail-row
-            label="Abholung:"
+            [label]="'bookingHistory.details.pickup' | translate"
             [value]="
               formatDate(detailReservation()!.pickupDate) +
               ' - ' +
@@ -185,7 +185,7 @@
             "
           ></ui-detail-row>
           <ui-detail-row
-            label="Rückgabe:"
+            [label]="'bookingHistory.details.return' | translate"
             [value]="
               formatDate(detailReservation()!.returnDate) +
               ' - ' +
@@ -195,17 +195,17 @@
         </div>
 
         <div class="detail-section">
-          <h3>Preise</h3>
+          <h3>{{ 'bookingHistory.details.pricing' | translate }}</h3>
           <ui-detail-row
-            label="Nettobetrag:"
+            [label]="'bookingHistory.details.netAmount' | translate"
             [value]="formatPrice(detailReservation()!.totalPriceNet)"
           ></ui-detail-row>
           <ui-detail-row
-            label="MwSt. (19%):"
+            [label]="'bookingHistory.details.vat' | translate"
             [value]="formatPrice(detailReservation()!.totalPriceVat)"
           ></ui-detail-row>
           <ui-detail-row
-            label="Gesamtbetrag:"
+            [label]="'bookingHistory.details.grossAmount' | translate"
             [value]="formatPrice(detailReservation()!.totalPriceGross)"
             [strong]="true"
             [highlight]="true"
@@ -213,35 +213,35 @@
         </div>
 
         <div class="detail-section">
-          <h3>Stornierungsbedingungen</h3>
-          <p>Kostenlose Stornierung bis 48 Stunden vor Abholung.</p>
-          <p>Spätere Stornierungen können Gebühren nach sich ziehen.</p>
+          <h3>{{ 'bookingHistory.details.cancellationPolicy' | translate }}</h3>
+          <p>{{ 'bookingHistory.details.cancellationFree' | translate }}</p>
+          <p>{{ 'bookingHistory.details.cancellationFee' | translate }}</p>
         </div>
       }
     </ng-container>
     <ng-container modal-footer>
-      <button class="btn-secondary" (click)="printReservation()">Drucken</button>
-      <button class="btn-primary" (click)="closeDetailModal()">Schließen</button>
+      <button class="btn-secondary" (click)="printReservation()">{{ 'common.actions.print' | translate }}</button>
+      <button class="btn-primary" (click)="closeDetailModal()">{{ 'common.actions.close' | translate }}</button>
     </ng-container>
   </ui-modal>
 
   <!-- Cancel Modal -->
   <ui-modal
     [isOpen]="showCancelModal() && !!selectedReservation()"
-    title="Buchung stornieren"
+    [title]="'bookingHistory.cancel.title' | translate"
     size="sm"
     (close)="closeCancelModal()"
   >
     <ng-container modal-body>
       @if (selectedReservation()) {
-        <p>Möchten Sie diese Buchung wirklich stornieren?</p>
-        <p><strong>Reservierungsnummer:</strong> {{ selectedReservation()!.id }}</p>
-        <p><strong>Abholtermin:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
+        <p>{{ 'bookingHistory.cancel.message' | translate }}</p>
+        <p><strong>{{ 'bookingHistory.details.reservationNumber' | translate }}:</strong> {{ selectedReservation()!.id }}</p>
+        <p><strong>{{ 'bookingHistory.details.pickup' | translate }}:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
 
         <div class="form-group">
-          <label for="cancellationReason">Grund für Stornierung *</label>
+          <label for="cancellationReason">{{ 'bookingHistory.cancel.reason' | translate }} *</label>
           <select id="cancellationReason" [(ngModel)]="cancellationReason" class="form-control">
-            <option value="">Bitte wählen...</option>
+            <option value="">{{ 'common.placeholders.select' | translate }}</option>
             @for (reason of cancellationReasons; track reason) {
               <option [value]="reason">{{ reason }}</option>
             }
@@ -249,18 +249,18 @@
         </div>
 
         <div class="warning-box">
-          <p><strong>Hinweis:</strong> Diese Aktion kann nicht rückgängig gemacht werden.</p>
+          <p><strong>{{ 'bookingHistory.cancel.warning' | translate }}:</strong> {{ 'bookingHistory.cancel.warningText' | translate }}</p>
         </div>
       }
     </ng-container>
     <ng-container modal-footer>
-      <button class="btn-secondary" (click)="closeCancelModal()">Abbrechen</button>
+      <button class="btn-secondary" (click)="closeCancelModal()">{{ 'common.actions.cancel' | translate }}</button>
       <button
         class="btn-danger"
         (click)="confirmCancellation()"
         [disabled]="!cancellationReason || isLoading()"
       >
-        {{ isLoading() ? 'Wird storniert...' : 'Stornierung bestätigen' }}
+        {{ isLoading() ? ('bookingHistory.cancel.inProgress' | translate) : ('bookingHistory.cancel.confirm' | translate) }}
       </button>
     </ng-container>
   </ui-modal>

@@ -1,23 +1,23 @@
 <div class="page-header">
-  <h1>Standortverwaltung</h1>
-  <p class="subtitle">Verwalten Sie alle Mietstandorte</p>
+  <h1>{{ 'locations.title' | translate }}</h1>
+  <p class="subtitle">{{ 'locations.subtitle' | translate }}</p>
 </div>
 
 <div class="dashboard-grid">
   <ui-stat-card
-    label="Gesamt Standorte"
+    [label]="'locations.stats.total' | translate"
     [value]="totalLocations"
     [loading]="loading()"
     iconName="location-marker-filled"
   />
   <ui-stat-card
-    label="Aktive Standorte"
+    [label]="'locations.stats.active' | translate"
     [value]="activeLocations"
     [loading]="loading()"
     variant="success"
   />
   <ui-stat-card
-    label="Fahrzeuge Gesamt"
+    [label]="'locations.stats.vehicles' | translate"
     [value]="totalVehicles"
     [loading]="loading()"
     variant="info"
@@ -27,11 +27,11 @@
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Standortübersicht</h2>
+    <h2>{{ 'locations.overview' | translate }}</h2>
   </div>
 
   @if (loading()) {
-    <ui-loading-state message="Lade Standorte..."></ui-loading-state>
+    <ui-loading-state [message]="'locations.loading' | translate"></ui-loading-state>
   }
 
   @if (error()) {
@@ -50,8 +50,8 @@
             <button
               class="btn-icon"
               (click)="viewDetails(location)"
-              title="Details anzeigen"
-              aria-label="Standortdetails anzeigen"
+              [title]="'common.actions.viewDetails' | translate"
+              [attr.aria-label]="'locations.ariaLabels.viewDetails' | translate"
             >
               <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
             </button>
@@ -82,7 +82,7 @@
             <div class="location-footer">
               <div class="vehicle-count">
                 <lib-icon name="car-filled" variant="filled" size="sm" aria-hidden="true" />
-                <span>{{ getLocationStats(location.code)?.totalVehicles || 0 }} Fahrzeuge</span>
+                <span>{{ getLocationStats(location.code)?.totalVehicles || 0 }} {{ 'locations.vehiclesCount' | translate }}</span>
               </div>
             </div>
           </div>
@@ -94,8 +94,8 @@
   @if (!loading() && !error() && locations().length === 0) {
     <ui-empty-state
       icon="location"
-      title="Keine Standorte verfügbar"
-      description="Es wurden keine Standorte gefunden."
+      [title]="'locations.empty.title' | translate"
+      [description]="'locations.empty.description' | translate"
     ></ui-empty-state>
   }
 </div>
@@ -103,7 +103,7 @@
 <!-- Location Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedLocation()"
-  title="Standortdetails"
+  [title]="'locations.details.title' | translate"
   size="lg"
   (close)="closeDetails()"
 >
@@ -111,32 +111,32 @@
     @if (selectedLocation()) {
       <!-- Location Information -->
       <div class="info-section">
-        <h3>Standortinformationen</h3>
+        <h3>{{ 'locations.details.info' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <label>Standortcode</label>
+            <label>{{ 'locations.details.locationCode' | translate }}</label>
             <p>
               <span class="location-code-badge">{{ selectedLocation()!.code }}</span>
             </p>
           </div>
           <div class="detail-item">
-            <label>Name</label>
+            <label>{{ 'locations.details.name' | translate }}</label>
             <p>{{ selectedLocation()!.name }}</p>
           </div>
           <div class="detail-item">
-            <label>Straße</label>
+            <label>{{ 'common.labels.street' | translate }}</label>
             <p>{{ selectedLocation()!.street }}</p>
           </div>
           <div class="detail-item">
-            <label>Stadt</label>
+            <label>{{ 'common.labels.city' | translate }}</label>
             <p>{{ selectedLocation()!.city }}</p>
           </div>
           <div class="detail-item">
-            <label>Postleitzahl</label>
+            <label>{{ 'common.labels.postalCode' | translate }}</label>
             <p>{{ selectedLocation()!.postalCode }}</p>
           </div>
           <div class="detail-item">
-            <label>Vollständige Adresse</label>
+            <label>{{ 'locations.details.fullAddress' | translate }}</label>
             <p>{{ selectedLocation()!.fullAddress }}</p>
           </div>
         </div>
@@ -144,10 +144,10 @@
 
       <!-- Vehicles at Location -->
       <div class="info-section">
-        <h3>Fahrzeuge am Standort ({{ locationVehicles().length }})</h3>
+        <h3>{{ 'locations.details.vehiclesAtLocation' | translate }} ({{ locationVehicles().length }})</h3>
 
         @if (loadingVehicles()) {
-          <ui-loading-state size="sm" message="Lade Fahrzeuge..."></ui-loading-state>
+          <ui-loading-state size="sm" [message]="'locations.details.loadingVehicles' | translate"></ui-loading-state>
         }
 
         @if (!loadingVehicles() && locationVehicles().length > 0) {
@@ -155,11 +155,11 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th scope="col">Kennzeichen</th>
-                  <th scope="col">Fahrzeug</th>
-                  <th scope="col">Kategorie</th>
-                  <th scope="col">Tagespreis</th>
-                  <th scope="col">Status</th>
+                  <th scope="col">{{ 'vehicles.table.licensePlate' | translate }}</th>
+                  <th scope="col">{{ 'vehicles.table.vehicle' | translate }}</th>
+                  <th scope="col">{{ 'vehicles.table.category' | translate }}</th>
+                  <th scope="col">{{ 'vehicles.table.dailyRate' | translate }}</th>
+                  <th scope="col">{{ 'vehicles.table.status' | translate }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -186,12 +186,12 @@
         }
 
         @if (!loadingVehicles() && locationVehicles().length === 0) {
-          <p class="no-data">Keine Fahrzeuge an diesem Standort</p>
+          <p class="no-data">{{ 'locations.details.noVehicles' | translate }}</p>
         }
       </div>
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
   </ng-container>
 </ui-modal>

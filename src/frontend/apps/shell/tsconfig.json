@@ -25,7 +25,8 @@
       "@orange-car-rental/pricing-api": ["../../libs/pricing-api/src/index.ts"],
       "@orange-car-rental/util": ["../../libs/util/src/index.ts"],
       "@orange-car-rental/ui-components": ["../../libs/ui-components/src/index.ts"],
-      "@orange-car-rental/shared-ui": ["../../libs/shared-ui/src/index.ts"]
+      "@orange-car-rental/shared-ui": ["../../libs/shared-ui/src/index.ts"],
+      "@orange-car-rental/i18n": ["../../libs/i18n/src/index.ts"]
     }
   },
   "angularCompilerOptions": {

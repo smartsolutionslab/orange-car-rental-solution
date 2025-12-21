@@ -1,6 +1,15 @@
 import { Component, output, signal, inject, DestroyRef, type OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import type { ISODateString } from '@orange-car-rental/shared';
+import type { LocationCode } from '@orange-car-rental/location-api';
+import type {
+  CategoryCode,
+  SeatingCapacity,
+  FuelType,
+  TransmissionType,
+} from '@orange-car-rental/vehicle-api';
 import type { VehicleSearchQuery } from './types';
 import { SelectCategoryComponent } from '../select-category/select-category.component';
 import { SelectFuelTypeComponent } from '../select-fuel-type/select-fuel-type.component';
@@ -21,6 +30,7 @@ const DEFAULT_RENTAL_DAYS = 3;
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    TranslateModule,
     SelectCategoryComponent,
     SelectFuelTypeComponent,
     SelectTransmissionComponent,
@@ -103,13 +113,15 @@ export class VehicleSearchComponent implements OnInit {
         : undefined;
 
     const query: VehicleSearchQuery = {
-      pickupDate: pickupDateTime,
-      returnDate: returnDateTime,
-      locationCode: formValue.locationCode || undefined,
-      categoryCode: formValue.categoryCode || undefined,
-      fuelType: formValue.fuelType || undefined,
-      transmissionType: formValue.transmissionType || undefined,
-      minSeats: formValue.minSeats || undefined,
+      pickupDate: pickupDateTime ? (pickupDateTime as ISODateString) : undefined,
+      returnDate: returnDateTime ? (returnDateTime as ISODateString) : undefined,
+      locationCode: formValue.locationCode ? (formValue.locationCode as LocationCode) : undefined,
+      categoryCode: formValue.categoryCode ? (formValue.categoryCode as CategoryCode) : undefined,
+      fuelType: formValue.fuelType ? (formValue.fuelType as FuelType) : undefined,
+      transmissionType: formValue.transmissionType
+        ? (formValue.transmissionType as TransmissionType)
+        : undefined,
+      minSeats: formValue.minSeats ? (formValue.minSeats as SeatingCapacity) : undefined,
     };
 
     const cleanQuery = Object.fromEntries(

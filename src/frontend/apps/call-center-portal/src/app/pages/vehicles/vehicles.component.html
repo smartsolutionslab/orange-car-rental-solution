@@ -1,77 +1,77 @@
 <div class="page-header">
-  <h1>Fahrzeugverwaltung</h1>
-  <p class="subtitle">Verwalten Sie Ihre Fahrzeugflotte</p>
+  <h1>{{ 'vehicles.title' | translate }}</h1>
+  <p class="subtitle">{{ 'vehicles.subtitle' | translate }}</p>
 </div>
 
 <div class="dashboard-grid">
   <ui-stat-card
-    label="Gesamte Fahrzeuge"
+    [label]="'vehicles.stats.total' | translate"
     [value]="totalVehicles()"
     [loading]="loading()"
     iconName="car-filled"
   />
   <ui-stat-card
-    label="Verfügbar"
+    [label]="'vehicles.stats.available' | translate"
     [value]="availableVehicles()"
     [loading]="loading()"
     variant="success"
   />
   <ui-stat-card
-    label="In Wartung"
+    [label]="'vehicles.stats.maintenance' | translate"
     [value]="maintenanceVehicles()"
     [loading]="loading()"
     variant="warning"
   />
-  <ui-stat-card label="Vermietet" [value]="rentedVehicles()" [loading]="loading()" variant="info" />
+  <ui-stat-card [label]="'vehicles.stats.rented' | translate" [value]="rentedVehicles()" [loading]="loading()" variant="info" />
 </div>
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Fahrzeugübersicht</h2>
+    <h2>{{ 'vehicles.overview' | translate }}</h2>
     <button class="btn-primary" disabled>
       <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
-      Neues Fahrzeug
+      {{ 'vehicles.addNew' | translate }}
     </button>
   </div>
 
   <!-- Filters -->
   <div class="filters-section">
     <div class="filter-group">
-      <label for="statusFilter">Status</label>
+      <label for="statusFilter">{{ 'common.labels.status' | translate }}</label>
       <ui-select-vehicle-status
         id="statusFilter"
         [ngModel]="searchStatus()"
         (ngModelChange)="searchStatus.set($event); applyFilters()"
-        placeholder="Alle Status"
+        [placeholder]="'vehicles.filters.allStatuses' | translate"
       />
     </div>
 
     <div class="filter-group">
-      <label for="locationFilter">Standort</label>
+      <label for="locationFilter">{{ 'common.labels.location' | translate }}</label>
       <ui-select-location
         id="locationFilter"
         [ngModel]="searchLocation()"
         (ngModelChange)="searchLocation.set($event); applyFilters()"
-        placeholder="Alle Standorte"
+        [placeholder]="'vehicles.filters.allLocations' | translate"
       />
     </div>
 
     <div class="filter-group">
-      <label for="categoryFilter">Kategorie</label>
+      <label for="categoryFilter">{{ 'common.labels.category' | translate }}</label>
       <ui-select-category
         id="categoryFilter"
         [ngModel]="searchCategory()"
         (ngModelChange)="searchCategory.set($event); applyFilters()"
-        placeholder="Alle Kategorien"
+        [placeholder]="'vehicles.filters.allCategories' | translate"
       />
     </div>
 
-    <button class="btn-secondary" (click)="clearFilters()">Filter zurücksetzen</button>
+    <button class="btn-secondary" (click)="clearFilters()">{{ 'common.actions.resetFilters' | translate }}</button>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <ui-loading-state message="Lade Fahrzeuge..."></ui-loading-state>
+    <ui-loading-state [message]="'vehicles.loading' | translate"></ui-loading-state>
   }
 
   <!-- Error State -->
@@ -89,13 +89,13 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Kennzeichen</th>
-            <th>Fahrzeug</th>
-            <th>Kategorie</th>
-            <th>Standort</th>
-            <th>Tagespreis</th>
-            <th>Status</th>
-            <th>Aktionen</th>
+            <th>{{ 'vehicles.table.licensePlate' | translate }}</th>
+            <th>{{ 'vehicles.table.vehicle' | translate }}</th>
+            <th>{{ 'vehicles.table.category' | translate }}</th>
+            <th>{{ 'vehicles.table.location' | translate }}</th>
+            <th>{{ 'vehicles.table.dailyRate' | translate }}</th>
+            <th>{{ 'vehicles.table.status' | translate }}</th>
+            <th>{{ 'common.labels.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -117,8 +117,8 @@
                 <button
                   class="btn-icon"
                   (click)="viewDetails(vehicle)"
-                  title="Details anzeigen"
-                  aria-label="Fahrzeugdetails anzeigen"
+                  [title]="'common.actions.viewDetails' | translate"
+                  [attr.aria-label]="'vehicles.ariaLabels.viewDetails' | translate"
                 >
                   <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
@@ -134,10 +134,10 @@
   @if (!loading() && !error() && vehicles().length === 0) {
     <ui-empty-state
       icon="car"
-      title="Keine Fahrzeuge gefunden"
-      description="Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen."
+      [title]="'vehicles.noResults.title' | translate"
+      [description]="'vehicles.noResults.description' | translate"
       [showAction]="true"
-      actionLabel="Filter zurücksetzen"
+      [actionLabel]="'common.actions.resetFilters' | translate"
       (action)="clearFilters()"
     ></ui-empty-state>
   }
@@ -146,7 +146,7 @@
 <!-- Vehicle Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedVehicle()"
-  title="Fahrzeugdetails"
+  [title]="'vehicles.details.title' | translate"
   size="lg"
   (close)="closeDetails()"
 >
@@ -154,38 +154,38 @@
     @if (selectedVehicle()) {
       <!-- Vehicle Information -->
       <div class="info-section">
-        <h3>Fahrzeuginformationen</h3>
+        <h3>{{ 'vehicles.details.info' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <label>Fahrzeug-ID</label>
+            <label>{{ 'vehicles.details.vehicleId' | translate }}</label>
             <p>
               <span class="id-badge">{{ selectedVehicle()!.id }}</span>
             </p>
           </div>
           <div class="detail-item">
-            <label>Kennzeichen</label>
+            <label>{{ 'vehicles.table.licensePlate' | translate }}</label>
             <p>
               @if (selectedVehicle()!.licensePlate) {
                 <span class="license-plate">{{ selectedVehicle()!.licensePlate }}</span>
               } @else {
-                <span class="text-muted">Nicht zugewiesen</span>
+                <span class="text-muted">{{ 'vehicles.details.notAssigned' | translate }}</span>
               }
             </p>
           </div>
           <div class="detail-item">
-            <label>Hersteller & Modell</label>
+            <label>{{ 'vehicles.details.manufacturerModel' | translate }}</label>
             <p>{{ selectedVehicle()!.manufacturer }} {{ selectedVehicle()!.model }}</p>
           </div>
           <div class="detail-item">
-            <label>Baujahr</label>
+            <label>{{ 'vehicles.details.year' | translate }}</label>
             <p>{{ selectedVehicle()!.year }}</p>
           </div>
           <div class="detail-item">
-            <label>Kategorie</label>
+            <label>{{ 'vehicles.table.category' | translate }}</label>
             <p>{{ selectedVehicle()!.categoryCode }} - {{ selectedVehicle()!.categoryName }}</p>
           </div>
           <div class="detail-item">
-            <label>Status</label>
+            <label>{{ 'vehicles.table.status' | translate }}</label>
             <p>
               <ui-status-badge
                 type="vehicle"
@@ -198,26 +198,26 @@
 
       <!-- Location & Pricing -->
       <div class="info-section">
-        <h3>Standort & Preise</h3>
+        <h3>{{ 'vehicles.details.locationPricing' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <label>Standort</label>
+            <label>{{ 'vehicles.table.location' | translate }}</label>
             <p>{{ selectedVehicle()!.locationCode }} - {{ selectedVehicle()!.city }}</p>
           </div>
           <div class="detail-item">
-            <label>Tagespreis (Netto)</label>
+            <label>{{ 'vehicles.details.dailyRateNet' | translate }}</label>
             <p>
               {{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}
             </p>
           </div>
           <div class="detail-item">
-            <label>MwSt (19%)</label>
+            <label>{{ 'vehicles.details.vat' | translate }}</label>
             <p>
               {{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}
             </p>
           </div>
           <div class="detail-item">
-            <label>Tagespreis (Brutto)</label>
+            <label>{{ 'vehicles.details.dailyRateGross' | translate }}</label>
             <p>
               <strong
                 >{{ selectedVehicle()!.dailyRateGross.toFixed(2) }}
@@ -230,20 +230,20 @@
 
       <!-- Features -->
       <div class="info-section">
-        <h3>Ausstattung</h3>
+        <h3>{{ 'vehicles.details.features' | translate }}</h3>
         <div class="detail-grid">
           <div class="detail-item">
-            <label>Getriebe</label>
+            <label>{{ 'vehicles.details.transmission' | translate }}</label>
             <p>
-              {{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}
+              {{ selectedVehicle()!.transmissionType === 'Automatic' ? ('vehicles.transmission.automatic' | translate) : ('vehicles.transmission.manual' | translate) }}
             </p>
           </div>
           <div class="detail-item">
-            <label>Kraftstoff</label>
+            <label>{{ 'vehicles.details.fuelType' | translate }}</label>
             <p>{{ selectedVehicle()!.fuelType }}</p>
           </div>
           <div class="detail-item">
-            <label>Sitzplätze</label>
+            <label>{{ 'vehicles.details.seats' | translate }}</label>
             <p>{{ selectedVehicle()!.seats }}</p>
           </div>
         </div>
@@ -251,6 +251,6 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
   </ng-container>
 </ui-modal>

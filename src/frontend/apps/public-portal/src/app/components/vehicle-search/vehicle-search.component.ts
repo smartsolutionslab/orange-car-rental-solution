@@ -3,6 +3,7 @@ import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 import type {
   VehicleSearchQuery,
   FuelType,
@@ -37,6 +38,7 @@ import {
   imports: [
     ReactiveFormsModule,
     CommonModule,
+    TranslateModule,
     SelectLocationComponent,
     SelectCategoryComponent,
     SelectFuelTypeComponent,

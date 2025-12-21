@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { KeycloakService } from 'keycloak-angular';
 import { App } from './app';
 import { AuthService } from './services/auth.service';
@@ -28,7 +29,7 @@ describe('App', () => {
     authServiceSpy.getUsername.and.returnValue('');
 
     await TestBed.configureTestingModule({
-      imports: [App],
+      imports: [App, TranslateModule.forRoot()],
       providers: [
         provideRouter([]),
         { provide: KeycloakService, useValue: keycloakServiceSpy },

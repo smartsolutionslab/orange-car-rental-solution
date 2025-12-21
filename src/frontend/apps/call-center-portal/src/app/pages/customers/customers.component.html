@@ -1,29 +1,29 @@
 <div class="page-header">
-  <h1>Kundenverwaltung</h1>
-  <p class="subtitle">Suchen und verwalten Sie Kundeninformationen</p>
+  <h1>{{ 'customers.title' | translate }}</h1>
+  <p class="subtitle">{{ 'customers.subtitle' | translate }}</p>
 </div>
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Kundensuche</h2>
+    <h2>{{ 'customers.search.title' | translate }}</h2>
   </div>
 
   <!-- Search Form -->
   <div class="search-section">
     <div class="search-grid">
       <div class="search-field">
-        <label for="searchEmail">E-Mail</label>
+        <label for="searchEmail">{{ 'customers.search.email' | translate }}</label>
         <input
           type="email"
           id="searchEmail"
           [(ngModel)]="searchEmail"
-          placeholder="kunde@beispiel.de"
+          [placeholder]="'common.placeholders.email' | translate"
           (keyup.enter)="searchCustomers()"
         />
       </div>
 
       <div class="search-field">
-        <label for="searchPhone">Telefonnummer</label>
+        <label for="searchPhone">{{ 'customers.search.phone' | translate }}</label>
         <input
           type="tel"
           id="searchPhone"
@@ -34,12 +34,12 @@
       </div>
 
       <div class="search-field">
-        <label for="searchLastName">Nachname</label>
+        <label for="searchLastName">{{ 'customers.search.lastName' | translate }}</label>
         <input
           type="text"
           id="searchLastName"
           [(ngModel)]="searchLastName"
-          placeholder="Mustermann"
+          [placeholder]="'common.placeholders.lastName' | translate"
           (keyup.enter)="searchCustomers()"
         />
       </div>
@@ -48,10 +48,10 @@
     <div class="search-actions">
       <button class="btn-primary" (click)="searchCustomers()" [disabled]="loading()">
         <lib-icon name="search-filled" variant="filled" size="sm" aria-hidden="true" />
-        Suchen
+        {{ 'customers.search.button' | translate }}
       </button>
       <button class="btn-secondary" (click)="clearSearch()" [disabled]="loading()">
-        Zurücksetzen
+        {{ 'common.actions.reset' | translate }}
       </button>
     </div>
 
@@ -62,27 +62,27 @@
 
   <!-- Loading State -->
   @if (loading()) {
-    <ui-loading-state message="Suche nach Kunden..."></ui-loading-state>
+    <ui-loading-state [message]="'customers.search.searching' | translate"></ui-loading-state>
   }
 
   <!-- Search Results -->
   @if (!loading() && searchPerformed() && customers().length > 0) {
     <div class="results-header">
-      <h3>Suchergebnisse</h3>
-      <span class="results-count">{{ totalCustomers() }} Kunde(n) gefunden</span>
+      <h3>{{ 'customers.results.title' | translate }}</h3>
+      <span class="results-count">{{ 'customers.results.found' | translate:{ count: totalCustomers() } }}</span>
     </div>
 
     <div class="table-container">
       <table class="data-table">
         <thead>
           <tr>
-            <th scope="col">Name</th>
-            <th scope="col">E-Mail</th>
-            <th scope="col">Telefon</th>
-            <th scope="col">Geburtsdatum</th>
-            <th scope="col">Stadt</th>
-            <th scope="col">Registriert</th>
-            <th scope="col">Aktionen</th>
+            <th scope="col">{{ 'customers.table.name' | translate }}</th>
+            <th scope="col">{{ 'customers.table.email' | translate }}</th>
+            <th scope="col">{{ 'customers.table.phone' | translate }}</th>
+            <th scope="col">{{ 'customers.table.dateOfBirth' | translate }}</th>
+            <th scope="col">{{ 'customers.table.city' | translate }}</th>
+            <th scope="col">{{ 'customers.table.registered' | translate }}</th>
+            <th scope="col">{{ 'customers.table.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -98,8 +98,8 @@
                 <button
                   class="btn-icon"
                   (click)="viewDetails(customer)"
-                  title="Details anzeigen"
-                  aria-label="Kundendetails anzeigen"
+                  [title]="'common.actions.viewDetails' | translate"
+                  [attr.aria-label]="'common.actions.viewDetails' | translate"
                 >
                   <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
@@ -115,8 +115,8 @@
   @if (!loading() && searchPerformed() && customers().length === 0) {
     <ui-empty-state
       icon="search"
-      title="Keine Kunden gefunden"
-      description="Versuchen Sie es mit anderen Suchkriterien."
+      [title]="'customers.results.noResults' | translate"
+      [description]="'customers.search.minCriteria' | translate"
     ></ui-empty-state>
   }
 
@@ -124,8 +124,8 @@
   @if (!loading() && !searchPerformed()) {
     <ui-empty-state
       icon="search"
-      title="Kundensuche"
-      description="Geben Sie mindestens ein Suchkriterium ein, um Kunden zu finden."
+      [title]="'customers.search.title' | translate"
+      [description]="'customers.search.minCriteria' | translate"
     ></ui-empty-state>
   }
 </div>
@@ -133,7 +133,7 @@
 <!-- Customer Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedCustomer()"
-  [title]="editMode() ? 'Kunde bearbeiten' : 'Kundendetails'"
+  [title]="editMode() ? ('customers.edit.title' | translate) : ('customers.details.title' | translate)"
   size="lg"
   (close)="closeDetails()"
 >
@@ -145,30 +145,30 @@
       }
       <!-- Customer Information -->
       <div class="info-section">
-        <h3>Persönliche Informationen</h3>
+        <h3>{{ 'customers.details.personalInfo' | translate }}</h3>
 
         @if (!editMode()) {
           <div class="detail-grid">
             <div class="detail-item">
-              <label>Kunden-ID</label>
+              <label>{{ 'customers.details.customerId' | translate }}</label>
               <p>
                 <span class="id-badge">{{ selectedCustomer()!.id }}</span>
               </p>
             </div>
             <div class="detail-item">
-              <label>Name</label>
+              <label>{{ 'customers.table.name' | translate }}</label>
               <p>{{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
             </div>
             <div class="detail-item">
-              <label>E-Mail</label>
+              <label>{{ 'common.labels.email' | translate }}</label>
               <p>{{ selectedCustomer()!.email }}</p>
             </div>
             <div class="detail-item">
-              <label>Telefon</label>
+              <label>{{ 'common.labels.phone' | translate }}</label>
               <p>{{ selectedCustomer()!.phoneNumber }}</p>
             </div>
             <div class="detail-item">
-              <label>Geburtsdatum</label>
+              <label>{{ 'common.labels.dateOfBirth' | translate }}</label>
               <p>
                 {{ formatDate(selectedCustomer()!.dateOfBirth) }} ({{
                   calculateAge(selectedCustomer()!.dateOfBirth)
@@ -177,14 +177,14 @@
               </p>
             </div>
             <div class="detail-item">
-              <label>Registriert seit</label>
+              <label>{{ 'common.labels.registered' | translate }}</label>
               <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
             </div>
           </div>
         } @else {
           <div class="form-grid">
             <div class="form-field">
-              <label for="editFirstName">Vorname *</label>
+              <label for="editFirstName">{{ 'common.labels.firstName' | translate }} *</label>
               <input
                 type="text"
                 id="editFirstName"
@@ -194,7 +194,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLastName">Nachname *</label>
+              <label for="editLastName">{{ 'common.labels.lastName' | translate }} *</label>
               <input
                 type="text"
                 id="editLastName"
@@ -204,7 +204,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editEmail">E-Mail *</label>
+              <label for="editEmail">{{ 'common.labels.email' | translate }} *</label>
               <input
                 type="email"
                 id="editEmail"
@@ -214,7 +214,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editPhone">Telefon *</label>
+              <label for="editPhone">{{ 'common.labels.phone' | translate }} *</label>
               <input
                 type="tel"
                 id="editPhone"
@@ -224,7 +224,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editDateOfBirth">Geburtsdatum *</label>
+              <label for="editDateOfBirth">{{ 'common.labels.dateOfBirth' | translate }} *</label>
               <input
                 type="date"
                 id="editDateOfBirth"
@@ -239,31 +239,31 @@
 
       <!-- Address Information -->
       <div class="info-section">
-        <h3>Adresse</h3>
+        <h3>{{ 'customers.details.address' | translate }}</h3>
 
         @if (!editMode()) {
           <div class="detail-grid">
             <div class="detail-item">
-              <label>Straße</label>
+              <label>{{ 'common.labels.street' | translate }}</label>
               <p>{{ selectedCustomer()!.street }}</p>
             </div>
             <div class="detail-item">
-              <label>Stadt</label>
+              <label>{{ 'common.labels.city' | translate }}</label>
               <p>{{ selectedCustomer()!.city }}</p>
             </div>
             <div class="detail-item">
-              <label>Postleitzahl</label>
+              <label>{{ 'common.labels.postalCode' | translate }}</label>
               <p>{{ selectedCustomer()!.postalCode }}</p>
             </div>
             <div class="detail-item">
-              <label>Land</label>
+              <label>{{ 'common.labels.country' | translate }}</label>
               <p>{{ selectedCustomer()!.country }}</p>
             </div>
           </div>
         } @else {
           <div class="form-grid">
             <div class="form-field">
-              <label for="editStreet">Straße</label>
+              <label for="editStreet">{{ 'common.labels.street' | translate }}</label>
               <input
                 type="text"
                 id="editStreet"
@@ -272,7 +272,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editCity">Stadt</label>
+              <label for="editCity">{{ 'common.labels.city' | translate }}</label>
               <input
                 type="text"
                 id="editCity"
@@ -281,7 +281,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editPostalCode">Postleitzahl</label>
+              <label for="editPostalCode">{{ 'common.labels.postalCode' | translate }}</label>
               <input
                 type="text"
                 id="editPostalCode"
@@ -290,7 +290,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editCountry">Land</label>
+              <label for="editCountry">{{ 'common.labels.country' | translate }}</label>
               <input
                 type="text"
                 id="editCountry"
@@ -304,31 +304,31 @@
 
       <!-- Driver's License Information -->
       <div class="info-section">
-        <h3>Führerschein</h3>
+        <h3>{{ 'customers.details.license.title' | translate }}</h3>
 
         @if (!editMode()) {
           <div class="detail-grid">
             <div class="detail-item">
-              <label>Führerscheinnummer</label>
+              <label>{{ 'customers.details.license.number' | translate }}</label>
               <p>{{ selectedCustomer()!.licenseNumber }}</p>
             </div>
             <div class="detail-item">
-              <label>Ausstellungsland</label>
+              <label>{{ 'customers.details.license.issueCountry' | translate }}</label>
               <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
             </div>
             <div class="detail-item">
-              <label>Ausstellungsdatum</label>
+              <label>{{ 'customers.details.license.issueDate' | translate }}</label>
               <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
             </div>
             <div class="detail-item">
-              <label>Ablaufdatum</label>
+              <label>{{ 'customers.details.license.expiryDate' | translate }}</label>
               <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
             </div>
           </div>
         } @else {
           <div class="form-grid">
             <div class="form-field">
-              <label for="editLicenseNumber">Führerscheinnummer *</label>
+              <label for="editLicenseNumber">{{ 'customers.details.license.number' | translate }} *</label>
               <input
                 type="text"
                 id="editLicenseNumber"
@@ -338,7 +338,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseCountry">Ausstellungsland</label>
+              <label for="editLicenseCountry">{{ 'customers.details.license.issueCountry' | translate }}</label>
               <input
                 type="text"
                 id="editLicenseCountry"
@@ -347,7 +347,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseIssueDate">Ausstellungsdatum</label>
+              <label for="editLicenseIssueDate">{{ 'customers.details.license.issueDate' | translate }}</label>
               <input
                 type="date"
                 id="editLicenseIssueDate"
@@ -356,7 +356,7 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseExpiryDate">Ablaufdatum</label>
+              <label for="editLicenseExpiryDate">{{ 'customers.details.license.expiryDate' | translate }}</label>
               <input
                 type="date"
                 id="editLicenseExpiryDate"
@@ -370,10 +370,10 @@
 
       <!-- Customer Reservations -->
       <div class="info-section">
-        <h3>Reservierungen ({{ customerReservations().length }})</h3>
+        <h3>{{ 'customers.details.reservations.title' | translate }} ({{ customerReservations().length }})</h3>
 
         @if (loadingReservations()) {
-          <ui-loading-state size="sm" message="Lade Reservierungen..."></ui-loading-state>
+          <ui-loading-state size="sm" [message]="'customers.details.reservations.loading' | translate"></ui-loading-state>
         }
 
         @if (!loadingReservations() && customerReservations().length > 0) {
@@ -389,22 +389,22 @@
                 </div>
                 <div class="reservation-details">
                   <div class="reservation-row">
-                    <span class="label">Zeitraum:</span>
+                    <span class="label">{{ 'customers.details.reservations.period' | translate }}:</span>
                     <span
                       >{{ formatDate(reservation.pickupDate) }} -
                       {{ formatDate(reservation.returnDate) }}</span
                     >
                   </div>
                   <div class="reservation-row">
-                    <span class="label">Dauer:</span>
-                    <span>{{ reservation.rentalDays }} Tag(e)</span>
+                    <span class="label">{{ 'customers.details.reservations.duration' | translate }}:</span>
+                    <span>{{ reservation.rentalDays }} {{ 'customers.details.reservations.days' | translate }}</span>
                   </div>
                   <div class="reservation-row">
-                    <span class="label">Abholort:</span>
+                    <span class="label">{{ 'customers.details.reservations.pickupLocation' | translate }}:</span>
                     <span>{{ reservation.pickupLocationCode }}</span>
                   </div>
                   <div class="reservation-row">
-                    <span class="label">Preis:</span>
+                    <span class="label">{{ 'customers.details.reservations.price' | translate }}:</span>
                     <span
                       ><strong
                         >{{ reservation.totalPriceGross.toFixed(2) }}
@@ -419,25 +419,25 @@
         }
 
         @if (!loadingReservations() && customerReservations().length === 0) {
-          <p class="no-data">Keine Reservierungen gefunden</p>
+          <p class="no-data">{{ 'customers.details.reservations.noResults' | translate }}</p>
         }
       </div>
     }
   </ng-container>
   <ng-container modal-footer>
     @if (!editMode()) {
-      <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+      <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
       <button class="btn-primary" (click)="enterEditMode()">
         <lib-icon name="pencil-filled" variant="filled" size="sm" aria-hidden="true" />
-        Bearbeiten
+        {{ 'common.actions.edit' | translate }}
       </button>
     } @else {
-      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">Abbrechen</button>
+      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">{{ 'common.actions.cancel' | translate }}</button>
       <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
         @if (saving()) {
           <span class="loading-spinner-small"></span>
         }
-        Speichern
+        {{ 'common.actions.save' | translate }}
       </button>
     }
   </ng-container>

@@ -1,13 +1,13 @@
 <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="vehicle-search-form">
   <!-- Date Range Section -->
   <div class="search-section">
-    <h3 class="section-title">Mietdauer</h3>
+    <h3 class="section-title">{{ 'vehicles.search.rentalPeriod' | translate }}</h3>
     <div class="date-range-group">
       <!-- Pickup Date & Time -->
       <div class="date-time-group">
         <label for="pickupDate" class="form-label">
           <lib-icon name="calendar-filled" variant="filled" size="sm" class="label-icon" />
-          Abholung
+          {{ 'vehicles.search.pickup' | translate }}
         </label>
         <div class="date-time-inputs">
           <input
@@ -31,7 +31,7 @@
       <div class="date-time-group">
         <label for="returnDate" class="form-label">
           <lib-icon name="calendar-filled" variant="filled" size="sm" class="label-icon" />
-          Rückgabe
+          {{ 'vehicles.search.return' | translate }}
         </label>
         <div class="date-time-inputs">
           <input
@@ -55,18 +55,18 @@
 
   <!-- Vehicle Filters Section -->
   <div class="search-section">
-    <h3 class="section-title">Fahrzeugfilter</h3>
+    <h3 class="section-title">{{ 'vehicles.search.filters' | translate }}</h3>
     <div class="filters-grid">
       <!-- Location -->
       <div class="filter-group">
         <label for="location" class="form-label">
           <lib-icon name="location-marker-filled" variant="filled" size="sm" class="label-icon" />
-          Standort
+          {{ 'vehicles.search.location' | translate }}
         </label>
         <ui-select-location
           id="location"
           formControlName="locationCode"
-          placeholder="Alle Standorte"
+          [placeholder]="'vehicles.search.allLocations' | translate"
           cssClass="form-input"
         />
       </div>
@@ -75,12 +75,12 @@
       <div class="filter-group">
         <label for="category" class="form-label">
           <lib-icon name="car-filled" variant="filled" size="sm" class="label-icon" />
-          Fahrzeugklasse
+          {{ 'vehicles.search.category' | translate }}
         </label>
         <ui-select-category
           id="category"
           formControlName="categoryCode"
-          placeholder="Alle Klassen"
+          [placeholder]="'vehicles.search.allCategories' | translate"
           cssClass="form-input"
         />
       </div>
@@ -89,12 +89,12 @@
       <div class="filter-group">
         <label for="fuel" class="form-label">
           <lib-icon name="fuel" variant="filled" size="sm" class="label-icon" />
-          Kraftstoffart
+          {{ 'vehicles.search.fuelType' | translate }}
         </label>
         <ui-select-fuel-type
           id="fuel"
           formControlName="fuelType"
-          placeholder="Alle"
+          [placeholder]="'vehicles.search.allFuelTypes' | translate"
           cssClass="form-input"
         />
       </div>
@@ -103,12 +103,12 @@
       <div class="filter-group">
         <label for="transmission" class="form-label">
           <lib-icon name="transmission" variant="filled" size="sm" class="label-icon" />
-          Getriebe
+          {{ 'vehicles.search.transmission' | translate }}
         </label>
         <ui-select-transmission
           id="transmission"
           formControlName="transmissionType"
-          placeholder="Alle"
+          [placeholder]="'vehicles.search.allTransmissions' | translate"
           cssClass="form-input"
         />
       </div>
@@ -117,12 +117,12 @@
       <div class="filter-group">
         <label for="minSeats" class="form-label">
           <lib-icon name="seats" variant="filled" size="sm" class="label-icon" />
-          Min. Sitze
+          {{ 'vehicles.search.minSeats' | translate }}
         </label>
         <ui-select-seats
           id="minSeats"
           formControlName="minSeats"
-          placeholder="Alle"
+          [placeholder]="'common.labels.all' | translate"
           cssClass="form-input"
         />
       </div>
@@ -133,11 +133,11 @@
   <div class="action-buttons">
     <button type="submit" class="btn btn-primary" [disabled]="searchForm.invalid">
       <lib-icon name="search-filled" variant="filled" size="sm" class="btn-icon" />
-      Verfügbare Fahrzeuge suchen
+      {{ 'vehicles.search.searchButton' | translate }}
     </button>
     <button type="button" class="btn btn-secondary" (click)="onReset()">
       <lib-icon name="refresh-filled" variant="filled" size="sm" class="btn-icon" />
-      Zurücksetzen
+      {{ 'common.actions.reset' | translate }}
     </button>
   </div>
 </form>

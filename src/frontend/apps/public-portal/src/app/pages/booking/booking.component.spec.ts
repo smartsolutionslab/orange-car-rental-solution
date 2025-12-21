@@ -3,6 +3,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError, Observable } from 'rxjs';
 import { provideHttpClient } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
@@ -11,10 +12,42 @@ import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { CustomerService } from '../../services/customer.service';
-import type { Vehicle } from '@orange-car-rental/vehicle-api';
-import type { GuestReservationResponse, CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  Vehicle,
+  VehicleId,
+  VehicleName,
+  CategoryCode,
+  CategoryName,
+  SeatingCapacity,
+  DailyRate,
+  FuelType,
+  TransmissionType,
+  VehicleStatus,
+  LicensePlate,
+  Manufacturer,
+  VehicleModel,
+  ManufacturingYear,
+} from '@orange-car-rental/vehicle-api';
+import type { LocationCode, CityName, StreetAddress } from '@orange-car-rental/location-api';
+import type {
+  GuestReservationResponse,
+  CustomerId,
+  ReservationId,
+  LicenseNumber,
+} from '@orange-car-rental/reservation-api';
 import type { CustomerProfile } from '@orange-car-rental/customer-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
+import type {
+  Price,
+  Currency,
+  ISODateString,
+  EmailAddress,
+  PhoneNumber,
+  FirstName,
+  LastName,
+  PostalCode,
+  CountryCode,
+} from '@orange-car-rental/shared';
 
 describe('BookingComponent', () => {
   let component: BookingComponent;
@@ -27,54 +60,54 @@ describe('BookingComponent', () => {
   let activatedRoute: { queryParams: Observable<Record<string, string>> };
 
   const mockVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'VW Golf',
-    categoryCode: 'MITTEL',
-    categoryName: 'Mittelklasse',
-    locationCode: 'BER-HBF',
-    city: 'Berlin',
-    dailyRateNet: 50.0,
-    dailyRateVat: 9.5,
-    dailyRateGross: 59.5,
-    currency: 'EUR',
-    seats: 5,
-    fuelType: 'Petrol',
-    transmissionType: 'Manual',
-    status: 'Available',
-    licensePlate: 'B-AB 1234',
-    manufacturer: 'Volkswagen',
-    model: 'Golf 8',
-    year: 2023,
+    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
+    name: 'VW Golf' as VehicleName,
+    categoryCode: 'MITTEL' as CategoryCode,
+    categoryName: 'Mittelklasse' as CategoryName,
+    locationCode: 'BER-HBF' as LocationCode,
+    city: 'Berlin' as CityName,
+    dailyRateNet: 50.0 as DailyRate,
+    dailyRateVat: 9.5 as DailyRate,
+    dailyRateGross: 59.5 as DailyRate,
+    currency: 'EUR' as Currency,
+    seats: 5 as SeatingCapacity,
+    fuelType: 'Petrol' as FuelType,
+    transmissionType: 'Manual' as TransmissionType,
+    status: 'Available' as VehicleStatus,
+    licensePlate: 'B-AB 1234' as LicensePlate,
+    manufacturer: 'Volkswagen' as Manufacturer,
+    model: 'Golf 8' as VehicleModel,
+    year: 2023 as ManufacturingYear,
     imageUrl: null,
   };
 
   const mockReservationResponse: GuestReservationResponse = {
-    reservationId: '987e6543-e89b-12d3-a456-426614174000',
+    reservationId: '987e6543-e89b-12d3-a456-426614174000' as ReservationId,
     customerId: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    totalPriceNet: 250.0,
-    totalPriceVat: 47.5,
-    totalPriceGross: 297.5,
-    currency: 'EUR',
+    totalPriceNet: 250.0 as Price,
+    totalPriceVat: 47.5 as Price,
+    totalPriceGross: 297.5 as Price,
+    currency: 'EUR' as Currency,
   };
 
   const mockCustomerProfile: CustomerProfile = {
     id: '111e2222-e89b-12d3-a456-426614174000' as CustomerId,
-    firstName: 'Max',
-    lastName: 'Mustermann',
-    email: 'max.mustermann@example.com',
-    phoneNumber: '+49 123 456789',
-    dateOfBirth: '1990-01-15',
+    firstName: 'Max' as FirstName,
+    lastName: 'Mustermann' as LastName,
+    email: 'max.mustermann@example.com' as EmailAddress,
+    phoneNumber: '+49 123 456789' as PhoneNumber,
+    dateOfBirth: '1990-01-15' as ISODateString,
     address: {
-      street: 'Musterstraße 123',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Deutschland',
+      street: 'Musterstraße 123' as StreetAddress,
+      city: 'Berlin' as CityName,
+      postalCode: '10115' as PostalCode,
+      country: 'Deutschland' as CountryCode,
     },
     driversLicense: {
-      licenseNumber: 'B12345678',
-      licenseIssueCountry: 'Deutschland',
-      licenseIssueDate: '2015-03-01',
-      licenseExpiryDate: '2035-03-01',
+      licenseNumber: 'B12345678' as LicenseNumber,
+      licenseIssueCountry: 'Deutschland' as CountryCode,
+      licenseIssueDate: '2015-03-01' as ISODateString,
+      licenseExpiryDate: '2035-03-01' as ISODateString,
     },
   };
 
@@ -95,7 +128,7 @@ describe('BookingComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [BookingComponent, ReactiveFormsModule],
+      imports: [BookingComponent, ReactiveFormsModule, TranslateModule.forRoot()],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
@@ -146,7 +179,7 @@ describe('BookingComponent', () => {
     fixture.detectChanges();
 
     expect(vehicleService.getVehicleById).toHaveBeenCalledWith(
-      '123e4567-e89b-12d3-a456-426614174000',
+      '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
     );
   });
 
@@ -585,7 +618,7 @@ describe('BookingComponent', () => {
     });
 
     it('should update customerProfile signal after successful profile update', fakeAsync(() => {
-      const updatedProfile = { ...mockCustomerProfile, firstName: 'Updated' };
+      const updatedProfile = { ...mockCustomerProfile, firstName: 'Updated' as FirstName };
       customerService.updateMyProfile.and.returnValue(of(updatedProfile));
 
       component['bookingForm'].patchValue({
@@ -603,7 +636,7 @@ describe('BookingComponent', () => {
       tick(100);
 
       // After booking completes, profile should be updated
-      expect(component['customerProfile']()?.firstName).toBe('Updated');
+      expect(component['customerProfile']()?.firstName).toBe('Updated' as FirstName);
     }));
   });
 });

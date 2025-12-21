@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers } from '@orange-car-rental/shared';
@@ -16,21 +17,27 @@ import { ErrorAlertComponent, IconComponent } from '@orange-car-rental/ui-compon
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, ErrorAlertComponent, IconComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule, ErrorAlertComponent, IconComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  private readonly fb = inject(FormBuilder);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly translate = inject(TranslateService);
+
   loginForm: FormGroup;
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   showPassword = signal(false);
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
-  ) {
+  /** Signal to track if email field has been touched */
+  private readonly emailTouched = signal(false);
+  /** Signal to track if password field has been touched */
+  private readonly passwordTouched = signal(false);
+
+  constructor() {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(8)]],
@@ -41,6 +48,8 @@ export class LoginComponent {
   async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
       FormHelpers.markAllTouched(this.loginForm);
+      this.emailTouched.set(true);
+      this.passwordTouched.set(true);
       return;
     }
 
@@ -62,13 +71,13 @@ export class LoginComponent {
       // Handle specific error cases
       const httpError = error as { status?: number; message?: string };
       if (httpError.status === 401) {
-        this.errorMessage.set('Ungültige E-Mail-Adresse oder Passwort');
+        this.errorMessage.set(this.translate.instant('auth.errors.invalidCredentials'));
       } else if (httpError.status === 403) {
-        this.errorMessage.set('Ihr Konto wurde gesperrt. Bitte kontaktieren Sie den Support.');
+        this.errorMessage.set(this.translate.instant('auth.errors.accountLocked'));
       } else if (httpError.message?.includes('Network')) {
-        this.errorMessage.set('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
+        this.errorMessage.set(this.translate.instant('auth.errors.networkError'));
       } else {
-        this.errorMessage.set('Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.');
+        this.errorMessage.set(this.translate.instant('auth.errors.loginFailed'));
       }
     } finally {
       this.isLoading.set(false);
@@ -94,23 +103,31 @@ export class LoginComponent {
     return this.loginForm.get('password');
   }
 
-  get emailError(): string | null {
-    if (this.email?.hasError('required') && this.email?.touched) {
-      return 'E-Mail-Adresse ist erforderlich';
+  /** Computed signal for email validation error */
+  readonly emailError = computed(() => {
+    // Access signal to create reactivity
+    this.emailTouched();
+    const email = this.email;
+    if (email?.hasError('required') && email?.touched) {
+      return this.translate.instant('auth.validation.emailRequired');
     }
-    if (this.email?.hasError('email') && this.email?.touched) {
-      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+    if (email?.hasError('email') && email?.touched) {
+      return this.translate.instant('auth.validation.emailInvalid');
     }
     return null;
-  }
+  });
 
-  get passwordError(): string | null {
-    if (this.password?.hasError('required') && this.password?.touched) {
-      return 'Passwort ist erforderlich';
+  /** Computed signal for password validation error */
+  readonly passwordError = computed(() => {
+    // Access signal to create reactivity
+    this.passwordTouched();
+    const password = this.password;
+    if (password?.hasError('required') && password?.touched) {
+      return this.translate.instant('auth.validation.passwordRequired');
     }
-    if (this.password?.hasError('minlength') && this.password?.touched) {
-      return 'Passwort muss mindestens 8 Zeichen lang sein';
+    if (password?.hasError('minlength') && password?.touched) {
+      return this.translate.instant('auth.validation.passwordMinLength');
     }
     return null;
-  }
+  });
 }

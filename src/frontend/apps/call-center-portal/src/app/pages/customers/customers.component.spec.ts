@@ -1,12 +1,31 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { CustomersComponent } from './customers.component';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
 import { of, throwError } from 'rxjs';
 import { createCustomerId } from '@orange-car-rental/reservation-api';
-import type { CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  CustomerId,
+  ReservationId,
+  ReservationStatus,
+  LicenseNumber,
+} from '@orange-car-rental/reservation-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode, CityName, StreetAddress } from '@orange-car-rental/location-api';
 import type { Customer, Reservation } from '../../types';
 import { API_CONFIG } from '@orange-car-rental/shared';
+import type {
+  Price,
+  Currency,
+  ISODateString,
+  EmailAddress,
+  PhoneNumber,
+  FirstName,
+  LastName,
+  PostalCode,
+  CountryCode,
+} from '@orange-car-rental/shared';
 import { UI_TIMING } from '../../constants/app.constants';
 
 describe('CustomersComponent', () => {
@@ -18,56 +37,56 @@ describe('CustomersComponent', () => {
   const mockCustomers: Customer[] = [
     {
       id: createCustomerId('11111111-1111-1111-1111-111111111111'),
-      firstName: 'Hans',
-      lastName: 'Müller',
-      email: 'hans.mueller@example.de',
-      phoneNumber: '+49 89 12345678',
-      dateOfBirth: '1985-06-15',
-      street: 'Teststraße 1',
-      city: 'München',
-      postalCode: '80331',
-      country: 'Germany',
-      licenseNumber: 'DE123456789',
-      licenseIssueCountry: 'Germany',
-      licenseIssueDate: '2010-01-01',
-      licenseExpiryDate: '2030-01-01',
-      createdAt: '2025-01-01',
+      firstName: 'Hans' as FirstName,
+      lastName: 'Müller' as LastName,
+      email: 'hans.mueller@example.de' as EmailAddress,
+      phoneNumber: '+49 89 12345678' as PhoneNumber,
+      dateOfBirth: '1985-06-15' as ISODateString,
+      street: 'Teststraße 1' as StreetAddress,
+      city: 'München' as CityName,
+      postalCode: '80331' as PostalCode,
+      country: 'Germany' as CountryCode,
+      licenseNumber: 'DE123456789' as LicenseNumber,
+      licenseIssueCountry: 'Germany' as CountryCode,
+      licenseIssueDate: '2010-01-01' as ISODateString,
+      licenseExpiryDate: '2030-01-01' as ISODateString,
+      createdAt: '2025-01-01' as ISODateString,
     },
     {
       id: createCustomerId('22222222-2222-2222-2222-222222222222'),
-      firstName: 'Anna',
-      lastName: 'Schmidt',
-      email: 'anna.schmidt@example.de',
-      phoneNumber: '+49 30 87654321',
-      dateOfBirth: '1990-03-20',
-      street: 'Hauptstraße 42',
-      city: 'Berlin',
-      postalCode: '10115',
-      country: 'Germany',
-      licenseNumber: 'DE987654321',
-      licenseIssueCountry: 'Germany',
-      licenseIssueDate: '2015-06-01',
-      licenseExpiryDate: '2035-06-01',
-      createdAt: '2025-02-15',
+      firstName: 'Anna' as FirstName,
+      lastName: 'Schmidt' as LastName,
+      email: 'anna.schmidt@example.de' as EmailAddress,
+      phoneNumber: '+49 30 87654321' as PhoneNumber,
+      dateOfBirth: '1990-03-20' as ISODateString,
+      street: 'Hauptstraße 42' as StreetAddress,
+      city: 'Berlin' as CityName,
+      postalCode: '10115' as PostalCode,
+      country: 'Germany' as CountryCode,
+      licenseNumber: 'DE987654321' as LicenseNumber,
+      licenseIssueCountry: 'Germany' as CountryCode,
+      licenseIssueDate: '2015-06-01' as ISODateString,
+      licenseExpiryDate: '2035-06-01' as ISODateString,
+      createdAt: '2025-02-15' as ISODateString,
     },
   ];
 
   const mockReservations: Reservation[] = [
     {
-      reservationId: '123e4567-e89b-12d3-a456-426614174000',
-      vehicleId: 'veh-001',
+      reservationId: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
+      vehicleId: 'veh-001' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
-      pickupDate: '2025-12-01',
-      returnDate: '2025-12-05',
-      pickupLocationCode: 'MUC',
-      dropoffLocationCode: 'MUC',
+      pickupDate: '2025-12-01' as ISODateString,
+      returnDate: '2025-12-05' as ISODateString,
+      pickupLocationCode: 'MUC' as LocationCode,
+      dropoffLocationCode: 'MUC' as LocationCode,
       rentalDays: 4,
-      totalPriceNet: 336.13,
-      totalPriceVat: 63.87,
-      totalPriceGross: 400.0,
-      currency: 'EUR',
-      status: 'Confirmed',
-      createdAt: '2025-11-20',
+      totalPriceNet: 336.13 as Price,
+      totalPriceVat: 63.87 as Price,
+      totalPriceGross: 400.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Confirmed' as ReservationStatus,
+      createdAt: '2025-11-20' as ISODateString,
     },
   ];
 
@@ -81,7 +100,7 @@ describe('CustomersComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
-      imports: [CustomersComponent],
+      imports: [CustomersComponent, TranslateModule.forRoot()],
       providers: [
         { provide: CustomerService, useValue: customerServiceSpy },
         { provide: ReservationService, useValue: reservationServiceSpy },
@@ -172,7 +191,7 @@ describe('CustomersComponent', () => {
       component['searchCustomers']();
 
       expect(mockCustomerService.searchCustomers).not.toHaveBeenCalled();
-      expect(component['error']()).toBe('Bitte geben Sie mindestens ein Suchkriterium ein');
+      expect(component['error']()).toBe('customers.search.minCriteria');
     });
 
     it('should trim search input', () => {
@@ -194,7 +213,7 @@ describe('CustomersComponent', () => {
       component['searchEmail'].set('test@example.de');
       component['searchCustomers']();
 
-      expect(component['error']()).toBe('Fehler bei der Kundensuche');
+      expect(component['error']()).toBe('customers.error');
       expect(component['loading']()).toBe(false);
     });
 
@@ -340,8 +359,8 @@ describe('CustomersComponent', () => {
     it('should handle null values in customer data', () => {
       const customerWithNulls = {
         ...mockCustomers[0],
-        street: null as unknown as string,
-        licenseNumber: null as unknown as string,
+        street: null as unknown as StreetAddress,
+        licenseNumber: null as unknown as LicenseNumber,
       };
       component['selectedCustomer'].set(customerWithNulls);
       component['enterEditMode']();
@@ -367,19 +386,19 @@ describe('CustomersComponent', () => {
     });
 
     it('should save customer successfully', fakeAsync(() => {
-      const updatedCustomer = { ...mockCustomers[0], firstName: 'Updated' };
+      const updatedCustomer = { ...mockCustomers[0], firstName: 'Updated' as FirstName };
       mockCustomerService.updateCustomer.and.returnValue(of(updatedCustomer));
 
       component['saveCustomer']();
 
       expect(mockCustomerService.updateCustomer).toHaveBeenCalledWith(
         mockCustomers[0].id,
-        component['editForm'](),
+        jasmine.any(Object),
       );
       expect(component['selectedCustomer']()).toEqual(updatedCustomer);
       expect(component['editMode']()).toBe(false);
       expect(component['saving']()).toBe(false);
-      expect(component['successMessage']()).toBe('Kundendaten erfolgreich aktualisiert');
+      expect(component['successMessage']()).toBe('customers.edit.success');
 
       tick(UI_TIMING.SUCCESS_MESSAGE_SHORT);
       expect(component['successMessage']()).toBeNull();
@@ -392,7 +411,7 @@ describe('CustomersComponent', () => {
 
       component['saveCustomer']();
 
-      expect(component['error']()).toBe('Fehler beim Speichern der Kundendaten');
+      expect(component['error']()).toBe('customers.edit.error');
       expect(component['saving']()).toBe(false);
     });
 

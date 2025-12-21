@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { createCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import {
@@ -18,7 +19,21 @@ import {
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
 import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
-import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
+import type {
+  Customer,
+  UpdateCustomerRequest,
+  CustomerFormValues,
+  Reservation,
+} from '../../types';
+import type {
+  EmailAddress,
+  PhoneNumber,
+  ISODateString,
+  PostalCode,
+  CountryCode,
+} from '@orange-car-rental/shared';
+import type { CityName } from '@orange-car-rental/location-api';
+import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 
 /**
  * Customers management page for call center
@@ -30,6 +45,7 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     ModalComponent,
     LoadingStateComponent,
     EmptyStateComponent,
@@ -44,6 +60,7 @@ import type { Customer, UpdateCustomerRequest, Reservation } from '../../types';
 export class CustomersComponent {
   private readonly customerService = inject(CustomerService);
   private readonly reservationService = inject(ReservationService);
+  private readonly translate = inject(TranslateService);
 
   protected readonly customers = signal<Customer[]>([]);
   protected readonly loading = signal(false);
@@ -56,8 +73,8 @@ export class CustomersComponent {
   protected readonly saving = signal(false);
   protected readonly successMessage = signal<string | null>(null);
 
-  // Edit form data
-  protected readonly editForm = signal<UpdateCustomerRequest>({
+  // Edit form data - uses plain strings for form binding
+  protected readonly editForm = signal<CustomerFormValues>({
     firstName: '',
     lastName: '',
     email: '',
@@ -91,7 +108,7 @@ export class CustomersComponent {
     const lastName = this.searchLastName().trim();
 
     if (!email && !phone && !lastName) {
-      this.error.set('Bitte geben Sie mindestens ein Suchkriterium ein');
+      this.error.set(this.translate.instant('customers.search.minCriteria'));
       return;
     }
 
@@ -100,8 +117,8 @@ export class CustomersComponent {
     this.searchPerformed.set(true);
 
     const query = {
-      ...(email && { email }),
-      ...(phone && { phoneNumber: phone }),
+      ...(email && { email: email as EmailAddress }),
+      ...(phone && { phoneNumber: phone as PhoneNumber }),
       ...(lastName && { lastName }),
       pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS,
     };
@@ -114,7 +131,7 @@ export class CustomersComponent {
       },
       error: (err) => {
         logError('CustomersComponent', 'Error searching customers', err);
-        this.error.set('Fehler bei der Kundensuche');
+        this.error.set(this.translate.instant('customers.error'));
         this.loading.set(false);
       },
     });
@@ -183,7 +200,7 @@ export class CustomersComponent {
   /**
    * Update edit form field
    */
-  protected updateEditForm(field: keyof UpdateCustomerRequest, value: string): void {
+  protected updateEditForm(field: keyof CustomerFormValues, value: string): void {
     this.editForm.update((form) => ({
       ...form,
       [field]: value,
@@ -232,19 +249,37 @@ export class CustomersComponent {
     this.saving.set(true);
     this.error.set(null);
 
-    this.customerService.updateCustomer(customer.id, this.editForm()).subscribe({
+    // Convert form values to UpdateCustomerRequest with type assertions
+    const formValues = this.editForm();
+    const request: UpdateCustomerRequest = {
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email as EmailAddress,
+      phoneNumber: formValues.phoneNumber as PhoneNumber,
+      dateOfBirth: formValues.dateOfBirth as ISODateString,
+      street: formValues.street,
+      city: formValues.city as CityName,
+      postalCode: formValues.postalCode as PostalCode,
+      country: formValues.country as CountryCode,
+      licenseNumber: formValues.licenseNumber as LicenseNumber,
+      licenseIssueCountry: formValues.licenseIssueCountry as CountryCode,
+      licenseIssueDate: formValues.licenseIssueDate as ISODateString,
+      licenseExpiryDate: formValues.licenseExpiryDate as ISODateString,
+    };
+
+    this.customerService.updateCustomer(customer.id, request).subscribe({
       next: (updatedCustomer) => {
         this.selectedCustomer.set(updatedCustomer);
         this.editMode.set(false);
         this.saving.set(false);
-        this.successMessage.set('Kundendaten erfolgreich aktualisiert');
+        this.successMessage.set(this.translate.instant('customers.edit.success'));
         setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
         // Refresh the customer list
         this.searchCustomers();
       },
       error: (err) => {
         logError('CustomersComponent', 'Error updating customer', err);
-        this.error.set('Fehler beim Speichern der Kundendaten');
+        this.error.set(this.translate.instant('customers.edit.error'));
         this.saving.set(false);
       },
     });

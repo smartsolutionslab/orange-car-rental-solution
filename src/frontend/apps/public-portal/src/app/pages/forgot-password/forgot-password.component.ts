@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import {
@@ -28,11 +29,14 @@ import {
     SuccessAlertComponent,
     ErrorAlertComponent,
     IconComponent,
+    TranslateModule,
   ],
   templateUrl: './forgot-password.component.html',
   styleUrl: './forgot-password.component.css',
 })
 export class ForgotPasswordComponent {
+  private readonly translate = inject(TranslateService);
+
   forgotPasswordForm: FormGroup;
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
@@ -64,10 +68,7 @@ export class ForgotPasswordComponent {
       await this.authService.resetPassword(email);
 
       this.emailSent.set(true);
-      this.successMessage.set(
-        `Ein Link zum Zurücksetzen des Passworts wurde an ${email} gesendet. ` +
-          `Bitte überprüfen Sie Ihren Posteingang und folgen Sie den Anweisungen.`,
-      );
+      this.successMessage.set(this.translate.instant('auth.forgotPassword.success', { email }));
 
       // Reset form
       this.forgotPasswordForm.reset();
@@ -78,15 +79,11 @@ export class ForgotPasswordComponent {
       if (httpError.status === 404) {
         // Don't reveal if email exists or not for security
         this.emailSent.set(true);
-        this.successMessage.set(
-          `Wenn ein Konto mit dieser E-Mail-Adresse existiert, wurde ein Link zum Zurücksetzen des Passworts gesendet.`,
-        );
+        this.successMessage.set(this.translate.instant('auth.forgotPassword.successGeneric'));
       } else if (httpError.message?.includes('Network')) {
-        this.errorMessage.set('Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.');
+        this.errorMessage.set(this.translate.instant('errors.network'));
       } else {
-        this.errorMessage.set(
-          'Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
-        );
+        this.errorMessage.set(this.translate.instant('auth.forgotPassword.errors.sendFailed'));
       }
     } finally {
       this.isLoading.set(false);
@@ -99,10 +96,10 @@ export class ForgotPasswordComponent {
 
   get emailError(): string | null {
     if (this.email?.hasError('required') && this.email?.touched) {
-      return 'E-Mail-Adresse ist erforderlich';
+      return this.translate.instant('auth.validation.emailRequired');
     }
     if (this.email?.hasError('email') && this.email?.touched) {
-      return 'Bitte geben Sie eine gültige E-Mail-Adresse ein';
+      return this.translate.instant('auth.validation.emailInvalid');
     }
     return null;
   }

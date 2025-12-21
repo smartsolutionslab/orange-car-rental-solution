@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router, provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -18,7 +19,7 @@ describe('LoginComponent', () => {
     authServiceSpy.getPostLoginRedirect.and.returnValue('/my-bookings');
 
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, ReactiveFormsModule],
+      imports: [LoginComponent, ReactiveFormsModule, TranslateModule.forRoot()],
       providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
@@ -54,8 +55,10 @@ describe('LoginComponent', () => {
       const emailControl = component.loginForm.get('email');
       emailControl?.setValue('invalid-email');
       emailControl?.markAsTouched();
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['emailTouched'].set(true);
       expect(emailControl?.hasError('email')).toBeTruthy();
-      expect(component.emailError).toBe('Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      expect(component.emailError()).toBe('auth.validation.emailInvalid');
     });
 
     it('should accept valid email', () => {
@@ -74,14 +77,18 @@ describe('LoginComponent', () => {
       const emailControl = component.loginForm.get('email');
       emailControl?.setValue('');
       emailControl?.markAsTouched();
-      expect(component.emailError).toBe('E-Mail-Adresse ist erforderlich');
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['emailTouched'].set(true);
+      expect(component.emailError()).toBe('auth.validation.emailRequired');
     });
 
     it('should show password required error when touched', () => {
       const passwordControl = component.loginForm.get('password');
       passwordControl?.setValue('');
       passwordControl?.markAsTouched();
-      expect(component.passwordError).toBe('Passwort ist erforderlich');
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['passwordTouched'].set(true);
+      expect(component.passwordError()).toBe('auth.validation.passwordRequired');
     });
 
     it('should mark form as invalid when fields are empty', () => {
@@ -171,7 +178,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe('Ungültige E-Mail-Adresse oder Passwort');
+      expect(component.errorMessage()).toBe('auth.errors.invalidCredentials');
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -181,7 +188,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toContain('Ihr Konto wurde gesperrt');
+      expect(component.errorMessage()).toBe('auth.errors.accountLocked');
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -191,9 +198,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.',
-      );
+      expect(component.errorMessage()).toBe('auth.errors.networkError');
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -203,9 +208,7 @@ describe('LoginComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.',
-      );
+      expect(component.errorMessage()).toBe('auth.errors.loginFailed');
       expect(component.isLoading()).toBeFalsy();
     });
 

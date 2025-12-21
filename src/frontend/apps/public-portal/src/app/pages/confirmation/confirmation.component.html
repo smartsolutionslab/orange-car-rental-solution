@@ -1,16 +1,16 @@
 <div class="confirmation-container">
   <!-- Loading State -->
   @if (loading()) {
-    <ui-loading-state message="Lade Reservierungsdetails..."></ui-loading-state>
+    <ui-loading-state [message]="'confirmation.loading' | translate"></ui-loading-state>
   }
 
   <!-- Error State -->
   @if (error() && !loading()) {
     <ui-error-state
-      title="Fehler"
+      [title]="'errors.generic' | translate"
       [message]="error()!"
       [showRetry]="true"
-      retryLabel="Zur Startseite"
+      [retryLabel]="'confirmation.homeButton' | translate"
       (retry)="goToHome()"
     ></ui-error-state>
   }
@@ -23,16 +23,16 @@
         <div class="success-icon">
           <lib-icon name="check-filled" variant="filled" size="lg" />
         </div>
-        <h1>Buchung erfolgreich!</h1>
-        <p class="success-subtitle">Ihre Reservierung wurde bestätigt</p>
+        <h1>{{ 'confirmation.title' | translate }}</h1>
+        <p class="success-subtitle">{{ 'confirmation.subtitle' | translate }}</p>
       </div>
 
       <!-- Reservation Details Card -->
       <div class="details-card">
         <div class="card-header">
-          <h2>Reservierungsdetails</h2>
+          <h2>{{ 'confirmation.details' | translate }}</h2>
           <div class="reservation-number">
-            <span class="label">Reservierungsnummer:</span>
+            <span class="label">{{ 'confirmation.reservationNumber' | translate }}:</span>
             <span class="number">{{ reservationId() }}</span>
           </div>
         </div>
@@ -42,22 +42,20 @@
           <div class="detail-section">
             <h3>
               <lib-icon name="clock-filled" variant="filled" size="sm" />
-              Mietzeit raum
+              {{ 'confirmation.rentalPeriod' | translate }}
             </h3>
             <div class="detail-grid">
               <div class="detail-item">
-                <span class="detail-label">Abholung:</span>
+                <span class="detail-label">{{ 'confirmation.pickup' | translate }}:</span>
                 <span class="detail-value">{{ formatDate(reservation()!.pickupDate) }}</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Rückgabe:</span>
+                <span class="detail-label">{{ 'confirmation.return' | translate }}:</span>
                 <span class="detail-value">{{ formatDate(reservation()!.returnDate) }}</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Mietdauer:</span>
-                <span class="detail-value"
-                  >{{ getRentalDays() }} Tag{{ getRentalDays() === 1 ? '' : 'e' }}</span
-                >
+                <span class="detail-label">{{ 'confirmation.duration' | translate }}:</span>
+                <span class="detail-value">{{ getRentalDays() }} {{ 'confirmation.days' | translate }}</span>
               </div>
             </div>
           </div>
@@ -66,15 +64,15 @@
           <div class="detail-section">
             <h3>
               <lib-icon name="location-marker-filled" variant="filled" size="sm" />
-              Stationen
+              {{ 'confirmation.stations' | translate }}
             </h3>
             <div class="detail-grid">
               <div class="detail-item">
-                <span class="detail-label">Abholstation:</span>
+                <span class="detail-label">{{ 'confirmation.pickupStation' | translate }}:</span>
                 <span class="detail-value">{{ reservation()!.pickupLocationCode }}</span>
               </div>
               <div class="detail-item">
-                <span class="detail-label">Rückgabestation:</span>
+                <span class="detail-label">{{ 'confirmation.returnStation' | translate }}:</span>
                 <span class="detail-value">{{ reservation()!.dropoffLocationCode }}</span>
               </div>
             </div>
@@ -84,23 +82,23 @@
           <div class="detail-section">
             <h3>
               <lib-icon name="currency" variant="filled" size="sm" />
-              Preisübersicht
+              {{ 'confirmation.priceOverview' | translate }}
             </h3>
             <div class="price-breakdown">
               <div class="price-row">
-                <span>Netto-Gesamtpreis:</span>
+                <span>{{ 'confirmation.netTotal' | translate }}:</span>
                 <span
                   >{{ reservation()!.totalPriceNet.toFixed(2) }} {{ reservation()!.currency }}</span
                 >
               </div>
               <div class="price-row">
-                <span>MwSt. (19%):</span>
+                <span>{{ 'confirmation.vat' | translate }}:</span>
                 <span
                   >{{ reservation()!.totalPriceVat.toFixed(2) }} {{ reservation()!.currency }}</span
                 >
               </div>
               <div class="price-row price-total">
-                <span>Brutto-Gesamtpreis:</span>
+                <span>{{ 'confirmation.grossTotal' | translate }}:</span>
                 <span
                   >{{ reservation()!.totalPriceGross.toFixed(2) }}
                   {{ reservation()!.currency }}</span
@@ -113,7 +111,7 @@
           <div class="detail-section">
             <h3>
               <lib-icon name="check-circle-filled" variant="filled" size="sm" />
-              Status
+              {{ 'confirmation.status' | translate }}
             </h3>
             <ui-status-badge type="reservation" [status]="reservation()!.status"></ui-status-badge>
           </div>
@@ -124,15 +122,13 @@
       <div class="info-box">
         <h3>
           <lib-icon name="info-circle-filled" variant="filled" size="sm" />
-          Wichtige Informationen
+          {{ 'confirmation.info.title' | translate }}
         </h3>
         <ul>
-          <li>Eine Bestätigungs-E-Mail wurde an Ihre E-Mail-Adresse gesendet</li>
-          <li>
-            Bitte bringen Sie einen gültigen Führerschein und Personalausweis zur Abholung mit
-          </li>
-          <li>Die Fahrzeugübergabe erfolgt nach Prüfung Ihrer Dokumente</li>
-          <li>Bei Fragen kontaktieren Sie bitte unseren Kundenservice</li>
+          <li>{{ 'confirmation.info.emailSent' | translate }}</li>
+          <li>{{ 'confirmation.info.bringDocuments' | translate }}</li>
+          <li>{{ 'confirmation.info.handover' | translate }}</li>
+          <li>{{ 'confirmation.info.contact' | translate }}</li>
         </ul>
       </div>
 
@@ -140,11 +136,11 @@
       <div class="action-buttons">
         <button class="btn btn-secondary" (click)="printConfirmation()">
           <lib-icon name="print-filled" variant="filled" size="sm" />
-          Bestätigung drucken
+          {{ 'confirmation.printButton' | translate }}
         </button>
         <button class="btn btn-primary" (click)="goToHome()">
           <lib-icon name="home-filled" variant="filled" size="sm" />
-          Zur Startseite
+          {{ 'confirmation.homeButton' | translate }}
         </button>
       </div>
     </div>

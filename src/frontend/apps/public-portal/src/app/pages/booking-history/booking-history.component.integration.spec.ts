@@ -1,11 +1,20 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
 import { ConfigService } from '../../services/config.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  Reservation,
+  CustomerId,
+  ReservationId,
+  ReservationStatus,
+} from '@orange-car-rental/reservation-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
 import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
+import type { Price, Currency, ISODateString } from '@orange-car-rental/shared';
 
 /**
  * Integration Tests for Booking History Component
@@ -21,47 +30,47 @@ describe('BookingHistoryComponent (Integration)', () => {
   const apiUrl = 'http://localhost:5000';
 
   // Use dynamic dates to ensure tests work regardless of when they run
-  const getFutureDate = (daysFromNow: number): string => {
+  const getFutureDate = (daysFromNow: number): ISODateString => {
     const date = new Date();
     date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString();
+    return date.toISOString() as ISODateString;
   };
 
-  const getPastDate = (daysAgo: number): string => {
+  const getPastDate = (daysAgo: number): ISODateString => {
     const date = new Date();
     date.setDate(date.getDate() - daysAgo);
-    return date.toISOString();
+    return date.toISOString() as ISODateString;
   };
 
   const mockReservations: Reservation[] = [
     {
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      vehicleId: 'veh-001',
+      id: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
+      vehicleId: 'veh-001' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: getFutureDate(7), // 7 days from now - upcoming
       returnDate: getFutureDate(11), // 11 days from now
-      pickupLocationCode: 'MUC',
-      dropoffLocationCode: 'MUC',
-      totalPriceNet: 336.13,
-      totalPriceVat: 63.87,
-      totalPriceGross: 400.0,
-      currency: 'EUR',
-      status: 'Confirmed',
+      pickupLocationCode: 'MUC' as LocationCode,
+      dropoffLocationCode: 'MUC' as LocationCode,
+      totalPriceNet: 336.13 as Price,
+      totalPriceVat: 63.87 as Price,
+      totalPriceGross: 400.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Confirmed' as ReservationStatus,
       createdAt: getPastDate(15),
     },
     {
-      id: '223e4567-e89b-12d3-a456-426614174001',
-      vehicleId: 'veh-002',
+      id: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
+      vehicleId: 'veh-002' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: getFutureDate(14), // 14 days from now - pending
       returnDate: getFutureDate(16), // 16 days from now
-      pickupLocationCode: 'BER',
-      dropoffLocationCode: 'BER',
-      totalPriceNet: 168.07,
-      totalPriceVat: 31.93,
-      totalPriceGross: 200.0,
-      currency: 'EUR',
-      status: 'Pending',
+      pickupLocationCode: 'BER' as LocationCode,
+      dropoffLocationCode: 'BER' as LocationCode,
+      totalPriceNet: 168.07 as Price,
+      totalPriceVat: 31.93 as Price,
+      totalPriceGross: 200.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Pending' as ReservationStatus,
       createdAt: getPastDate(15),
     },
   ];
@@ -84,7 +93,7 @@ describe('BookingHistoryComponent (Integration)', () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [BookingHistoryComponent, HttpClientTestingModule],
+      imports: [BookingHistoryComponent, HttpClientTestingModule, TranslateModule.forRoot()],
       providers: [
         ReservationService,
         { provide: AuthService, useValue: authServiceSpy },
@@ -166,8 +175,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify error handling
-      expect(component.error()).toBe(
-        'Failed to load your booking history. Please try again later.',
+      expect(component.error()).toBe('bookingHistory.errors.loadFailed',
       );
       expect(component.isLoading()).toBe(false);
     }));
@@ -265,9 +273,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify error
-      expect(component.guestLookupError()).toBe(
-        'Reservation not found. Please check your Reservation ID and Email.',
-      );
+      expect(component.guestLookupError()).toBe('bookingHistory.guestLookup.notFound');
       expect(component.guestReservation()).toBeNull();
     }));
   });
@@ -331,7 +337,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify success
-      expect(toastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
+      expect(toastService.success).toHaveBeenCalledWith('bookingHistory.cancel.success');
       expect(component.showCancelModal()).toBe(false);
     }));
 
@@ -353,9 +359,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify error
-      expect(toastService.error).toHaveBeenCalledWith(
-        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
-      );
+      expect(toastService.error).toHaveBeenCalledWith('bookingHistory.cancel.error');
       expect(component.isLoading()).toBe(false);
     }));
   });
@@ -427,7 +431,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Step 8: Verify final state
-      expect(toastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
+      expect(toastService.success).toHaveBeenCalledWith('bookingHistory.cancel.success');
       expect(
         component
           .groupedReservations()

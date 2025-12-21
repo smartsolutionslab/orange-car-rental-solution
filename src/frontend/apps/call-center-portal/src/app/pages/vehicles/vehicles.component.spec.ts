@@ -1,12 +1,35 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { VehiclesComponent } from './vehicles.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { LocationService } from '@orange-car-rental/location-api';
 import { of, throwError } from 'rxjs';
-import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import type {
+  Vehicle,
+  VehicleId,
+  VehicleName,
+  CategoryCode,
+  CategoryName,
+  SeatingCapacity,
+  DailyRate,
+  FuelType,
+  TransmissionType,
+  LicensePlate,
+  Manufacturer,
+  VehicleModel,
+  ManufacturingYear,
+  ImageUrl,
+} from '@orange-car-rental/vehicle-api';
 import { VehicleStatus } from '@orange-car-rental/vehicle-api';
-import type { Location } from '@orange-car-rental/location-api';
+import type {
+  Location,
+  LocationCode,
+  LocationName,
+  CityName,
+  StreetAddress,
+} from '@orange-car-rental/location-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
+import type { Currency, PostalCode } from '@orange-car-rental/shared';
 import { UI_TIMING, GERMAN_VAT_MULTIPLIER } from '../../constants/app.constants';
 
 describe('VehiclesComponent', () => {
@@ -17,85 +40,85 @@ describe('VehiclesComponent', () => {
 
   const mockVehicles: Vehicle[] = [
     {
-      id: 'veh-001',
-      name: 'BMW 3er',
-      manufacturer: 'BMW',
-      model: '320i',
-      year: 2024,
-      categoryCode: 'MITTEL',
-      categoryName: 'Mittelklasse',
-      seats: 5,
-      fuelType: 'Petrol',
-      transmissionType: 'Automatic',
-      locationCode: 'MUC',
-      city: 'München',
-      licensePlate: 'M-AB 1234',
-      dailyRateNet: 84.03,
-      dailyRateVat: 15.97,
-      dailyRateGross: 100.0,
-      currency: 'EUR',
+      id: 'veh-001' as VehicleId,
+      name: 'BMW 3er' as VehicleName,
+      manufacturer: 'BMW' as Manufacturer,
+      model: '320i' as VehicleModel,
+      year: 2024 as ManufacturingYear,
+      categoryCode: 'MITTEL' as CategoryCode,
+      categoryName: 'Mittelklasse' as CategoryName,
+      seats: 5 as SeatingCapacity,
+      fuelType: 'Petrol' as FuelType,
+      transmissionType: 'Automatic' as TransmissionType,
+      locationCode: 'MUC' as LocationCode,
+      city: 'München' as CityName,
+      licensePlate: 'M-AB 1234' as LicensePlate,
+      dailyRateNet: 84.03 as DailyRate,
+      dailyRateVat: 15.97 as DailyRate,
+      dailyRateGross: 100.0 as DailyRate,
+      currency: 'EUR' as Currency,
       status: VehicleStatus.Available,
-      imageUrl: 'https://example.com/bmw.jpg',
+      imageUrl: 'https://example.com/bmw.jpg' as ImageUrl,
     },
     {
-      id: 'veh-002',
-      name: 'Audi A4',
-      manufacturer: 'Audi',
-      model: 'A4 Avant',
-      year: 2023,
-      categoryCode: 'KOMBI',
-      categoryName: 'Kombi',
-      seats: 5,
-      fuelType: 'Diesel',
-      transmissionType: 'Automatic',
-      locationCode: 'BER',
-      city: 'Berlin',
-      licensePlate: 'B-CD 5678',
-      dailyRateNet: 100.84,
-      dailyRateVat: 19.16,
-      dailyRateGross: 120.0,
-      currency: 'EUR',
+      id: 'veh-002' as VehicleId,
+      name: 'Audi A4' as VehicleName,
+      manufacturer: 'Audi' as Manufacturer,
+      model: 'A4 Avant' as VehicleModel,
+      year: 2023 as ManufacturingYear,
+      categoryCode: 'KOMBI' as CategoryCode,
+      categoryName: 'Kombi' as CategoryName,
+      seats: 5 as SeatingCapacity,
+      fuelType: 'Diesel' as FuelType,
+      transmissionType: 'Automatic' as TransmissionType,
+      locationCode: 'BER' as LocationCode,
+      city: 'Berlin' as CityName,
+      licensePlate: 'B-CD 5678' as LicensePlate,
+      dailyRateNet: 100.84 as DailyRate,
+      dailyRateVat: 19.16 as DailyRate,
+      dailyRateGross: 120.0 as DailyRate,
+      currency: 'EUR' as Currency,
       status: VehicleStatus.Rented,
-      imageUrl: 'https://example.com/audi.jpg',
+      imageUrl: 'https://example.com/audi.jpg' as ImageUrl,
     },
     {
-      id: 'veh-003',
-      name: 'VW Golf',
-      manufacturer: 'Volkswagen',
-      model: 'Golf 8',
-      year: 2024,
-      categoryCode: 'KOMPAKT',
-      categoryName: 'Kompaktklasse',
-      seats: 5,
-      fuelType: 'Hybrid',
-      transmissionType: 'Manual',
-      locationCode: 'MUC',
-      city: 'München',
-      licensePlate: 'M-EF 9012',
-      dailyRateNet: 58.82,
-      dailyRateVat: 11.18,
-      dailyRateGross: 70.0,
-      currency: 'EUR',
+      id: 'veh-003' as VehicleId,
+      name: 'VW Golf' as VehicleName,
+      manufacturer: 'Volkswagen' as Manufacturer,
+      model: 'Golf 8' as VehicleModel,
+      year: 2024 as ManufacturingYear,
+      categoryCode: 'KOMPAKT' as CategoryCode,
+      categoryName: 'Kompaktklasse' as CategoryName,
+      seats: 5 as SeatingCapacity,
+      fuelType: 'Hybrid' as FuelType,
+      transmissionType: 'Manual' as TransmissionType,
+      locationCode: 'MUC' as LocationCode,
+      city: 'München' as CityName,
+      licensePlate: 'M-EF 9012' as LicensePlate,
+      dailyRateNet: 58.82 as DailyRate,
+      dailyRateVat: 11.18 as DailyRate,
+      dailyRateGross: 70.0 as DailyRate,
+      currency: 'EUR' as Currency,
       status: VehicleStatus.Maintenance,
-      imageUrl: 'https://example.com/vw.jpg',
+      imageUrl: 'https://example.com/vw.jpg' as ImageUrl,
     },
   ];
 
   const mockLocations: Location[] = [
     {
-      code: 'MUC',
-      name: 'München Flughafen',
-      city: 'München',
-      street: 'Flughafenstraße 1',
-      postalCode: '85356',
+      code: 'MUC' as LocationCode,
+      name: 'München Flughafen' as LocationName,
+      city: 'München' as CityName,
+      street: 'Flughafenstraße 1' as StreetAddress,
+      postalCode: '85356' as PostalCode,
       fullAddress: 'Flughafenstraße 1, 85356 München',
     },
     {
-      code: 'BER',
-      name: 'Berlin Brandenburg',
-      city: 'Berlin',
-      street: 'Willy Brandt Platz 1',
-      postalCode: '12529',
+      code: 'BER' as LocationCode,
+      name: 'Berlin Brandenburg' as LocationName,
+      city: 'Berlin' as CityName,
+      street: 'Willy Brandt Platz 1' as StreetAddress,
+      postalCode: '12529' as PostalCode,
       fullAddress: 'Willy Brandt Platz 1, 12529 Berlin',
     },
   ];
@@ -111,7 +134,7 @@ describe('VehiclesComponent', () => {
     const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getAllLocations']);
 
     await TestBed.configureTestingModule({
-      imports: [VehiclesComponent],
+      imports: [VehiclesComponent, TranslateModule.forRoot()],
       providers: [
         { provide: VehicleService, useValue: vehicleServiceSpy },
         { provide: LocationService, useValue: locationServiceSpy },
@@ -260,16 +283,16 @@ describe('VehiclesComponent', () => {
 
     it('should get unique locations from vehicles', () => {
       const locations = component['uniqueLocations']();
-      expect(locations).toContain('MUC');
-      expect(locations).toContain('BER');
+      expect(locations).toContain('MUC' as LocationCode);
+      expect(locations).toContain('BER' as LocationCode);
       expect(locations.length).toBe(2);
     });
 
     it('should get unique categories from vehicles', () => {
       const categories = component['uniqueCategories']();
-      expect(categories).toContain('MITTEL');
-      expect(categories).toContain('KOMBI');
-      expect(categories).toContain('KOMPAKT');
+      expect(categories).toContain('MITTEL' as CategoryCode);
+      expect(categories).toContain('KOMBI' as CategoryCode);
+      expect(categories).toContain('KOMPAKT' as CategoryCode);
     });
   });
 
@@ -331,11 +354,11 @@ describe('VehiclesComponent', () => {
 
     it('should add vehicle successfully', fakeAsync(() => {
       const addVehicleResult = {
-        vehicleId: 'new-id',
-        name: 'New Car',
-        category: 'MITTEL',
-        location: 'MUC',
-        dailyRateGross: 95.2,
+        vehicleId: 'new-id' as VehicleId,
+        name: 'New Car' as VehicleName,
+        category: 'MITTEL' as CategoryCode,
+        location: 'MUC' as LocationCode,
+        dailyRateGross: 95.2 as DailyRate,
         status: VehicleStatus.Available,
       };
       mockVehicleService.addVehicle.and.returnValue(of(addVehicleResult));
@@ -472,7 +495,7 @@ describe('VehiclesComponent', () => {
 
       expect(mockVehicleService.updateVehicleLocation).toHaveBeenCalledWith(
         mockVehicles[0].id,
-        'BER',
+        'BER' as LocationCode,
       );
       expect(component['showLocationModal']()).toBe(false);
 
@@ -525,7 +548,7 @@ describe('VehiclesComponent', () => {
 
       expect(mockVehicleService.updateVehicleDailyRate).toHaveBeenCalledWith(
         mockVehicles[0].id,
-        100,
+        100 as DailyRate,
       );
       expect(component['showPricingModal']()).toBe(false);
 

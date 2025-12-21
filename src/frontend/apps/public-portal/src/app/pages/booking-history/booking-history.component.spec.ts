@@ -1,9 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { BookingHistoryComponent } from './booking-history.component';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
-import type { Reservation, CustomerId } from '@orange-car-rental/reservation-api';
+import type {
+  Reservation,
+  CustomerId,
+  ReservationId,
+  ReservationStatus,
+} from '@orange-car-rental/reservation-api';
+import type { VehicleId } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
 import { API_CONFIG, ToastService } from '@orange-car-rental/shared';
+import type { Price, Currency, ISODateString, EmailAddress } from '@orange-car-rental/shared';
 import { of, throwError } from 'rxjs';
 
 describe('BookingHistoryComponent', () => {
@@ -14,62 +23,62 @@ describe('BookingHistoryComponent', () => {
   let mockToastService: jasmine.SpyObj<ToastService>;
 
   // Use dynamic dates to ensure tests work regardless of when they run
-  const getFutureDate = (daysFromNow: number): string => {
+  const getFutureDate = (daysFromNow: number): ISODateString => {
     const date = new Date();
     date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString().split('T')[0]!;
+    return date.toISOString().split('T')[0]! as ISODateString;
   };
 
-  const getPastDate = (daysAgo: number): string => {
+  const getPastDate = (daysAgo: number): ISODateString => {
     const date = new Date();
     date.setDate(date.getDate() - daysAgo);
-    return date.toISOString().split('T')[0]!;
+    return date.toISOString().split('T')[0]! as ISODateString;
   };
 
   const mockReservations: Reservation[] = [
     {
-      id: '123e4567-e89b-12d3-a456-426614174000',
-      vehicleId: 'veh-001',
+      id: '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
+      vehicleId: 'veh-001' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: getFutureDate(7), // 7 days from now - upcoming
       returnDate: getFutureDate(11), // 11 days from now
-      pickupLocationCode: 'MUC',
-      dropoffLocationCode: 'MUC',
-      totalPriceNet: 336.13,
-      totalPriceVat: 63.87,
-      totalPriceGross: 400.0,
-      currency: 'EUR',
-      status: 'Confirmed',
+      pickupLocationCode: 'MUC' as LocationCode,
+      dropoffLocationCode: 'MUC' as LocationCode,
+      totalPriceNet: 336.13 as Price,
+      totalPriceVat: 63.87 as Price,
+      totalPriceGross: 400.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Confirmed' as ReservationStatus,
       createdAt: getPastDate(15),
     },
     {
-      id: '223e4567-e89b-12d3-a456-426614174001',
-      vehicleId: 'veh-002',
+      id: '223e4567-e89b-12d3-a456-426614174001' as ReservationId,
+      vehicleId: 'veh-002' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: getFutureDate(14), // 14 days from now - pending
       returnDate: getFutureDate(16), // 16 days from now
-      pickupLocationCode: 'BER',
-      dropoffLocationCode: 'BER',
-      totalPriceNet: 168.07,
-      totalPriceVat: 31.93,
-      totalPriceGross: 200.0,
-      currency: 'EUR',
-      status: 'Pending',
+      pickupLocationCode: 'BER' as LocationCode,
+      dropoffLocationCode: 'BER' as LocationCode,
+      totalPriceNet: 168.07 as Price,
+      totalPriceVat: 31.93 as Price,
+      totalPriceGross: 200.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Pending' as ReservationStatus,
       createdAt: getPastDate(15),
     },
     {
-      id: '323e4567-e89b-12d3-a456-426614174002',
-      vehicleId: 'veh-003',
+      id: '323e4567-e89b-12d3-a456-426614174002' as ReservationId,
+      vehicleId: 'veh-003' as VehicleId,
       customerId: '11111111-1111-1111-1111-111111111111' as CustomerId,
       pickupDate: getPastDate(60), // 60 days ago - past
       returnDate: getPastDate(58), // 58 days ago
-      pickupLocationCode: 'FRA',
-      dropoffLocationCode: 'FRA',
-      totalPriceNet: 252.1,
-      totalPriceVat: 47.9,
-      totalPriceGross: 300.0,
-      currency: 'EUR',
-      status: 'Completed',
+      pickupLocationCode: 'FRA' as LocationCode,
+      dropoffLocationCode: 'FRA' as LocationCode,
+      totalPriceNet: 252.1 as Price,
+      totalPriceVat: 47.9 as Price,
+      totalPriceGross: 300.0 as Price,
+      currency: 'EUR' as Currency,
+      status: 'Completed' as ReservationStatus,
       createdAt: getPastDate(75),
     },
   ];
@@ -94,7 +103,7 @@ describe('BookingHistoryComponent', () => {
     ]);
 
     await TestBed.configureTestingModule({
-      imports: [BookingHistoryComponent],
+      imports: [BookingHistoryComponent, TranslateModule.forRoot()],
       providers: [
         { provide: ReservationService, useValue: reservationServiceSpy },
         { provide: AuthService, useValue: authServiceSpy },
@@ -209,8 +218,7 @@ describe('BookingHistoryComponent', () => {
       await component.ngOnInit();
       fixture.detectChanges();
 
-      expect(component.error()).toBe(
-        'Failed to load your booking history. Please try again later.',
+      expect(component.error()).toBe('bookingHistory.errors.loadFailed',
       );
       expect(component.isLoading()).toBe(false);
     });
@@ -239,8 +247,8 @@ describe('BookingHistoryComponent', () => {
       component.onGuestLookup();
 
       expect(mockReservationService.lookupGuestReservation).toHaveBeenCalledWith(
-        '123e4567-e89b-12d3-a456-426614174000',
-        'guest@example.com',
+        '123e4567-e89b-12d3-a456-426614174000' as ReservationId,
+        'guest@example.com' as EmailAddress,
       );
       expect(component.guestReservation()).toEqual(guestReservation);
       expect(component.guestLookupError()).toBeNull();
@@ -255,9 +263,7 @@ describe('BookingHistoryComponent', () => {
       component.guestLookupForm.email = 'wrong@example.com';
       component.onGuestLookup();
 
-      expect(component.guestLookupError()).toBe(
-        'Reservation not found. Please check your Reservation ID and Email.',
-      );
+      expect(component.guestLookupError()).toBe('bookingHistory.guestLookup.notFound');
       expect(component.guestReservation()).toBeNull();
     });
 
@@ -266,7 +272,7 @@ describe('BookingHistoryComponent', () => {
       component.guestLookupForm.email = '';
       component.onGuestLookup();
 
-      expect(component.guestLookupError()).toBe('Please enter both Reservation ID and Email');
+      expect(component.guestLookupError()).toBe('bookingHistory.guestLookup.validation');
       expect(mockReservationService.lookupGuestReservation).not.toHaveBeenCalled();
     });
   });
@@ -291,8 +297,8 @@ describe('BookingHistoryComponent', () => {
     it('should check if reservation can be cancelled', () => {
       const futureReservation: Reservation = {
         ...mockReservations[0],
-        pickupDate: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
-        status: 'Confirmed',
+        pickupDate: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString() as ISODateString, // 72 hours from now
+        status: 'Confirmed' as ReservationStatus,
       };
 
       expect(component.canCancel(futureReservation)).toBe(true);
@@ -301,8 +307,8 @@ describe('BookingHistoryComponent', () => {
     it('should not allow cancellation within 48 hours', () => {
       const soonReservation: Reservation = {
         ...mockReservations[0],
-        pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
-        status: 'Confirmed',
+        pickupDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() as ISODateString, // 24 hours from now
+        status: 'Confirmed' as ReservationStatus,
       };
 
       expect(component.canCancel(soonReservation)).toBe(false);
@@ -311,7 +317,7 @@ describe('BookingHistoryComponent', () => {
     it('should not allow cancellation of completed reservations', () => {
       const completedReservation: Reservation = {
         ...mockReservations[2],
-        status: 'Completed',
+        status: 'Completed' as ReservationStatus,
       };
 
       expect(component.canCancel(completedReservation)).toBe(false);
@@ -350,7 +356,7 @@ describe('BookingHistoryComponent', () => {
         mockReservations[0].id,
         'Change of plans',
       );
-      expect(mockToastService.success).toHaveBeenCalledWith('Reservierung erfolgreich storniert!');
+      expect(mockToastService.success).toHaveBeenCalledWith('bookingHistory.cancel.success');
     });
 
     it('should not cancel without reason', () => {
@@ -372,9 +378,7 @@ describe('BookingHistoryComponent', () => {
 
       component.confirmCancellation();
 
-      expect(mockToastService.error).toHaveBeenCalledWith(
-        'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
-      );
+      expect(mockToastService.error).toHaveBeenCalledWith('bookingHistory.cancel.error');
     });
   });
 
@@ -442,14 +446,14 @@ describe('BookingHistoryComponent', () => {
       await component.ngOnInit();
       fixture.detectChanges();
 
-      expect(component.error()).toBe('Unable to retrieve user information');
+      expect(component.error()).toBe('bookingHistory.errors.userInfo');
     });
 
     it('should handle reservations with missing dates', () => {
       const invalidReservation: Reservation = {
         ...mockReservations[0],
-        pickupDate: '',
-        returnDate: '',
+        pickupDate: '' as ISODateString,
+        returnDate: '' as ISODateString,
       };
 
       expect(() => component.canCancel(invalidReservation)).not.toThrow();
@@ -460,7 +464,7 @@ describe('BookingHistoryComponent', () => {
       component.guestLookupForm.email = '   ';
       component.onGuestLookup();
 
-      expect(component.guestLookupError()).toBe('Please enter both Reservation ID and Email');
+      expect(component.guestLookupError()).toBe('bookingHistory.guestLookup.validation');
     });
   });
 });

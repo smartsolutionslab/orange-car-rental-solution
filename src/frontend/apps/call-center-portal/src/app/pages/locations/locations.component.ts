@@ -3,7 +3,8 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import type { Location } from '@orange-car-rental/location-api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { Location, LocationCode } from '@orange-car-rental/location-api';
 import { LocationService } from '@orange-car-rental/location-api';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
 import { VehicleStatus } from '@orange-car-rental/vehicle-api';
@@ -32,6 +33,7 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     StatusBadgeComponent,
     ModalComponent,
     LoadingStateComponent,
@@ -47,6 +49,7 @@ export class LocationsComponent implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly vehicleService = inject(VehicleService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly locations = signal<Location[]>([]);
   protected readonly allVehicles = signal<Vehicle[]>([]);
@@ -125,7 +128,7 @@ export class LocationsComponent implements OnInit {
         },
         error: (err) => {
           logError('LocationsComponent', 'Error loading locations', err);
-          this.error.set('Fehler beim Laden der Standorte');
+          this.error.set(this.translate.instant('locations.error'));
           this.loading.set(false);
         },
       });
@@ -205,7 +208,7 @@ export class LocationsComponent implements OnInit {
     this.loadingVehicles.set(true);
 
     this.vehicleService
-      .searchVehicles({ locationCode })
+      .searchVehicles({ locationCode: locationCode as LocationCode })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {

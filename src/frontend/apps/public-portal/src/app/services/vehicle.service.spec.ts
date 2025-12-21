@@ -4,9 +4,24 @@ import { VehicleService } from './vehicle.service';
 import { ConfigService } from './config.service';
 import type {
   Vehicle,
+  VehicleId,
+  VehicleName,
   VehicleSearchQuery,
   VehicleSearchResult,
+  CategoryCode,
+  CategoryName,
+  SeatingCapacity,
+  DailyRate,
+  FuelType,
+  TransmissionType,
+  VehicleStatus,
+  LicensePlate,
+  Manufacturer,
+  VehicleModel,
+  ManufacturingYear,
 } from '@orange-car-rental/vehicle-api';
+import type { ISODateString, Currency } from '@orange-car-rental/shared';
+import type { LocationCode, CityName } from '@orange-car-rental/location-api';
 
 describe('VehicleService', () => {
   let service: VehicleService;
@@ -16,24 +31,24 @@ describe('VehicleService', () => {
   const mockApiUrl = 'https://api.example.com';
 
   const mockVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'VW Golf',
-    categoryCode: 'MITTEL',
-    categoryName: 'Mittelklasse',
-    locationCode: 'BER-HBF',
-    city: 'Berlin',
-    dailyRateNet: 50.0,
-    dailyRateVat: 9.5,
-    dailyRateGross: 59.5,
-    currency: 'EUR',
-    seats: 5,
-    fuelType: 'Petrol',
-    transmissionType: 'Manual',
-    status: 'Available',
-    licensePlate: 'B-AB 1234',
-    manufacturer: 'Volkswagen',
-    model: 'Golf 8',
-    year: 2023,
+    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
+    name: 'VW Golf' as VehicleName,
+    categoryCode: 'MITTEL' as CategoryCode,
+    categoryName: 'Mittelklasse' as CategoryName,
+    locationCode: 'BER-HBF' as LocationCode,
+    city: 'Berlin' as CityName,
+    dailyRateNet: 50.0 as DailyRate,
+    dailyRateVat: 9.5 as DailyRate,
+    dailyRateGross: 59.5 as DailyRate,
+    currency: 'EUR' as Currency,
+    seats: 5 as SeatingCapacity,
+    fuelType: 'Petrol' as FuelType,
+    transmissionType: 'Manual' as TransmissionType,
+    status: 'Available' as VehicleStatus,
+    licensePlate: 'B-AB 1234' as LicensePlate,
+    manufacturer: 'Volkswagen' as Manufacturer,
+    model: 'Golf 8' as VehicleModel,
+    year: 2023 as ManufacturingYear,
     imageUrl: null,
   };
 
@@ -81,7 +96,7 @@ describe('VehicleService', () => {
 
     it('should search vehicles with location filter', () => {
       const query: VehicleSearchQuery = {
-        locationCode: 'BER-HBF',
+        locationCode: 'BER-HBF' as LocationCode,
       };
 
       service.searchVehicles(query).subscribe((result) => {
@@ -98,8 +113,8 @@ describe('VehicleService', () => {
 
     it('should search vehicles with date range filter', () => {
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15',
-        returnDate: '2024-01-20',
+        pickupDate: '2024-01-15' as ISODateString,
+        returnDate: '2024-01-20' as ISODateString,
       };
 
       service.searchVehicles(query).subscribe((result) => {
@@ -118,14 +133,14 @@ describe('VehicleService', () => {
 
     it('should search vehicles with all filters', () => {
       const query: VehicleSearchQuery = {
-        pickupDate: '2024-01-15',
-        returnDate: '2024-01-20',
-        locationCode: 'BER-HBF',
-        categoryCode: 'MITTEL',
-        minSeats: 5,
-        fuelType: 'Petrol',
-        transmissionType: 'Manual',
-        maxDailyRateGross: 100.0,
+        pickupDate: '2024-01-15' as ISODateString,
+        returnDate: '2024-01-20' as ISODateString,
+        locationCode: 'BER-HBF' as LocationCode,
+        categoryCode: 'MITTEL' as CategoryCode,
+        minSeats: 5 as SeatingCapacity,
+        fuelType: 'Petrol' as FuelType,
+        transmissionType: 'Manual' as TransmissionType,
+        maxDailyRateGross: 100.0 as DailyRate,
         pageNumber: 1,
         pageSize: 20,
       };
@@ -183,7 +198,7 @@ describe('VehicleService', () => {
 
   describe('getVehicleById', () => {
     it('should get vehicle by ID', () => {
-      const vehicleId = '123e4567-e89b-12d3-a456-426614174000';
+      const vehicleId = '123e4567-e89b-12d3-a456-426614174000' as VehicleId;
 
       service.getVehicleById(vehicleId).subscribe((vehicle) => {
         expect(vehicle).toEqual(mockVehicle);
@@ -196,7 +211,7 @@ describe('VehicleService', () => {
     });
 
     it('should handle 404 when vehicle not found', () => {
-      const vehicleId = 'non-existent-id';
+      const vehicleId = 'non-existent-id' as VehicleId;
 
       service.getVehicleById(vehicleId).subscribe({
         next: () => fail('should have failed with 404 error'),

@@ -4,9 +4,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { firstValueFrom } from 'rxjs';
-import type { Reservation, ReservationSearchFilters } from '@orange-car-rental/reservation-api';
+import type { Reservation, ReservationSearchFilters, ReservationId } from '@orange-car-rental/reservation-api';
 import { createCustomerId, ReservationStatus } from '@orange-car-rental/reservation-api';
+import type { EmailAddress } from '@orange-car-rental/shared';
 import { logError } from '@orange-car-rental/util';
 import { ToastService } from '@orange-car-rental/shared';
 import {
@@ -44,6 +46,7 @@ import type { GroupedReservations } from '../../types';
     DetailRowComponent,
     FormFieldComponent,
     ErrorAlertComponent,
+    TranslateModule,
   ],
   templateUrl: './booking-history.component.html',
   styleUrls: ['./booking-history.component.css'],
@@ -54,6 +57,7 @@ export class BookingHistoryComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   // State signals
   isAuthenticated = signal(false);
@@ -108,7 +112,7 @@ export class BookingHistoryComponent implements OnInit {
 
     const userProfile = await this.authService.getUserProfile();
     if (!userProfile?.id) {
-      this.error.set('Unable to retrieve user information');
+      this.error.set(this.translate.instant('bookingHistory.errors.userInfo'));
       this.isLoading.set(false);
       return;
     }
@@ -126,7 +130,7 @@ export class BookingHistoryComponent implements OnInit {
       this.isLoading.set(false);
     } catch (err) {
       logError('BookingHistoryComponent', 'Error loading reservations', err);
-      this.error.set('Failed to load your booking history. Please try again later.');
+      this.error.set(this.translate.instant('bookingHistory.errors.loadFailed'));
       this.isLoading.set(false);
     }
   }
@@ -167,7 +171,7 @@ export class BookingHistoryComponent implements OnInit {
     const email = this.guestLookupForm.email?.trim();
 
     if (!reservationId || !email) {
-      this.guestLookupError.set('Please enter both Reservation ID and Email');
+      this.guestLookupError.set(this.translate.instant('bookingHistory.guestLookup.validation'));
       return;
     }
 
@@ -176,7 +180,7 @@ export class BookingHistoryComponent implements OnInit {
     this.guestReservation.set(null);
 
     this.reservationService
-      .lookupGuestReservation(reservationId, email)
+      .lookupGuestReservation(reservationId as ReservationId, email as EmailAddress)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (reservation) => {
@@ -185,9 +189,7 @@ export class BookingHistoryComponent implements OnInit {
         },
         error: (err) => {
           logError('BookingHistoryComponent', 'Guest lookup error', err);
-          this.guestLookupError.set(
-            'Reservation not found. Please check your Reservation ID and Email.',
-          );
+          this.guestLookupError.set(this.translate.instant('bookingHistory.guestLookup.notFound'));
           this.isLoading.set(false);
         },
       });
@@ -258,14 +260,12 @@ export class BookingHistoryComponent implements OnInit {
             this.guestReservation.set(updated);
           }
 
-          this.toast.success('Reservierung erfolgreich storniert!');
+          this.toast.success(this.translate.instant('bookingHistory.cancel.success'));
         },
         error: (err) => {
           logError('BookingHistoryComponent', 'Cancellation error', err);
           this.isLoading.set(false);
-          this.toast.error(
-            'Stornierung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.',
-          );
+          this.toast.error(this.translate.instant('bookingHistory.cancel.error'));
         },
       });
   }

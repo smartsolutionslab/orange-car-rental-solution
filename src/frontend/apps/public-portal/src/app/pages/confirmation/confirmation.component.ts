@@ -3,7 +3,8 @@ import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
-import type { Reservation } from '@orange-car-rental/reservation-api';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { Reservation, ReservationId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import {
   StatusBadgeComponent,
@@ -24,6 +25,7 @@ import { ReservationService } from '../../services/reservation.service';
   standalone: true,
   imports: [
     CommonModule,
+    TranslateModule,
     StatusBadgeComponent,
     LoadingStateComponent,
     ErrorStateComponent,
@@ -37,6 +39,7 @@ export class ConfirmationComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly reservationService = inject(ReservationService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly reservation = signal<Reservation | null>(null);
   protected readonly loading = signal(true);
@@ -51,7 +54,7 @@ export class ConfirmationComponent implements OnInit {
       const customerId = params['customerId'];
 
       if (!reservationId) {
-        this.error.set('Keine Reservierungs-ID gefunden');
+        this.error.set(this.translate.instant('errors.notFound'));
         this.loading.set(false);
         return;
       }
@@ -70,7 +73,7 @@ export class ConfirmationComponent implements OnInit {
     this.error.set(null);
 
     this.reservationService
-      .getReservation(reservationId)
+      .getReservation(reservationId as ReservationId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (reservation) => {
@@ -79,7 +82,7 @@ export class ConfirmationComponent implements OnInit {
         },
         error: (err) => {
           logError('ConfirmationComponent', 'Error loading reservation', err);
-          this.error.set('Fehler beim Laden der Reservierung');
+          this.error.set(this.translate.instant('confirmation.error'));
           this.loading.set(false);
         },
       });

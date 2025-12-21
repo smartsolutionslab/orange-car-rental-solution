@@ -9,7 +9,8 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import type { Vehicle, DailyRate, AddVehicleRequest } from '@orange-car-rental/vehicle-api';
+import { TranslateModule } from '@ngx-translate/core';
+import type { Vehicle, DailyRate, AddVehicleRequest, CategoryCode } from '@orange-car-rental/vehicle-api';
 import {
   VehicleStatus,
   VehicleCategoryLabel,
@@ -53,6 +54,7 @@ import {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    TranslateModule,
     SelectVehicleStatusComponent,
     SelectLocationComponent,
     SelectCategoryComponent,
@@ -188,17 +190,17 @@ export class VehiclesComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: string } =
+    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: CategoryCode } =
       {};
 
     if (this.searchStatus()) {
       query.status = this.searchStatus() as VehicleStatus;
     }
     if (this.searchLocation()) {
-      query.locationCode = this.searchLocation();
+      query.locationCode = this.searchLocation() as LocationCode;
     }
     if (this.searchCategory()) {
-      query.categoryCode = this.searchCategory();
+      query.categoryCode = this.searchCategory() as CategoryCode;
     }
 
     this.vehicleService

@@ -17,6 +17,7 @@ import {
 } from 'keycloak-angular';
 import type { IncludeBearerTokenCondition } from 'keycloak-angular';
 import { environment } from '../environments/environment';
+import { provideI18n } from '@orange-car-rental/i18n';
 import { ConfigService } from './services/config.service';
 import { initializeApp } from './initializers/config.initializer';
 
@@ -31,6 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
+    ...provideI18n(),
     { provide: LOCALE_ID, useValue: 'de-DE' },
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,

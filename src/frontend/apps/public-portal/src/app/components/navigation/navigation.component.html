@@ -30,6 +30,7 @@
   </ul>
 
   <div class="nav__auth">
+    <lib-language-switcher />
     @if (isAuthenticated()) {
       <span class="nav__username">{{ username() }}</span>
       <button (click)="logout()" class="nav__auth-button nav__auth-button--logout">
@@ -39,7 +40,7 @@
           fill="currentColor"
           [innerHTML]="icons.logout"
         ></svg>
-        <span>Abmelden</span>
+        <span>{{ 'common.actions.logout' | translate }}</span>
       </button>
     } @else {
       <button (click)="login()" class="nav__auth-button nav__auth-button--login">
@@ -49,7 +50,7 @@
           fill="currentColor"
           [innerHTML]="icons.login"
         ></svg>
-        <span>Anmelden</span>
+        <span>{{ 'common.actions.login' | translate }}</span>
       </button>
     }
   </div>

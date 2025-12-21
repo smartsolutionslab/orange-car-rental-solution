@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { ForgotPasswordComponent } from './forgot-password.component';
 import { AuthService } from '../../services/auth.service';
 
@@ -13,7 +14,7 @@ describe('ForgotPasswordComponent', () => {
     const authServiceSpy = jasmine.createSpyObj('AuthService', ['resetPassword']);
 
     await TestBed.configureTestingModule({
-      imports: [ForgotPasswordComponent, ReactiveFormsModule],
+      imports: [ForgotPasswordComponent, ReactiveFormsModule, TranslateModule.forRoot()],
       providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
@@ -55,7 +56,7 @@ describe('ForgotPasswordComponent', () => {
       emailControl?.setValue('');
       emailControl?.markAsTouched();
       expect(emailControl?.hasError('required')).toBeTruthy();
-      expect(component.emailError).toBe('E-Mail-Adresse ist erforderlich');
+      expect(component.emailError).toBe('auth.validation.emailRequired');
     });
 
     it('should validate email format', () => {
@@ -63,7 +64,7 @@ describe('ForgotPasswordComponent', () => {
       emailControl?.setValue('invalid-email');
       emailControl?.markAsTouched();
       expect(emailControl?.hasError('email')).toBeTruthy();
-      expect(component.emailError).toBe('Bitte geben Sie eine gültige E-Mail-Adresse ein');
+      expect(component.emailError).toBe('auth.validation.emailInvalid');
     });
 
     it('should accept valid email', () => {
@@ -120,8 +121,8 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.successMessage()).toContain('test@example.com');
-      expect(component.successMessage()).toContain('Link zum Zurücksetzen des Passworts');
+      // TranslateModule.forRoot() returns key with params, so just check the key is returned
+      expect(component.successMessage()).toBe('auth.forgotPassword.success');
     });
 
     it('should reset form on success', async () => {
@@ -175,9 +176,7 @@ describe('ForgotPasswordComponent', () => {
 
       // Should not reveal if email exists for security
       expect(component.emailSent()).toBeTruthy();
-      expect(component.successMessage()).toContain(
-        'Wenn ein Konto mit dieser E-Mail-Adresse existiert',
-      );
+      expect(component.successMessage()).toBe('auth.forgotPassword.successGeneric');
     });
 
     it('should show network error message', async () => {
@@ -186,9 +185,7 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Netzwerkfehler. Bitte überprüfen Sie Ihre Internetverbindung.',
-      );
+      expect(component.errorMessage()).toBe('errors.network');
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -198,9 +195,7 @@ describe('ForgotPasswordComponent', () => {
 
       await component.onSubmit();
 
-      expect(component.errorMessage()).toBe(
-        'Beim Senden der E-Mail ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
-      );
+      expect(component.errorMessage()).toBe('auth.forgotPassword.errors.sendFailed');
       expect(component.isLoading()).toBeFalsy();
     });
 
@@ -331,7 +326,8 @@ describe('ForgotPasswordComponent', () => {
       fixture.detectChanges();
       const label = fixture.nativeElement.querySelector('label[for="email"]');
       expect(label).toBeTruthy();
-      expect(label.textContent).toContain('E-Mail-Adresse');
+      // With TranslateModule.forRoot(), the key is rendered
+      expect(label.textContent).toContain('common.labels.email');
     });
 
     it('should have role="alert" on error messages', () => {

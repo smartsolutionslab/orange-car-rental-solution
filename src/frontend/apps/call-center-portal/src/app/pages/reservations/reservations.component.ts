@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ReservationStatus, isCustomerId } from '@orange-car-rental/reservation-api';
 import { logError } from '@orange-car-rental/util';
 import {
@@ -28,6 +29,8 @@ import {
 import { ReservationService } from '../../services/reservation.service';
 import { UI_TIMING, DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
 import type { Reservation, ReservationSearchQuery } from '../../types';
+import type { ISODateString, Price } from '@orange-car-rental/shared';
+import type { LocationCode } from '@orange-car-rental/location-api';
 
 type GroupBy = 'none' | 'status' | 'pickupDate' | 'location';
 
@@ -43,6 +46,7 @@ type GroupedReservations = Record<string, Reservation[]>;
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     SelectReservationStatusComponent,
     SelectLocationComponent,
     StatusBadgeComponent,
@@ -65,6 +69,7 @@ export class ReservationsComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly reservations = signal<Reservation[]>([]);
   protected readonly loading = signal(false);
@@ -158,20 +163,20 @@ export class ReservationsComponent implements OnInit {
 
   protected readonly groupKeys = computed(() => Object.keys(this.groupedReservations()));
 
-  // Sort options
+  // Sort options (using translation keys)
   protected readonly sortOptions = [
-    { value: 'PickupDate', label: 'Abholdatum' },
-    { value: 'Price', label: 'Preis' },
-    { value: 'Status', label: 'Status' },
-    { value: 'CreatedDate', label: 'Erstellungsdatum' },
+    { value: 'PickupDate', labelKey: 'reservations.sorting.pickupDate' },
+    { value: 'Price', labelKey: 'reservations.sorting.price' },
+    { value: 'Status', labelKey: 'reservations.sorting.status' },
+    { value: 'CreatedDate', labelKey: 'reservations.sorting.createdDate' },
   ];
 
-  // Group options
+  // Group options (using translation keys)
   protected readonly groupOptions = [
-    { value: 'none', label: 'Keine Gruppierung' },
-    { value: 'status', label: 'Nach Status' },
-    { value: 'pickupDate', label: 'Nach Abholdatum' },
-    { value: 'location', label: 'Nach Standort' },
+    { value: 'none', labelKey: 'reservations.grouping.none' },
+    { value: 'status', labelKey: 'reservations.grouping.byStatus' },
+    { value: 'pickupDate', labelKey: 'reservations.grouping.byPickupDate' },
+    { value: 'location', labelKey: 'reservations.grouping.byLocation' },
   ];
 
   ngOnInit(): void {
@@ -248,14 +253,20 @@ export class ReservationsComponent implements OnInit {
     this.error.set(null);
 
     const customerIdValue = this.searchCustomerId();
+    const pickupDateFrom = this.searchPickupDateFrom();
+    const pickupDateTo = this.searchPickupDateTo();
+    const locationCode = this.searchLocation();
+    const minPrice = this.searchMinPrice();
+    const maxPrice = this.searchMaxPrice();
+
     const query: ReservationSearchQuery = {
       status: (this.searchStatus() || undefined) as ReservationStatus | undefined,
       customerId: customerIdValue && isCustomerId(customerIdValue) ? customerIdValue : undefined,
-      pickupDateFrom: this.searchPickupDateFrom() || undefined,
-      pickupDateTo: this.searchPickupDateTo() || undefined,
-      locationCode: this.searchLocation() || undefined,
-      minPrice: this.searchMinPrice() ?? undefined,
-      maxPrice: this.searchMaxPrice() ?? undefined,
+      pickupDateFrom: pickupDateFrom ? (pickupDateFrom as ISODateString) : undefined,
+      pickupDateTo: pickupDateTo ? (pickupDateTo as ISODateString) : undefined,
+      locationCode: locationCode ? (locationCode as LocationCode) : undefined,
+      minPrice: minPrice !== null ? (minPrice as Price) : undefined,
+      maxPrice: maxPrice !== null ? (maxPrice as Price) : undefined,
       sortBy: this.sortBy(),
       sortOrder: this.sortOrder(),
       pageNumber: this.currentPage(),
@@ -272,7 +283,7 @@ export class ReservationsComponent implements OnInit {
       },
       error: (err) => {
         logError('ReservationsComponent', 'Error loading reservations', err);
-        this.error.set('Fehler beim Laden der Reservierungen');
+        this.error.set(this.translate.instant('errors.generic'));
         this.loading.set(false);
       },
     });
@@ -312,10 +323,10 @@ export class ReservationsComponent implements OnInit {
     const todayOnly = today.toISOString().split('T')[0];
     const tomorrowOnly = tomorrow.toISOString().split('T')[0];
 
-    if (dateOnly === todayOnly) return 'Heute';
-    if (dateOnly === tomorrowOnly) return 'Morgen';
-    if (date <= nextWeek) return 'Diese Woche';
-    return 'Später';
+    if (dateOnly === todayOnly) return this.translate.instant('reservations.dateGroups.today');
+    if (dateOnly === tomorrowOnly) return this.translate.instant('reservations.dateGroups.tomorrow');
+    if (date <= nextWeek) return this.translate.instant('reservations.dateGroups.thisWeek');
+    return this.translate.instant('reservations.dateGroups.later');
   }
 
   /**
@@ -475,7 +486,7 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.confirmReservation(reservation.reservationId).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.successMessage.set('Reservierung erfolgreich bestätigt');
+        this.successMessage.set(this.translate.instant('common.messages.success'));
         this.closeConfirmModal();
         this.closeDetails();
         this.loadReservations();
@@ -486,7 +497,7 @@ export class ReservationsComponent implements OnInit {
       error: (err) => {
         logError('ReservationsComponent', 'Error confirming reservation', err);
         this.actionInProgress.set(false);
-        this.error.set('Fehler beim Bestätigen der Reservierung');
+        this.error.set(this.translate.instant('errors.generic'));
       },
     });
   }
@@ -520,7 +531,7 @@ export class ReservationsComponent implements OnInit {
     const reason = this.cancelReason().trim();
 
     if (!reservation || !reason) {
-      this.error.set('Bitte geben Sie einen Stornierungsgrund ein');
+      this.error.set(this.translate.instant('common.messages.required'));
       return;
     }
 
@@ -531,7 +542,7 @@ export class ReservationsComponent implements OnInit {
     this.reservationService.cancelReservation(reservation.reservationId, reason).subscribe({
       next: () => {
         this.actionInProgress.set(false);
-        this.successMessage.set('Reservierung erfolgreich storniert');
+        this.successMessage.set(this.translate.instant('common.messages.success'));
         this.closeCancelModal();
         this.closeDetails();
         this.loadReservations();
@@ -542,7 +553,7 @@ export class ReservationsComponent implements OnInit {
       error: (err) => {
         logError('ReservationsComponent', 'Error cancelling reservation', err);
         this.actionInProgress.set(false);
-        this.error.set('Fehler beim Stornieren der Reservierung');
+        this.error.set(this.translate.instant('errors.generic'));
       },
     });
   }

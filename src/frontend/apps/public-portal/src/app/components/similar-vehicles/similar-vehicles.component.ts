@@ -1,5 +1,6 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
 
 /**
@@ -12,11 +13,13 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
 @Component({
   selector: 'app-similar-vehicles',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslateModule],
   templateUrl: './similar-vehicles.component.html',
   styleUrl: './similar-vehicles.component.css',
 })
 export class SimilarVehiclesComponent {
+  private readonly translate = inject(TranslateService);
+
   readonly currentVehicle = input<Vehicle | null>(null);
   readonly similarVehicles = input<Vehicle[]>([]);
   readonly showUnavailableWarning = input(false);
@@ -38,17 +41,17 @@ export class SimilarVehiclesComponent {
     if (difference > 0) {
       return {
         amount: difference,
-        text: `€${absDifference.toFixed(2)}/Tag günstiger`,
+        text: this.translate.instant('similarVehicles.cheaper', { amount: absDifference.toFixed(2) }),
       };
     } else if (difference < 0) {
       return {
         amount: difference,
-        text: `€${absDifference.toFixed(2)}/Tag teurer`,
+        text: this.translate.instant('similarVehicles.moreExpensive', { amount: absDifference.toFixed(2) }),
       };
     } else {
       return {
         amount: 0,
-        text: 'Gleicher Preis',
+        text: this.translate.instant('similarVehicles.samePrice'),
       };
     }
   }
@@ -65,27 +68,27 @@ export class SimilarVehiclesComponent {
 
     // Same category
     if (vehicle.categoryCode === this.currentVehicle()!.categoryCode) {
-      reasons.push('Gleiche Kategorie');
+      reasons.push(this.translate.instant('similarVehicles.sameCategory'));
     } else {
-      reasons.push('Ähnliche Kategorie');
+      reasons.push(this.translate.instant('similarVehicles.similarCategory'));
     }
 
     // Price comparison
     const priceDiff = this.getPriceDifference(vehicle);
     if (priceDiff.amount > 0) {
-      reasons.push('Günstiger');
+      reasons.push(this.translate.instant('similarVehicles.cheaperLabel'));
     } else if (priceDiff.amount === 0) {
-      reasons.push('Gleicher Preis');
+      reasons.push(this.translate.instant('similarVehicles.samePrice'));
     }
 
     // Same fuel type
     if (vehicle.fuelType === this.currentVehicle()!.fuelType) {
-      reasons.push(`${vehicle.fuelType}`);
+      reasons.push(this.translate.instant(`vehicles.fuelType.${vehicle.fuelType.toLowerCase()}`));
     }
 
     // Same transmission
     if (vehicle.transmissionType === this.currentVehicle()!.transmissionType) {
-      reasons.push(vehicle.transmissionType);
+      reasons.push(this.translate.instant(`vehicles.transmission.${vehicle.transmissionType.toLowerCase()}`));
     }
 
     return reasons.join(' • ');
@@ -99,26 +102,20 @@ export class SimilarVehiclesComponent {
   }
 
   /**
-   * Format fuel type in German
+   * Format fuel type using translation
    */
   protected formatFuelType(fuelType: string): string {
-    const fuelTypes: Record<string, string> = {
-      Petrol: 'Benzin',
-      Diesel: 'Diesel',
-      Electric: 'Elektro',
-      Hybrid: 'Hybrid',
-    };
-    return fuelTypes[fuelType] || fuelType;
+    const key = `vehicles.fuelType.${fuelType.toLowerCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : fuelType;
   }
 
   /**
-   * Format transmission type in German
+   * Format transmission type using translation
    */
   protected formatTransmissionType(transmissionType: string): string {
-    const transmissionTypes: Record<string, string> = {
-      Manual: 'Manuell',
-      Automatic: 'Automatik',
-    };
-    return transmissionTypes[transmissionType] || transmissionType;
+    const key = `vehicles.transmission.${transmissionType.toLowerCase()}`;
+    const translated = this.translate.instant(key);
+    return translated !== key ? translated : transmissionType;
   }
 }

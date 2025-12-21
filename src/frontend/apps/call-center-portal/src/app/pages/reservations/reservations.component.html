@@ -1,30 +1,30 @@
 <div class="page-header">
-  <h1>Buchungsverwaltung</h1>
-  <p class="subtitle">Verwalten Sie alle Reservierungen und Buchungen</p>
+  <h1>{{ 'reservations.title' | translate }}</h1>
+  <p class="subtitle">{{ 'reservations.subtitle' | translate }}</p>
 </div>
 
 <!-- Statistics Dashboard -->
 <div class="dashboard-grid">
   <ui-stat-card
-    label="Heutige Buchungen"
+    [label]="'reservations.stats.todayBookings' | translate"
     [value]="todayReservations()"
     [loading]="loading()"
     iconName="calendar-filled"
   />
   <ui-stat-card
-    label="Aktive Buchungen"
+    [label]="'reservations.stats.activeBookings' | translate"
     [value]="activeReservations()"
     [loading]="loading()"
     variant="success"
   />
   <ui-stat-card
-    label="Anstehend"
+    [label]="'reservations.stats.pending' | translate"
     [value]="pendingReservations()"
     [loading]="loading()"
     variant="warning"
   />
   <ui-stat-card
-    label="Gesamt"
+    [label]="'reservations.stats.total' | translate"
     [value]="totalCount()"
     [loading]="loading()"
     variant="info"
@@ -44,24 +44,24 @@
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Reservierungsübersicht</h2>
+    <h2>{{ 'reservations.overview' | translate }}</h2>
     <button class="btn-primary" disabled>
       <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
-      Neue Buchung
+      {{ 'common.actions.newBooking' | translate }}
     </button>
   </div>
 
   <!-- Advanced Filters Section -->
   <div class="filters-panel">
     <div class="filters-header">
-      <h3>Filter & Sortierung</h3>
+      <h3>{{ 'reservations.filters.title' | translate }}</h3>
       <div class="filters-actions">
         @if (activeFiltersCount() > 0) {
-          <span class="active-filters-badge">{{ activeFiltersCount() }} aktive Filter</span>
+          <span class="active-filters-badge">{{ 'common.messages.activeFilters' | translate:{ count: activeFiltersCount() } }}</span>
         }
         <button class="btn-secondary btn-sm" (click)="clearFilters()">
           <lib-icon name="x-filled" variant="filled" size="sm" aria-hidden="true" />
-          Zurücksetzen
+          {{ 'common.actions.reset' | translate }}
         </button>
       </div>
     </div>
@@ -70,50 +70,50 @@
     <div class="filters-grid">
       <!-- Status Filter -->
       <div class="filter-group">
-        <label for="statusFilter">Status</label>
+        <label for="statusFilter">{{ 'reservations.filters.status' | translate }}</label>
         <ui-select-reservation-status
           id="statusFilter"
           [(ngModel)]="searchStatus"
-          placeholder="Alle Status"
+          [placeholder]="'reservations.filters.allStatus' | translate"
         />
       </div>
 
       <!-- Customer ID Filter -->
       <div class="filter-group">
-        <label for="customerFilter">Kunden-ID</label>
+        <label for="customerFilter">{{ 'reservations.filters.customerId' | translate }}</label>
         <input
           type="text"
           id="customerFilter"
           [(ngModel)]="searchCustomerId"
-          placeholder="Kunden-ID eingeben..."
+          [placeholder]="'reservations.filters.customerIdPlaceholder' | translate"
         />
       </div>
 
       <!-- Pickup Date From -->
       <div class="filter-group">
-        <label for="dateFromFilter">Abholung von</label>
+        <label for="dateFromFilter">{{ 'reservations.filters.pickupFrom' | translate }}</label>
         <input type="date" id="dateFromFilter" [(ngModel)]="searchPickupDateFrom" />
       </div>
 
       <!-- Pickup Date To -->
       <div class="filter-group">
-        <label for="dateToFilter">Abholung bis</label>
+        <label for="dateToFilter">{{ 'reservations.filters.pickupTo' | translate }}</label>
         <input type="date" id="dateToFilter" [(ngModel)]="searchPickupDateTo" />
       </div>
 
       <!-- Location Filter -->
       <div class="filter-group">
-        <label for="locationFilter">Standort</label>
+        <label for="locationFilter">{{ 'reservations.filters.location' | translate }}</label>
         <ui-select-location
           id="locationFilter"
           [(ngModel)]="searchLocation"
-          placeholder="Alle Standorte"
+          [placeholder]="'reservations.filters.allLocations' | translate"
         />
       </div>
 
       <!-- Min Price Filter -->
       <div class="filter-group">
-        <label for="minPriceFilter">Min. Preis (€)</label>
+        <label for="minPriceFilter">{{ 'reservations.filters.minPrice' | translate }}</label>
         <input
           type="number"
           id="minPriceFilter"
@@ -125,7 +125,7 @@
 
       <!-- Max Price Filter -->
       <div class="filter-group">
-        <label for="maxPriceFilter">Max. Preis (€)</label>
+        <label for="maxPriceFilter">{{ 'reservations.filters.maxPrice' | translate }}</label>
         <input
           type="number"
           id="maxPriceFilter"
@@ -139,7 +139,7 @@
       <div class="filter-group filter-actions">
         <button class="btn-primary btn-block" (click)="applyFilters()" [disabled]="loading()">
           <lib-icon name="filter-filled" variant="filled" [customSize]="18" aria-hidden="true" />
-          Filter anwenden
+          {{ 'common.actions.applyFilters' | translate }}
         </button>
       </div>
     </div>
@@ -148,22 +148,18 @@
     <div class="controls-row">
       <!-- Sorting -->
       <div class="control-group">
-        <label>Sortierung</label>
+        <label>{{ 'common.sorting.label' | translate }}</label>
         <div class="sort-controls">
           <select [(ngModel)]="sortBy" (change)="applyFilters()">
             @for (option of sortOptions; track option.value) {
-              <option [value]="option.value">{{ option.label }}</option>
+              <option [value]="option.value">{{ option.labelKey | translate }}</option>
             }
           </select>
           <button
             class="btn-icon"
             (click)="changeSortBy(sortBy())"
-            [title]="sortOrder() === 'asc' ? 'Aufsteigend' : 'Absteigend'"
-            [attr.aria-label]="
-              sortOrder() === 'asc'
-                ? 'Sortierung umkehren (aktuell aufsteigend)'
-                : 'Sortierung umkehren (aktuell absteigend)'
-            "
+            [title]="sortOrder() === 'asc' ? ('common.sorting.ascending' | translate) : ('common.sorting.descending' | translate)"
+            [attr.aria-label]="sortOrder() === 'asc' ? ('common.sorting.ascending' | translate) : ('common.sorting.descending' | translate)"
           >
             @if (sortOrder() === 'asc') {
               <lib-icon
@@ -186,17 +182,17 @@
 
       <!-- Grouping -->
       <div class="control-group">
-        <label>Gruppierung</label>
+        <label>{{ 'common.grouping.label' | translate }}</label>
         <select [(ngModel)]="groupBy" (change)="changeGroupBy(groupBy())">
           @for (option of groupOptions; track option.value) {
-            <option [value]="option.value">{{ option.label }}</option>
+            <option [value]="option.value">{{ option.labelKey | translate }}</option>
           }
         </select>
       </div>
 
       <!-- Page Size -->
       <div class="control-group">
-        <label>Einträge pro Seite</label>
+        <label>{{ 'common.pagination.entriesPerPage' | translate }}</label>
         <ui-select-page-size [(ngModel)]="pageSize" (ngModelChange)="applyFilters()" />
       </div>
     </div>
@@ -204,16 +200,14 @@
     <!-- Result Count -->
     <div class="results-info">
       <p>
-        Zeige {{ (currentPage() - 1) * pageSize() + 1 }} -
-        {{ Math.min(currentPage() * pageSize(), totalCount()) }}
-        von {{ totalCount() }} Reservierungen
+        {{ 'reservations.results.showing' | translate:{ from: (currentPage() - 1) * pageSize() + 1, to: Math.min(currentPage() * pageSize(), totalCount()), total: totalCount() } }}
       </p>
     </div>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <ui-loading-state message="Reservierungen werden geladen..."></ui-loading-state>
+    <ui-loading-state [message]="'reservations.loading' | translate"></ui-loading-state>
   }
 
   <!-- Reservations Table/List -->
@@ -226,21 +220,21 @@
             <div class="group-header">
               <h3>{{ groupKey }}</h3>
               <span class="group-count"
-                >{{ groupedReservations()[groupKey].length }} Buchungen</span
+                >{{ groupedReservations()[groupKey].length }} {{ 'reservations.groups.bookings' | translate }}</span
               >
             </div>
             <div class="reservations-table">
               <table>
                 <thead>
                   <tr>
-                    <th scope="col">Reservierungs-ID</th>
-                    <th scope="col">Kunde</th>
-                    <th scope="col">Abholdatum</th>
-                    <th scope="col">Rückgabedatum</th>
-                    <th scope="col">Standort</th>
-                    <th scope="col">Preis</th>
-                    <th scope="col">Status</th>
-                    <th scope="col">Aktionen</th>
+                    <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.location' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.price' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.status' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -267,19 +261,19 @@
                       </td>
                       <td class="actions-cell">
                         <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
-                          Details
+                          {{ 'common.actions.details' | translate }}
                         </button>
                         @if (canConfirm(reservation)) {
                           <button
                             class="btn-sm btn-success"
                             (click)="confirmReservation(reservation)"
                           >
-                            Bestätigen
+                            {{ 'common.actions.confirm' | translate }}
                           </button>
                         }
                         @if (canCancel(reservation)) {
                           <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
-                            Stornieren
+                            {{ 'reservations.cancel.button' | translate }}
                           </button>
                         }
                       </td>
@@ -299,14 +293,14 @@
         <table>
           <thead>
             <tr>
-              <th scope="col">Reservierungs-ID</th>
-              <th scope="col">Kunde</th>
-              <th scope="col">Abholdatum</th>
-              <th scope="col">Rückgabedatum</th>
-              <th scope="col">Standort</th>
-              <th scope="col">Preis</th>
-              <th scope="col">Status</th>
-              <th scope="col">Aktionen</th>
+              <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.location' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.price' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.status' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -330,16 +324,16 @@
                 </td>
                 <td class="actions-cell">
                   <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
-                    Details
+                    {{ 'common.actions.details' | translate }}
                   </button>
                   @if (canConfirm(reservation)) {
                     <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">
-                      Bestätigen
+                      {{ 'common.actions.confirm' | translate }}
                     </button>
                   }
                   @if (canCancel(reservation)) {
                     <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
-                      Stornieren
+                      {{ 'reservations.cancel.button' | translate }}
                     </button>
                   }
                 </td>
@@ -357,8 +351,8 @@
       [totalItems]="totalCount()"
       [pageSize]="pageSize()"
       [showItemRange]="true"
-      itemLabel="Reservierung"
-      itemLabelPlural="Reservierungen"
+      [itemLabel]="'reservations.itemLabel' | translate"
+      [itemLabelPlural]="'reservations.itemLabelPlural' | translate"
       (pageChange)="goToPage($event)"
     />
   }
@@ -367,10 +361,10 @@
   @if (!loading() && reservations().length === 0) {
     <ui-empty-state
       icon="reservation"
-      title="Keine Reservierungen gefunden"
-      description="Versuchen Sie, die Filter anzupassen, um weitere Ergebnisse zu sehen."
+      [title]="'reservations.empty.title' | translate"
+      [description]="'reservations.empty.description' | translate"
       [showAction]="activeFiltersCount() > 0"
-      actionLabel="Filter zurücksetzen"
+      [actionLabel]="'reservations.empty.resetFilters' | translate"
       (action)="clearFilters()"
     ></ui-empty-state>
   }
@@ -379,7 +373,7 @@
 <!-- Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedReservation()"
-  title="Reservierungsdetails"
+  [title]="'reservations.details.title' | translate"
   size="lg"
   (close)="closeDetails()"
 >
@@ -387,19 +381,19 @@
     @if (selectedReservation()) {
       <div class="detail-grid">
         <div class="detail-item">
-          <label>Reservierungs-ID</label>
+          <label>{{ 'common.labels.reservationId' | translate }}</label>
           <p>{{ selectedReservation()!.reservationId }}</p>
         </div>
         <div class="detail-item">
-          <label>Kunden-ID</label>
+          <label>{{ 'common.labels.customerId' | translate }}</label>
           <p>{{ selectedReservation()!.customerId }}</p>
         </div>
         <div class="detail-item">
-          <label>Fahrzeug-ID</label>
+          <label>{{ 'reservations.details.vehicleId' | translate }}</label>
           <p>{{ selectedReservation()!.vehicleId }}</p>
         </div>
         <div class="detail-item">
-          <label>Status</label>
+          <label>{{ 'common.labels.status' | translate }}</label>
           <p>
             <ui-status-badge
               type="reservation"
@@ -408,44 +402,44 @@
           </p>
         </div>
         <div class="detail-item">
-          <label>Abholdatum</label>
+          <label>{{ 'reservations.details.pickupDate' | translate }}</label>
           <p>{{ formatDate(selectedReservation()!.pickupDate) }}</p>
         </div>
         <div class="detail-item">
-          <label>Rückgabedatum</label>
+          <label>{{ 'reservations.details.returnDate' | translate }}</label>
           <p>{{ formatDate(selectedReservation()!.returnDate) }}</p>
         </div>
         <div class="detail-item">
-          <label>Abholort</label>
+          <label>{{ 'reservations.details.pickupLocation' | translate }}</label>
           <p>{{ selectedReservation()!.pickupLocationCode }}</p>
         </div>
         <div class="detail-item">
-          <label>Rückgabeort</label>
+          <label>{{ 'reservations.details.returnLocation' | translate }}</label>
           <p>{{ selectedReservation()!.dropoffLocationCode }}</p>
         </div>
         <div class="detail-item">
-          <label>Miettage</label>
+          <label>{{ 'reservations.details.rentalDays' | translate }}</label>
           <p>{{ selectedReservation()!.rentalDays }}</p>
         </div>
         <div class="detail-item">
-          <label>Erstellt am</label>
+          <label>{{ 'reservations.details.createdAt' | translate }}</label>
           <p>{{ formatDate(selectedReservation()!.createdAt) }}</p>
         </div>
       </div>
 
       <div class="price-section">
-        <h3>Preisübersicht</h3>
+        <h3>{{ 'reservations.pricing.title' | translate }}</h3>
         <div class="price-breakdown">
           <div class="price-row">
-            <span>Nettobetrag:</span>
+            <span>{{ 'reservations.pricing.netAmount' | translate }}:</span>
             <span>{{ formatPrice(selectedReservation()!.totalPriceNet) }}</span>
           </div>
           <div class="price-row">
-            <span>MwSt. (19%):</span>
+            <span>{{ 'reservations.pricing.vat' | translate }}:</span>
             <span>{{ formatPrice(selectedReservation()!.totalPriceVat) }}</span>
           </div>
           <div class="price-row total">
-            <span><strong>Gesamtbetrag:</strong></span>
+            <span><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong></span>
             <span
               ><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span
             >
@@ -461,7 +455,7 @@
         (click)="confirmReservation(selectedReservation()!)"
         [disabled]="actionInProgress()"
       >
-        Bestätigen
+        {{ 'reservations.confirm.button' | translate }}
       </button>
     }
     @if (selectedReservation() && canCancel(selectedReservation()!)) {
@@ -470,35 +464,35 @@
         (click)="showCancelDialog(selectedReservation()!)"
         [disabled]="actionInProgress()"
       >
-        Stornieren
+        {{ 'reservations.cancel.button' | translate }}
       </button>
     }
-    <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
+    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
   </ng-container>
 </ui-modal>
 
 <!-- Cancel Modal -->
 <ui-modal
   [isOpen]="showCancelModal() && !!selectedReservation()"
-  title="Reservierung stornieren"
+  [title]="'reservations.cancel.title' | translate"
   size="sm"
   (close)="closeCancelModal()"
 >
   <ng-container modal-body>
     @if (selectedReservation()) {
-      <p>Möchten Sie diese Reservierung wirklich stornieren?</p>
+      <p>{{ 'reservations.cancel.message' | translate }}</p>
       <p>
-        <strong>Reservierungs-ID:</strong>
+        <strong>{{ 'common.labels.reservationId' | translate }}:</strong>
         {{ selectedReservation()!.reservationId.substring(0, 8) }}...
       </p>
 
       <div class="form-group">
-        <label for="cancelReason">Stornierungsgrund *</label>
+        <label for="cancelReason">{{ 'reservations.cancel.reason' | translate }} *</label>
         <textarea
           id="cancelReason"
           [(ngModel)]="cancelReason"
           rows="4"
-          placeholder="Bitte geben Sie einen Grund für die Stornierung ein..."
+          [placeholder]="'reservations.cancel.reasonPlaceholder' | translate"
           class="form-control"
         ></textarea>
       </div>
@@ -509,13 +503,13 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeCancelModal()">Abbrechen</button>
+    <button class="btn-secondary" (click)="closeCancelModal()">{{ 'common.actions.cancel' | translate }}</button>
     <button
       class="btn-danger"
       (click)="cancelReservation()"
       [disabled]="!cancelReason() || actionInProgress()"
     >
-      {{ actionInProgress() ? 'Wird storniert...' : 'Stornierung bestätigen' }}
+      {{ actionInProgress() ? ('reservations.cancel.inProgress' | translate) : ('reservations.cancel.execute' | translate) }}
     </button>
   </ng-container>
 </ui-modal>
@@ -523,20 +517,20 @@
 <!-- Confirm Modal -->
 <ui-modal
   [isOpen]="showConfirmModal() && !!selectedReservation()"
-  title="Reservierung bestätigen"
+  [title]="'reservations.confirm.title' | translate"
   size="sm"
   (close)="closeConfirmModal()"
 >
   <ng-container modal-body>
     @if (selectedReservation()) {
-      <p>Möchten Sie diese Reservierung wirklich bestätigen?</p>
+      <p>{{ 'reservations.confirm.message' | translate }}</p>
       <p>
-        <strong>Reservierungs-ID:</strong>
+        <strong>{{ 'common.labels.reservationId' | translate }}:</strong>
         {{ selectedReservation()!.reservationId.substring(0, 8) }}...
       </p>
-      <p><strong>Kunde:</strong> {{ selectedReservation()!.customerId.substring(0, 8) }}...</p>
-      <p><strong>Abholdatum:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
-      <p><strong>Gesamtpreis:</strong> {{ formatPrice(selectedReservation()!.totalPriceGross) }}</p>
+      <p><strong>{{ 'reservations.table.customer' | translate }}:</strong> {{ selectedReservation()!.customerId.substring(0, 8) }}...</p>
+      <p><strong>{{ 'reservations.details.pickupDate' | translate }}:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
+      <p><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong> {{ formatPrice(selectedReservation()!.totalPriceGross) }}</p>
 
       @if (error()) {
         <ui-error-state variant="inline" [message]="error()!"></ui-error-state>
@@ -544,9 +538,9 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeConfirmModal()">Abbrechen</button>
+    <button class="btn-secondary" (click)="closeConfirmModal()">{{ 'common.actions.cancel' | translate }}</button>
     <button class="btn-success" (click)="executeConfirmation()" [disabled]="actionInProgress()">
-      {{ actionInProgress() ? 'Wird bestätigt...' : 'Bestätigung durchführen' }}
+      {{ actionInProgress() ? ('reservations.confirm.inProgress' | translate) : ('reservations.confirm.execute' | translate) }}
     </button>
   </ng-container>
 </ui-modal>

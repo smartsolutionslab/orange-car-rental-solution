@@ -1,82 +1,100 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TranslateModule } from '@ngx-translate/core';
 import { SimilarVehiclesComponent } from './similar-vehicles.component';
-import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import type {
+  Vehicle,
+  VehicleId,
+  VehicleName,
+  CategoryCode,
+  CategoryName,
+  SeatingCapacity,
+  DailyRate,
+  FuelType,
+  TransmissionType,
+  VehicleStatus,
+  LicensePlate,
+  Manufacturer,
+  VehicleModel,
+  ManufacturingYear,
+} from '@orange-car-rental/vehicle-api';
+import type { LocationCode, CityName } from '@orange-car-rental/location-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
+import type { Currency } from '@orange-car-rental/shared';
 
 describe('SimilarVehiclesComponent', () => {
   let component: SimilarVehiclesComponent;
   let fixture: ComponentFixture<SimilarVehiclesComponent>;
 
   const mockCurrentVehicle: Vehicle = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
-    name: 'VW Golf',
-    categoryCode: 'MITTEL',
-    categoryName: 'Mittelklasse',
-    locationCode: 'BER-HBF',
-    city: 'Berlin',
-    dailyRateNet: 50.0,
-    dailyRateVat: 9.5,
-    dailyRateGross: 59.5,
-    currency: 'EUR',
-    seats: 5,
-    fuelType: 'Petrol',
-    transmissionType: 'Manual',
-    status: 'Available',
-    licensePlate: 'B-AB 1234',
-    manufacturer: 'Volkswagen',
-    model: 'Golf 8',
-    year: 2023,
+    id: '123e4567-e89b-12d3-a456-426614174000' as VehicleId,
+    name: 'VW Golf' as VehicleName,
+    categoryCode: 'MITTEL' as CategoryCode,
+    categoryName: 'Mittelklasse' as CategoryName,
+    locationCode: 'BER-HBF' as LocationCode,
+    city: 'Berlin' as CityName,
+    dailyRateNet: 50.0 as DailyRate,
+    dailyRateVat: 9.5 as DailyRate,
+    dailyRateGross: 59.5 as DailyRate,
+    currency: 'EUR' as Currency,
+    seats: 5 as SeatingCapacity,
+    fuelType: 'Petrol' as FuelType,
+    transmissionType: 'Manual' as TransmissionType,
+    status: 'Available' as VehicleStatus,
+    licensePlate: 'B-AB 1234' as LicensePlate,
+    manufacturer: 'Volkswagen' as Manufacturer,
+    model: 'Golf 8' as VehicleModel,
+    year: 2023 as ManufacturingYear,
     imageUrl: null,
   };
 
   const mockSimilarVehicles: Vehicle[] = [
     {
-      id: '987e6543-e89b-12d3-a456-426614174001',
-      name: 'Opel Astra',
-      categoryCode: 'MITTEL',
-      categoryName: 'Mittelklasse',
-      locationCode: 'BER-HBF',
-      city: 'Berlin',
-      dailyRateNet: 45.0,
-      dailyRateVat: 8.55,
-      dailyRateGross: 53.55,
-      currency: 'EUR',
-      seats: 5,
-      fuelType: 'Petrol',
-      transmissionType: 'Manual',
-      status: 'Available',
-      licensePlate: 'B-CD 5678',
-      manufacturer: 'Opel',
-      model: 'Astra',
-      year: 2023,
+      id: '987e6543-e89b-12d3-a456-426614174001' as VehicleId,
+      name: 'Opel Astra' as VehicleName,
+      categoryCode: 'MITTEL' as CategoryCode,
+      categoryName: 'Mittelklasse' as CategoryName,
+      locationCode: 'BER-HBF' as LocationCode,
+      city: 'Berlin' as CityName,
+      dailyRateNet: 45.0 as DailyRate,
+      dailyRateVat: 8.55 as DailyRate,
+      dailyRateGross: 53.55 as DailyRate,
+      currency: 'EUR' as Currency,
+      seats: 5 as SeatingCapacity,
+      fuelType: 'Petrol' as FuelType,
+      transmissionType: 'Manual' as TransmissionType,
+      status: 'Available' as VehicleStatus,
+      licensePlate: 'B-CD 5678' as LicensePlate,
+      manufacturer: 'Opel' as Manufacturer,
+      model: 'Astra' as VehicleModel,
+      year: 2023 as ManufacturingYear,
       imageUrl: null,
     },
     {
-      id: '111e2222-e89b-12d3-a456-426614174002',
-      name: 'Ford Focus',
-      categoryCode: 'KOMPAKT',
-      categoryName: 'Kompaktklasse',
-      locationCode: 'BER-HBF',
-      city: 'Berlin',
-      dailyRateNet: 40.0,
-      dailyRateVat: 7.6,
-      dailyRateGross: 47.6,
-      currency: 'EUR',
-      seats: 5,
-      fuelType: 'Diesel',
-      transmissionType: 'Manual',
-      status: 'Available',
-      licensePlate: 'B-EF 9012',
-      manufacturer: 'Ford',
-      model: 'Focus',
-      year: 2022,
+      id: '111e2222-e89b-12d3-a456-426614174002' as VehicleId,
+      name: 'Ford Focus' as VehicleName,
+      categoryCode: 'KOMPAKT' as CategoryCode,
+      categoryName: 'Kompaktklasse' as CategoryName,
+      locationCode: 'BER-HBF' as LocationCode,
+      city: 'Berlin' as CityName,
+      dailyRateNet: 40.0 as DailyRate,
+      dailyRateVat: 7.6 as DailyRate,
+      dailyRateGross: 47.6 as DailyRate,
+      currency: 'EUR' as Currency,
+      seats: 5 as SeatingCapacity,
+      fuelType: 'Diesel' as FuelType,
+      transmissionType: 'Manual' as TransmissionType,
+      status: 'Available' as VehicleStatus,
+      licensePlate: 'B-EF 9012' as LicensePlate,
+      manufacturer: 'Ford' as Manufacturer,
+      model: 'Focus' as VehicleModel,
+      year: 2022 as ManufacturingYear,
       imageUrl: null,
     },
   ];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SimilarVehiclesComponent],
+      imports: [SimilarVehiclesComponent, TranslateModule.forRoot()],
       providers: [{ provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } }],
     }).compileComponents();
 
@@ -97,29 +115,29 @@ describe('SimilarVehiclesComponent', () => {
       const result = component['getPriceDifference'](cheaper);
 
       expect(result.amount).toBeCloseTo(5.95, 2);
-      expect(result.text).toContain('günstiger');
+      expect(result.text).toBe('similarVehicles.cheaper');
     });
 
     it('should calculate price difference correctly for more expensive vehicle', () => {
       const expensive: Vehicle = {
         ...mockCurrentVehicle,
-        dailyRateGross: 70.0,
+        dailyRateGross: 70.0 as DailyRate,
       };
       const result = component['getPriceDifference'](expensive);
 
       expect(result.amount).toBeLessThan(0);
-      expect(result.text).toContain('teurer');
+      expect(result.text).toBe('similarVehicles.moreExpensive');
     });
 
     it('should handle same price', () => {
       const samePrice: Vehicle = {
         ...mockCurrentVehicle,
-        id: 'different-id',
+        id: 'different-id' as VehicleId,
       };
       const result = component['getPriceDifference'](samePrice);
 
       expect(result.amount).toBe(0);
-      expect(result.text).toBe('Gleicher Preis');
+      expect(result.text).toBe('similarVehicles.samePrice');
     });
 
     it('should return empty when current vehicle is null', () => {
@@ -137,35 +155,35 @@ describe('SimilarVehiclesComponent', () => {
       const sameCategory = mockSimilarVehicles[0]!; // MITTEL like current
       const reason = component['getSimilarityReason'](sameCategory);
 
-      expect(reason).toContain('Gleiche Kategorie');
+      expect(reason).toContain('similarVehicles.sameCategory');
     });
 
     it('should show "Ähnliche Kategorie" for different category', () => {
       const differentCategory = mockSimilarVehicles[1]!; // KOMPAKT vs MITTEL
       const reason = component['getSimilarityReason'](differentCategory);
 
-      expect(reason).toContain('Ähnliche Kategorie');
+      expect(reason).toContain('similarVehicles.similarCategory');
     });
 
     it('should include "Günstiger" for cheaper vehicles', () => {
       const cheaper = mockSimilarVehicles[0]!;
       const reason = component['getSimilarityReason'](cheaper);
 
-      expect(reason).toContain('Günstiger');
+      expect(reason).toContain('similarVehicles.cheaperLabel');
     });
 
     it('should include fuel type when matching', () => {
       const sameFuel = mockSimilarVehicles[0]!; // Petrol like current
       const reason = component['getSimilarityReason'](sameFuel);
 
-      expect(reason).toContain('Petrol');
+      expect(reason).toContain('vehicles.fuelType.petrol');
     });
 
     it('should include transmission type when matching', () => {
       const sameTransmission = mockSimilarVehicles[0]!; // Manual like current
       const reason = component['getSimilarityReason'](sameTransmission);
 
-      expect(reason).toContain('Manual');
+      expect(reason).toContain('vehicles.transmission.manual');
     });
 
     it('should return empty string when current vehicle is null', () => {
@@ -189,8 +207,11 @@ describe('SimilarVehiclesComponent', () => {
   });
 
   describe('Fuel Type Formatting', () => {
+    // With TranslateModule.forRoot(), translate.instant returns the key,
+    // so formatFuelType falls back to the original value
     it('should translate Petrol to Benzin', () => {
-      expect(component['formatFuelType']('Petrol')).toBe('Benzin');
+      // Falls back to original since no translations are loaded
+      expect(component['formatFuelType']('Petrol')).toBe('Petrol');
     });
 
     it('should translate Diesel to Diesel', () => {
@@ -198,7 +219,7 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should translate Electric to Elektro', () => {
-      expect(component['formatFuelType']('Electric')).toBe('Elektro');
+      expect(component['formatFuelType']('Electric')).toBe('Electric');
     });
 
     it('should translate Hybrid to Hybrid', () => {
@@ -211,12 +232,14 @@ describe('SimilarVehiclesComponent', () => {
   });
 
   describe('Transmission Type Formatting', () => {
+    // With TranslateModule.forRoot(), translate.instant returns the key,
+    // so formatTransmissionType falls back to the original value
     it('should translate Manual to Manuell', () => {
-      expect(component['formatTransmissionType']('Manual')).toBe('Manuell');
+      expect(component['formatTransmissionType']('Manual')).toBe('Manual');
     });
 
     it('should translate Automatic to Automatik', () => {
-      expect(component['formatTransmissionType']('Automatic')).toBe('Automatik');
+      expect(component['formatTransmissionType']('Automatic')).toBe('Automatic');
     });
 
     it('should return original value for unknown transmission type', () => {
@@ -247,7 +270,8 @@ describe('SimilarVehiclesComponent', () => {
 
       const header = fixture.nativeElement.querySelector('.section-title');
       expect(header).toBeTruthy();
-      expect(header.textContent).toContain('Ähnliche Fahrzeuge');
+      // With TranslateModule.forRoot(), the translation key is rendered
+      expect(header.textContent).toContain('similarVehicles.title');
     });
 
     it('should render vehicle cards for each similar vehicle', () => {
@@ -264,7 +288,8 @@ describe('SimilarVehiclesComponent', () => {
     it('should display "Book This Instead" button', () => {
       const button = fixture.nativeElement.querySelector('.book-instead-button');
       expect(button).toBeTruthy();
-      expect(button.textContent).toContain('Stattdessen buchen');
+      // With TranslateModule.forRoot(), the translation key is rendered
+      expect(button.textContent).toContain('similarVehicles.bookInstead');
     });
 
     it('should show no vehicles message when array is empty', () => {

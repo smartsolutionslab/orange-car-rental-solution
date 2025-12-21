@@ -2,11 +2,22 @@ import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomValidators } from '@orange-car-rental/shared';
+import type {
+  EmailAddress,
+  PhoneNumber,
+  ISODateString,
+  PostalCode,
+  CountryCode,
+  FirstName,
+  LastName,
+} from '@orange-car-rental/shared';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import type { Vehicle } from '@orange-car-rental/vehicle-api';
-import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
+import type { Vehicle, VehicleId } from '@orange-car-rental/vehicle-api';
+import type { GuestReservationRequest, LicenseNumber } from '@orange-car-rental/reservation-api';
+import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
 import type {
   CustomerProfile,
   UpdateCustomerProfileRequest,
@@ -44,6 +55,7 @@ import type { BookingFormValue } from '../../types';
   imports: [
     ReactiveFormsModule,
     CommonModule,
+    TranslateModule,
     SimilarVehiclesComponent,
     SelectLocationComponent,
     ErrorAlertComponent,
@@ -61,6 +73,7 @@ export class BookingComponent implements OnInit {
   private readonly reservationService = inject(ReservationService);
   private readonly authService = inject(AuthService);
   private readonly customerService = inject(CustomerService);
+  private readonly translate = inject(TranslateService);
 
   // Form state
   protected readonly bookingForm: FormGroup;
@@ -155,7 +168,7 @@ export class BookingComponent implements OnInit {
    */
   private loadVehicle(vehicleId: string): void {
     this.vehicleService
-      .getVehicleById(vehicleId)
+      .getVehicleById(vehicleId as VehicleId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (vehicle) => {
@@ -426,9 +439,7 @@ export class BookingComponent implements OnInit {
         error: (err) => {
           logError('BookingComponent', 'Error creating reservation', err);
           this.submitting.set(false);
-          this.error.set(
-            'Fehler beim Erstellen der Reservierung. Bitte überprüfen Sie Ihre Eingaben und versuchen Sie es erneut.',
-          );
+          this.error.set(this.translate.instant('booking.errors.create'));
           window.scrollTo({ top: 0, behavior: 'smooth' });
         },
       });
@@ -445,22 +456,22 @@ export class BookingComponent implements OnInit {
     }
 
     const updateRequest: UpdateCustomerProfileRequest = {
-      firstName: formValue.firstName,
-      lastName: formValue.lastName,
-      email: formValue.email,
-      phoneNumber: formValue.phoneNumber,
-      dateOfBirth: formValue.dateOfBirth,
+      firstName: formValue.firstName as FirstName,
+      lastName: formValue.lastName as LastName,
+      email: formValue.email as EmailAddress,
+      phoneNumber: formValue.phoneNumber as PhoneNumber,
+      dateOfBirth: formValue.dateOfBirth as ISODateString,
       address: {
-        street: formValue.street,
-        city: formValue.city,
-        postalCode: formValue.postalCode,
-        country: formValue.country,
+        street: formValue.street as StreetAddress,
+        city: formValue.city as CityName,
+        postalCode: formValue.postalCode as PostalCode,
+        country: formValue.country as CountryCode,
       },
       driversLicense: {
-        licenseNumber: formValue.licenseNumber,
-        licenseIssueCountry: formValue.licenseIssueCountry,
-        licenseIssueDate: formValue.licenseIssueDate,
-        licenseExpiryDate: formValue.licenseExpiryDate,
+        licenseNumber: formValue.licenseNumber as LicenseNumber,
+        licenseIssueCountry: formValue.licenseIssueCountry as CountryCode,
+        licenseIssueDate: formValue.licenseIssueDate as ISODateString,
+        licenseExpiryDate: formValue.licenseExpiryDate as ISODateString,
       },
     };
 
