@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" />
     <PackageReference Include="Eventuous" />
     <PackageReference Include="Eventuous.SqlServer" />
     <PackageReference Include="Eventuous.Subscriptions" />

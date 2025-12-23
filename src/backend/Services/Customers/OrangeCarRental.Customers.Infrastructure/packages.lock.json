@@ -96,16 +96,6 @@
           "System.Memory.Data": "8.0.1"
         }
       },
-      "Azure.Identity": {
-        "type": "Transitive",
-        "resolved": "1.14.2",
-        "contentHash": "YhNMwOTwT+I2wIcJKSdP0ADyB2aK+JaYWZxO8LSRDm5w77LFr0ykR9xmt2ZV5T1gaI7xU6iNFIh/yW1dAlpddQ==",
-        "dependencies": {
-          "Azure.Core": "1.46.1",
-          "Microsoft.Identity.Client": "4.73.1",
-          "Microsoft.Identity.Client.Extensions.Msal": "4.73.1"
-        }
-      },
       "Eventuous.Application": {
         "type": "Transitive",
         "resolved": "0.15.1",
@@ -729,7 +719,6 @@
           "Eventuous": "[0.15.1, )",
           "Eventuous.SqlServer": "[0.15.1, )",
           "Eventuous.Subscriptions": "[0.15.1, )",
-          "Eventuous.Subscriptions.SqlServer": "(, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[10.0.1, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.1, )",
           "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
@@ -764,6 +753,17 @@
         "type": "Project",
         "dependencies": {
           "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+        }
+      },
+      "Azure.Identity": {
+        "type": "CentralTransitive",
+        "requested": "[1.17.0, )",
+        "resolved": "1.14.2",
+        "contentHash": "YhNMwOTwT+I2wIcJKSdP0ADyB2aK+JaYWZxO8LSRDm5w77LFr0ykR9xmt2ZV5T1gaI7xU6iNFIh/yW1dAlpddQ==",
+        "dependencies": {
+          "Azure.Core": "1.46.1",
+          "Microsoft.Identity.Client": "4.73.1",
+          "Microsoft.Identity.Client.Extensions.Msal": "4.73.1"
         }
       },
       "Eventuous.SqlServer": {
