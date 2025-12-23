@@ -10,6 +10,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 public readonly record struct CustomerIdentifier(Guid Value) : IValueObject
 {
     /// <summary>
+    ///     Empty customer identifier (represents uninitialized state).
+    /// </summary>
+    public static readonly CustomerIdentifier Empty = new(Guid.Empty);
+
+    /// <summary>
     ///     Creates a new unique customer identifier using GUID v7.
     /// </summary>
     public static CustomerIdentifier New() => new(Guid.CreateVersion7());

@@ -1,34 +1,31 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 
 /// <summary>
 ///     Handler for CancelReservationCommand.
-///     Cancels a reservation with an optional reason.
+///     Cancels a reservation via event sourcing with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IReservationsUnitOfWork unitOfWork)
+    IReservationCommandService commandService)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
-    private IReservationRepository Reservations => field ??= unitOfWork.Reservations;
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await Reservations.GetByIdAsync(command.ReservationId, cancellationToken);
-
-        var cancelledReservation = reservation.Cancel(command.CancellationReason);
-        await Reservations.UpdateAsync(cancelledReservation, cancellationToken);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Cancel the reservation via event-sourced command service
+        var reservation = await commandService.CancelAsync(
+            command.ReservationId,
+            command.CancellationReason,
+            cancellationToken);
 
         return new CancelReservationResult(
-            cancelledReservation.Id.Value,
-            cancelledReservation.Status.ToString(),
-            cancelledReservation.CancelledAt!.Value,
-            cancelledReservation.CancellationReason
+            reservation.Id.Value,
+            reservation.Status.ToString(),
+            reservation.CancelledAt!.Value,
+            reservation.CancellationReason
         );
     }
 }

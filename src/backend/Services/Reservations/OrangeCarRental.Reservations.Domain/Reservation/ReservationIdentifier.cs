@@ -8,6 +8,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 /// </summary>
 public readonly record struct ReservationIdentifier(Guid Value) : IValueObject
 {
+    /// <summary>
+    ///     Empty identifier for uninitialized state detection.
+    /// </summary>
+    public static readonly ReservationIdentifier Empty = new(Guid.Empty);
+
     public static ReservationIdentifier New() => new(Guid.CreateVersion7());
 
     public static ReservationIdentifier From(Guid value)

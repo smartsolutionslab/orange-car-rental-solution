@@ -1,14 +1,13 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
 /// <summary>
 ///     Handler for UpdateCustomerProfileCommand.
-///     Loads the customer, updates profile information, and persists changes.
+///     Loads the customer, updates profile information, and persists via event sourcing.
 /// </summary>
-public sealed class UpdateCustomerProfileCommandHandler(ICustomersUnitOfWork unitOfWork)
+public sealed class UpdateCustomerProfileCommandHandler(ICustomerCommandService commandService)
     : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
@@ -17,7 +16,7 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomersUnitOfWork uni
     /// <param name="command">The update command with new profile data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Update result with success status and details.</returns>
-    /// <exception cref="BuildingBlocks.Domain.Exceptions.EntityNotFoundException">Thrown when customer is not found.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when customer is not found.</exception>
     /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
     public async Task<UpdateCustomerProfileResult> HandleAsync(
         UpdateCustomerProfileCommand command,
@@ -25,13 +24,13 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomersUnitOfWork uni
     {
         var (customerId, name, phoneNumber, address) = command;
 
-        var customers = unitOfWork.Customers;
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
-        customer = customer.UpdateProfile(name, phoneNumber, address);
-
-        // Persist changes (repository updates with the new immutable instance)
-        await customers.UpdateAsync(customer, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Update profile via event-sourced command service
+        var customer = await commandService.UpdateProfileAsync(
+            customerId,
+            name,
+            phoneNumber,
+            address,
+            cancellationToken);
 
         return new UpdateCustomerProfileResult(
             customer.Id.Value,

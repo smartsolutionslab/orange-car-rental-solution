@@ -9,9 +9,12 @@
     <ProjectReference Include="..\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Customers.Application\OrangeCarRental.Customers.Application.csproj"/>
     <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.EventStore\OrangeCarRental.BuildingBlocks.EventStore.csproj"/>
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Eventuous"/>
+    <PackageReference Include="Eventuous.Subscriptions"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">

@@ -18,22 +18,32 @@ public static class MappingExtensions
         /// <summary>
         ///     Maps a Customer aggregate to a CustomerDto.
         /// </summary>
-        public CustomerDto ToDto() => new(
-            customer.Id.Value,
-            customer.Name.FirstName.Value,
-            customer.Name.LastName.Value,
-            customer.FullName,
-            customer.Email.Value,
-            customer.PhoneNumber.Value,
-            customer.PhoneNumber.FormattedValue,
-            customer.DateOfBirth,
-            customer.Age,
-            customer.Address.ToDto(),
-            customer.DriversLicense.ToDto(),
-            customer.Status.ToString(),
-            customer.CanMakeReservation(),
-            customer.RegisteredAtUtc,
-            customer.UpdatedAtUtc);
+        public CustomerDto ToDto()
+        {
+            var name = customer.Name;
+            var email = customer.Email;
+            var phone = customer.PhoneNumber;
+            var dob = customer.DateOfBirth;
+            var address = customer.Address;
+            var license = customer.DriversLicense;
+
+            return new CustomerDto(
+                customer.Id.Value,
+                name?.FirstName.Value ?? string.Empty,
+                name?.LastName.Value ?? string.Empty,
+                customer.FullName,
+                email?.Value ?? string.Empty,
+                phone?.Value ?? string.Empty,
+                phone?.FormattedValue ?? string.Empty,
+                dob?.Value ?? DateOnly.MinValue,
+                customer.Age,
+                address.HasValue ? address.Value.ToDto() : null,
+                license.HasValue ? license.Value.ToDto() : null,
+                customer.Status.ToString(),
+                customer.CanMakeReservation(),
+                customer.RegisteredAtUtc,
+                customer.UpdatedAtUtc);
+        }
     }
 
     /// <summary>

@@ -31,14 +31,14 @@ public class GetCustomerQueryHandlerTests
         // Act
         var result = await handler.HandleAsync(query, CancellationToken.None);
 
-        // Assert
+        // Assert - using .Value to access nullable struct properties
         result.ShouldNotBeNull();
         result.Id.ShouldBe(customer.Id.Value);
-        result.FirstName.ShouldBe(customer.Name.FirstName.Value);
-        result.LastName.ShouldBe(customer.Name.LastName.Value);
-        result.Email.ShouldBe(customer.Email.Value);
-        result.PhoneNumber.ShouldBe(customer.PhoneNumber.Value);
-        result.PhoneNumberFormatted.ShouldBe(customer.PhoneNumber.FormattedValue);
+        result.FirstName.ShouldBe(customer.Name!.Value.FirstName.Value);
+        result.LastName.ShouldBe(customer.Name!.Value.LastName.Value);
+        result.Email.ShouldBe(customer.Email!.Value.Value);
+        result.PhoneNumber.ShouldBe(customer.PhoneNumber!.Value.Value);
+        result.PhoneNumberFormatted.ShouldBe(customer.PhoneNumber!.Value.FormattedValue);
         result.Status.ShouldBe(customer.Status.ToString());
 
         customerRepositoryMock.Verify(x => x.GetByIdAsync(customer.Id, It.IsAny<CancellationToken>()), Times.Once);

@@ -225,13 +225,15 @@ public class CustomerBuilder
     /// </summary>
     public Customer Build()
     {
-        return Customer.Register(
+        var customer = new Customer();
+        customer.Register(
             _name,
             _email,
             _phone,
             _birthDate,
             _address,
             _license);
+        return customer;
     }
 
     /// <summary>

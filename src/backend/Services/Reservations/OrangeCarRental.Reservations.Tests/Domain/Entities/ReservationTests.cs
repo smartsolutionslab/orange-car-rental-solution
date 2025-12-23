@@ -20,7 +20,8 @@ public class ReservationTests
     public void Create_WithValidData_ShouldCreateReservation()
     {
         // Act
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             validPeriod,
@@ -44,8 +45,11 @@ public class ReservationTests
     [Fact]
     public void Create_WithEmptyVehicleId_ShouldThrowArgumentException()
     {
+        // Arrange
+        var reservation = new Reservation();
+
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Reservation.Create(
+        Should.Throw<ArgumentException>(() => reservation.Create(
             VehicleIdentifier.From(Guid.Empty),
             validCustomerIdentifier,
             validPeriod,
@@ -57,8 +61,11 @@ public class ReservationTests
     [Fact]
     public void Create_WithEmptyCustomerId_ShouldThrowArgumentException()
     {
+        // Arrange
+        var reservation = new Reservation();
+
         // Act & Assert
-        Should.Throw<ArgumentException>(() => Reservation.Create(
+        Should.Throw<ArgumentException>(() => reservation.Create(
             validVehicleIdentifier,
             CustomerIdentifier.From(Guid.Empty),
             validPeriod,
@@ -70,8 +77,9 @@ public class ReservationTests
     [Fact]
     public void Create_ShouldRaiseReservationCreatedEvent()
     {
-        // Act
-        var reservation = Reservation.Create(
+        // Arrange & Act
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             validPeriod,
@@ -79,16 +87,16 @@ public class ReservationTests
             validDropoffLocation,
             validTotalPrice);
 
-        // Assert
-        var events = reservation.DomainEvents;
+        // Assert - Changes contains uncommitted events from Eventuous Aggregate
+        var events = reservation.Changes;
         events.ShouldNotBeEmpty();
         var createdEvent = events.ShouldHaveSingleItem();
         createdEvent.ShouldBeOfType<ReservationCreated>();
 
         var evt = (ReservationCreated)createdEvent;
         evt.ReservationId.ShouldBe(reservation.Id);
-        evt.VehicleId.ShouldBe(validVehicleIdentifier);
-        evt.CustomerId.ShouldBe(validCustomerIdentifier);
+        evt.VehicleIdentifier.ShouldBe(validVehicleIdentifier);
+        evt.CustomerIdentifier.ShouldBe(validCustomerIdentifier);
         evt.Period.ShouldBe(validPeriod);
         evt.TotalPrice.ShouldBe(validTotalPrice);
     }
@@ -100,15 +108,12 @@ public class ReservationTests
         var reservation = CreateTestReservation();
 
         // Act
-        var confirmedReservation = reservation.Confirm();
+        reservation.Confirm();
 
-        // Assert
-        confirmedReservation.ShouldNotBeSameAs(reservation); // New instance (immutable)
-        confirmedReservation.Id.ShouldBe(reservation.Id); // Same ID
-        confirmedReservation.Status.ShouldBe(ReservationStatus.Confirmed);
-        confirmedReservation.ConfirmedAt.ShouldNotBeNull();
-        confirmedReservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
-        reservation.Status.ShouldBe(ReservationStatus.Pending); // Original unchanged
+        // Assert - event-sourced aggregate mutates in place
+        reservation.Status.ShouldBe(ReservationStatus.Confirmed);
+        reservation.ConfirmedAt.ShouldNotBeNull();
+        reservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -116,15 +121,14 @@ public class ReservationTests
     {
         // Arrange
         var reservation = CreateTestReservation();
-        reservation.ClearDomainEvents(); // Clear creation event
+        var initialEventCount = reservation.Changes.Count;
 
         // Act
-        var confirmedReservation = reservation.Confirm();
+        reservation.Confirm();
 
         // Assert
-        var events = confirmedReservation.DomainEvents;
-        events.ShouldNotBeEmpty();
-        var confirmedEvent = events.ShouldHaveSingleItem();
+        reservation.Changes.Count.ShouldBe(initialEventCount + 1);
+        var confirmedEvent = reservation.Changes.Last();
         confirmedEvent.ShouldBeOfType<ReservationConfirmed>();
 
         var evt = (ReservationConfirmed)confirmedEvent;
@@ -133,29 +137,19 @@ public class ReservationTests
 
     [Theory]
     [InlineData(ReservationStatus.Confirmed)]
-    [InlineData(ReservationStatus.Active)]
-    [InlineData(ReservationStatus.Completed)]
     [InlineData(ReservationStatus.Cancelled)]
-    [InlineData(ReservationStatus.NoShow)]
     public void Confirm_WhenNotPending_ShouldThrowInvalidOperationException(ReservationStatus status)
     {
         // Arrange
         var reservation = CreateTestReservation();
-        var changedReservation = status switch
-        {
-            ReservationStatus.Confirmed => reservation.Confirm(),
-            ReservationStatus.Cancelled => reservation.Cancel(),
-            _ => reservation // Cannot easily transition to Active/Completed/NoShow
-        };
-
-        if (status == ReservationStatus.Pending) return; // Skip
+        if (status == ReservationStatus.Confirmed)
+            reservation.Confirm();
+        else if (status == ReservationStatus.Cancelled)
+            reservation.Cancel();
 
         // Act & Assert
-        if (status == ReservationStatus.Confirmed || status == ReservationStatus.Cancelled)
-        {
-            var ex = Should.Throw<InvalidOperationException>(() => changedReservation.Confirm());
-            ex.Message.ShouldContain("Cannot confirm reservation in status");
-        }
+        var ex = Should.Throw<InvalidOperationException>(() => reservation.Confirm());
+        ex.Message.ShouldContain("Cannot confirm reservation in status");
     }
 
     [Fact]
@@ -166,43 +160,28 @@ public class ReservationTests
         var reason = "Customer requested cancellation";
 
         // Act
-        var cancelledReservation = reservation.Cancel(reason);
+        reservation.Cancel(reason);
 
-        // Assert
-        cancelledReservation.ShouldNotBeSameAs(reservation); // New instance (immutable)
-        cancelledReservation.Id.ShouldBe(reservation.Id); // Same ID
-        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
-        cancelledReservation.CancellationReason.ShouldBe(reason);
-        cancelledReservation.CancelledAt.ShouldNotBeNull();
-        cancelledReservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        // Assert - event-sourced aggregate mutates in place
+        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        reservation.CancellationReason.ShouldBe(reason);
+        reservation.CancelledAt.ShouldNotBeNull();
+        reservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
-    public void Cancel_WhenAlreadyCancelled_ShouldReturnSameInstance()
+    public void Cancel_WhenAlreadyCancelled_ShouldBeIdempotent()
     {
         // Arrange
         var reservation = CreateTestReservation();
-        var cancelledReservation = reservation.Cancel("First cancellation");
+        reservation.Cancel("First cancellation");
+        var eventCountAfterFirstCancel = reservation.Changes.Count;
 
         // Act
-        var secondCancellation = cancelledReservation.Cancel("Second attempt");
+        reservation.Cancel("Second attempt");
 
-        // Assert
-        secondCancellation.ShouldBeSameAs(cancelledReservation); // Same instance, no change
-    }
-
-    [Fact]
-    public void Cancel_WhenCompleted_ShouldThrowInvalidOperationException()
-    {
-        // Arrange
-        var reservation = CreateTestReservation();
-        var confirmedReservation = reservation.Confirm();
-
-        // We can't easily create a completed reservation in tests without time manipulation,
-        // so we'll skip this test scenario or create a different approach
-
-        // For now, just test that the method throws when appropriate
-        // This would need a mock or test helper to properly test
+        // Assert - no new event raised (idempotent)
+        reservation.Changes.Count.ShouldBe(eventCountAfterFirstCancel);
     }
 
     [Fact]
@@ -210,16 +189,15 @@ public class ReservationTests
     {
         // Arrange
         var reservation = CreateTestReservation();
-        reservation.ClearDomainEvents(); // Clear creation event
+        var initialEventCount = reservation.Changes.Count;
         var reason = "Customer requested cancellation";
 
         // Act
-        var cancelledReservation = reservation.Cancel(reason);
+        reservation.Cancel(reason);
 
         // Assert
-        var events = cancelledReservation.DomainEvents;
-        events.ShouldNotBeEmpty();
-        var cancelledEvent = events.ShouldHaveSingleItem();
+        reservation.Changes.Count.ShouldBe(initialEventCount + 1);
+        var cancelledEvent = reservation.Changes.Last();
         cancelledEvent.ShouldBeOfType<ReservationCancelled>();
 
         var evt = (ReservationCancelled)cancelledEvent;
@@ -235,23 +213,21 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
             validPickupLocation,
             validDropoffLocation,
             validTotalPrice);
-
-        var confirmedReservation = reservation.Confirm();
+        reservation.Confirm();
 
         // Act
-        var activeReservation = confirmedReservation.MarkAsActive();
+        reservation.MarkAsActive();
 
         // Assert
-        activeReservation.ShouldNotBeSameAs(confirmedReservation); // New instance (immutable)
-        activeReservation.Id.ShouldBe(reservation.Id); // Same ID
-        activeReservation.Status.ShouldBe(ReservationStatus.Active);
+        reservation.Status.ShouldBe(ReservationStatus.Active);
     }
 
     [Fact]
@@ -262,7 +238,8 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
@@ -280,10 +257,10 @@ public class ReservationTests
     {
         // Arrange
         var reservation = CreateTestReservation();
-        var confirmedReservation = reservation.Confirm();
+        reservation.Confirm();
 
         // Act & Assert (pickup date is 7 days in future)
-        var ex = Should.Throw<InvalidOperationException>(() => confirmedReservation.MarkAsActive());
+        var ex = Should.Throw<InvalidOperationException>(() => reservation.MarkAsActive());
         ex.Message.ShouldContain("Cannot activate reservation before pickup date");
     }
 
@@ -295,26 +272,24 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
             validPickupLocation,
             validDropoffLocation,
             validTotalPrice);
-
-        var confirmedReservation = reservation.Confirm();
-        var activeReservation = confirmedReservation.MarkAsActive();
+        reservation.Confirm();
+        reservation.MarkAsActive();
 
         // Act
-        var completedReservation = activeReservation.Complete();
+        reservation.Complete();
 
         // Assert
-        completedReservation.ShouldNotBeSameAs(activeReservation); // New instance (immutable)
-        completedReservation.Id.ShouldBe(reservation.Id); // Same ID
-        completedReservation.Status.ShouldBe(ReservationStatus.Completed);
-        completedReservation.CompletedAt.ShouldNotBeNull();
-        completedReservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
+        reservation.Status.ShouldBe(ReservationStatus.Completed);
+        reservation.CompletedAt.ShouldNotBeNull();
+        reservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -325,25 +300,24 @@ public class ReservationTests
         var returnDate = pickupDate.AddDays(3);
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
             validPickupLocation,
             validDropoffLocation,
             validTotalPrice);
-
-        var confirmedReservation = reservation.Confirm();
-        var activeReservation = confirmedReservation.MarkAsActive();
-        activeReservation.ClearDomainEvents(); // Clear previous events
+        reservation.Confirm();
+        reservation.MarkAsActive();
+        var eventCountBeforeComplete = reservation.Changes.Count;
 
         // Act
-        var completedReservation = activeReservation.Complete();
+        reservation.Complete();
 
         // Assert
-        var events = completedReservation.DomainEvents;
-        events.ShouldNotBeEmpty();
-        var completedEvent = events.ShouldHaveSingleItem();
+        reservation.Changes.Count.ShouldBe(eventCountBeforeComplete + 1);
+        var completedEvent = reservation.Changes.Last();
         completedEvent.ShouldBeOfType<ReservationCompleted>();
 
         var evt = (ReservationCompleted)completedEvent;
@@ -365,26 +339,22 @@ public class ReservationTests
     public void MarkAsNoShow_WhenPickupDateInFuture_ShouldThrowInvalidOperationException()
     {
         // Arrange - Create reservation with future dates
-        // Note: Cannot create BookingPeriod with past dates, so test the validation instead
         var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1));
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(4));
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
             validPickupLocation,
             validDropoffLocation,
             validTotalPrice);
+        reservation.Confirm();
 
-        var confirmedReservation = reservation.Confirm();
-
-        // Act
-        var act = () => confirmedReservation.MarkAsNoShow();
-
-        // Assert
-        var ex = Should.Throw<InvalidOperationException>(act);
+        // Act & Assert
+        var ex = Should.Throw<InvalidOperationException>(() => reservation.MarkAsNoShow());
         ex.Message.ShouldContain("Cannot mark as no-show before pickup date has passed");
     }
 
@@ -396,7 +366,8 @@ public class ReservationTests
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(4));
         var period = BookingPeriod.Of(pickupDate, returnDate);
 
-        var reservation = Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             period,
@@ -414,10 +385,10 @@ public class ReservationTests
     {
         // Arrange
         var reservation = CreateTestReservation();
-        var confirmedReservation = reservation.Confirm();
+        reservation.Confirm();
 
         // Act & Assert (pickup date is in future)
-        var ex = Should.Throw<InvalidOperationException>(() => confirmedReservation.MarkAsNoShow());
+        var ex = Should.Throw<InvalidOperationException>(() => reservation.MarkAsNoShow());
         ex.Message.ShouldContain("Cannot mark as no-show before pickup date has passed");
     }
 
@@ -440,12 +411,14 @@ public class ReservationTests
 
     private Reservation CreateTestReservation()
     {
-        return Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             validVehicleIdentifier,
             validCustomerIdentifier,
             validPeriod,
             validPickupLocation,
             validDropoffLocation,
             validTotalPrice);
+        return reservation;
     }
 }

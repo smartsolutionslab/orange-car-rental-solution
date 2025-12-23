@@ -113,13 +113,15 @@ public class ReservationBuilder
     /// </summary>
     public Reservation Build()
     {
-        return Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             _vehicleId,
             _customerId,
             _period,
             _pickupLocation,
             _returnLocation,
             _totalPrice);
+        return reservation;
     }
 
     /// <summary>
@@ -128,7 +130,8 @@ public class ReservationBuilder
     public Reservation BuildConfirmed()
     {
         var reservation = Build();
-        return reservation.Confirm();
+        reservation.Confirm();
+        return reservation;
     }
 
     /// <summary>
@@ -144,8 +147,9 @@ public class ReservationBuilder
         }
 
         var reservation = Build();
-        reservation = reservation.Confirm();
-        return reservation.MarkAsActive();
+        reservation.Confirm();
+        reservation.MarkAsActive();
+        return reservation;
     }
 
     /// <summary>
@@ -153,8 +157,9 @@ public class ReservationBuilder
     /// </summary>
     public Reservation BuildCompleted()
     {
-        var active = BuildActive();
-        return active.Complete();
+        var reservation = BuildActive();
+        reservation.Complete();
+        return reservation;
     }
 
     /// <summary>
@@ -163,7 +168,8 @@ public class ReservationBuilder
     public Reservation BuildCancelled(string? reason = "Test cancellation")
     {
         var reservation = Build();
-        return reservation.Cancel(reason);
+        reservation.Cancel(reason);
+        return reservation;
     }
 
     /// <summary>

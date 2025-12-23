@@ -41,7 +41,7 @@ public class CustomerDataSeeder(
         var customers = new List<Customer>();
 
         // Customer 1: Maximilian Schmidt - Young professional from Berlin
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Maximilian", "Schmidt"),
             Email.From("max.schmidt@email.de"),
             PhoneNumber.From("+49 30 12345678"),
@@ -51,7 +51,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 2: Anna Müller - Mid-career from Munich
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Anna", "Müller"),
             Email.From("anna.mueller@mail.de"),
             PhoneNumber.From("+49 89 98765432"),
@@ -61,7 +61,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 3: Lukas Weber - Recent graduate from Hamburg
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Lukas", "Weber"),
             Email.From("l.weber@webmail.de"),
             PhoneNumber.From("+49 40 55512345"),
@@ -71,7 +71,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 4: Sophie Wagner - Senior professional from Frankfurt
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Sophie", "Wagner"),
             Email.From("sophie.wagner@gmx.de"),
             PhoneNumber.From("+49 69 77788899"),
@@ -81,7 +81,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 5: Jonas Fischer - Young driver from Cologne
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Jonas", "Fischer"),
             Email.From("jonas.fischer@outlook.de"),
             PhoneNumber.From("+49 221 33344455"),
@@ -91,7 +91,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 6: Emma Becker - Experienced driver from Stuttgart
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Emma", "Becker"),
             Email.From("emma.becker@t-online.de"),
             PhoneNumber.From("+49 711 22211100"),
@@ -101,7 +101,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 7: Felix Hoffmann - Mid-age from Düsseldorf
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Felix", "Hoffmann"),
             Email.From("f.hoffmann@web.de"),
             PhoneNumber.From("+49 211 66677788"),
@@ -111,7 +111,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 8: Mia Schäfer - Young professional from Leipzig
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Mia", "Schäfer"),
             Email.From("mia.schaefer@email.de"),
             PhoneNumber.From("+49 341 44455566"),
@@ -121,7 +121,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 9: Leon Meyer - Senior citizen from Bremen
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Leon", "Meyer"),
             Email.From("leon.meyer@posteo.de"),
             PhoneNumber.From("+49 421 11122233"),
@@ -131,7 +131,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 10: Lena Koch - Mid-career from Hannover
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Lena", "Koch"),
             Email.From("lena.koch@yahoo.de"),
             PhoneNumber.From("+49 511 88899900"),
@@ -141,7 +141,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 11: Paul Richter - Young entrepreneur from Dresden
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Paul", "Richter"),
             Email.From("paul.richter@gmail.com"),
             PhoneNumber.From("+49 351 55566677"),
@@ -151,7 +151,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 12: Laura Zimmermann - Student from Freiburg
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Laura", "Zimmermann"),
             Email.From("laura.zimmer@student.de"),
             PhoneNumber.From("+49 761 33322211"),
@@ -161,7 +161,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 13: David Klein - Suspended customer (late payment issue)
-        var suspendedCustomer = Customer.Register(
+        var suspendedCustomer = CreateCustomer(
             CustomerName.Of("David", "Klein"),
             Email.From("david.klein@example.de"),
             PhoneNumber.From("+49 228 99988877"),
@@ -173,7 +173,7 @@ public class CustomerDataSeeder(
         customers.Add(suspendedCustomer);
 
         // Customer 14: Sarah Lang - Older driver from Nuremberg
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Sarah", "Lang"),
             Email.From("sarah.lang@freenet.de"),
             PhoneNumber.From("+49 911 12312312"),
@@ -183,7 +183,7 @@ public class CustomerDataSeeder(
         ));
 
         // Customer 15: Tim Schwarz - Recent driver
-        customers.Add(Customer.Register(
+        customers.Add(CreateCustomer(
             CustomerName.Of("Tim", "Schwarz"),
             Email.From("tim.schwarz@mailbox.org"),
             PhoneNumber.From("+49 201 45645645"),
@@ -193,5 +193,18 @@ public class CustomerDataSeeder(
         ));
 
         return customers;
+    }
+
+    private static Customer CreateCustomer(
+        CustomerName name,
+        Email email,
+        PhoneNumber phone,
+        BirthDate birthDate,
+        Address address,
+        DriversLicense license)
+    {
+        var customer = new Customer();
+        customer.Register(name, email, phone, birthDate, address, license);
+        return customer;
     }
 }

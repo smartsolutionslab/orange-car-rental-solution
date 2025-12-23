@@ -6,5 +6,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Even
 ///     Domain event raised when a reservation is confirmed (payment received).
 /// </summary>
 public sealed record ReservationConfirmed(
-    ReservationIdentifier ReservationId
+    ReservationIdentifier ReservationId,
+    DateTime ConfirmedAtUtc
 ) : DomainEvent;

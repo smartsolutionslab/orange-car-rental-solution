@@ -1,8 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
@@ -12,10 +10,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Handles guest booking by:
 ///     1. Registering the customer via the Customers API
 ///     2. Calculating the price via the Pricing API
-///     3. Creating the reservation with the new customer ID
+///     3. Creating the reservation via event sourcing with the new customer ID
 /// </summary>
 public sealed class CreateGuestReservationCommandHandler(
-    IReservationsUnitOfWork unitOfWork,
+    IReservationCommandService commandService,
     ICustomersService customersService,
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
@@ -24,12 +22,10 @@ public sealed class CreateGuestReservationCommandHandler(
         CreateGuestReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        var reservations = unitOfWork.Reservations;
-
         var (vehicleId, vehicleCategory, bookingPeriod, pickupLocationCode, dropoffLocationCode, name, email,
             phoneNumber, birthDate, address, driversLicense) = command;
+
         // Step 1: Register the customer via Customers API
-        // Extract primitive values from value objects for the DTO
         var registerCustomerDto = new RegisterCustomerDto(
             name.FirstName.Value,
             name.LastName.Value,
@@ -49,7 +45,6 @@ public sealed class CreateGuestReservationCommandHandler(
         var customerId = await customersService.RegisterCustomerAsync(registerCustomerDto, cancellationToken);
 
         // Step 2: Calculate price via Pricing API
-        // Note: Pricing service still uses primitives, so we extract from value objects
         var priceCalculation = await pricingService.CalculatePriceAsync(
             vehicleCategory,
             bookingPeriod,
@@ -58,27 +53,24 @@ public sealed class CreateGuestReservationCommandHandler(
 
         var totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
 
-        // Step 3: Create the reservation aggregate with the new customer ID
-        var reservation = Reservation.Create(
+        // Step 3: Create the reservation via event-sourced command service
+        var reservation = await commandService.CreateAsync(
             vehicleId,
             CustomerIdentifier.From(customerId),
             bookingPeriod,
             pickupLocationCode,
             dropoffLocationCode,
-            totalPrice
-        );
-        await reservations.AddAsync(reservation, cancellationToken);
+            totalPrice,
+            cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        // Step 6: Return result with both customer and reservation IDs
+        // Step 4: Return result with both customer and reservation IDs
         return new CreateGuestReservationResult(
             customerId,
             reservation.Id.Value,
-            reservation.TotalPrice.NetAmount,
-            reservation.TotalPrice.VatAmount,
-            reservation.TotalPrice.GrossAmount,
-            reservation.TotalPrice.Currency.Code
+            reservation.TotalPrice!.Value.NetAmount,
+            reservation.TotalPrice!.Value.VatAmount,
+            reservation.TotalPrice!.Value.GrossAmount,
+            reservation.TotalPrice!.Value.Currency.Code
         );
     }
 }

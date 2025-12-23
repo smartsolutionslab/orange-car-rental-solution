@@ -4,12 +4,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 /// <summary>
 ///     Domain event raised when a new customer registers in the system.
-///     This event can trigger welcome emails, analytics tracking, etc.
+///     Contains all data needed to construct the initial customer state.
 /// </summary>
 public sealed record CustomerRegistered(
     CustomerIdentifier CustomerIdentifier,
     CustomerName Name,
     Email Email,
+    PhoneNumber PhoneNumber,
     BirthDate DateOfBirth,
+    Address Address,
+    DriversLicense DriversLicense,
     DateTime RegisteredAtUtc
 ) : DomainEvent;

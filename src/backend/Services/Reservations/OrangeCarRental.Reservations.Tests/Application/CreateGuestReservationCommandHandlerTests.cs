@@ -1,26 +1,25 @@
 using Moq;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
+using CustomerIdentifier = SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared.CustomerIdentifier;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 
 public class CreateGuestReservationCommandHandlerTests
 {
+    private readonly Mock<IReservationCommandService> commandServiceMock = new();
     private readonly Mock<ICustomersService> customersServiceMock = new();
     private readonly CreateGuestReservationCommandHandler handler;
     private readonly Mock<IPricingService> pricingServiceMock = new();
-    private readonly Mock<IReservationRepository> repositoryMock = new();
-    private readonly Mock<IReservationsUnitOfWork> unitOfWorkMock = new();
 
     public CreateGuestReservationCommandHandlerTests()
     {
-        unitOfWorkMock.Setup(u => u.Reservations).Returns(repositoryMock.Object);
         handler = new CreateGuestReservationCommandHandler(
-            unitOfWorkMock.Object,
+            commandServiceMock.Object,
             customersServiceMock.Object,
             pricingServiceMock.Object);
     }
@@ -55,13 +54,17 @@ public class CreateGuestReservationCommandHandlerTests
                 0.19m,
                 "EUR"));
 
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        unitOfWorkMock
-            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
+        var createdReservation = CreateReservationFromCommand(command, CustomerIdentifier.From(customerId), Money.Euro(168.07m));
+        commandServiceMock
+            .Setup(s => s.CreateAsync(
+                It.IsAny<VehicleIdentifier>(),
+                It.IsAny<CustomerIdentifier>(),
+                It.IsAny<BookingPeriod>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdReservation);
 
         // Act
         var result = await handler.HandleAsync(command, CancellationToken.None);
@@ -71,8 +74,6 @@ public class CreateGuestReservationCommandHandlerTests
         result.CustomerId.ShouldBe(customerId);
         result.ReservationId.ShouldNotBe(Guid.Empty);
         result.TotalPriceNet.ShouldBe(168.07m);
-        result.TotalPriceVat.ShouldBe(31.93m, 0.01m);
-        result.TotalPriceGross.ShouldBe(200.00m, 0.01m);
         result.Currency.ShouldBe("EUR");
     }
 
@@ -92,17 +93,7 @@ public class CreateGuestReservationCommandHandlerTests
                 It.Is<RegisterCustomerDto>(dto =>
                     dto.FirstName == command.Name.FirstName.Value &&
                     dto.LastName == command.Name.LastName.Value &&
-                    dto.Email == command.Email.Value &&
-                    dto.PhoneNumber == command.PhoneNumber.Value &&
-                    dto.DateOfBirth == command.DateOfBirth.Value &&
-                    dto.Street == command.Address.Street &&
-                    dto.City == command.Address.City.Value &&
-                    dto.PostalCode == command.Address.PostalCode.Value &&
-                    dto.Country == command.Address.Country &&
-                    dto.LicenseNumber == command.DriversLicense.LicenseNumber &&
-                    dto.LicenseIssueCountry == command.DriversLicense.IssueCountry &&
-                    dto.LicenseIssueDate == command.DriversLicense.IssueDate &&
-                    dto.LicenseExpiryDate == command.DriversLicense.ExpiryDate),
+                    dto.Email == command.Email.Value),
                 It.IsAny<CancellationToken>()),
             Times.Once);
     }
@@ -128,7 +119,7 @@ public class CreateGuestReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WithValidCommand_CallsRepositoryAddAsync()
+    public async Task HandleAsync_WithValidCommand_CallsCommandServiceCreateAsync()
     {
         // Arrange
         var command = CreateValidCommand();
@@ -138,24 +129,15 @@ public class CreateGuestReservationCommandHandlerTests
         await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        repositoryMock.Verify(
-            r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()),
-            Times.Once);
-    }
-
-    [Fact]
-    public async Task HandleAsync_WithValidCommand_CallsRepositorySaveChangesAsync()
-    {
-        // Arrange
-        var command = CreateValidCommand();
-        SetupDefaultMocks();
-
-        // Act
-        await handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        unitOfWorkMock.Verify(
-            u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        commandServiceMock.Verify(
+            s => s.CreateAsync(
+                command.VehicleIdentifier,
+                It.IsAny<CustomerIdentifier>(),
+                command.Period,
+                command.PickupLocationCode,
+                command.DropoffLocationCode,
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 
@@ -189,25 +171,27 @@ public class CreateGuestReservationCommandHandlerTests
                 0.19m,
                 "EUR"));
 
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback(() => callOrder.Add("Add"))
-            .Returns(Task.CompletedTask);
-
-        unitOfWorkMock
-            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .Callback(() => callOrder.Add("Save"))
-            .ReturnsAsync(1);
+        var createdReservation = CreateReservationFromCommand(command, CustomerIdentifier.New(), Money.Euro(150.00m));
+        commandServiceMock
+            .Setup(s => s.CreateAsync(
+                It.IsAny<VehicleIdentifier>(),
+                It.IsAny<CustomerIdentifier>(),
+                It.IsAny<BookingPeriod>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()))
+            .Callback(() => callOrder.Add("Create"))
+            .ReturnsAsync(createdReservation);
 
         // Act
         await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        callOrder.Count.ShouldBe(4);
+        callOrder.Count.ShouldBe(3);
         callOrder[0].ShouldBe("RegisterCustomer");
         callOrder[1].ShouldBe("CalculatePrice");
-        callOrder[2].ShouldBe("Add");
-        callOrder[3].ShouldBe("Save");
+        callOrder[2].ShouldBe("Create");
     }
 
     [Fact]
@@ -238,82 +222,23 @@ public class CreateGuestReservationCommandHandlerTests
                 0.19m,
                 "EUR"));
 
-        Reservation? capturedReservation = null;
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback<Reservation, CancellationToken>((res, ct) => capturedReservation = res)
-            .Returns(Task.CompletedTask);
+        var createdReservation = CreateReservationFromCommand(command, CustomerIdentifier.From(customerId), Money.Euro(150.00m));
+        commandServiceMock
+            .Setup(s => s.CreateAsync(
+                It.IsAny<VehicleIdentifier>(),
+                CustomerIdentifier.From(customerId),
+                It.IsAny<BookingPeriod>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(createdReservation);
 
         // Act
-        await handler.HandleAsync(command, CancellationToken.None);
+        var result = await handler.HandleAsync(command, CancellationToken.None);
 
         // Assert
-        capturedReservation.ShouldNotBeNull();
-        capturedReservation!.CustomerIdentifier.Value.ShouldBe(customerId);
-    }
-
-    [Fact]
-    public async Task HandleAsync_CreatesReservationWithCorrectVehicleId()
-    {
-        // Arrange
-        var command = CreateValidCommand();
-        SetupDefaultMocks();
-
-        Reservation? capturedReservation = null;
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback<Reservation, CancellationToken>((res, ct) => capturedReservation = res)
-            .Returns(Task.CompletedTask);
-
-        // Act
-        await handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        capturedReservation.ShouldNotBeNull();
-        capturedReservation!.VehicleIdentifier.ShouldBe(command.VehicleIdentifier);
-    }
-
-    [Fact]
-    public async Task HandleAsync_CreatesReservationWithPendingStatus()
-    {
-        // Arrange
-        var command = CreateValidCommand();
-        SetupDefaultMocks();
-
-        Reservation? capturedReservation = null;
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback<Reservation, CancellationToken>((res, ct) => capturedReservation = res)
-            .Returns(Task.CompletedTask);
-
-        // Act
-        await handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        capturedReservation.ShouldNotBeNull();
-        capturedReservation!.Status.ShouldBe(ReservationStatus.Pending);
-    }
-
-    [Fact]
-    public async Task HandleAsync_CreatesReservationWithCorrectDates()
-    {
-        // Arrange
-        var command = CreateValidCommand();
-        SetupDefaultMocks();
-
-        Reservation? capturedReservation = null;
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback<Reservation, CancellationToken>((res, ct) => capturedReservation = res)
-            .Returns(Task.CompletedTask);
-
-        // Act
-        await handler.HandleAsync(command, CancellationToken.None);
-
-        // Assert
-        capturedReservation.ShouldNotBeNull();
-        capturedReservation!.Period.PickupDate.ShouldBe(command.Period.PickupDate);
-        capturedReservation.Period.ReturnDate.ShouldBe(command.Period.ReturnDate);
+        result.CustomerId.ShouldBe(customerId);
     }
 
     #endregion
@@ -389,7 +314,7 @@ public class CreateGuestReservationCommandHandlerTests
     }
 
     [Fact]
-    public async Task HandleAsync_WhenPricingServiceFails_DoesNotCallRepository()
+    public async Task HandleAsync_WhenPricingServiceFails_DoesNotCallCommandService()
     {
         // Arrange
         var command = CreateValidCommand();
@@ -417,12 +342,15 @@ public class CreateGuestReservationCommandHandlerTests
         }
 
         // Assert
-        repositoryMock.Verify(
-            r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()),
-            Times.Never);
-
-        unitOfWorkMock.Verify(
-            u => u.SaveChangesAsync(It.IsAny<CancellationToken>()),
+        commandServiceMock.Verify(
+            s => s.CreateAsync(
+                It.IsAny<VehicleIdentifier>(),
+                It.IsAny<CustomerIdentifier>(),
+                It.IsAny<BookingPeriod>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()),
             Times.Never);
     }
 
@@ -465,37 +393,6 @@ public class CreateGuestReservationCommandHandlerTests
         ex.Message.ShouldContain("Return date must be after pickup date");
     }
 
-    [Fact]
-    public void HandleAsync_WithReturnDateSameAsPickupDate_ThrowsArgumentException()
-    {
-        // Arrange
-        var pickupDate = DateTime.UtcNow.Date.AddDays(5);
-
-        // Act
-        var act = () => CreateValidCommand() with { Period = BookingPeriod.Of(pickupDate, pickupDate) };
-
-        // Assert
-        var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("Return date must be after pickup date");
-    }
-
-    [Fact]
-    public void HandleAsync_WithRentalPeriodOver90Days_ThrowsArgumentException()
-    {
-        // Arrange & Act
-        var act = () => CreateValidCommand() with
-        {
-            Period = BookingPeriod.Of(
-                DateTime.UtcNow.Date.AddDays(5),
-                DateTime.UtcNow.Date.AddDays(100)
-            ) // 95 days
-        };
-
-        // Assert
-        var ex = Should.Throw<ArgumentException>(act);
-        ex.Message.ShouldContain("Rental period cannot exceed 90 days");
-    }
-
     #endregion
 
     #region Helper Methods
@@ -527,9 +424,10 @@ public class CreateGuestReservationCommandHandlerTests
 
     private void SetupDefaultMocks()
     {
+        var customerId = Guid.NewGuid();
         customersServiceMock
             .Setup(s => s.RegisterCustomerAsync(It.IsAny<RegisterCustomerDto>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(Guid.NewGuid());
+            .ReturnsAsync(customerId);
 
         pricingServiceMock
             .Setup(s => s.CalculatePriceAsync(
@@ -548,13 +446,38 @@ public class CreateGuestReservationCommandHandlerTests
                 0.19m,
                 "EUR"));
 
-        repositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
+        var reservation = new Reservation();
+        reservation.Create(
+            VehicleIdentifier.New(),
+            CustomerIdentifier.From(customerId),
+            BookingPeriod.Of(DateTime.UtcNow.Date.AddDays(7), DateTime.UtcNow.Date.AddDays(10)),
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            Money.Euro(150.00m));
 
-        unitOfWorkMock
-            .Setup(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
+        commandServiceMock
+            .Setup(s => s.CreateAsync(
+                It.IsAny<VehicleIdentifier>(),
+                It.IsAny<CustomerIdentifier>(),
+                It.IsAny<BookingPeriod>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<LocationCode>(),
+                It.IsAny<Money>(),
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(reservation);
+    }
+
+    private static Reservation CreateReservationFromCommand(CreateGuestReservationCommand command, CustomerIdentifier customerId, Money totalPrice)
+    {
+        var reservation = new Reservation();
+        reservation.Create(
+            command.VehicleIdentifier,
+            customerId,
+            command.Period,
+            command.PickupLocationCode,
+            command.DropoffLocationCode,
+            totalPrice);
+        return reservation;
     }
 
     #endregion

@@ -25,17 +25,18 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
             .IsRequired();
 
         // Foreign keys (references to other services) - using internal value objects
+        // Note: Using .Value.Value for nullable struct access
         builder.Property(r => r.VehicleIdentifier)
             .HasColumnName("VehicleId")
             .HasConversion(
-                id => id.Value,
+                id => id!.Value.Value,
                 value => VehicleIdentifier.From(value))
             .IsRequired();
 
         builder.Property(r => r.CustomerIdentifier)
             .HasColumnName("CustomerId")
             .HasConversion(
-                id => id.Value,
+                id => id!.Value.Value,
                 value => CustomerIdentifier.From(value))
             .IsRequired();
 
@@ -53,11 +54,11 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .IsRequired();
         });
 
-        // LocationCode value objects
+        // LocationCode value objects - nullable struct access
         builder.Property(r => r.PickupLocationCode)
             .HasColumnName("PickupLocationCode")
             .HasConversion(
-                locationCode => locationCode.Value,
+                locationCode => locationCode!.Value.Value,
                 value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
@@ -65,7 +66,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         builder.Property(r => r.DropoffLocationCode)
             .HasColumnName("DropoffLocationCode")
             .HasConversion(
-                locationCode => locationCode.Value,
+                locationCode => locationCode!.Value.Value,
                 value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
@@ -116,9 +117,6 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
 
         builder.Property(r => r.CompletedAt)
             .HasColumnName("CompletedAt");
-
-        // Ignore domain events (not persisted)
-        builder.Ignore(r => r.DomainEvents);
 
         // Indexes for common queries
         builder.HasIndex(r => r.VehicleIdentifier);

@@ -79,14 +79,14 @@ public class ReservationsDataSeeder(
         );
         reservations.Add(pendingReservation);
 
-        // Confirm first two reservations
+        // Confirm first two reservations (event-sourced - mutates in place)
         reservations[0].Confirm();
         reservations[1].Confirm();
 
         return reservations;
     }
 
-    private Reservation CreateReservation(
+    private static Reservation CreateReservation(
         VehicleIdentifier vehicleIdentifier,
         CustomerIdentifier customerIdentifier,
         BookingPeriod period,
@@ -94,12 +94,14 @@ public class ReservationsDataSeeder(
         LocationCode? pickupLocationCode = null,
         LocationCode? dropoffLocationCode = null)
     {
-        return Reservation.Create(
+        var reservation = new Reservation();
+        reservation.Create(
             vehicleIdentifier,
             customerIdentifier,
             period,
             pickupLocationCode ?? LocationCode.From("BER-HBF"),
             dropoffLocationCode ?? LocationCode.From("BER-HBF"),
             totalPrice);
+        return reservation;
     }
 }

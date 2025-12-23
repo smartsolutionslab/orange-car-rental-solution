@@ -43,14 +43,15 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
     /// <summary>
     ///     Sort field selectors for reservation queries.
+    ///     Note: .Value used to access nullable struct properties in EF Core queries.
     /// </summary>
     private static readonly Dictionary<string, Expression<Func<Reservation, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["pickupdate"] = r => r.Period.PickupDate,
-        ["pickup_date"] = r => r.Period.PickupDate,
-        ["price"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
-        ["totalprice"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
-        ["total_price"] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        ["pickupdate"] = r => r.Period!.Value.PickupDate,
+        ["pickup_date"] = r => r.Period!.Value.PickupDate,
+        ["price"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
+        ["totalprice"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
+        ["total_price"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
         ["status"] = r => r.Status,
         ["createddate"] = r => r.CreatedAt,
         ["created_date"] = r => r.CreatedAt,
@@ -99,9 +100,9 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
                 (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
                 // Period overlap check: reservation period overlaps if:
                 // reservation pickup <= requested return AND reservation return >= requested pickup
-                r.Period.PickupDate <= period.ReturnDate &&
-                r.Period.ReturnDate >= period.PickupDate)
-            .Select(r => r.VehicleIdentifier.Value) // Extract Guid from value object
+                r.Period!.Value.PickupDate <= period.ReturnDate &&
+                r.Period!.Value.ReturnDate >= period.PickupDate)
+            .Select(r => r.VehicleIdentifier!.Value.Value) // Extract Guid from nullable struct
             .Distinct()
             .ToListAsync(cancellationToken);
 
@@ -116,6 +117,7 @@ internal static class ReservationQueryExtensions
 {
     /// <summary>
     ///     Applies all filters from ReservationSearchParameters to the query.
+    ///     Note: .Value used to access nullable struct properties in EF Core queries.
     /// </summary>
     public static IQueryable<Reservation> ApplyFilters(
         this IQueryable<Reservation> query,
@@ -130,14 +132,14 @@ internal static class ReservationQueryExtensions
         // Pickup date range filtering
         query = query.WhereInDateRange(
             parameters.PickupDateRange,
-            r => r.Period.PickupDate >= parameters.PickupDateRange!.From!.Value,
-            r => r.Period.PickupDate <= parameters.PickupDateRange!.To!.Value);
+            r => r.Period!.Value.PickupDate >= parameters.PickupDateRange!.From!.Value,
+            r => r.Period!.Value.PickupDate <= parameters.PickupDateRange!.To!.Value);
 
         // Price range filtering
         query = query.WhereInPriceRange(
             parameters.PriceRange,
-            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceRange!.Min!.Value,
-            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceRange!.Max!.Value);
+            r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount >= parameters.PriceRange!.Min!.Value,
+            r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount <= parameters.PriceRange!.Max!.Value);
 
         return query;
     }

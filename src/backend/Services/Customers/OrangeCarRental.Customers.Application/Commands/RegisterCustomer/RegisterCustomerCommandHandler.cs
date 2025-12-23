@@ -1,14 +1,16 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
 /// <summary>
 ///     Handler for RegisterCustomerCommand.
-///     Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
+///     Validates email uniqueness, creates a new customer aggregate, and persists via event sourcing.
 /// </summary>
-public sealed class RegisterCustomerCommandHandler(ICustomersUnitOfWork unitOfWork)
+public sealed class RegisterCustomerCommandHandler(
+    ICustomerCommandService commandService,
+    ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
@@ -25,29 +27,26 @@ public sealed class RegisterCustomerCommandHandler(ICustomersUnitOfWork unitOfWo
     {
         var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
 
-        var customers = unitOfWork.Customers;
-
-        // Check email uniqueness
-        var emailExists = await customers.ExistsWithEmailAsync(email, cancellationToken);
+        // Check email uniqueness using read model
+        var emailExists = await unitOfWork.Customers.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
             throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
         }
 
-        var customer = Customer.Register(
+        // Create and register customer via event-sourced command service
+        var customer = await commandService.RegisterAsync(
             customerName,
             email,
             phoneNumber,
             dateOfBirth,
             address,
-            driversLicense);
-        await customers.AddAsync(customer, cancellationToken);
-
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+            driversLicense,
+            cancellationToken);
 
         return new RegisterCustomerResult(
             customer.Id.Value,
-            customer.Email.Value,
+            customer.Email?.Value ?? email.Value,
             "Customer registered successfully",
             customer.RegisteredAtUtc);
     }

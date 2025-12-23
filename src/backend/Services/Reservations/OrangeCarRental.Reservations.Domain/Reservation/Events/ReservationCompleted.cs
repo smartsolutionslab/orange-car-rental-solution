@@ -6,5 +6,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Even
 ///     Domain event raised when a reservation is completed (vehicle returned).
 /// </summary>
 public sealed record ReservationCompleted(
-    ReservationIdentifier ReservationId
+    ReservationIdentifier ReservationId,
+    DateTime CompletedAtUtc
 ) : DomainEvent;

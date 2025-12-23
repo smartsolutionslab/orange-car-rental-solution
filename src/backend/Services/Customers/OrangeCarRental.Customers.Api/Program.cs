@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.EventStore.Extensions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
@@ -13,6 +14,7 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCust
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
+using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.EventSourcing;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
@@ -59,6 +61,12 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
 // Register Unit of Work and repositories
 builder.Services.AddScoped<ICustomersUnitOfWork, CustomersUnitOfWork>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+// Register event sourcing (type mappings for serialization)
+builder.Services.AddCustomerEventSourcing();
+
+// Register event publisher (for domain event publishing)
+builder.Services.AddCustomerEventPublisher();
 
 // Register command handlers
 builder.Services.AddScoped<RegisterCustomerCommandHandler>();

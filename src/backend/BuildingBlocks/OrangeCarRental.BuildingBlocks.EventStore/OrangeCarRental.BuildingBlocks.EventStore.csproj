@@ -1,8 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <!-- Suppress transitive package vulnerability warnings from Eventuous.SqlServer -->
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Eventuous" />
+    <PackageReference Include="Eventuous.SqlServer" />
+    <PackageReference Include="Eventuous.Subscriptions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj" />
+    <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj" />
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj" />
+  </ItemGroup>
 
 </Project>

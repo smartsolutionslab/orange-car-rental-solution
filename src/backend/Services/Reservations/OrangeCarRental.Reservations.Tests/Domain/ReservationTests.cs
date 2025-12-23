@@ -57,8 +57,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act
-        reservation = reservation.Confirm();
+        // Act - event-sourced aggregate mutates in place
+        reservation.Confirm();
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Confirmed);
@@ -104,8 +104,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act
-        reservation = reservation.Cancel("Changed plans");
+        // Act - event-sourced aggregate mutates in place
+        reservation.Cancel("Changed plans");
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Cancelled);
@@ -120,8 +120,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildConfirmed();
 
-        // Act
-        reservation = reservation.Cancel("Emergency");
+        // Act - event-sourced aggregate mutates in place
+        reservation.Cancel("Emergency");
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Cancelled);
@@ -134,8 +134,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act
-        reservation = reservation.Cancel();
+        // Act - event-sourced aggregate mutates in place
+        reservation.Cancel();
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Cancelled);
@@ -197,8 +197,8 @@ public class ReservationTests
             .StartingToday()
             .BuildConfirmed();
 
-        // Act
-        reservation = reservation.MarkAsActive();
+        // Act - event-sourced aggregate mutates in place
+        reservation.MarkAsActive();
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Active);
@@ -262,8 +262,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildActive();
 
-        // Act
-        reservation = reservation.Complete();
+        // Act - event-sourced aggregate mutates in place
+        reservation.Complete();
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Completed);
@@ -435,16 +435,16 @@ public class ReservationTests
         // Assert initial state
         reservation.Status.ShouldBe(ReservationStatus.Pending);
 
-        // Confirm
-        reservation = reservation.Confirm();
+        // Confirm - event-sourced aggregate mutates in place
+        reservation.Confirm();
         reservation.Status.ShouldBe(ReservationStatus.Confirmed);
 
         // Activate
-        reservation = reservation.MarkAsActive();
+        reservation.MarkAsActive();
         reservation.Status.ShouldBe(ReservationStatus.Active);
 
         // Complete
-        reservation = reservation.Complete();
+        reservation.Complete();
         reservation.Status.ShouldBe(ReservationStatus.Completed);
     }
 
@@ -454,8 +454,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act
-        reservation = reservation.Cancel("Customer request");
+        // Act - event-sourced aggregate mutates in place
+        reservation.Cancel("Customer request");
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Cancelled);
@@ -467,8 +467,8 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildConfirmed();
 
-        // Act
-        reservation = reservation.Cancel("Emergency");
+        // Act - event-sourced aggregate mutates in place
+        reservation.Cancel("Emergency");
 
         // Assert
         reservation.Status.ShouldBe(ReservationStatus.Cancelled);
@@ -497,9 +497,9 @@ public class ReservationTests
         // Arrange & Act
         var reservation = ReservationBuilder.WeekendTrip().Build();
 
-        // Assert
-        reservation.Period.Days.ShouldBe(3);
-        reservation.TotalPrice.GrossAmount.ShouldBe(250.00m);
+        // Assert - using .Value to access nullable struct properties
+        reservation.Period!.Value.Days.ShouldBe(3);
+        reservation.TotalPrice!.Value.GrossAmount.ShouldBe(250.00m);
     }
 
     [Fact]
@@ -508,9 +508,9 @@ public class ReservationTests
         // Arrange & Act
         var reservation = ReservationBuilder.WeekLongTrip().Build();
 
-        // Assert
-        reservation.Period.Days.ShouldBe(7);
-        reservation.TotalPrice.GrossAmount.ShouldBe(500.00m);
+        // Assert - using .Value to access nullable struct properties
+        reservation.Period!.Value.Days.ShouldBe(7);
+        reservation.TotalPrice!.Value.GrossAmount.ShouldBe(500.00m);
     }
 
     #endregion

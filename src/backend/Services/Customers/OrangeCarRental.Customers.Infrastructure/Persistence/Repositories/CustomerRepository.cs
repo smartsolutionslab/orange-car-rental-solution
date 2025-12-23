@@ -89,24 +89,26 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
 
     /// <summary>
     ///     Sort field selectors for customer queries.
+    ///     Note: .Value used to access nullable struct properties as EF Core queries operate
+    ///     on persisted data where these properties are guaranteed to be non-null.
     /// </summary>
     private static readonly Dictionary<string, Expression<Func<Customer, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["firstname"] = c => c.Name.FirstName,
-        ["first_name"] = c => c.Name.FirstName,
-        ["lastname"] = c => c.Name.LastName,
-        ["last_name"] = c => c.Name.LastName,
-        ["email"] = c => c.Email,
-        ["phonenumber"] = c => c.PhoneNumber,
-        ["phone_number"] = c => c.PhoneNumber,
-        ["phone"] = c => c.PhoneNumber,
-        ["dateofbirth"] = c => c.DateOfBirth,
-        ["date_of_birth"] = c => c.DateOfBirth,
-        ["birthdate"] = c => c.DateOfBirth,
-        ["city"] = c => c.Address.City,
-        ["postalcode"] = c => c.Address.PostalCode,
-        ["postal_code"] = c => c.Address.PostalCode,
-        ["zip"] = c => c.Address.PostalCode,
+        ["firstname"] = c => c.Name!.Value.FirstName,
+        ["first_name"] = c => c.Name!.Value.FirstName,
+        ["lastname"] = c => c.Name!.Value.LastName,
+        ["last_name"] = c => c.Name!.Value.LastName,
+        ["email"] = c => c.Email!.Value,
+        ["phonenumber"] = c => c.PhoneNumber!.Value,
+        ["phone_number"] = c => c.PhoneNumber!.Value,
+        ["phone"] = c => c.PhoneNumber!.Value,
+        ["dateofbirth"] = c => c.DateOfBirth!.Value,
+        ["date_of_birth"] = c => c.DateOfBirth!.Value,
+        ["birthdate"] = c => c.DateOfBirth!.Value,
+        ["city"] = c => c.Address!.Value.City,
+        ["postalcode"] = c => c.Address!.Value.PostalCode,
+        ["postal_code"] = c => c.Address!.Value.PostalCode,
+        ["zip"] = c => c.Address!.Value.PostalCode,
         ["status"] = c => c.Status,
         ["registeredat"] = c => c.RegisteredAtUtc,
         ["registered_at"] = c => c.RegisteredAtUtc,
@@ -116,9 +118,9 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         ["updated_at"] = c => c.UpdatedAtUtc,
         ["modified"] = c => c.UpdatedAtUtc,
         ["modifiedat"] = c => c.UpdatedAtUtc,
-        ["licenseexpiry"] = c => c.DriversLicense.ExpiryDate,
-        ["license_expiry"] = c => c.DriversLicense.ExpiryDate,
-        ["expirydate"] = c => c.DriversLicense.ExpiryDate
+        ["licenseexpiry"] = c => c.DriversLicense!.Value.ExpiryDate,
+        ["license_expiry"] = c => c.DriversLicense!.Value.ExpiryDate,
+        ["expirydate"] = c => c.DriversLicense!.Value.ExpiryDate
     };
 }
 
@@ -129,6 +131,8 @@ internal static class CustomerQueryExtensions
 {
     /// <summary>
     ///     Applies all filters from CustomerSearchParameters to the query.
+    ///     Note: Null-forgiving operators used as EF Core queries operate on persisted data
+    ///     where these properties are guaranteed to be non-null.
     /// </summary>
     public static IQueryable<Customer> ApplyFilters(
         this IQueryable<Customer> query,
@@ -140,8 +144,8 @@ internal static class CustomerQueryExtensions
         {
             var searchTermValue = parameters.SearchTerm.Value.Value;
             query = query.Where(c =>
-                EF.Functions.Like(c.Name.FirstName.Value, $"%{searchTermValue}%") ||
-                EF.Functions.Like(c.Name.LastName.Value, $"%{searchTermValue}%"));
+                EF.Functions.Like(c.Name!.Value.FirstName.Value, $"%{searchTermValue}%") ||
+                EF.Functions.Like(c.Name!.Value.LastName.Value, $"%{searchTermValue}%"));
         }
 
         // Direct value object filters
@@ -149,8 +153,8 @@ internal static class CustomerQueryExtensions
             .WhereIf(parameters.Email is not null, c => c.Email == parameters.Email)
             .WhereIf(parameters.PhoneNumber is not null, c => c.PhoneNumber == parameters.PhoneNumber)
             .WhereIf(parameters.Status.HasValue, c => c.Status == parameters.Status!.Value)
-            .WhereIf(parameters.City is not null, c => c.Address.City == parameters.City!.Value)
-            .WhereIf(parameters.PostalCode is not null, c => c.Address.PostalCode == parameters.PostalCode!.Value);
+            .WhereIf(parameters.City is not null, c => c.Address!.Value.City == parameters.City!.Value)
+            .WhereIf(parameters.PostalCode is not null, c => c.Address!.Value.PostalCode == parameters.PostalCode!.Value);
 
         // Age range filtering - calculated from DateOfBirth
         if (parameters.AgeRange is { HasFilter: true })
@@ -158,13 +162,13 @@ internal static class CustomerQueryExtensions
             if (parameters.AgeRange.Min.HasValue)
             {
                 var maxDateOfBirth = today.AddYears(-parameters.AgeRange.Min.Value);
-                query = query.Where(c => c.DateOfBirth <= maxDateOfBirth);
+                query = query.Where(c => c.DateOfBirth!.Value <= maxDateOfBirth);
             }
 
             if (parameters.AgeRange.Max.HasValue)
             {
                 var minDateOfBirth = today.AddYears(-(parameters.AgeRange.Max.Value + 1));
-                query = query.Where(c => c.DateOfBirth >= minDateOfBirth);
+                query = query.Where(c => c.DateOfBirth!.Value >= minDateOfBirth);
             }
         }
 
@@ -173,8 +177,8 @@ internal static class CustomerQueryExtensions
         {
             var expiryThreshold = today.AddDays(parameters.LicenseExpiringDays.Max.Value);
             query = query.Where(c =>
-                c.DriversLicense.ExpiryDate >= today &&
-                c.DriversLicense.ExpiryDate <= expiryThreshold);
+                c.DriversLicense!.Value.ExpiryDate >= today &&
+                c.DriversLicense!.Value.ExpiryDate <= expiryThreshold);
         }
 
         // Registration date range filtering

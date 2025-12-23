@@ -1,15 +1,15 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.EventSourcing;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Events;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-///     Customer aggregate root.
+///     Customer aggregate root (event-sourced).
 ///     Represents a customer in the Orange Car Rental system with German market-specific validation.
 ///     Enforces business rules such as minimum age (18+), valid driver's license, and GDPR compliance.
 /// </summary>
-public sealed class Customer : AggregateRoot<CustomerIdentifier>
+public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, CustomerIdentifier>
 {
     /// <summary>
     ///     Minimum age required to rent a vehicle in Germany.
@@ -18,86 +18,73 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
 
     /// <summary>
     ///     Minimum days before license expiry to allow rentals.
-    ///     Prevents customers from renting with a license about to expire.
     /// </summary>
     public const int MinimumLicenseValidityDays = 30;
 
-    // For EF Core - properties will be set by EF Core during materialization
-    private Customer()
-    {
-        Name = default!;
-        Email = default!;
-        PhoneNumber = default!;
-        Address = default!;
-        DriversLicense = default!;
-    }
+    /// <summary>
+    ///     Gets the customer's name.
+    /// </summary>
+    public CustomerName? Name => State.Name;
 
-    private Customer(
-        CustomerIdentifier id,
-        CustomerName name,
-        Email email,
-        PhoneNumber phoneNumber,
-        BirthDate dateOfBirth,
-        Address address,
-        DriversLicense driversLicense)
-        : base(id)
-    {
-        Name = name;
-        Email = email;
-        PhoneNumber = phoneNumber;
-        DateOfBirth = dateOfBirth;
-        Address = address;
-        DriversLicense = driversLicense;
-        Status = CustomerStatus.Active;
-        RegisteredAtUtc = DateTime.UtcNow;
-        UpdatedAtUtc = DateTime.UtcNow;
+    /// <summary>
+    ///     Gets the customer's email.
+    /// </summary>
+    public Email? Email => State.Email;
 
-        AddDomainEvent(new CustomerRegistered(
-            Id,
-            Name,
-            Email,
-            DateOfBirth,
-            RegisteredAtUtc));
-    }
+    /// <summary>
+    ///     Gets the customer's phone number.
+    /// </summary>
+    public PhoneNumber? PhoneNumber => State.PhoneNumber;
 
-    // IMMUTABLE: Properties can only be set during construction. Methods return new instances.
-    public CustomerName Name { get; init; }
-    public Email Email { get; init; }
-    public PhoneNumber PhoneNumber { get; init; }
-    public BirthDate DateOfBirth { get; init; }
-    public Address Address { get; init; }
-    public DriversLicense DriversLicense { get; init; }
-    public CustomerStatus Status { get; init; }
-    public DateTime RegisteredAtUtc { get; init; }
-    public DateTime UpdatedAtUtc { get; init; }
+    /// <summary>
+    ///     Gets the customer's date of birth.
+    /// </summary>
+    public BirthDate? DateOfBirth => State.DateOfBirth;
+
+    /// <summary>
+    ///     Gets the customer's address.
+    /// </summary>
+    public Address? Address => State.Address;
+
+    /// <summary>
+    ///     Gets the customer's driver's license.
+    /// </summary>
+    public DriversLicense? DriversLicense => State.DriversLicense;
+
+    /// <summary>
+    ///     Gets the customer's account status.
+    /// </summary>
+    public CustomerStatus Status => State.Status;
+
+    /// <summary>
+    ///     Gets when the customer registered.
+    /// </summary>
+    public DateTime RegisteredAtUtc => State.RegisteredAtUtc;
+
+    /// <summary>
+    ///     Gets when the customer was last updated.
+    /// </summary>
+    public DateTime UpdatedAtUtc => State.UpdatedAtUtc;
 
     /// <summary>
     ///     Gets the customer's full name.
     /// </summary>
-    public string FullName => Name.FullName;
+    public string FullName => State.FullName;
 
     /// <summary>
     ///     Gets the customer's formal name with salutation.
     /// </summary>
-    public string FormalName => Name.FormalName;
+    public string FormalName => State.FormalName;
 
     /// <summary>
     ///     Gets the customer's current age in years.
     /// </summary>
-    public int Age => DateOfBirth.Age;
+    public int Age => State.Age;
 
     /// <summary>
     ///     Registers a new customer with German market validation.
     /// </summary>
-    /// <param name="name">Customer's name (first name, last name, optional salutation).</param>
-    /// <param name="email">Customer's email address.</param>
-    /// <param name="phoneNumber">Customer's phone number (German format).</param>
-    /// <param name="dateOfBirth">Customer's date of birth.</param>
-    /// <param name="address">Customer's address.</param>
-    /// <param name="driversLicense">Customer's driver's license.</param>
-    /// <returns>A new Customer instance.</returns>
-    /// <exception cref="ArgumentException">Thrown when validation fails.</exception>
-    public static Customer Register(
+    public void Register(
         CustomerName name,
         Email email,
         PhoneNumber phoneNumber,
@@ -105,205 +92,160 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         Address address,
         DriversLicense driversLicense)
     {
+        EnsureDoesNotExist();
+
         // Validate age - must be 18+ to rent in Germany
         ValidateAge(dateOfBirth.Value);
 
         // Validate driver's license
         ValidateDriversLicense(driversLicense, dateOfBirth.Value);
 
-        return new Customer(
+        var now = DateTime.UtcNow;
+        Apply(new CustomerRegistered(
             CustomerIdentifier.New(),
             name,
             email,
             phoneNumber,
             dateOfBirth,
             address,
-            driversLicense);
-    }
-
-    /// <summary>
-    ///     Creates a copy of this instance with modified values (used internally for immutable updates).
-    ///     Does not raise domain events - caller is responsible for that.
-    /// </summary>
-    private Customer CreateMutatedCopy(
-        CustomerName? name = null,
-        Email? email = null,
-        PhoneNumber? phoneNumber = null,
-        BirthDate? dateOfBirth = null,
-        Address? address = null,
-        DriversLicense? driversLicense = null,
-        CustomerStatus? status = null,
-        DateTime? registeredAtUtc = null,
-        DateTime? updatedAtUtc = null)
-    {
-        return new Customer
-        {
-            Id = Id,
-            Name = name ?? Name,
-            Email = email ?? Email,
-            PhoneNumber = phoneNumber ?? PhoneNumber,
-            DateOfBirth = dateOfBirth ?? DateOfBirth,
-            Address = address ?? Address,
-            DriversLicense = driversLicense ?? DriversLicense,
-            Status = status ?? Status,
-            RegisteredAtUtc = registeredAtUtc ?? RegisteredAtUtc,
-            UpdatedAtUtc = updatedAtUtc ?? UpdatedAtUtc
-        };
+            driversLicense,
+            now));
     }
 
     /// <summary>
     ///     Updates the customer's profile information.
-    ///     Returns a new instance with the updated profile (immutable pattern).
     /// </summary>
-    public Customer UpdateProfile(
+    public void UpdateProfile(
         CustomerName name,
         PhoneNumber phoneNumber,
         Address address)
     {
-        var hasChanges = Name.FirstName.Value != name.FirstName.Value ||
-                         Name.LastName.Value != name.LastName.Value ||
-                         Name.Salutation != name.Salutation ||
-                         PhoneNumber != phoneNumber ||
-                         Address != address;
+        EnsureExists();
+
+        var hasChanges = State.Name?.FirstName.Value != name.FirstName.Value ||
+                         State.Name?.LastName.Value != name.LastName.Value ||
+                         State.Name?.Salutation != name.Salutation ||
+                         State.PhoneNumber != phoneNumber ||
+                         State.Address != address;
 
         if (!hasChanges)
-            return this;
+            return;
 
         var now = DateTime.UtcNow;
-        var updated = CreateMutatedCopy(
-            name,
-            phoneNumber: phoneNumber,
-            address: address,
-            updatedAtUtc: now);
-
-        updated.AddDomainEvent(new CustomerProfileUpdated(
+        Apply(new CustomerProfileUpdated(
             Id,
             name,
             phoneNumber,
             address,
             now));
-
-        return updated;
     }
 
     /// <summary>
     ///     Updates the customer's driver's license.
-    ///     Returns a new instance with the updated license (immutable pattern).
     /// </summary>
-    public Customer UpdateDriversLicense(DriversLicense newLicense)
+    public void UpdateDriversLicense(DriversLicense newLicense)
     {
-        ValidateDriversLicense(newLicense, DateOfBirth);
+        EnsureExists();
 
-        if (DriversLicense == newLicense)
-            return this;
+        if (State.DateOfBirth is null)
+            throw new InvalidOperationException("Customer date of birth is required");
 
-        var oldLicense = DriversLicense;
+        ValidateDriversLicense(newLicense, State.DateOfBirth.Value);
+
+        if (State.DriversLicense == newLicense)
+            return;
+
+        var oldLicense = State.DriversLicense ??
+            throw new InvalidOperationException("Customer has no existing driver's license");
+
         var now = DateTime.UtcNow;
-        var updated = CreateMutatedCopy(
-            driversLicense: newLicense,
-            updatedAtUtc: now);
-
-        updated.AddDomainEvent(new DriversLicenseUpdated(
+        Apply(new DriversLicenseUpdated(
             Id,
             oldLicense,
             newLicense,
             now));
-
-        return updated;
     }
 
     /// <summary>
     ///     Changes the customer's account status.
-    ///     Returns a new instance with the updated status (immutable pattern).
     /// </summary>
-    public Customer ChangeStatus(CustomerStatus newStatus, string reason)
+    public void ChangeStatus(CustomerStatus newStatus, string reason)
     {
+        EnsureExists();
+
         Ensure.That(reason, nameof(reason))
             .IsNotNullOrWhiteSpace();
 
-        if (Status == newStatus)
-            return this;
+        if (State.Status == newStatus)
+            return;
 
-        var oldStatus = Status;
         var now = DateTime.UtcNow;
-        var updated = CreateMutatedCopy(
-            status: newStatus,
-            updatedAtUtc: now);
-
-        updated.AddDomainEvent(new CustomerStatusChanged(
+        Apply(new CustomerStatusChanged(
             Id,
-            oldStatus,
+            State.Status,
             newStatus,
             reason,
             now));
-
-        return updated;
     }
 
     /// <summary>
     ///     Updates the customer's email address.
-    ///     Returns a new instance with the updated email (immutable pattern).
     /// </summary>
-    public Customer UpdateEmail(Email newEmail)
+    public void UpdateEmail(Email newEmail)
     {
-        if (Email == newEmail)
-            return this;
+        EnsureExists();
 
-        var oldEmail = Email;
+        if (State.Email == newEmail)
+            return;
+
+        var oldEmail = State.Email ??
+            throw new InvalidOperationException("Customer has no existing email");
+
         var now = DateTime.UtcNow;
-        var updated = CreateMutatedCopy(
-            email: newEmail,
-            updatedAtUtc: now);
-
-        updated.AddDomainEvent(new CustomerEmailChanged(
+        Apply(new CustomerEmailChanged(
             Id,
             oldEmail,
             newEmail,
             now));
-
-        return updated;
     }
 
     /// <summary>
     ///     Activates the customer account.
-    ///     Returns a new instance with active status (immutable pattern).
     /// </summary>
-    public Customer Activate(string reason = "Account activated")
+    public void Activate(string reason = "Account activated")
     {
-        if (Status == CustomerStatus.Active)
-            return this;
+        if (State.Status == CustomerStatus.Active)
+            return;
 
-        return ChangeStatus(CustomerStatus.Active, reason);
+        ChangeStatus(CustomerStatus.Active, reason);
     }
 
     /// <summary>
     ///     Suspends the customer account (temporary).
-    ///     Returns a new instance with suspended status (immutable pattern).
     /// </summary>
-    public Customer Suspend(string reason)
+    public void Suspend(string reason)
     {
         Ensure.That(reason, nameof(reason))
             .IsNotNullOrWhiteSpace();
 
-        if (Status == CustomerStatus.Suspended)
-            return this;
+        if (State.Status == CustomerStatus.Suspended)
+            return;
 
-        return ChangeStatus(CustomerStatus.Suspended, reason);
+        ChangeStatus(CustomerStatus.Suspended, reason);
     }
 
     /// <summary>
     ///     Blocks the customer account (more severe than suspension).
-    ///     Returns a new instance with blocked status (immutable pattern).
     /// </summary>
-    public Customer Block(string reason)
+    public void Block(string reason)
     {
         Ensure.That(reason, nameof(reason))
             .IsNotNullOrWhiteSpace();
 
-        if (Status == CustomerStatus.Blocked)
-            return this;
+        if (State.Status == CustomerStatus.Blocked)
+            return;
 
-        return ChangeStatus(CustomerStatus.Blocked, reason);
+        ChangeStatus(CustomerStatus.Blocked, reason);
     }
 
     /// <summary>
@@ -311,16 +253,17 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
     /// </summary>
     public bool CanMakeReservation()
     {
-        // Must be active
-        if (Status != CustomerStatus.Active)
+        if (State.Status != CustomerStatus.Active)
             return false;
 
-        // License must be valid
-        if (!DriversLicense.IsValid())
+        if (!State.DriversLicense.HasValue)
             return false;
 
-        // License must have sufficient validity remaining
-        if (DriversLicense.DaysUntilExpiry() < MinimumLicenseValidityDays)
+        var license = State.DriversLicense.Value;
+        if (!license.IsValid())
+            return false;
+
+        if (license.DaysUntilExpiry() < MinimumLicenseValidityDays)
             return false;
 
         return true;
@@ -334,52 +277,43 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         if (!CanMakeReservation())
             return false;
 
-        // License must be valid for the entire rental period
-        if (!DriversLicense.IsValidOn(startDate) || !DriversLicense.IsValidOn(endDate))
+        if (!State.DriversLicense.HasValue)
+            return false;
+
+        var license = State.DriversLicense.Value;
+        if (!license.IsValidOn(startDate) || !license.IsValidOn(endDate))
             return false;
 
         return true;
     }
 
-    /// <summary>
-    ///     Validates that the customer meets the minimum age requirement.
-    /// </summary>
     private static void ValidateAge(DateOnly dateOfBirth)
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var age = today.Year - dateOfBirth.Year;
 
-        // Adjust if birthday hasn't occurred this year
         if (dateOfBirth.AddYears(age) > today)
             age--;
 
         Ensure.That(dateOfBirth, nameof(dateOfBirth))
             .ThrowIf(age < MinimumAgeYears, $"Customer must be at least {MinimumAgeYears} years old. Current age: {age}");
 
-        // Sanity check - no one over 150 years old
         Ensure.That(dateOfBirth, nameof(dateOfBirth))
             .ThrowIf(age > 150, "Invalid date of birth - age cannot exceed 150 years");
 
-        // Date of birth cannot be in the future
         Ensure.That(dateOfBirth, nameof(dateOfBirth))
             .ThrowIf(dateOfBirth > today, "Date of birth cannot be in the future");
     }
 
-    /// <summary>
-    ///     Validates the driver's license against business rules.
-    /// </summary>
     private static void ValidateDriversLicense(DriversLicense license, DateOnly dateOfBirth)
     {
-        // License must be currently valid
         Ensure.That(license, nameof(license))
             .ThrowIf(!license.IsValid(), $"Driver's license is expired. Expiry date: {license.ExpiryDate}");
 
-        // License must have minimum validity remaining
         Ensure.That(license, nameof(license))
             .ThrowIf(license.DaysUntilExpiry() < MinimumLicenseValidityDays,
                 $"Driver's license must be valid for at least {MinimumLicenseValidityDays} days. Days remaining: {license.DaysUntilExpiry()}");
 
-        // License issue date must be after 18th birthday (with some tolerance)
         var minimumLicenseIssueDate = dateOfBirth.AddYears(MinimumAgeYears - 1);
         Ensure.That(license, nameof(license))
             .ThrowIf(license.IssueDate < minimumLicenseIssueDate,

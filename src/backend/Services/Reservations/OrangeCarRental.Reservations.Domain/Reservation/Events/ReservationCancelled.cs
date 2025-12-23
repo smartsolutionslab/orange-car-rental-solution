@@ -7,5 +7,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Even
 /// </summary>
 public sealed record ReservationCancelled(
     ReservationIdentifier ReservationId,
-    string? CancellationReason
+    string? CancellationReason,
+    DateTime CancelledAtUtc
 ) : DomainEvent;

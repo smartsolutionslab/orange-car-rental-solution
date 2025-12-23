@@ -19,5 +19,6 @@
     <!-- Reference to Customers.Domain for guest reservation value objects (Email, PhoneNumber, etc.) -->
     <ProjectReference Include="..\..\Customers\OrangeCarRental.Customers.Domain\OrangeCarRental.Customers.Domain.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.EventStore\OrangeCarRental.BuildingBlocks.EventStore.csproj" />
   </ItemGroup>
 </Project>

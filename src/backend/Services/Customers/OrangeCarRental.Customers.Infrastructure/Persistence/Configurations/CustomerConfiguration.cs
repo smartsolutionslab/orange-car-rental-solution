@@ -49,10 +49,11 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         });
 
         // Email value object - converted to string
+        // Note: Using .Value.Value because Email? is a nullable struct wrapping a string
         builder.Property(c => c.Email)
             .HasColumnName("Email")
             .HasConversion(
-                email => email.Value,
+                email => email!.Value.Value,
                 value => Email.From(value))
             .HasMaxLength(254)
             .IsRequired();
@@ -61,7 +62,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(c => c.PhoneNumber)
             .HasColumnName("PhoneNumber")
             .HasConversion(
-                phone => phone.Value,
+                phone => phone!.Value.Value,
                 value => PhoneNumber.From(value))
             .HasMaxLength(20)
             .IsRequired();
@@ -70,7 +71,7 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(c => c.DateOfBirth)
             .HasColumnName("DateOfBirth")
             .HasConversion(
-                bd => bd.Value,
+                bd => bd!.Value.Value,
                 value => BirthDate.Of(value))
             .HasColumnType("date")
             .IsRequired();
@@ -166,9 +167,6 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
         // Note: Indexes on complex property members (Address.City, Address.PostalCode, DriversLicense.ExpiryDate)
         // need to be added via migration Up() method using SQL if needed for performance
-
-        // Ignore domain events (not persisted)
-        builder.Ignore(c => c.DomainEvents);
 
         // Computed properties (not persisted)
         builder.Ignore(c => c.FullName);

@@ -27,8 +27,8 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.Default().Build();
 
-        // Assert
-        var events = customer.DomainEvents;
+        // Assert - Changes contains uncommitted events from Eventuous Aggregate
+        var events = customer.Changes;
         events.ShouldNotBeEmpty();
         var registeredEvent = events.ShouldHaveSingleItem();
         registeredEvent.ShouldBeOfType<CustomerRegistered>();
@@ -119,41 +119,40 @@ public class CustomerTests
     }
 
     [Fact]
-    public void UpdateProfile_WithChangedValues_ShouldReturnNewInstance()
+    public void UpdateProfile_WithChangedValues_ShouldUpdateState()
     {
         // Arrange
         var customer = CustomerBuilder.MaxMustermann().Build();
+        var originalEmail = customer.Email;
         var newName = CustomerName.Of("Anna", "Schmidt", Salutation.Frau);
         var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act
-        var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
+        customer.UpdateProfile(newName, newPhone, newAddress);
 
-        // Assert
-        updatedCustomer.ShouldNotBeSameAs(customer); // New instance (immutable)
-        updatedCustomer.Id.ShouldBe(customer.Id); // Same ID
-        updatedCustomer.Name.ShouldBe(newName);
-        updatedCustomer.PhoneNumber.ShouldBe(newPhone);
-        updatedCustomer.Address.ShouldBe(newAddress);
-        updatedCustomer.Email.ShouldBe(customer.Email); // Email unchanged
-        updatedCustomer.UpdatedAtUtc.ShouldBeGreaterThan(customer.UpdatedAtUtc);
+        // Assert - event-sourced aggregate mutates in place via events
+        customer.Name.ShouldBe(newName);
+        customer.PhoneNumber.ShouldBe(newPhone);
+        customer.Address.ShouldBe(newAddress);
+        customer.Email.ShouldBe(originalEmail); // Email unchanged
     }
 
     [Fact]
-    public void UpdateProfile_WithSameValues_ShouldReturnSameInstance()
+    public void UpdateProfile_WithSameValues_ShouldNotRaiseEvent()
     {
         // Arrange
         var customer = CustomerBuilder.Default().Build();
-        var name = customer.Name;
-        var phone = customer.PhoneNumber;
-        var address = customer.Address;
+        var initialEventCount = customer.Changes.Count;
+        var name = customer.Name!.Value;
+        var phone = customer.PhoneNumber!.Value;
+        var address = customer.Address!.Value;
 
         // Act
-        var updatedCustomer = customer.UpdateProfile(name, phone, address);
+        customer.UpdateProfile(name, phone, address);
 
-        // Assert
-        updatedCustomer.ShouldBeSameAs(customer); // Same instance if no changes
+        // Assert - no new events if values unchanged
+        customer.Changes.Count.ShouldBe(initialEventCount);
     }
 
     [Fact]
@@ -161,20 +160,18 @@ public class CustomerTests
     {
         // Arrange
         var customer = CustomerBuilder.Default().Build();
-        customer.ClearDomainEvents(); // Clear registration event
+        var initialEventCount = customer.Changes.Count;
 
         var newName = CustomerName.Of("Anna", "Schmidt");
         var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
         // Act
-        var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
+        customer.UpdateProfile(newName, newPhone, newAddress);
 
-        // Assert
-        var events = updatedCustomer.DomainEvents;
-        events.ShouldNotBeEmpty();
-        var profileUpdatedEvent = events.ShouldHaveSingleItem();
-        profileUpdatedEvent.ShouldBeOfType<CustomerProfileUpdated>();
+        // Assert - should have one additional event
+        customer.Changes.Count.ShouldBe(initialEventCount + 1);
+        customer.Changes.Last().ShouldBeOfType<CustomerProfileUpdated>();
     }
 
     [Fact]
@@ -199,11 +196,11 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.MaxMustermann().Build();
 
-        // Assert
-        customer.Name.FirstName.Value.ShouldBe("Max");
-        customer.Name.LastName.Value.ShouldBe("Mustermann");
-        customer.Email.Value.ShouldBe("max.mustermann@example.com");
-        customer.Address.City.Value.ShouldBe("Berlin");
+        // Assert - using .Value to access nullable struct properties
+        customer.Name!.Value.FirstName.Value.ShouldBe("Max");
+        customer.Name!.Value.LastName.Value.ShouldBe("Mustermann");
+        customer.Email!.Value.Value.ShouldBe("max.mustermann@example.com");
+        customer.Address!.Value.City.Value.ShouldBe("Berlin");
     }
 
     [Fact]
@@ -212,11 +209,11 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.AnnaSchmidt().Build();
 
-        // Assert
-        customer.Name.FirstName.Value.ShouldBe("Anna");
-        customer.Name.LastName.Value.ShouldBe("Schmidt");
-        customer.Email.Value.ShouldBe("anna.schmidt@example.com");
-        customer.Address.City.Value.ShouldBe("München");
+        // Assert - using .Value to access nullable struct properties
+        customer.Name!.Value.FirstName.Value.ShouldBe("Anna");
+        customer.Name!.Value.LastName.Value.ShouldBe("Schmidt");
+        customer.Email!.Value.Value.ShouldBe("anna.schmidt@example.com");
+        customer.Address!.Value.City.Value.ShouldBe("München");
     }
 
     [Fact]
