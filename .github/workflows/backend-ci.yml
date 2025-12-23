@@ -56,11 +56,8 @@ jobs:
         flags: backend
         name: backend-coverage
 
-    # Docker build may fail with .NET 10 preview due to missing packages on nuget.org
-    # This will be resolved when .NET 10 is officially released
     - name: Build Docker images
       if: github.event_name == 'push'
-      continue-on-error: true
       working-directory: src/backend
       run: |
         docker build -f Services/Fleet/OrangeCarRental.Fleet.Api/Dockerfile -t ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }} .
