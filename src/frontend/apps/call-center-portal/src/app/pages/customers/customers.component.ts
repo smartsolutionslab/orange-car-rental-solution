@@ -19,12 +19,7 @@ import {
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
 import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
-import type {
-  Customer,
-  UpdateCustomerRequest,
-  CustomerFormValues,
-  Reservation,
-} from '../../types';
+import type { Customer, UpdateCustomerRequest, CustomerFormValues, Reservation } from '../../types';
 import type {
   EmailAddress,
   PhoneNumber,

@@ -324,7 +324,8 @@ export class ReservationsComponent implements OnInit {
     const tomorrowOnly = tomorrow.toISOString().split('T')[0];
 
     if (dateOnly === todayOnly) return this.translate.instant('reservations.dateGroups.today');
-    if (dateOnly === tomorrowOnly) return this.translate.instant('reservations.dateGroups.tomorrow');
+    if (dateOnly === tomorrowOnly)
+      return this.translate.instant('reservations.dateGroups.tomorrow');
     if (date <= nextWeek) return this.translate.instant('reservations.dateGroups.thisWeek');
     return this.translate.instant('reservations.dateGroups.later');
   }

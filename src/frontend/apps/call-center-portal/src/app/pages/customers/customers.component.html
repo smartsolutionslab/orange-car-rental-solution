@@ -69,7 +69,9 @@
   @if (!loading() && searchPerformed() && customers().length > 0) {
     <div class="results-header">
       <h3>{{ 'customers.results.title' | translate }}</h3>
-      <span class="results-count">{{ 'customers.results.found' | translate:{ count: totalCustomers() } }}</span>
+      <span class="results-count">{{
+        'customers.results.found' | translate: { count: totalCustomers() }
+      }}</span>
     </div>
 
     <div class="table-container">
@@ -133,7 +135,9 @@
 <!-- Customer Details Modal -->
 <ui-modal
   [isOpen]="showDetails() && !!selectedCustomer()"
-  [title]="editMode() ? ('customers.edit.title' | translate) : ('customers.details.title' | translate)"
+  [title]="
+    editMode() ? ('customers.edit.title' | translate) : ('customers.details.title' | translate)
+  "
   size="lg"
   (close)="closeDetails()"
 >
@@ -328,7 +332,9 @@
         } @else {
           <div class="form-grid">
             <div class="form-field">
-              <label for="editLicenseNumber">{{ 'customers.details.license.number' | translate }} *</label>
+              <label for="editLicenseNumber"
+                >{{ 'customers.details.license.number' | translate }} *</label
+              >
               <input
                 type="text"
                 id="editLicenseNumber"
@@ -338,7 +344,9 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseCountry">{{ 'customers.details.license.issueCountry' | translate }}</label>
+              <label for="editLicenseCountry">{{
+                'customers.details.license.issueCountry' | translate
+              }}</label>
               <input
                 type="text"
                 id="editLicenseCountry"
@@ -347,7 +355,9 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseIssueDate">{{ 'customers.details.license.issueDate' | translate }}</label>
+              <label for="editLicenseIssueDate">{{
+                'customers.details.license.issueDate' | translate
+              }}</label>
               <input
                 type="date"
                 id="editLicenseIssueDate"
@@ -356,7 +366,9 @@
               />
             </div>
             <div class="form-field">
-              <label for="editLicenseExpiryDate">{{ 'customers.details.license.expiryDate' | translate }}</label>
+              <label for="editLicenseExpiryDate">{{
+                'customers.details.license.expiryDate' | translate
+              }}</label>
               <input
                 type="date"
                 id="editLicenseExpiryDate"
@@ -370,10 +382,17 @@
 
       <!-- Customer Reservations -->
       <div class="info-section">
-        <h3>{{ 'customers.details.reservations.title' | translate }} ({{ customerReservations().length }})</h3>
+        <h3>
+          {{ 'customers.details.reservations.title' | translate }} ({{
+            customerReservations().length
+          }})
+        </h3>
 
         @if (loadingReservations()) {
-          <ui-loading-state size="sm" [message]="'customers.details.reservations.loading' | translate"></ui-loading-state>
+          <ui-loading-state
+            size="sm"
+            [message]="'customers.details.reservations.loading' | translate"
+          ></ui-loading-state>
         }
 
         @if (!loadingReservations() && customerReservations().length > 0) {
@@ -389,22 +408,33 @@
                 </div>
                 <div class="reservation-details">
                   <div class="reservation-row">
-                    <span class="label">{{ 'customers.details.reservations.period' | translate }}:</span>
+                    <span class="label"
+                      >{{ 'customers.details.reservations.period' | translate }}:</span
+                    >
                     <span
                       >{{ formatDate(reservation.pickupDate) }} -
                       {{ formatDate(reservation.returnDate) }}</span
                     >
                   </div>
                   <div class="reservation-row">
-                    <span class="label">{{ 'customers.details.reservations.duration' | translate }}:</span>
-                    <span>{{ reservation.rentalDays }} {{ 'customers.details.reservations.days' | translate }}</span>
+                    <span class="label"
+                      >{{ 'customers.details.reservations.duration' | translate }}:</span
+                    >
+                    <span
+                      >{{ reservation.rentalDays }}
+                      {{ 'customers.details.reservations.days' | translate }}</span
+                    >
                   </div>
                   <div class="reservation-row">
-                    <span class="label">{{ 'customers.details.reservations.pickupLocation' | translate }}:</span>
+                    <span class="label"
+                      >{{ 'customers.details.reservations.pickupLocation' | translate }}:</span
+                    >
                     <span>{{ reservation.pickupLocationCode }}</span>
                   </div>
                   <div class="reservation-row">
-                    <span class="label">{{ 'customers.details.reservations.price' | translate }}:</span>
+                    <span class="label"
+                      >{{ 'customers.details.reservations.price' | translate }}:</span
+                    >
                     <span
                       ><strong
                         >{{ reservation.totalPriceGross.toFixed(2) }}
@@ -426,13 +456,17 @@
   </ng-container>
   <ng-container modal-footer>
     @if (!editMode()) {
-      <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
+      <button class="btn-secondary" (click)="closeDetails()">
+        {{ 'common.actions.close' | translate }}
+      </button>
       <button class="btn-primary" (click)="enterEditMode()">
         <lib-icon name="pencil-filled" variant="filled" size="sm" aria-hidden="true" />
         {{ 'common.actions.edit' | translate }}
       </button>
     } @else {
-      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">{{ 'common.actions.cancel' | translate }}</button>
+      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">
+        {{ 'common.actions.cancel' | translate }}
+      </button>
       <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
         @if (saving()) {
           <span class="loading-spinner-small"></span>

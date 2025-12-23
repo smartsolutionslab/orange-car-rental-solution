@@ -57,7 +57,9 @@
       <h3>{{ 'reservations.filters.title' | translate }}</h3>
       <div class="filters-actions">
         @if (activeFiltersCount() > 0) {
-          <span class="active-filters-badge">{{ 'common.messages.activeFilters' | translate:{ count: activeFiltersCount() } }}</span>
+          <span class="active-filters-badge">{{
+            'common.messages.activeFilters' | translate: { count: activeFiltersCount() }
+          }}</span>
         }
         <button class="btn-secondary btn-sm" (click)="clearFilters()">
           <lib-icon name="x-filled" variant="filled" size="sm" aria-hidden="true" />
@@ -158,8 +160,16 @@
           <button
             class="btn-icon"
             (click)="changeSortBy(sortBy())"
-            [title]="sortOrder() === 'asc' ? ('common.sorting.ascending' | translate) : ('common.sorting.descending' | translate)"
-            [attr.aria-label]="sortOrder() === 'asc' ? ('common.sorting.ascending' | translate) : ('common.sorting.descending' | translate)"
+            [title]="
+              sortOrder() === 'asc'
+                ? ('common.sorting.ascending' | translate)
+                : ('common.sorting.descending' | translate)
+            "
+            [attr.aria-label]="
+              sortOrder() === 'asc'
+                ? ('common.sorting.ascending' | translate)
+                : ('common.sorting.descending' | translate)
+            "
           >
             @if (sortOrder() === 'asc') {
               <lib-icon
@@ -200,7 +210,15 @@
     <!-- Result Count -->
     <div class="results-info">
       <p>
-        {{ 'reservations.results.showing' | translate:{ from: (currentPage() - 1) * pageSize() + 1, to: Math.min(currentPage() * pageSize(), totalCount()), total: totalCount() } }}
+        {{
+          'reservations.results.showing'
+            | translate
+              : {
+                  from: (currentPage() - 1) * pageSize() + 1,
+                  to: Math.min(currentPage() * pageSize(), totalCount()),
+                  total: totalCount(),
+                }
+        }}
       </p>
     </div>
   </div>
@@ -220,7 +238,8 @@
             <div class="group-header">
               <h3>{{ groupKey }}</h3>
               <span class="group-count"
-                >{{ groupedReservations()[groupKey].length }} {{ 'reservations.groups.bookings' | translate }}</span
+                >{{ groupedReservations()[groupKey].length }}
+                {{ 'reservations.groups.bookings' | translate }}</span
               >
             </div>
             <div class="reservations-table">
@@ -439,7 +458,9 @@
             <span>{{ formatPrice(selectedReservation()!.totalPriceVat) }}</span>
           </div>
           <div class="price-row total">
-            <span><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong></span>
+            <span
+              ><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong></span
+            >
             <span
               ><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span
             >
@@ -467,7 +488,9 @@
         {{ 'reservations.cancel.button' | translate }}
       </button>
     }
-    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
+    <button class="btn-secondary" (click)="closeDetails()">
+      {{ 'common.actions.close' | translate }}
+    </button>
   </ng-container>
 </ui-modal>
 
@@ -503,13 +526,19 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeCancelModal()">{{ 'common.actions.cancel' | translate }}</button>
+    <button class="btn-secondary" (click)="closeCancelModal()">
+      {{ 'common.actions.cancel' | translate }}
+    </button>
     <button
       class="btn-danger"
       (click)="cancelReservation()"
       [disabled]="!cancelReason() || actionInProgress()"
     >
-      {{ actionInProgress() ? ('reservations.cancel.inProgress' | translate) : ('reservations.cancel.execute' | translate) }}
+      {{
+        actionInProgress()
+          ? ('reservations.cancel.inProgress' | translate)
+          : ('reservations.cancel.execute' | translate)
+      }}
     </button>
   </ng-container>
 </ui-modal>
@@ -528,9 +557,18 @@
         <strong>{{ 'common.labels.reservationId' | translate }}:</strong>
         {{ selectedReservation()!.reservationId.substring(0, 8) }}...
       </p>
-      <p><strong>{{ 'reservations.table.customer' | translate }}:</strong> {{ selectedReservation()!.customerId.substring(0, 8) }}...</p>
-      <p><strong>{{ 'reservations.details.pickupDate' | translate }}:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
-      <p><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong> {{ formatPrice(selectedReservation()!.totalPriceGross) }}</p>
+      <p>
+        <strong>{{ 'reservations.table.customer' | translate }}:</strong>
+        {{ selectedReservation()!.customerId.substring(0, 8) }}...
+      </p>
+      <p>
+        <strong>{{ 'reservations.details.pickupDate' | translate }}:</strong>
+        {{ formatDate(selectedReservation()!.pickupDate) }}
+      </p>
+      <p>
+        <strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong>
+        {{ formatPrice(selectedReservation()!.totalPriceGross) }}
+      </p>
 
       @if (error()) {
         <ui-error-state variant="inline" [message]="error()!"></ui-error-state>
@@ -538,9 +576,15 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeConfirmModal()">{{ 'common.actions.cancel' | translate }}</button>
+    <button class="btn-secondary" (click)="closeConfirmModal()">
+      {{ 'common.actions.cancel' | translate }}
+    </button>
     <button class="btn-success" (click)="executeConfirmation()" [disabled]="actionInProgress()">
-      {{ actionInProgress() ? ('reservations.confirm.inProgress' | translate) : ('reservations.confirm.execute' | translate) }}
+      {{
+        actionInProgress()
+          ? ('reservations.confirm.inProgress' | translate)
+          : ('reservations.confirm.execute' | translate)
+      }}
     </button>
   </ng-container>
 </ui-modal>

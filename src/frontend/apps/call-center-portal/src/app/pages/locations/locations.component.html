@@ -82,7 +82,10 @@
             <div class="location-footer">
               <div class="vehicle-count">
                 <lib-icon name="car-filled" variant="filled" size="sm" aria-hidden="true" />
-                <span>{{ getLocationStats(location.code)?.totalVehicles || 0 }} {{ 'locations.vehiclesCount' | translate }}</span>
+                <span
+                  >{{ getLocationStats(location.code)?.totalVehicles || 0 }}
+                  {{ 'locations.vehiclesCount' | translate }}</span
+                >
               </div>
             </div>
           </div>
@@ -144,10 +147,15 @@
 
       <!-- Vehicles at Location -->
       <div class="info-section">
-        <h3>{{ 'locations.details.vehiclesAtLocation' | translate }} ({{ locationVehicles().length }})</h3>
+        <h3>
+          {{ 'locations.details.vehiclesAtLocation' | translate }} ({{ locationVehicles().length }})
+        </h3>
 
         @if (loadingVehicles()) {
-          <ui-loading-state size="sm" [message]="'locations.details.loadingVehicles' | translate"></ui-loading-state>
+          <ui-loading-state
+            size="sm"
+            [message]="'locations.details.loadingVehicles' | translate"
+          ></ui-loading-state>
         }
 
         @if (!loadingVehicles() && locationVehicles().length > 0) {
@@ -192,6 +200,8 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
+    <button class="btn-secondary" (click)="closeDetails()">
+      {{ 'common.actions.close' | translate }}
+    </button>
   </ng-container>
 </ui-modal>

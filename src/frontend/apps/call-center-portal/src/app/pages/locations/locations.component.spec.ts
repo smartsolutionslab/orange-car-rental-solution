@@ -439,7 +439,9 @@ describe('LocationsComponent', () => {
     });
 
     it('should return high class for high utilization', () => {
-      expect(component['getUtilizationClass'](UTILIZATION_THRESHOLDS.HIGH)).toBe('utilization-high');
+      expect(component['getUtilizationClass'](UTILIZATION_THRESHOLDS.HIGH)).toBe(
+        'utilization-high',
+      );
       expect(component['getUtilizationClass'](90)).toBe('utilization-high');
     });
 

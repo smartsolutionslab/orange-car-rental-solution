@@ -22,7 +22,12 @@
     [loading]="loading()"
     variant="warning"
   />
-  <ui-stat-card [label]="'vehicles.stats.rented' | translate" [value]="rentedVehicles()" [loading]="loading()" variant="info" />
+  <ui-stat-card
+    [label]="'vehicles.stats.rented' | translate"
+    [value]="rentedVehicles()"
+    [loading]="loading()"
+    variant="info"
+  />
 </div>
 
 <div class="content-section">
@@ -66,7 +71,9 @@
       />
     </div>
 
-    <button class="btn-secondary" (click)="clearFilters()">{{ 'common.actions.resetFilters' | translate }}</button>
+    <button class="btn-secondary" (click)="clearFilters()">
+      {{ 'common.actions.resetFilters' | translate }}
+    </button>
   </div>
 
   <!-- Loading State -->
@@ -235,7 +242,11 @@
           <div class="detail-item">
             <label>{{ 'vehicles.details.transmission' | translate }}</label>
             <p>
-              {{ selectedVehicle()!.transmissionType === 'Automatic' ? ('vehicles.transmission.automatic' | translate) : ('vehicles.transmission.manual' | translate) }}
+              {{
+                selectedVehicle()!.transmissionType === 'Automatic'
+                  ? ('vehicles.transmission.automatic' | translate)
+                  : ('vehicles.transmission.manual' | translate)
+              }}
             </p>
           </div>
           <div class="detail-item">
@@ -251,6 +262,8 @@
     }
   </ng-container>
   <ng-container modal-footer>
-    <button class="btn-secondary" (click)="closeDetails()">{{ 'common.actions.close' | translate }}</button>
+    <button class="btn-secondary" (click)="closeDetails()">
+      {{ 'common.actions.close' | translate }}
+    </button>
   </ng-container>
 </ui-modal>

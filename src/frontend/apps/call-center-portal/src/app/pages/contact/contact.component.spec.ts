@@ -47,32 +47,32 @@ describe('ContactComponent', () => {
 
     it('should render phone contact card', () => {
       const cards = fixture.nativeElement.querySelectorAll('.contact-card');
-      const phoneCard = Array.from(cards).find(
-        (card) => (card as HTMLElement).textContent?.includes('+49 30 1234567'),
+      const phoneCard = Array.from(cards).find((card) =>
+        (card as HTMLElement).textContent?.includes('+49 30 1234567'),
       );
       expect(phoneCard).toBeTruthy();
     });
 
     it('should render email contact card', () => {
       const cards = fixture.nativeElement.querySelectorAll('.contact-card');
-      const emailCard = Array.from(cards).find(
-        (card) => (card as HTMLElement).textContent?.includes('callcenter@orangecarrental.de'),
+      const emailCard = Array.from(cards).find((card) =>
+        (card as HTMLElement).textContent?.includes('callcenter@orangecarrental.de'),
       );
       expect(emailCard).toBeTruthy();
     });
 
     it('should render headquarters contact card', () => {
       const cards = fixture.nativeElement.querySelectorAll('.contact-card');
-      const addressCard = Array.from(cards).find(
-        (card) => (card as HTMLElement).textContent?.includes('Friedrichstraße 123'),
+      const addressCard = Array.from(cards).find((card) =>
+        (card as HTMLElement).textContent?.includes('Friedrichstraße 123'),
       );
       expect(addressCard).toBeTruthy();
     });
 
     it('should render support hotline contact card', () => {
       const cards = fixture.nativeElement.querySelectorAll('.contact-card');
-      const supportCard = Array.from(cards).find(
-        (card) => (card as HTMLElement).textContent?.includes('+49 30 9876543'),
+      const supportCard = Array.from(cards).find((card) =>
+        (card as HTMLElement).textContent?.includes('+49 30 9876543'),
       );
       expect(supportCard).toBeTruthy();
     });

@@ -10,7 +10,12 @@ import {
   Validators,
 } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import type { Vehicle, DailyRate, AddVehicleRequest, CategoryCode } from '@orange-car-rental/vehicle-api';
+import type {
+  Vehicle,
+  DailyRate,
+  AddVehicleRequest,
+  CategoryCode,
+} from '@orange-car-rental/vehicle-api';
 import {
   VehicleStatus,
   VehicleCategoryLabel,
@@ -190,8 +195,11 @@ export class VehiclesComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    const query: { status?: VehicleStatus; locationCode?: LocationCode; categoryCode?: CategoryCode } =
-      {};
+    const query: {
+      status?: VehicleStatus;
+      locationCode?: LocationCode;
+      categoryCode?: CategoryCode;
+    } = {};
 
     if (this.searchStatus()) {
       query.status = this.searchStatus() as VehicleStatus;
