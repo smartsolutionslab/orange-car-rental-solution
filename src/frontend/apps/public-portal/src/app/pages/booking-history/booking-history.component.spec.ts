@@ -212,8 +212,7 @@ describe('BookingHistoryComponent', () => {
       await component.ngOnInit();
       fixture.detectChanges();
 
-      expect(component.error()).toBe('bookingHistory.errors.loadFailed',
-      );
+      expect(component.error()).toBe('bookingHistory.errors.loadFailed');
       expect(component.isLoading()).toBe(false);
     });
   });

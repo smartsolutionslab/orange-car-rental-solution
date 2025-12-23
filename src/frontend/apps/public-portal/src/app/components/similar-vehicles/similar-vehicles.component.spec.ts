@@ -12,10 +12,7 @@ describe('SimilarVehiclesComponent', () => {
   // Use shared mock vehicles
   const mockCurrentVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
-  const mockSimilarVehicles: Vehicle[] = [
-    MOCK_VEHICLES.OPEL_ASTRA,
-    MOCK_VEHICLES.BMW_3ER,
-  ];
+  const mockSimilarVehicles: Vehicle[] = [MOCK_VEHICLES.OPEL_ASTRA, MOCK_VEHICLES.BMW_3ER];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({

@@ -164,8 +164,7 @@ describe('BookingHistoryComponent (Integration)', () => {
       tick();
 
       // Verify error handling
-      expect(component.error()).toBe('bookingHistory.errors.loadFailed',
-      );
+      expect(component.error()).toBe('bookingHistory.errors.loadFailed');
       expect(component.isLoading()).toBe(false);
     }));
 

@@ -3,7 +3,7 @@
   <div class="booking-header">
     <h1>{{ 'booking.title' | translate }}</h1>
     <p class="subtitle">
-      {{ 'booking.subtitle' | translate:{ steps: totalSteps } }}
+      {{ 'booking.subtitle' | translate: { steps: totalSteps } }}
     </p>
   </div>
 
@@ -90,12 +90,19 @@
           @if (getRentalDays() > 0) {
             <div class="rental-info">
               <lib-icon name="clock-filled" variant="filled" size="sm" />
-              <span>{{ getRentalDays() }} {{ (getRentalDays() === 1 ? 'common.labels.day' : 'common.labels.days') | translate }}</span>
+              <span
+                >{{ getRentalDays() }}
+                {{
+                  (getRentalDays() === 1 ? 'common.labels.day' : 'common.labels.days') | translate
+                }}</span
+              >
             </div>
           }
 
           <div class="form-field full-width">
-            <label for="pickupLocationCode">{{ 'booking.fields.pickupStation' | translate }} *</label>
+            <label for="pickupLocationCode"
+              >{{ 'booking.fields.pickupStation' | translate }} *</label
+            >
             <ui-select-location
               id="pickupLocationCode"
               formControlName="pickupLocationCode"
@@ -115,7 +122,9 @@
           </div>
 
           <div class="form-field full-width">
-            <label for="dropoffLocationCode">{{ 'booking.fields.returnStation' | translate }} *</label>
+            <label for="dropoffLocationCode"
+              >{{ 'booking.fields.returnStation' | translate }} *</label
+            >
             <ui-select-location
               id="dropoffLocationCode"
               formControlName="dropoffLocationCode"
@@ -330,7 +339,9 @@
           </div>
 
           <div class="form-field full-width">
-            <label for="licenseIssueCountry">{{ 'booking.fields.licenseIssueCountry' | translate }} *</label>
+            <label for="licenseIssueCountry"
+              >{{ 'booking.fields.licenseIssueCountry' | translate }} *</label
+            >
             <input
               type="text"
               id="licenseIssueCountry"
@@ -349,7 +360,9 @@
           </div>
 
           <div class="form-field">
-            <label for="licenseIssueDate">{{ 'booking.fields.licenseIssueDate' | translate }} *</label>
+            <label for="licenseIssueDate"
+              >{{ 'booking.fields.licenseIssueDate' | translate }} *</label
+            >
             <input
               type="date"
               id="licenseIssueDate"
@@ -369,7 +382,9 @@
           </div>
 
           <div class="form-field">
-            <label for="licenseExpiryDate">{{ 'booking.fields.licenseExpiryDate' | translate }} *</label>
+            <label for="licenseExpiryDate"
+              >{{ 'booking.fields.licenseExpiryDate' | translate }} *</label
+            >
             <input
               type="date"
               id="licenseExpiryDate"
@@ -411,7 +426,10 @@
             <div class="review-item">
               <span class="review-label">{{ 'booking.review.rentalDuration' | translate }}:</span>
               <span class="review-value"
-                >{{ getRentalDays() }} {{ (getRentalDays() === 1 ? 'common.labels.day' : 'common.labels.days') | translate }}</span
+                >{{ getRentalDays() }}
+                {{
+                  (getRentalDays() === 1 ? 'common.labels.day' : 'common.labels.days') | translate
+                }}</span
               >
             </div>
           </div>

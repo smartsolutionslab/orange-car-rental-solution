@@ -26,9 +26,9 @@
     <lib-icon name="car-filled" variant="filled" size="sm" />
     <span>
       @if (totalCount() === 1) {
-        {{ 'vehicles.results.found' | translate:{ count: totalCount() } }}
+        {{ 'vehicles.results.found' | translate: { count: totalCount() } }}
       } @else {
-        {{ 'vehicles.results.foundPlural' | translate:{ count: totalCount() } }}
+        {{ 'vehicles.results.foundPlural' | translate: { count: totalCount() } }}
       }
     </span>
   </div>
@@ -57,7 +57,7 @@
           <div class="vehicle-specs">
             <span class="spec">
               <lib-icon name="seats" variant="filled" size="sm" />
-              {{ 'vehicles.card.seats' | translate:{ count: vehicle.seats } }}
+              {{ 'vehicles.card.seats' | translate: { count: vehicle.seats } }}
             </span>
             <span class="spec">
               <lib-icon name="transmission" variant="filled" size="sm" />
@@ -79,7 +79,9 @@
               <span>{{ 'vehicles.card.inclVat' | translate }}</span>
             </div>
           </div>
-          <button class="btn-book" (click)="onBookVehicle(vehicle)">{{ 'common.actions.bookNow' | translate }}</button>
+          <button class="btn-book" (click)="onBookVehicle(vehicle)">
+            {{ 'common.actions.bookNow' | translate }}
+          </button>
         </div>
       </div>
     }

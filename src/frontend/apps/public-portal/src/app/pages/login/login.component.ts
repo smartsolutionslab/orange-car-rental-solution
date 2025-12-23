@@ -17,7 +17,14 @@ import { ErrorAlertComponent, IconComponent } from '@orange-car-rental/ui-compon
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule, ErrorAlertComponent, IconComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    TranslateModule,
+    ErrorAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

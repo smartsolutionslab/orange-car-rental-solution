@@ -475,6 +475,7 @@
       "orangecarrental.buildingblocks.eventstore": {
         "type": "Project",
         "dependencies": {
+          "Azure.Identity": "[1.17.0, )",
           "Eventuous": "[0.15.1, )",
           "Eventuous.SqlServer": "[0.15.1, )",
           "Eventuous.Subscriptions": "[0.15.1, )",

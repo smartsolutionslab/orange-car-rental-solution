@@ -102,7 +102,11 @@
       <p>{{ 'bookingHistory.guestLookup.description' | translate }}</p>
 
       <form class="lookup-form" (ngSubmit)="onGuestLookup()">
-        <ui-form-field [label]="'bookingHistory.guestLookup.reservationId' | translate" inputId="reservationId" [required]="true">
+        <ui-form-field
+          [label]="'bookingHistory.guestLookup.reservationId' | translate"
+          inputId="reservationId"
+          [required]="true"
+        >
           <input
             type="text"
             id="reservationId"
@@ -113,7 +117,11 @@
           />
         </ui-form-field>
 
-        <ui-form-field [label]="'common.labels.email' | translate" inputId="email" [required]="true">
+        <ui-form-field
+          [label]="'common.labels.email' | translate"
+          inputId="email"
+          [required]="true"
+        >
           <input
             type="email"
             id="email"
@@ -129,7 +137,11 @@
         }
 
         <button type="submit" class="btn-primary" [disabled]="isLoading()">
-          {{ isLoading() ? ('bookingHistory.guestLookup.searching' | translate) : ('bookingHistory.guestLookup.searchButton' | translate) }}
+          {{
+            isLoading()
+              ? ('bookingHistory.guestLookup.searching' | translate)
+              : ('bookingHistory.guestLookup.searchButton' | translate)
+          }}
         </button>
       </form>
 
@@ -220,8 +232,12 @@
       }
     </ng-container>
     <ng-container modal-footer>
-      <button class="btn-secondary" (click)="printReservation()">{{ 'common.actions.print' | translate }}</button>
-      <button class="btn-primary" (click)="closeDetailModal()">{{ 'common.actions.close' | translate }}</button>
+      <button class="btn-secondary" (click)="printReservation()">
+        {{ 'common.actions.print' | translate }}
+      </button>
+      <button class="btn-primary" (click)="closeDetailModal()">
+        {{ 'common.actions.close' | translate }}
+      </button>
     </ng-container>
   </ui-modal>
 
@@ -235,8 +251,14 @@
     <ng-container modal-body>
       @if (selectedReservation()) {
         <p>{{ 'bookingHistory.cancel.message' | translate }}</p>
-        <p><strong>{{ 'bookingHistory.details.reservationNumber' | translate }}:</strong> {{ selectedReservation()!.id }}</p>
-        <p><strong>{{ 'bookingHistory.details.pickup' | translate }}:</strong> {{ formatDate(selectedReservation()!.pickupDate) }}</p>
+        <p>
+          <strong>{{ 'bookingHistory.details.reservationNumber' | translate }}:</strong>
+          {{ selectedReservation()!.id }}
+        </p>
+        <p>
+          <strong>{{ 'bookingHistory.details.pickup' | translate }}:</strong>
+          {{ formatDate(selectedReservation()!.pickupDate) }}
+        </p>
 
         <div class="form-group">
           <label for="cancellationReason">{{ 'bookingHistory.cancel.reason' | translate }} *</label>
@@ -249,18 +271,27 @@
         </div>
 
         <div class="warning-box">
-          <p><strong>{{ 'bookingHistory.cancel.warning' | translate }}:</strong> {{ 'bookingHistory.cancel.warningText' | translate }}</p>
+          <p>
+            <strong>{{ 'bookingHistory.cancel.warning' | translate }}:</strong>
+            {{ 'bookingHistory.cancel.warningText' | translate }}
+          </p>
         </div>
       }
     </ng-container>
     <ng-container modal-footer>
-      <button class="btn-secondary" (click)="closeCancelModal()">{{ 'common.actions.cancel' | translate }}</button>
+      <button class="btn-secondary" (click)="closeCancelModal()">
+        {{ 'common.actions.cancel' | translate }}
+      </button>
       <button
         class="btn-danger"
         (click)="confirmCancellation()"
         [disabled]="!cancellationReason || isLoading()"
       >
-        {{ isLoading() ? ('bookingHistory.cancel.inProgress' | translate) : ('bookingHistory.cancel.confirm' | translate) }}
+        {{
+          isLoading()
+            ? ('bookingHistory.cancel.inProgress' | translate)
+            : ('bookingHistory.cancel.confirm' | translate)
+        }}
       </button>
     </ng-container>
   </ui-modal>

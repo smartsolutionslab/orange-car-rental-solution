@@ -34,7 +34,9 @@
       <div class="form-group">
         <div class="label-row">
           <label for="password" class="form-label">{{ 'auth.login.password' | translate }}</label>
-          <a routerLink="/forgot-password" class="forgot-link">{{ 'auth.login.forgotPassword' | translate }}</a>
+          <a routerLink="/forgot-password" class="forgot-link">{{
+            'auth.login.forgotPassword' | translate
+          }}</a>
         </div>
         <div class="password-wrapper">
           <input
@@ -50,7 +52,11 @@
             type="button"
             class="password-toggle"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="showPassword() ? ('auth.login.hidePassword' | translate) : ('auth.login.showPassword' | translate)"
+            [attr.aria-label]="
+              showPassword()
+                ? ('auth.login.hidePassword' | translate)
+                : ('auth.login.showPassword' | translate)
+            "
           >
             @if (showPassword()) {
               <!-- Eye Slash Icon -->
@@ -99,7 +105,9 @@
     <div class="register-section">
       <p class="register-text">
         {{ 'auth.login.noAccount' | translate }}
-        <a routerLink="/register" class="register-link">{{ 'auth.login.registerNow' | translate }}</a>
+        <a routerLink="/register" class="register-link">{{
+          'auth.login.registerNow' | translate
+        }}</a>
       </p>
     </div>
 

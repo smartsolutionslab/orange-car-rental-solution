@@ -41,12 +41,16 @@ export class SimilarVehiclesComponent {
     if (difference > 0) {
       return {
         amount: difference,
-        text: this.translate.instant('similarVehicles.cheaper', { amount: absDifference.toFixed(2) }),
+        text: this.translate.instant('similarVehicles.cheaper', {
+          amount: absDifference.toFixed(2),
+        }),
       };
     } else if (difference < 0) {
       return {
         amount: difference,
-        text: this.translate.instant('similarVehicles.moreExpensive', { amount: absDifference.toFixed(2) }),
+        text: this.translate.instant('similarVehicles.moreExpensive', {
+          amount: absDifference.toFixed(2),
+        }),
       };
     } else {
       return {
@@ -88,7 +92,9 @@ export class SimilarVehiclesComponent {
 
     // Same transmission
     if (vehicle.transmissionType === this.currentVehicle()!.transmissionType) {
-      reasons.push(this.translate.instant(`vehicles.transmission.${vehicle.transmissionType.toLowerCase()}`));
+      reasons.push(
+        this.translate.instant(`vehicles.transmission.${vehicle.transmissionType.toLowerCase()}`),
+      );
     }
 
     return reasons.join(' • ');

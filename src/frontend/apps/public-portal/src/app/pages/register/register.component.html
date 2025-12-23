@@ -61,7 +61,9 @@
           </div>
 
           <div class="form-group">
-            <label for="password" class="form-label">{{ 'common.labels.password' | translate }} *</label>
+            <label for="password" class="form-label"
+              >{{ 'common.labels.password' | translate }} *</label
+            >
             <div class="password-wrapper">
               <input
                 id="password"
@@ -91,7 +93,9 @@
           </div>
 
           <div class="form-group">
-            <label for="confirmPassword" class="form-label">{{ 'auth.register.confirmPassword' | translate }} *</label>
+            <label for="confirmPassword" class="form-label"
+              >{{ 'auth.register.confirmPassword' | translate }} *</label
+            >
             <div class="password-wrapper">
               <input
                 id="confirmPassword"
@@ -126,7 +130,9 @@
         <div class="form-step">
           <div class="form-row">
             <div class="form-group">
-              <label for="firstName" class="form-label">{{ 'common.labels.firstName' | translate }} *</label>
+              <label for="firstName" class="form-label"
+                >{{ 'common.labels.firstName' | translate }} *</label
+              >
               <input
                 id="firstName"
                 type="text"
@@ -142,7 +148,9 @@
             </div>
 
             <div class="form-group">
-              <label for="lastName" class="form-label">{{ 'common.labels.lastName' | translate }} *</label>
+              <label for="lastName" class="form-label"
+                >{{ 'common.labels.lastName' | translate }} *</label
+              >
               <input
                 id="lastName"
                 type="text"
@@ -159,7 +167,9 @@
           </div>
 
           <div class="form-group">
-            <label for="phoneNumber" class="form-label">{{ 'common.labels.phone' | translate }} *</label>
+            <label for="phoneNumber" class="form-label"
+              >{{ 'common.labels.phone' | translate }} *</label
+            >
             <input
               id="phoneNumber"
               type="tel"
@@ -175,7 +185,9 @@
           </div>
 
           <div class="form-group">
-            <label for="dateOfBirth" class="form-label">{{ 'common.labels.dateOfBirth' | translate }} *</label>
+            <label for="dateOfBirth" class="form-label"
+              >{{ 'common.labels.dateOfBirth' | translate }} *</label
+            >
             <input
               id="dateOfBirth"
               type="date"
@@ -198,18 +210,26 @@
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptTerms" class="checkbox-input" />
-              <span>{{ 'auth.register.acceptTermsPrefix' | translate }}
-                <a href="/terms" target="_blank" class="terms-link">{{ 'auth.register.termsLink' | translate }}</a>
-                *</span>
+              <span
+                >{{ 'auth.register.acceptTermsPrefix' | translate }}
+                <a href="/terms" target="_blank" class="terms-link">{{
+                  'auth.register.termsLink' | translate
+                }}</a>
+                *</span
+              >
             </label>
           </div>
 
           <div class="form-group">
             <label class="checkbox-label required-checkbox">
               <input type="checkbox" formControlName="acceptPrivacy" class="checkbox-input" />
-              <span>{{ 'auth.register.acceptPrivacyPrefix' | translate }}
-                <a href="/privacy" target="_blank" class="terms-link">{{ 'auth.register.privacyLink' | translate }}</a>
-                *</span>
+              <span
+                >{{ 'auth.register.acceptPrivacyPrefix' | translate }}
+                <a href="/privacy" target="_blank" class="terms-link">{{
+                  'auth.register.privacyLink' | translate
+                }}</a>
+                *</span
+              >
             </label>
           </div>
 
@@ -233,7 +253,9 @@
       <!-- Navigation Buttons -->
       <div class="form-actions">
         @if (currentStep() > 1) {
-          <button type="button" class="secondary-button" (click)="previousStep()">{{ 'common.actions.back' | translate }}</button>
+          <button type="button" class="secondary-button" (click)="previousStep()">
+            {{ 'common.actions.back' | translate }}
+          </button>
         }
 
         @if (currentStep() < totalSteps) {
