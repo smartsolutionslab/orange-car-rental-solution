@@ -6,10 +6,9 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-preview AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy Directory.Build.props, Directory.Packages.props, and NuGet.config for central package management
+# Copy Directory.Build.props and Directory.Packages.props for central package management
 COPY Directory.Build.props ./
 COPY Directory.Packages.props ./
-COPY NuGet.config ./
 
 # Copy project files for restore
 COPY BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/OrangeCarRental.BuildingBlocks.Domain.csproj BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/

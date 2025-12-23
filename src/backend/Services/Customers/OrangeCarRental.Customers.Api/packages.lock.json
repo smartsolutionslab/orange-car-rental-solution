@@ -33,9 +33,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "Direct",
-        "requested": "[2.11.8, )",
-        "resolved": "2.11.8",
-        "contentHash": "JIHWLVSiJF6FIfRGA7Pc9Bj45rrnolgFTS7yJ09MndMhmDl+Iq5X1UV3O8lLEyoXVLbD2AWJV3NXZxRH7v4zMw=="
+        "requested": "[2.11.10, )",
+        "resolved": "2.11.10",
+        "contentHash": "tkiZTK3pxiniTl9sVz5WY2bn8Y+vaFu9yo2Qrs4guMXoBB3wTbKwXIwFvcZnpantGeYxSk9/+UZ5BQ6eFG69Dw=="
       },
       "Serilog.AspNetCore": {
         "type": "Direct",
@@ -488,7 +488,6 @@
           "Eventuous": "[0.15.1, )",
           "Eventuous.SqlServer": "[0.15.1, )",
           "Eventuous.Subscriptions": "[0.15.1, )",
-          "Eventuous.Subscriptions.SqlServer": "(, )",
           "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
           "OrangeCarRental.Customers.Domain": "[1.0.0, )",
           "OrangeCarRental.Reservations.Domain": "[1.0.0, )"
