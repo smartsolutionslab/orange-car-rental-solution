@@ -5,6 +5,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 /// </summary>
 public interface IInvoiceRepository
 {
+
     /// <summary>
     ///     Gets an invoice by its identifier.
     /// </summary>

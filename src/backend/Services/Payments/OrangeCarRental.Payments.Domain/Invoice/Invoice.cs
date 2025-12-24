@@ -8,214 +8,59 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 /// </summary>
 public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
 {
-    private readonly List<InvoiceLineItem> _lineItems = [];
-
     private Invoice()
     {
+        InvoiceNumber = null!;
+        LineItems = [];
     }
 
-    #region Seller Information (Impressum)
-
-    /// <summary>
-    ///     Seller company name.
-    /// </summary>
+    // Seller Information (Impressum)
     public string SellerName { get; init; } = "Orange Car Rental GmbH";
-
-    /// <summary>
-    ///     Seller street address.
-    /// </summary>
     public string SellerStreet { get; init; } = "Musterstraße 123";
-
-    /// <summary>
-    ///     Seller postal code.
-    /// </summary>
     public string SellerPostalCode { get; init; } = "10115";
-
-    /// <summary>
-    ///     Seller city.
-    /// </summary>
     public string SellerCity { get; init; } = "Berlin";
-
-    /// <summary>
-    ///     Seller country.
-    /// </summary>
     public string SellerCountry { get; init; } = "Deutschland";
-
-    /// <summary>
-    ///     Seller email.
-    /// </summary>
     public string SellerEmail { get; init; } = "rechnung@orangecarrental.de";
-
-    /// <summary>
-    ///     Seller phone.
-    /// </summary>
     public string SellerPhone { get; init; } = "+49 30 12345678";
-
-    /// <summary>
-    ///     Seller trade register number (Handelsregisternummer).
-    /// </summary>
     public string TradeRegisterNumber { get; init; } = "HRB 123456 B";
-
-    /// <summary>
-    ///     Seller VAT ID (Umsatzsteuer-Identifikationsnummer).
-    /// </summary>
     public string VatId { get; init; } = "DE123456789";
-
-    /// <summary>
-    ///     Seller tax number (Steuernummer).
-    /// </summary>
     public string TaxNumber { get; init; } = "27/123/45678";
-
-    /// <summary>
-    ///     Managing director name (Geschäftsführer).
-    /// </summary>
     public string ManagingDirector { get; init; } = "Max Mustermann";
 
-    #endregion
-
-    #region Invoice Details
-
-    /// <summary>
-    ///     Unique consecutive invoice number.
-    /// </summary>
-    public InvoiceNumber InvoiceNumber { get; init; } = null!;
-
-    /// <summary>
-    ///     Invoice date (Rechnungsdatum).
-    /// </summary>
+    // Invoice Details
+    public InvoiceNumber InvoiceNumber { get; init; }
     public DateOnly InvoiceDate { get; init; }
-
-    /// <summary>
-    ///     Service/delivery date (Leistungsdatum).
-    /// </summary>
     public DateOnly ServiceDate { get; init; }
-
-    /// <summary>
-    ///     Due date for payment (Fälligkeitsdatum).
-    /// </summary>
     public DateOnly DueDate { get; init; }
-
-    /// <summary>
-    ///     Invoice status.
-    /// </summary>
     public InvoiceStatus Status { get; init; }
 
-    #endregion
-
-    #region Customer Information
-
-    /// <summary>
-    ///     Customer ID.
-    /// </summary>
+    // Customer Information
     public Guid CustomerId { get; init; }
-
-    /// <summary>
-    ///     Customer full name.
-    /// </summary>
     public string CustomerName { get; init; } = string.Empty;
-
-    /// <summary>
-    ///     Customer street address.
-    /// </summary>
     public string CustomerStreet { get; init; } = string.Empty;
-
-    /// <summary>
-    ///     Customer postal code.
-    /// </summary>
     public string CustomerPostalCode { get; init; } = string.Empty;
-
-    /// <summary>
-    ///     Customer city.
-    /// </summary>
     public string CustomerCity { get; init; } = string.Empty;
-
-    /// <summary>
-    ///     Customer country.
-    /// </summary>
     public string CustomerCountry { get; init; } = "Deutschland";
-
-    /// <summary>
-    ///     Customer VAT ID (for B2B).
-    /// </summary>
     public string? CustomerVatId { get; init; }
 
-    #endregion
-
-    #region Reservation Reference
-
-    /// <summary>
-    ///     Related reservation ID.
-    /// </summary>
+    // Reservation Reference
     public Guid ReservationId { get; init; }
-
-    /// <summary>
-    ///     Related payment ID.
-    /// </summary>
     public Guid? PaymentId { get; init; }
 
-    #endregion
-
-    #region Line Items and Totals
-
-    /// <summary>
-    ///     Invoice line items.
-    /// </summary>
-    public IReadOnlyList<InvoiceLineItem> LineItems => _lineItems.AsReadOnly();
-
-    /// <summary>
-    ///     Total net amount (before VAT).
-    /// </summary>
-    public decimal TotalNet => _lineItems.Sum(x => x.TotalNet);
-
-    /// <summary>
-    ///     Total VAT amount.
-    /// </summary>
-    public decimal TotalVat => _lineItems.Sum(x => x.VatAmount);
-
-    /// <summary>
-    ///     Total gross amount (after VAT).
-    /// </summary>
+    // Line Items and Totals
+    public IReadOnlyList<InvoiceLineItem> LineItems { get; init; }
+    public decimal TotalNet => LineItems.Sum(x => x.TotalNet);
+    public decimal TotalVat => LineItems.Sum(x => x.VatAmount);
     public decimal TotalGross => TotalNet + TotalVat;
-
-    /// <summary>
-    ///     Currency code.
-    /// </summary>
     public string CurrencyCode { get; init; } = "EUR";
 
-    #endregion
-
-    #region Metadata
-
-    /// <summary>
-    ///     When the invoice was created.
-    /// </summary>
+    // Metadata
     public DateTime CreatedAt { get; init; }
-
-    /// <summary>
-    ///     When the invoice was sent to customer.
-    /// </summary>
     public DateTime? SentAt { get; init; }
-
-    /// <summary>
-    ///     When the invoice was paid.
-    /// </summary>
     public DateTime? PaidAt { get; init; }
-
-    /// <summary>
-    ///     When the invoice was voided.
-    /// </summary>
     public DateTime? VoidedAt { get; init; }
+    public byte[]? PdfDocument { get; init; }
 
-    /// <summary>
-    ///     PDF document stored as bytes.
-    /// </summary>
-    public byte[]? PdfDocument { get; private set; }
-
-    #endregion
-
-    /// <summary>
-    ///     Creates a new invoice for a reservation.
-    /// </summary>
     public static Invoice Create(
         InvoiceNumber invoiceNumber,
         Guid reservationId,
@@ -231,7 +76,7 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
         int paymentTermDays = 14,
         Guid? paymentId = null)
     {
-        var invoice = new Invoice
+        return new Invoice
         {
             Id = InvoiceIdentifier.New(),
             InvoiceNumber = invoiceNumber,
@@ -248,32 +93,19 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             CustomerVatId = customerVatId,
             ReservationId = reservationId,
             PaymentId = paymentId,
+            LineItems = lineItems.ToList(),
             CreatedAt = DateTime.UtcNow
         };
-
-        invoice._lineItems.AddRange(lineItems);
-        return invoice;
     }
 
-    /// <summary>
-    ///     Attaches the generated PDF document.
-    /// </summary>
-    public Invoice WithPdfDocument(byte[] pdfBytes)
-    {
-        PdfDocument = pdfBytes;
-        return this;
-    }
-
-    /// <summary>
-    ///     Creates a copy with updated status.
-    /// </summary>
     private Invoice CreateMutatedCopy(
         InvoiceStatus? status = null,
         DateTime? sentAt = null,
         DateTime? paidAt = null,
-        DateTime? voidedAt = null)
+        DateTime? voidedAt = null,
+        byte[]? pdfDocument = null)
     {
-        var copy = new Invoice
+        return new Invoice
         {
             Id = Id,
             InvoiceNumber = InvoiceNumber,
@@ -301,20 +133,21 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             CustomerVatId = CustomerVatId,
             ReservationId = ReservationId,
             PaymentId = PaymentId,
+            LineItems = LineItems,
             CurrencyCode = CurrencyCode,
             CreatedAt = CreatedAt,
             SentAt = sentAt ?? SentAt,
             PaidAt = paidAt ?? PaidAt,
             VoidedAt = voidedAt ?? VoidedAt,
-            PdfDocument = PdfDocument
+            PdfDocument = pdfDocument ?? PdfDocument
         };
-        copy._lineItems.AddRange(_lineItems);
-        return copy;
     }
 
-    /// <summary>
-    ///     Marks the invoice as sent to customer.
-    /// </summary>
+    public Invoice WithPdfDocument(byte[] pdfBytes)
+    {
+        return CreateMutatedCopy(pdfDocument: pdfBytes);
+    }
+
     public Invoice MarkAsSent()
     {
         if (Status != InvoiceStatus.Created)
@@ -325,9 +158,6 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             sentAt: DateTime.UtcNow);
     }
 
-    /// <summary>
-    ///     Marks the invoice as paid.
-    /// </summary>
     public Invoice MarkAsPaid()
     {
         if (Status == InvoiceStatus.Voided)
@@ -338,9 +168,6 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             paidAt: DateTime.UtcNow);
     }
 
-    /// <summary>
-    ///     Voids the invoice.
-    /// </summary>
     public Invoice Void()
     {
         if (Status == InvoiceStatus.Paid)
