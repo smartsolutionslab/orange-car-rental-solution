@@ -18,13 +18,13 @@ public sealed class SmsService(ILogger<SmsService> logger) : ISmsService
         // Generate a mock provider message ID
         var providerMessageId = $"sms-{Guid.NewGuid():N}";
 
-        // Sanitize user input to prevent log forging (CWE-117)
-        var sanitizedPhone = SanitizeLogValue(toPhone);
+        // Mask phone number to prevent exposure of sensitive information
+        var maskedPhone = MaskPhoneNumber(toPhone);
 
         // Log the SMS (stub implementation)
         logger.LogInformation(
             "STUB: Sending SMS to {ToPhone}. Provider ID: {ProviderId}",
-            sanitizedPhone,
+            maskedPhone,
             providerMessageId);
 
         logger.LogDebug("SMS message: {Message}", SanitizeLogValue(message));
@@ -41,6 +41,24 @@ public sealed class SmsService(ILogger<SmsService> logger) : ISmsService
         // return messageResource.Sid;
 
         return providerMessageId;
+    }
+
+    /// <summary>
+    ///     Masks a phone number to prevent exposure of sensitive information.
+    ///     Example: "+49151234567" becomes "+49***4567"
+    /// </summary>
+    private static string MaskPhoneNumber(string? phone)
+    {
+        if (string.IsNullOrEmpty(phone))
+            return "[empty]";
+
+        var sanitized = SanitizeLogValue(phone);
+        if (sanitized.Length <= 4)
+            return "***";
+
+        var visibleEnd = sanitized[^4..];
+        var prefix = sanitized.Length > 6 ? sanitized[..3] : "";
+        return $"{prefix}***{visibleEnd}";
     }
 
     /// <summary>

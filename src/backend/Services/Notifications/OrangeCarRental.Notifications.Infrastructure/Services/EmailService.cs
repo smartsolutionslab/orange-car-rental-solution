@@ -19,14 +19,14 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // Generate a mock provider message ID
         var providerMessageId = $"email-{Guid.NewGuid():N}";
 
-        // Sanitize user input to prevent log forging (CWE-117)
-        var sanitizedEmail = SanitizeLogValue(toEmail);
+        // Sanitize and mask user input for logging
+        var maskedEmail = MaskEmail(toEmail);
         var sanitizedSubject = SanitizeLogValue(subject);
 
         // Log the email (stub implementation)
         logger.LogInformation(
             "STUB: Sending email to {ToEmail} with subject '{Subject}'. Provider ID: {ProviderId}",
-            sanitizedEmail,
+            maskedEmail,
             sanitizedSubject,
             providerMessageId);
 
@@ -45,6 +45,28 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // return response.Headers.GetValues("X-Message-Id").FirstOrDefault();
 
         return providerMessageId;
+    }
+
+    /// <summary>
+    ///     Masks an email address to prevent exposure of sensitive information.
+    ///     Example: "john.doe@example.com" becomes "jo***@example.com"
+    /// </summary>
+    private static string MaskEmail(string? email)
+    {
+        if (string.IsNullOrEmpty(email))
+            return "[empty]";
+
+        var sanitized = SanitizeLogValue(email);
+        var atIndex = sanitized.IndexOf('@');
+        if (atIndex <= 0)
+            return "***@[invalid]";
+
+        var localPart = sanitized[..atIndex];
+        var domain = sanitized[(atIndex + 1)..];
+        var visibleChars = Math.Min(2, localPart.Length);
+        var masked = localPart[..visibleChars] + "***";
+
+        return $"{masked}@{domain}";
     }
 
     /// <summary>
