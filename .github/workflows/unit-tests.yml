@@ -33,6 +33,8 @@ jobs:
 
       - name: Run unit tests
         run: yarn test:public
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
 
       - name: Generate coverage report
         run: echo "Coverage skipped"
@@ -76,6 +78,8 @@ jobs:
 
       - name: Run unit tests
         run: yarn test:call-center
+        env:
+          CHROME_BIN: /usr/bin/google-chrome
 
       - name: Generate coverage report
         run: echo "Coverage skipped"
