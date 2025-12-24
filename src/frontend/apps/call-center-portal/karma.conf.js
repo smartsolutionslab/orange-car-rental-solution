@@ -1,8 +1,15 @@
 // Karma configuration file
-// Using Puppeteer's bundled Chromium for headless testing
+// Using Puppeteer's bundled Chromium for headless testing (unless CHROME_BIN is already set)
 
-const puppeteer = require('puppeteer');
-process.env.CHROME_BIN = puppeteer.executablePath();
+// Only use puppeteer's Chrome if CHROME_BIN isn't already set (e.g., in CI)
+if (!process.env.CHROME_BIN) {
+  try {
+    const puppeteer = require('puppeteer');
+    process.env.CHROME_BIN = puppeteer.executablePath();
+  } catch {
+    // puppeteer not available, rely on system Chrome
+  }
+}
 
 module.exports = function (config) {
   config.set({
