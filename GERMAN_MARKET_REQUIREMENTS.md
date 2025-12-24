@@ -576,7 +576,7 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 
 ### Medium Priority
 1. ⚠️ SEPA payment method
-2. ⚠️ Invoice generation with legal requirements
+2. ✅ Invoice generation with legal requirements (§14 UStG compliant)
 3. ⚠️ Driving license validation
 4. ⚠️ Cookie consent banner
 5. ⚠️ Kilometer packages

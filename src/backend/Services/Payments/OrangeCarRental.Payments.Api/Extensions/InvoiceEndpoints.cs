@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
@@ -177,6 +178,49 @@ public static class InvoiceEndpoints
             .WithSummary("Mark invoice as paid")
             .RequireAuthorization("CallCenterOrAdminPolicy");
 
+        // Send invoice via email
+        invoices.MapPost("/{invoiceId:guid}/email", async Task<Results<Ok<SendEmailResultDto>, NotFound, BadRequest<ProblemDetails>>> (
+                Guid invoiceId,
+                SendInvoiceEmailRequest request,
+                IPaymentsUnitOfWork unitOfWork,
+                IInvoiceEmailSender emailSender,
+                CancellationToken cancellationToken) =>
+            {
+                var invoice = await unitOfWork.Invoices
+                    .GetByIdAsync(InvoiceIdentifier.From(invoiceId), cancellationToken);
+
+                if (invoice == null)
+                    return TypedResults.NotFound();
+
+                var result = await emailSender.SendInvoiceAsync(invoice, request.RecipientEmail, cancellationToken);
+
+                if (!result.Success)
+                {
+                    return TypedResults.BadRequest(new ProblemDetails
+                    {
+                        Title = "Failed to send invoice email",
+                        Detail = result.ErrorMessage,
+                        Status = StatusCodes.Status400BadRequest
+                    });
+                }
+
+                // Mark invoice as sent if not already
+                if (invoice.Status == InvoiceStatus.Created)
+                {
+                    var updatedInvoice = invoice.MarkAsSent();
+                    await unitOfWork.Invoices.UpdateAsync(updatedInvoice, cancellationToken);
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                }
+
+                return TypedResults.Ok(new SendEmailResultDto(
+                    Success: true,
+                    ProviderMessageId: result.ProviderMessageId,
+                    Message: "Invoice email sent successfully."));
+            })
+            .WithName("SendInvoiceEmail")
+            .WithSummary("Send invoice to customer via email")
+            .RequireAuthorization("CallCenterOrAdminPolicy");
+
         return app;
     }
 
@@ -245,3 +289,20 @@ public sealed record InvoiceLineItemDto(
     decimal VatRate,
     decimal TotalNet,
     decimal TotalGross);
+
+/// <summary>
+///     Request to send invoice via email.
+/// </summary>
+/// <param name="RecipientEmail">Customer's email address.</param>
+public sealed record SendInvoiceEmailRequest(string RecipientEmail);
+
+/// <summary>
+///     Result of sending invoice email.
+/// </summary>
+/// <param name="Success">Whether the email was sent successfully.</param>
+/// <param name="ProviderMessageId">Message ID from the email provider.</param>
+/// <param name="Message">Success or error message.</param>
+public sealed record SendEmailResultDto(
+    bool Success,
+    string? ProviderMessageId,
+    string Message);

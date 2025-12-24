@@ -58,6 +58,7 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 // Register infrastructure services
 builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IInvoiceGenerator, InvoiceGenerator>();
+builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
 
 // Register command handlers
 builder.Services.AddScoped<ProcessPaymentCommandHandler>();
