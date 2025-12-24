@@ -36,6 +36,8 @@ jobs:
       - name: Install dependencies
         working-directory: src/frontend
         run: yarn install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Run ESLint
         working-directory: src/frontend
@@ -68,6 +70,8 @@ jobs:
       - name: Install dependencies
         working-directory: src/frontend
         run: yarn install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Build application
         working-directory: src/frontend
