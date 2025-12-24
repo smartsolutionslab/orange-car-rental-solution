@@ -19,14 +19,18 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // Generate a mock provider message ID
         var providerMessageId = $"email-{Guid.NewGuid():N}";
 
+        // Sanitize user input to prevent log forging (CWE-117)
+        var sanitizedEmail = SanitizeLogValue(toEmail);
+        var sanitizedSubject = SanitizeLogValue(subject);
+
         // Log the email (stub implementation)
         logger.LogInformation(
             "STUB: Sending email to {ToEmail} with subject '{Subject}'. Provider ID: {ProviderId}",
-            toEmail,
-            subject,
+            sanitizedEmail,
+            sanitizedSubject,
             providerMessageId);
 
-        logger.LogDebug("Email body:\n{Body}", body);
+        logger.LogDebug("Email body: {Body}", SanitizeLogValue(body));
 
         // Simulate async operation
         await Task.Delay(100, cancellationToken);
@@ -41,5 +45,20 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // return response.Headers.GetValues("X-Message-Id").FirstOrDefault();
 
         return providerMessageId;
+    }
+
+    /// <summary>
+    ///     Sanitizes a value for logging to prevent log forging attacks (CWE-117).
+    ///     Removes newlines and other control characters that could be used to inject fake log entries.
+    /// </summary>
+    private static string SanitizeLogValue(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return string.Empty;
+
+        return value
+            .Replace("\r\n", " ")
+            .Replace("\r", " ")
+            .Replace("\n", " ");
     }
 }
