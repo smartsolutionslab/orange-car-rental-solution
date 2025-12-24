@@ -19,18 +19,12 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // Generate a mock provider message ID
         var providerMessageId = $"email-{Guid.NewGuid():N}";
 
-        // Sanitize and mask user input for logging
-        var maskedEmail = MaskEmail(toEmail);
-        var sanitizedSubject = SanitizeLogValue(subject);
-
-        // Log the email (stub implementation)
+        // Log the email send operation (stub implementation)
+        // Note: Email addresses are not logged to prevent exposure of PII
         logger.LogInformation(
-            "STUB: Sending email to {ToEmail} with subject '{Subject}'. Provider ID: {ProviderId}",
-            maskedEmail,
-            sanitizedSubject,
+            "STUB: Sending email with subject '{Subject}'. Provider ID: {ProviderId}",
+            SanitizeLogValue(subject),
             providerMessageId);
-
-        logger.LogDebug("Email body: {Body}", SanitizeLogValue(body));
 
         // Simulate async operation
         await Task.Delay(100, cancellationToken);
@@ -45,28 +39,6 @@ public sealed class EmailService(ILogger<EmailService> logger) : IEmailService
         // return response.Headers.GetValues("X-Message-Id").FirstOrDefault();
 
         return providerMessageId;
-    }
-
-    /// <summary>
-    ///     Masks an email address to prevent exposure of sensitive information.
-    ///     Example: "john.doe@example.com" becomes "jo***@example.com"
-    /// </summary>
-    private static string MaskEmail(string? email)
-    {
-        if (string.IsNullOrEmpty(email))
-            return "[empty]";
-
-        var sanitized = SanitizeLogValue(email);
-        var atIndex = sanitized.IndexOf('@');
-        if (atIndex <= 0)
-            return "***@[invalid]";
-
-        var localPart = sanitized[..atIndex];
-        var domain = sanitized[(atIndex + 1)..];
-        var visibleChars = Math.Min(2, localPart.Length);
-        var masked = localPart[..visibleChars] + "***";
-
-        return $"{masked}@{domain}";
     }
 
     /// <summary>
