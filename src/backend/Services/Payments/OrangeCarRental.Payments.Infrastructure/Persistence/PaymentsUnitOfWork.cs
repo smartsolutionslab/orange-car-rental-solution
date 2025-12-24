@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
@@ -19,6 +20,10 @@ public sealed class PaymentsUnitOfWork : IPaymentsUnitOfWork
     /// <inheritdoc />
     public IPaymentRepository Payments =>
         field ??= new PaymentRepository(_context);
+
+    /// <inheritdoc />
+    public IInvoiceRepository Invoices =>
+        field ??= new InvoiceRepository(_context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>

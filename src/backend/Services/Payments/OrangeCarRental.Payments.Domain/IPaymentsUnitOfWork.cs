@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain;
@@ -13,4 +14,9 @@ public interface IPaymentsUnitOfWork : IUnitOfWork
     ///     Gets the payment repository.
     /// </summary>
     IPaymentRepository Payments { get; }
+
+    /// <summary>
+    ///     Gets the invoice repository.
+    /// </summary>
+    IInvoiceRepository Invoices { get; }
 }

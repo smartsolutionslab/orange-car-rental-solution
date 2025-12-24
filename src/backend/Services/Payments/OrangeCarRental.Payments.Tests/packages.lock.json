@@ -24,6 +24,16 @@
           "Microsoft.TestPlatform.TestHost": "18.0.1"
         }
       },
+      "Shouldly": {
+        "type": "Direct",
+        "requested": "[4.3.0, )",
+        "resolved": "4.3.0",
+        "contentHash": "sDetrWXrl6YXZ4HeLsdBoNk3uIa7K+V4uvIJ+cqdRa5DrFxeTED7VkjoxCuU1kJWpUuBDZz2QXFzSxBtVXLwRQ==",
+        "dependencies": {
+          "DiffEngine": "11.3.0",
+          "EmptyFiles": "4.4.0"
+        }
+      },
       "xunit": {
         "type": "Direct",
         "requested": "[2.9.3, )",
@@ -40,6 +50,66 @@
         "requested": "[3.1.5, )",
         "resolved": "3.1.5",
         "contentHash": "tKi7dSTwP4m5m9eXPM2Ime4Kn7xNf4x4zT9sdLO/G4hZVnQCRiMTWoSZqI/pYTVeI27oPPqHBKYI/DjJ9GsYgA=="
+      },
+      "DiffEngine": {
+        "type": "Transitive",
+        "resolved": "11.3.0",
+        "contentHash": "k0ZgZqd09jLZQjR8FyQbSQE86Q7QZnjEzq1LPHtj1R2AoWO8sjV5x+jlSisL7NZAbUOI4y+7Bog8gkr9WIRBGw==",
+        "dependencies": {
+          "EmptyFiles": "4.4.0",
+          "System.Management": "6.0.1"
+        }
+      },
+      "EmptyFiles": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "gwJEfIGS7FhykvtZoscwXj/XwW+mJY6UbAZk+qtLKFUGWC95kfKXnj8VkxsZQnWBxJemM/q664rGLN5nf+OHZw=="
+      },
+      "Eventuous.Application": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "4d20644k11EYcKH08lmq93JgnPjSjSE5SChwd1+CHSWm7Eb7ZuQxGDU4GDLVt9JQyudLfDnowsPe0MspnTJDCA==",
+        "dependencies": {
+          "Eventuous.Domain": "0.15.1",
+          "Eventuous.Persistence": "0.15.1"
+        }
+      },
+      "Eventuous.Diagnostics": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "qw+BMJBLdAYzuO/zSC/0gjVVqbU38hWAwbLZvchmmhrtRqDS80YO2dpSJp4JrN2gF+e+FgygoyrZCgOKq4zM1w==",
+        "dependencies": {
+          "Eventuous.Shared": "0.15.1"
+        }
+      },
+      "Eventuous.Domain": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "b6M5hA0Nv8wAcWbG2qDfroslUEBH/k+NNBLVdqCx8/U6mZs7JTtk9vtouh3dR2kuYbZldmdhNVKehwbUNXFPcA=="
+      },
+      "Eventuous.Persistence": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "1SelYyAxJPw6NyEi3TMuytDnu/6gl1ACtvK5p3IkuSUkdXUk4UfwXkE5/5QdjF7nsMBRNVltVo3WStp80Z6NhQ==",
+        "dependencies": {
+          "Eventuous.Diagnostics": "0.15.1",
+          "Eventuous.Domain": "0.15.1",
+          "Eventuous.Serialization": "0.15.1",
+          "Eventuous.Shared": "0.15.1"
+        }
+      },
+      "Eventuous.Serialization": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "jg9Crk0RyCUqTCCBEonEqIrIk0iSXnOqmF6V6yplHbPQNnWABH2oTykUYbYJPm+HEp6qwVT0K+0r5W5CDlt6aw==",
+        "dependencies": {
+          "Eventuous.Shared": "0.15.1"
+        }
+      },
+      "Eventuous.Shared": {
+        "type": "Transitive",
+        "resolved": "0.15.1",
+        "contentHash": "esM2WnErg5mchkC+v7DII53VQNKyHQ1LDCBehx38eA45b4d15B+qPJnVkh0NCTUybpI9Nu9G9LSNVafo+DP0wQ=="
       },
       "Microsoft.CodeCoverage": {
         "type": "Transitive",
@@ -64,6 +134,19 @@
         "type": "Transitive",
         "resolved": "13.0.3",
         "contentHash": "HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ=="
+      },
+      "System.CodeDom": {
+        "type": "Transitive",
+        "resolved": "6.0.0",
+        "contentHash": "CPc6tWO1LAer3IzfZufDBRL+UZQcj5uS207NHALQzP84Vp/z6wF0Aa0YZImOQY8iStY0A2zI/e3ihKNPfUm8XA=="
+      },
+      "System.Management": {
+        "type": "Transitive",
+        "resolved": "6.0.1",
+        "contentHash": "10J1D0h/lioojphfJ4Fuh5ZUThT/xOVHdV9roGBittKKNP2PMjrvibEdbVTGZcPra1399Ja3tqIJLyQrc5Wmhg==",
+        "dependencies": {
+          "System.CodeDom": "6.0.0"
+        }
       },
       "xunit.abstractions": {
         "type": "Transitive",
@@ -103,6 +186,27 @@
         "contentHash": "yMb6vMESlSrE3Wfj7V6cjQ3S4TXdXpRqYeNEI3zsX31uTsGMJjEw6oD5F5u1cHnMptjhEECnmZSsPxB6ChZHDQ==",
         "dependencies": {
           "xunit.extensibility.core": "[2.9.3]"
+        }
+      },
+      "orangecarrental.buildingblocks.domain": {
+        "type": "Project",
+        "dependencies": {
+          "Eventuous": "[0.15.1, )"
+        }
+      },
+      "orangecarrental.payments.domain": {
+        "type": "Project",
+        "dependencies": {
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+        }
+      },
+      "Eventuous": {
+        "type": "CentralTransitive",
+        "requested": "[0.15.1, )",
+        "resolved": "0.15.1",
+        "contentHash": "V6QkOXmyD0necj2srRticwR0B5Sp8HrE2OgHz1Uik914gi+bSkbhLHEVLRb5qtSTZgfH3BPH/0wjz6ArRtEjww==",
+        "dependencies": {
+          "Eventuous.Application": "0.15.1"
         }
       }
     }

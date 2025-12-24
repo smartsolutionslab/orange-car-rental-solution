@@ -969,7 +969,8 @@
           "Microsoft.Extensions.Configuration.FileExtensions": "[10.0.1, )",
           "Microsoft.Extensions.Configuration.Json": "[10.0.1, )",
           "OrangeCarRental.Payments.Application": "[1.0.0, )",
-          "OrangeCarRental.Payments.Domain": "[1.0.0, )"
+          "OrangeCarRental.Payments.Domain": "[1.0.0, )",
+          "QuestPDF": "[2024.12.3, )"
         }
       },
       "orangecarrental.pricing.application": {
@@ -1142,6 +1143,12 @@
         "requested": "[10.0.1, )",
         "resolved": "10.0.1",
         "contentHash": "oIy8fQxxbUsSrrOvgBqlVgOeCtDmrcynnTG+FQufcUWBrwyPfwlUkCDB2vaiBeYPyT+20u9/HeuHeBf+H4F/8g=="
+      },
+      "QuestPDF": {
+        "type": "CentralTransitive",
+        "requested": "[2024.12.3, )",
+        "resolved": "2024.12.3",
+        "contentHash": "gdIoEC9cTnySnDdbwcguUfSS2+444rGEeecQH5n0IKUA9Tm4473eRrFjPk5HoD5I2BxjuyDW+WCGnwKa+OIXsw=="
       }
     }
   }

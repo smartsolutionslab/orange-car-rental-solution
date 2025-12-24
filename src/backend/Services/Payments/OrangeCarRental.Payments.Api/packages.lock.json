@@ -693,7 +693,8 @@
           "Microsoft.EntityFrameworkCore.Design": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.1, )",
           "OrangeCarRental.Payments.Application": "[1.0.0, )",
-          "OrangeCarRental.Payments.Domain": "[1.0.0, )"
+          "OrangeCarRental.Payments.Domain": "[1.0.0, )",
+          "QuestPDF": "[2024.12.3, )"
         }
       },
       "orangecarrental.servicedefaults": {
@@ -848,6 +849,12 @@
         "dependencies": {
           "Polly.Core": "8.4.2"
         }
+      },
+      "QuestPDF": {
+        "type": "CentralTransitive",
+        "requested": "[2024.12.3, )",
+        "resolved": "2024.12.3",
+        "contentHash": "gdIoEC9cTnySnDdbwcguUfSS2+444rGEeecQH5n0IKUA9Tm4473eRrFjPk5HoD5I2BxjuyDW+WCGnwKa+OIXsw=="
       },
       "Serilog": {
         "type": "CentralTransitive",

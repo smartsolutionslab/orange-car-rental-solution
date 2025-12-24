@@ -66,6 +66,8 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="10.0.101" />
     <!-- Serialization -->
     <PackageVersion Include="System.Text.Json" Version="10.0.0" />
+    <!-- PDF Generation -->
+    <PackageVersion Include="QuestPDF" Version="2024.12.3" />
     <!-- Event Sourcing -->
     <PackageVersion Include="Eventuous" Version="0.15.1" />
     <PackageVersion Include="Eventuous.SqlServer" Version="0.15.1" />

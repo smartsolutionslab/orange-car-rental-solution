@@ -6,6 +6,7 @@ using SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Services;
@@ -52,13 +53,16 @@ builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextO
 // Register Unit of Work and repositories
 builder.Services.AddScoped<IPaymentsUnitOfWork, PaymentsUnitOfWork>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 
 // Register infrastructure services
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IInvoiceGenerator, InvoiceGenerator>();
 
 // Register command handlers
 builder.Services.AddScoped<ProcessPaymentCommandHandler>();
 builder.Services.AddScoped<RefundPaymentCommandHandler>();
+builder.Services.AddScoped<GenerateInvoiceCommandHandler>();
 
 var app = builder.Build();
 
@@ -94,6 +98,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapPaymentEndpoints();
+app.MapInvoiceEndpoints();
 app.MapDefaultEndpoints();
 
 app.Run();
