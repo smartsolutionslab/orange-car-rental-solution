@@ -250,36 +250,36 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
 
 ### 1. German Driving License
 
-**Validation Requirements:**
+**Validation Requirements (Implemented):**
 - Valid German (EU) driving license required
-- Minimum age: 21 years
+- Minimum age: 21 years for car rental
 - License held for at least 1 year
-- International licenses require additional validation
+- International licenses require International Driving Permit (warning issued)
 
-**Value Object:**
+**Value Object (Implemented):**
 ```csharp
-public sealed record DrivingLicense(
-    LicenseNumber Number,
-    LicenseType Type,
-    DateTime IssueDate,
-    DateTime? ExpiryDate,
-    Country IssuingCountry)
+public readonly record struct DriversLicense : IValueObject
 {
-    public bool IsValidInGermany()
-    {
-        // EU licenses are valid
-        if (IssuingCountry.IsEU())
-            return true;
+    public string LicenseNumber { get; }
+    public string IssueCountry { get; }
+    public DateOnly IssueDate { get; }
+    public DateOnly ExpiryDate { get; }
 
-        // International licenses need additional checks
-        return false;
-    }
+    public bool IsEuLicense();  // Recognizes all 27 EU countries
+    public bool HasBeenHeldForYears(int years, DateOnly? asOfDate = null);
+    public int YearsHeld(DateOnly? asOfDate = null);
+    public bool IsValidForGermanRental(DateOnly rentalDate);
+    public LicenseValidationResult ValidateForGermanRental(DateOnly rentalDate);
+}
 
-    public bool MeetsMinimumRequirements(DateTime rentalStartDate)
-    {
-        var licenseAge = (rentalStartDate - IssueDate).Days / 365.25;
-        return licenseAge >= 1;
-    }
+// Customer aggregate enforces rental requirements
+public sealed class Customer : EventSourcedAggregate<...>
+{
+    public const int MinimumRentalAgeYears = 21;
+    public const int MinimumRegistrationAgeYears = 18;
+    public const int MinimumLicenseHeldYears = 1;
+
+    public RentalEligibilityResult ValidateRentalEligibility(DateOnly startDate);
 }
 ```
 
@@ -588,7 +588,7 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 ### Medium Priority
 1. ✅ SEPA payment method (IBAN/BIC validation, mandate management)
 2. ✅ Invoice generation with legal requirements (§14 UStG compliant)
-3. ⚠️ Driving license validation
+3. ✅ Driving license validation (21+ age, 1 year holding period, EU recognition)
 4. ⚠️ Cookie consent banner
 5. ⚠️ Kilometer packages
 6. ⚠️ Vehicle extras (GPS, child seats)

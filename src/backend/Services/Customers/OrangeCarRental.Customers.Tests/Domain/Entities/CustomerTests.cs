@@ -175,10 +175,24 @@ public class CustomerTests
     }
 
     [Fact]
-    public void MinimumAgeYears_ShouldBe18()
+    public void MinimumRegistrationAgeYears_ShouldBe18()
     {
         // Assert
-        Customer.MinimumAgeYears.ShouldBe(18);
+        Customer.MinimumRegistrationAgeYears.ShouldBe(18);
+    }
+
+    [Fact]
+    public void MinimumRentalAgeYears_ShouldBe21()
+    {
+        // Assert
+        Customer.MinimumRentalAgeYears.ShouldBe(21);
+    }
+
+    [Fact]
+    public void MinimumLicenseHeldYears_ShouldBe1()
+    {
+        // Assert
+        Customer.MinimumLicenseHeldYears.ShouldBe(1);
     }
 
     [Fact]

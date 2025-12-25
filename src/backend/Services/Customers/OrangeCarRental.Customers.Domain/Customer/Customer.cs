@@ -13,8 +13,19 @@ public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, Custome
 {
     /// <summary>
     ///     Minimum age required to rent a vehicle in Germany.
+    ///     While the minimum driving age is 18, most German car rental companies require 21+.
     /// </summary>
-    public const int MinimumAgeYears = 18;
+    public const int MinimumRentalAgeYears = 21;
+
+    /// <summary>
+    ///     Minimum age required to register as a customer (can book, but rental eligibility checked separately).
+    /// </summary>
+    public const int MinimumRegistrationAgeYears = 18;
+
+    /// <summary>
+    ///     Minimum years the driver's license must be held before renting.
+    /// </summary>
+    public const int MinimumLicenseHeldYears = 1;
 
     /// <summary>
     ///     Minimum days before license expiry to allow rentals.
@@ -296,7 +307,7 @@ public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, Custome
             age--;
 
         Ensure.That(dateOfBirth, nameof(dateOfBirth))
-            .ThrowIf(age < MinimumAgeYears, $"Customer must be at least {MinimumAgeYears} years old. Current age: {age}");
+            .ThrowIf(age < MinimumRegistrationAgeYears, $"Customer must be at least {MinimumRegistrationAgeYears} years old to register. Current age: {age}");
 
         Ensure.That(dateOfBirth, nameof(dateOfBirth))
             .ThrowIf(age > 150, "Invalid date of birth - age cannot exceed 150 years");
@@ -314,9 +325,69 @@ public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, Custome
             .ThrowIf(license.DaysUntilExpiry() < MinimumLicenseValidityDays,
                 $"Driver's license must be valid for at least {MinimumLicenseValidityDays} days. Days remaining: {license.DaysUntilExpiry()}");
 
-        var minimumLicenseIssueDate = dateOfBirth.AddYears(MinimumAgeYears - 1);
+        var minimumLicenseIssueDate = dateOfBirth.AddYears(MinimumRegistrationAgeYears - 1);
         Ensure.That(license, nameof(license))
             .ThrowIf(license.IssueDate < minimumLicenseIssueDate,
                 $"Driver's license issue date seems inconsistent with date of birth. License issued: {license.IssueDate}, Date of birth: {dateOfBirth}");
     }
+
+    /// <summary>
+    ///     Validates rental eligibility for a specific rental period according to German requirements.
+    /// </summary>
+    /// <param name="startDate">The rental start date.</param>
+    /// <returns>Detailed validation result.</returns>
+    public RentalEligibilityResult ValidateRentalEligibility(DateOnly startDate)
+    {
+        var issues = new List<string>();
+
+        // Check account status
+        if (State.Status != CustomerStatus.Active)
+            issues.Add($"Account is not active (status: {State.Status})");
+
+        // Check age requirement (21+)
+        if (State.DateOfBirth.HasValue)
+        {
+            var ageOnRentalDate = CalculateAge(State.DateOfBirth.Value, startDate);
+            if (ageOnRentalDate < MinimumRentalAgeYears)
+                issues.Add($"Must be at least {MinimumRentalAgeYears} years old to rent (age on rental date: {ageOnRentalDate})");
+        }
+        else
+        {
+            issues.Add("Date of birth is required");
+        }
+
+        // Check driver's license
+        if (State.DriversLicense.HasValue)
+        {
+            var license = State.DriversLicense.Value;
+            var licenseValidation = license.ValidateForGermanRental(startDate);
+
+            if (!licenseValidation.IsValid)
+                issues.AddRange(licenseValidation.Issues);
+        }
+        else
+        {
+            issues.Add("Driver's license is required");
+        }
+
+        return new RentalEligibilityResult(issues.Count == 0, issues);
+    }
+
+    private static int CalculateAge(DateOnly dateOfBirth, DateOnly asOfDate)
+    {
+        var age = asOfDate.Year - dateOfBirth.Year;
+        if (dateOfBirth.AddYears(age) > asOfDate)
+            age--;
+        return age;
+    }
+}
+
+/// <summary>
+///     Result of rental eligibility validation.
+/// </summary>
+/// <param name="IsEligible">Whether the customer is eligible to rent.</param>
+/// <param name="Issues">List of eligibility issues if any.</param>
+public sealed record RentalEligibilityResult(bool IsEligible, IReadOnlyList<string> Issues)
+{
+    public static RentalEligibilityResult Eligible => new(true, []);
 }

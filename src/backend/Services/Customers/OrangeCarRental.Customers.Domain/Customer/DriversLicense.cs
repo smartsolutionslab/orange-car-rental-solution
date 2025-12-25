@@ -4,6 +4,16 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
+///     Result of driver's license validation for rental eligibility.
+/// </summary>
+/// <param name="IsValid">Whether the license is valid for rental.</param>
+/// <param name="Issues">List of validation issues if any.</param>
+public sealed record LicenseValidationResult(bool IsValid, IReadOnlyList<string> Issues)
+{
+    public static LicenseValidationResult Valid => new(true, []);
+}
+
+/// <summary>
 ///     Driver's license value object.
 ///     Represents a driver's license with validation for EU/German requirements.
 /// </summary>
@@ -126,6 +136,75 @@ public readonly record struct DriversLicense(
     {
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         return ExpiryDate.DayNumber - today.DayNumber;
+    }
+
+    /// <summary>
+    ///     Checks if the license has been held for the specified number of years.
+    ///     German car rental requires licenses held for at least 1 year.
+    /// </summary>
+    /// <param name="years">The minimum number of years the license must have been held.</param>
+    /// <param name="asOfDate">The date to check against (defaults to today).</param>
+    public bool HasBeenHeldForYears(int years, DateOnly? asOfDate = null)
+    {
+        var checkDate = asOfDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        var yearsHeld = (checkDate.DayNumber - IssueDate.DayNumber) / 365.25;
+        return yearsHeld >= years;
+    }
+
+    /// <summary>
+    ///     Gets the number of complete years the license has been held.
+    /// </summary>
+    /// <param name="asOfDate">The date to calculate from (defaults to today).</param>
+    public int YearsHeld(DateOnly? asOfDate = null)
+    {
+        var checkDate = asOfDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        return (int)((checkDate.DayNumber - IssueDate.DayNumber) / 365.25);
+    }
+
+    /// <summary>
+    ///     Validates the license meets German car rental requirements:
+    ///     - License must be valid on the rental date
+    ///     - License must have been held for at least 1 year
+    ///     - License must be from EU or recognized international license
+    /// </summary>
+    /// <param name="rentalDate">The start date of the rental.</param>
+    /// <returns>True if the license is valid for rental in Germany.</returns>
+    public bool IsValidForGermanRental(DateOnly rentalDate)
+    {
+        // Must be valid on rental date
+        if (!IsValidOn(rentalDate))
+            return false;
+
+        // Must have been held for at least 1 year
+        if (!HasBeenHeldForYears(1, rentalDate))
+            return false;
+
+        // EU licenses are always valid
+        // Non-EU licenses may require additional validation (international driving permit)
+        return true; // Basic validation - additional checks may be needed for non-EU
+    }
+
+    /// <summary>
+    ///     Gets detailed validation result for German rental requirements.
+    /// </summary>
+    /// <param name="rentalDate">The start date of the rental.</param>
+    public LicenseValidationResult ValidateForGermanRental(DateOnly rentalDate)
+    {
+        var issues = new List<string>();
+
+        if (!IsValidOn(rentalDate))
+            issues.Add($"License expires before rental date ({ExpiryDate:dd.MM.yyyy})");
+
+        if (!HasBeenHeldForYears(1, rentalDate))
+        {
+            var yearsHeld = YearsHeld(rentalDate);
+            issues.Add($"License must be held for at least 1 year (currently held for {yearsHeld} years)");
+        }
+
+        if (!IsEuLicense())
+            issues.Add("Non-EU license may require International Driving Permit");
+
+        return new LicenseValidationResult(issues.Count == 0, issues);
     }
 
     /// <summary>
