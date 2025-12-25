@@ -93,6 +93,31 @@ public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, Custome
     public int Age => State.Age;
 
     /// <summary>
+    ///     Gets the customer type (Individual or Business).
+    /// </summary>
+    public CustomerType CustomerType => State.CustomerType;
+
+    /// <summary>
+    ///     Gets the company name (for business customers).
+    /// </summary>
+    public CompanyName? CompanyName => State.CompanyName;
+
+    /// <summary>
+    ///     Gets the VAT ID (for business customers).
+    /// </summary>
+    public VATId? VATId => State.VATId;
+
+    /// <summary>
+    ///     Gets the payment terms (for business customers).
+    /// </summary>
+    public PaymentTerms? PaymentTerms => State.PaymentTerms;
+
+    /// <summary>
+    ///     Gets whether this is a business customer.
+    /// </summary>
+    public bool IsBusinessCustomer => State.IsBusinessCustomer;
+
+    /// <summary>
     ///     Registers a new customer with German market validation.
     /// </summary>
     public void Register(
@@ -257,6 +282,70 @@ public sealed class Customer : EventSourcedAggregate<CustomerQueryModel, Custome
             return;
 
         ChangeStatus(CustomerStatus.Blocked, reason);
+    }
+
+    /// <summary>
+    ///     Upgrades the customer to a business account (Geschäftskunde).
+    /// </summary>
+    /// <param name="companyName">The company name.</param>
+    /// <param name="vatId">The German VAT ID (USt-IdNr.).</param>
+    /// <param name="paymentTerms">The agreed payment terms.</param>
+    public void UpgradeToBusiness(
+        CompanyName companyName,
+        VATId vatId,
+        PaymentTerms paymentTerms)
+    {
+        EnsureExists();
+
+        if (State.CustomerType == CustomerType.Business)
+            throw new InvalidOperationException("Customer is already a business customer");
+
+        Ensure.That(vatId, nameof(vatId))
+            .ThrowIf(!vatId.IsGerman, "Only German VAT IDs are supported");
+
+        var now = DateTime.UtcNow;
+        Apply(new CustomerUpgradedToBusiness(
+            Id,
+            companyName,
+            vatId,
+            paymentTerms,
+            now));
+    }
+
+    /// <summary>
+    ///     Updates the business customer details.
+    /// </summary>
+    /// <param name="companyName">The updated company name.</param>
+    /// <param name="vatId">The updated VAT ID.</param>
+    /// <param name="paymentTerms">The updated payment terms.</param>
+    public void UpdateBusinessDetails(
+        CompanyName companyName,
+        VATId vatId,
+        PaymentTerms paymentTerms)
+    {
+        EnsureExists();
+
+        if (State.CustomerType != CustomerType.Business)
+            throw new InvalidOperationException("Customer is not a business customer");
+
+        Ensure.That(vatId, nameof(vatId))
+            .ThrowIf(!vatId.IsGerman, "Only German VAT IDs are supported");
+
+        // Check for changes
+        var hasChanges = State.CompanyName != companyName ||
+                         State.VATId != vatId ||
+                         State.PaymentTerms != paymentTerms;
+
+        if (!hasChanges)
+            return;
+
+        var now = DateTime.UtcNow;
+        Apply(new BusinessDetailsUpdated(
+            Id,
+            companyName,
+            vatId,
+            paymentTerms,
+            now));
     }
 
     /// <summary>

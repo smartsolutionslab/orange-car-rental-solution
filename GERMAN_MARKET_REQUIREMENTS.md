@@ -460,7 +460,7 @@ public sealed record CrossBorderPolicy(
     Money? DailySurcharge);
 ```
 
-### 4. Business Customer (Geschäftskunde) Support
+### 4. Business Customer (Geschäftskunde) Support (Implemented)
 
 **B2B Features:**
 - Corporate accounts
@@ -469,31 +469,57 @@ public sealed record CrossBorderPolicy(
 - Invoice payment terms (Zahlungsziel: 14/30 days)
 - Cost center allocation
 
+**Value Objects (Implemented):**
 ```csharp
-public sealed record BusinessCustomer : Customer
+// German VAT ID (USt-IdNr.) with format validation
+public readonly partial record struct VATId : IValueObject
 {
-    public CompanyName Company { get; private set; }
-    public VATId VatId { get; private set; }
-    public PaymentTerms PaymentTerms { get; private set; }
+    public string Value { get; }
+    public string CountryCode => Value[..2];  // "DE"
+    public string NumericPart => Value[2..];  // "123456789"
+    public bool IsGerman => CountryCode == "DE";
+    public string Formatted => $"{CountryCode} {NumericPart}";
+
+    public static VATId Create(string value);  // Validates DE + 9 digits
+    public static bool TryCreate(string value, out VATId vatId);
 }
 
-public sealed record VATId(string Value)
+// Company name with German legal form detection
+public readonly record struct CompanyName : IValueObject
 {
-    public VATId(string value) : this()
-    {
-        Value = value.Replace(" ", "").ToUpperInvariant();
-
-        // German VAT ID: DE + 9 digits
-        if (!Regex.IsMatch(Value, @"^DE\d{9}$"))
-            throw new ArgumentException("Invalid German VAT ID format");
-    }
+    public string Value { get; }
+    public bool HasGermanLegalForm();  // GmbH, AG, KG, OHG, UG, etc.
 }
 
-public sealed record PaymentTerms(int DaysUntilDue)
+// Payment terms (Zahlungsziel)
+public readonly record struct PaymentTerms : IValueObject
 {
+    public int DaysUntilDue { get; }
+    public bool IsImmediate => DaysUntilDue == 0;
+
     public static readonly PaymentTerms Immediate = new(0);
+    public static readonly PaymentTerms Net7 = new(7);
     public static readonly PaymentTerms Net14 = new(14);
     public static readonly PaymentTerms Net30 = new(30);
+    public static readonly PaymentTerms Net60 = new(60);
+
+    public DateOnly CalculateDueDate(DateOnly invoiceDate);
+    public string GetGermanDisplayName();  // "Zahlungsziel 30 Tage"
+}
+```
+
+**Customer Aggregate Extension:**
+```csharp
+public sealed class Customer : EventSourcedAggregate<...>
+{
+    public CustomerType CustomerType { get; }  // Individual or Business
+    public CompanyName? CompanyName { get; }
+    public VATId? VATId { get; }
+    public PaymentTerms? PaymentTerms { get; }
+    public bool IsBusinessCustomer { get; }
+
+    public void UpgradeToBusiness(CompanyName, VATId, PaymentTerms);
+    public void UpdateBusinessDetails(CompanyName, VATId, PaymentTerms);
 }
 ```
 
@@ -629,7 +655,7 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 7. ⚠️ Cookie consent banner
 
 ### Future Enhancements
-1. ⏳ B2B customer support with VAT ID
+1. ✅ B2B customer support with VAT ID (CustomerType, VATId, CompanyName, PaymentTerms)
 2. ⏳ Cross-border travel policies
 3. ⏳ Framework agreements for corporate customers
 4. ⏳ Multi-language support (English, French)

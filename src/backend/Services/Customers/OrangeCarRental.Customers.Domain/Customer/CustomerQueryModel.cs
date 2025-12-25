@@ -22,6 +22,12 @@ public sealed record CustomerQueryModel : QueryModel<CustomerQueryModel, Custome
     public DateTime RegisteredAtUtc { get; init; }
     public DateTime UpdatedAtUtc { get; init; }
 
+    // B2B customer fields
+    public CustomerType CustomerType { get; init; } = CustomerType.Individual;
+    public CompanyName? CompanyName { get; init; }
+    public VATId? VATId { get; init; }
+    public PaymentTerms? PaymentTerms { get; init; }
+
     /// <summary>
     ///     Indicates whether this customer has been created (registered).
     /// </summary>
@@ -42,6 +48,18 @@ public sealed record CustomerQueryModel : QueryModel<CustomerQueryModel, Custome
     /// </summary>
     public int Age => DateOfBirth?.Age ?? 0;
 
+    /// <summary>
+    ///     Gets whether this is a business customer.
+    /// </summary>
+    public bool IsBusinessCustomer => CustomerType == CustomerType.Business;
+
+    /// <summary>
+    ///     Gets the display name (company name for B2B, full name for individual).
+    /// </summary>
+    public string DisplayName => IsBusinessCustomer && CompanyName.HasValue
+        ? CompanyName.Value.Value
+        : FullName;
+
     public CustomerQueryModel()
     {
         On<CustomerRegistered>(Handle);
@@ -49,6 +67,8 @@ public sealed record CustomerQueryModel : QueryModel<CustomerQueryModel, Custome
         On<CustomerStatusChanged>(Handle);
         On<DriversLicenseUpdated>(Handle);
         On<CustomerEmailChanged>(Handle);
+        On<CustomerUpgradedToBusiness>(Handle);
+        On<BusinessDetailsUpdated>(Handle);
     }
 
     private static CustomerQueryModel Handle(CustomerQueryModel state, CustomerRegistered @event) =>
@@ -94,5 +114,24 @@ public sealed record CustomerQueryModel : QueryModel<CustomerQueryModel, Custome
         {
             Email = @event.NewEmail,
             UpdatedAtUtc = @event.ChangedAtUtc
+        };
+
+    private static CustomerQueryModel Handle(CustomerQueryModel state, CustomerUpgradedToBusiness @event) =>
+        state with
+        {
+            CustomerType = CustomerType.Business,
+            CompanyName = @event.CompanyName,
+            VATId = @event.VATId,
+            PaymentTerms = @event.PaymentTerms,
+            UpdatedAtUtc = @event.UpgradedAtUtc
+        };
+
+    private static CustomerQueryModel Handle(CustomerQueryModel state, BusinessDetailsUpdated @event) =>
+        state with
+        {
+            CompanyName = @event.CompanyName,
+            VATId = @event.VATId,
+            PaymentTerms = @event.PaymentTerms,
+            UpdatedAtUtc = @event.UpdatedAtUtc
         };
 }
