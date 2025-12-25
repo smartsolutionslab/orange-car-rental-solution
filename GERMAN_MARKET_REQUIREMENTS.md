@@ -445,7 +445,7 @@ public sealed record VehicleExtra : IValueObject
 }
 ```
 
-### 3. Cross-Border Travel
+### 3. Cross-Border Travel (Implemented)
 
 **Restrictions:**
 - Most rental companies allow EU travel
@@ -453,11 +453,91 @@ public sealed record VehicleExtra : IValueObject
 - Additional insurance for certain countries
 - Separate daily charge for cross-border
 
+**Value Objects (Implemented):**
 ```csharp
-public sealed record CrossBorderPolicy(
-    bool AllowedInEU,
-    HashSet<Country> RestrictedCountries,
-    Money? DailySurcharge);
+// ISO 3166-1 alpha-2 country code with EU/Schengen detection
+public readonly partial record struct CountryCode : IValueObject
+{
+    public string Value { get; }
+    public bool IsEuMember { get; }
+    public bool IsSchengenArea { get; }
+    public string GetGermanName();   // "Österreich", "Frankreich"
+    public string GetEnglishName();  // "Austria", "France"
+
+    public static readonly CountryCode Germany = new("DE");
+    public static readonly CountryCode Austria = new("AT");
+    // ... plus 10 more predefined countries
+}
+
+// Travel restriction level
+public enum TravelRestriction
+{
+    Allowed,         // No restrictions
+    PermitRequired,  // Cross-border permit needed
+    Restricted,      // Special approval needed
+    Prohibited       // Not allowed
+}
+
+// Individual country travel rule
+public sealed record CountryTravelRule
+{
+    public CountryCode Country { get; }
+    public TravelRestriction Restriction { get; }
+    public Money? DailySurcharge { get; }
+    public bool RequiresAdditionalInsurance { get; }
+    public string? RestrictionReason { get; }
+    public bool IsAllowed { get; }
+    public bool RequiresAdvanceBooking { get; }
+
+    public static CountryTravelRule Allowed(CountryCode country, Money? surcharge = null);
+    public static CountryTravelRule RequiresPermit(CountryCode country, Money surcharge, bool insurance = false);
+    public static CountryTravelRule Restricted(CountryCode country, string reason, bool insurance = true);
+    public static CountryTravelRule Prohibited(CountryCode country, string reason);
+
+    public string GetGermanDescription();   // "Reisen nach Polen mit Grenzübertrittserlaubnis (15,00€/Tag)"
+    public string GetEnglishDescription();  // "Travel to Poland requires cross-border permit (€15.00/day)"
+}
+
+// Cross-border policy with country rules
+public sealed class CrossBorderPolicy : IValueObject
+{
+    public CountryTravelRule? GetRule(CountryCode country);
+    public bool IsAllowed(CountryCode country);
+    public bool RequiresPermit(CountryCode country);
+    public Money? GetDailySurcharge(CountryCode country);
+    public Money CalculateTotalSurcharge(IEnumerable<CountryCode> countries, int rentalDays);
+    public CrossBorderValidationResult Validate(IEnumerable<CountryCode> countries);
+    public IReadOnlyList<CountryCode> GetAllowedCountries();
+    public IReadOnlyList<CountryCode> GetPermitRequiredCountries();
+    public IReadOnlyList<CountryCode> GetProhibitedCountries();
+
+    // Standard German policy (22 countries defined)
+    public static CrossBorderPolicy StandardGermanPolicy => new([
+        // Allowed without permit
+        CountryTravelRule.Allowed(CountryCode.Germany),
+        CountryTravelRule.Allowed(CountryCode.Austria),
+        CountryTravelRule.Allowed(CountryCode.Switzerland, Money.EuroGross(5.00m)),
+        CountryTravelRule.Allowed(CountryCode.France),
+        // ... Western, Southern, Northern Europe
+
+        // Permit required (Eastern Europe)
+        CountryTravelRule.RequiresPermit(CountryCode.Poland, Money.EuroGross(15.00m)),
+        CountryTravelRule.RequiresPermit(CountryCode.CzechRepublic, Money.EuroGross(15.00m)),
+        // ... more Eastern European countries
+
+        // Restricted (special approval)
+        CountryTravelRule.Restricted(CountryCode.Create("GR"), "Ferry required"),
+        // ...
+
+        // Prohibited
+        CountryTravelRule.Prohibited(CountryCode.Create("UA"), "Active conflict zone"),
+        CountryTravelRule.Prohibited(CountryCode.Create("RU"), "Sanctions and insurance void"),
+        // ...
+    ]);
+
+    // Premium policy with more destinations
+    public static CrossBorderPolicy PremiumGermanPolicy => new([...]);
+}
 ```
 
 ### 4. Business Customer (Geschäftskunde) Support (Implemented)
@@ -656,7 +736,7 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 
 ### Future Enhancements
 1. ✅ B2B customer support with VAT ID (CustomerType, VATId, CompanyName, PaymentTerms)
-2. ⏳ Cross-border travel policies
+2. ✅ Cross-border travel policies (CountryCode, TravelRestriction, CountryTravelRule, CrossBorderPolicy)
 3. ⏳ Framework agreements for corporate customers
 4. ⏳ Multi-language support (English, French)
 
