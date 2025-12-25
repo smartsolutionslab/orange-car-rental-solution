@@ -344,7 +344,7 @@ public sealed record FuelPolicy
 
 ## Additional Features for German Market
 
-### 1. Kilometer Packages
+### 1. Kilometer Packages (Implemented)
 
 **Typical Offerings:**
 - 100 km/day included
@@ -352,26 +352,30 @@ public sealed record FuelPolicy
 - Unlimited kilometers
 - Additional km charged at 0,20€/km
 
+**Value Object (Implemented):**
 ```csharp
-public sealed record KilometerPackage(
-    KilometerLimit DailyLimit,
-    Money? AdditionalKilometerRate)
+public sealed record KilometerPackage : IValueObject
 {
-    public static readonly KilometerPackage Limited100 =
-        new(new KilometerLimit(100), Money.Euro(0.20m));
+    public static readonly KilometerPackage Limited100 = new(
+        KilometerPackageType.Limited100, 100, Money.EuroGross(0.20m));
+    public static readonly KilometerPackage Limited200 = new(
+        KilometerPackageType.Limited200, 200, Money.EuroGross(0.20m));
+    public static readonly KilometerPackage Unlimited = new(
+        KilometerPackageType.Unlimited, null, null);
 
-    public static readonly KilometerPackage Unlimited =
-        new(KilometerLimit.Unlimited(), null);
-}
+    public KilometerPackageType Type { get; }
+    public int? DailyLimitKm { get; }
+    public Money? AdditionalKmRate { get; }
+    public bool IsUnlimited => Type == KilometerPackageType.Unlimited;
 
-public sealed record KilometerLimit(int? Value)
-{
-    public bool IsUnlimited => Value == null;
-    public static KilometerLimit Unlimited() => new(null);
+    public int? GetTotalAllowance(int days);
+    public Money CalculateAdditionalCharge(int totalDays, int kilometersDriven);
+    public string GetGermanDisplayName();  // "100 km/Tag inklusive"
+    public string GetEnglishDisplayName(); // "100 km/day included"
 }
 ```
 
-### 2. Additional Equipment (Extras)
+### 2. Additional Equipment (Extras) (Implemented)
 
 **Common in Germany:**
 - Navigationssystem (GPS)
@@ -381,33 +385,41 @@ public sealed record KilometerLimit(int? Value)
 - Dachgepäckträger (Roof rack)
 - Anhängerkupplung (Trailer hitch)
 
+**Value Object (Implemented):**
 ```csharp
-public sealed record VehicleExtra(
-    ExtraId Id,
-    ExtraName Name,
-    Money DailyRate,
-    bool RequiresAdvanceBooking);
-
-// Example extras
-public static class GermanMarketExtras
+public sealed record VehicleExtra : IValueObject
 {
-    public static readonly VehicleExtra GPS = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Navigationssystem"),
-        Money.Euro(5),
-        false);
+    public VehicleExtraType Type { get; }
+    public Money DailyRate { get; }
+    public bool RequiresAdvanceBooking { get; }
+    public bool IsPerRental { get; }
 
-    public static readonly VehicleExtra ChildSeat = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Kindersitz (0-4 Jahre)"),
-        Money.Euro(8),
-        true);
+    // 12 predefined German market extras
+    public static readonly VehicleExtra GPS = new(VehicleExtraType.GPS,
+        Money.EuroGross(5.00m), requiresAdvanceBooking: false, isPerRental: false);
+    public static readonly VehicleExtra ChildSeatInfant = new(VehicleExtraType.ChildSeatInfant,
+        Money.EuroGross(8.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra ChildSeatToddler = new(VehicleExtraType.ChildSeatToddler,
+        Money.EuroGross(8.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra BoosterSeat = new(VehicleExtraType.BoosterSeat,
+        Money.EuroGross(5.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra WinterTires = new(VehicleExtraType.WinterTires,
+        Money.Zero(Currency.EUR), requiresAdvanceBooking: false, isPerRental: true);
+    public static readonly VehicleExtra SnowChains = new(VehicleExtraType.SnowChains,
+        Money.EuroGross(15.00m), requiresAdvanceBooking: true, isPerRental: true);
+    public static readonly VehicleExtra RoofRack = new(VehicleExtraType.RoofRack,
+        Money.EuroGross(10.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra AdditionalDriver = new(VehicleExtraType.AdditionalDriver,
+        Money.EuroGross(10.00m), requiresAdvanceBooking: false, isPerRental: false);
+    public static readonly VehicleExtra CrossBorderPermit = new(VehicleExtraType.CrossBorderPermit,
+        Money.EuroGross(15.00m), requiresAdvanceBooking: false, isPerRental: true);
+    // ... plus SkiRack, BikeRack, TrailerHitch
 
-    public static readonly VehicleExtra WinterTires = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Winterreifen"),
-        Money.Euro(0), // Often included
-        false);
+    public Money CalculateCost(int rentalDays);
+    public string GetGermanDisplayName();  // "Navigationssystem", "Babyschale (0-12 Monate)"
+    public string GetEnglishDisplayName(); // "GPS Navigation", "Infant Car Seat"
+    public static IReadOnlyList<VehicleExtra> GetAllExtras();
+    public static VehicleExtra FromType(VehicleExtraType type);
 }
 ```
 
@@ -589,9 +601,9 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 1. ✅ SEPA payment method (IBAN/BIC validation, mandate management)
 2. ✅ Invoice generation with legal requirements (§14 UStG compliant)
 3. ✅ Driving license validation (21+ age, 1 year holding period, EU recognition)
-4. ⚠️ Cookie consent banner
-5. ⚠️ Kilometer packages
-6. ⚠️ Vehicle extras (GPS, child seats)
+4. ✅ Kilometer packages (100/200 km per day, unlimited, overage charging)
+5. ✅ Vehicle extras (12 German market extras with pricing)
+6. ⚠️ Cookie consent banner
 
 ### Future Enhancements
 1. ⏳ B2B customer support with VAT ID
