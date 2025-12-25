@@ -198,34 +198,45 @@ public sealed record GermanPostalCode : PostalCode
 - Creditor ID (Gläubiger-Identifikationsnummer)
 - Pre-notification (Vorabankündigung) - at least 5 days before debit
 
-**Value Objects:**
+**Value Objects (Implemented):**
 ```csharp
-public sealed record IBAN(string Value)
+// IBAN with MOD-97 check digit validation (ISO 13616)
+public sealed partial record IBAN : IValueObject
 {
-    public IBAN(string value) : this()
-    {
-        Value = value.Replace(" ", "").ToUpperInvariant();
+    public string Value { get; }
+    public string CountryCode => Value[..2];
+    public bool IsGerman => CountryCode == "DE";
+    public string Formatted => FormatIBAN(Value);  // DE89 3704 0044 0532 0130 00
 
-        if (!IsValidIBAN(Value))
-            throw new ArgumentException("Invalid IBAN format");
-    }
-
-    private static bool IsValidIBAN(string iban)
+    public static IBAN Create(string value)
     {
-        // IBAN validation algorithm
-        // German IBANs start with DE and are 22 characters
-        return iban.StartsWith("DE") && iban.Length == 22;
+        // Validates format and MOD-97 check digits
+        // German IBANs must be exactly 22 characters
     }
 }
 
-public sealed record BIC(string Value);
+// BIC/SWIFT validation (ISO 9362)
+public sealed partial record BIC : IValueObject
+{
+    public string BankCode => Value[..4];
+    public string CountryCode => Value[4..6];
+    public bool IsGerman => CountryCode == "DE";
+}
 
-public sealed record SepaMandate(
-    MandateReference Reference,
-    IBAN Iban,
-    BIC Bic,
-    AccountHolder AccountHolder,
-    DateTime SignedDate);
+// SEPA Mandate aggregate with status management
+public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
+{
+    public const string CreditorId = "DE98ZZZ09999999999";
+    public MandateReference MandateReference { get; init; }
+    public IBAN IBAN { get; init; }
+    public BIC BIC { get; init; }
+    public string AccountHolder { get; init; }
+    public MandateStatus Status { get; init; }
+
+    public SepaMandate RecordUsage();  // Track when mandate is used
+    public SepaMandate Revoke();       // Customer revokes mandate
+    public bool IsExpiredDueToInactivity();  // 36-month SEPA rule
+}
 ```
 
 ### 3. Payment Gateway Integration
@@ -575,7 +586,7 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 7. ✅ German postal code validation
 
 ### Medium Priority
-1. ⚠️ SEPA payment method
+1. ✅ SEPA payment method (IBAN/BIC validation, mandate management)
 2. ✅ Invoice generation with legal requirements (§14 UStG compliant)
 3. ⚠️ Driving license validation
 4. ⚠️ Cookie consent banner
