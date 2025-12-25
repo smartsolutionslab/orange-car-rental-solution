@@ -283,7 +283,7 @@ public sealed class Customer : EventSourcedAggregate<...>
 }
 ```
 
-### 2. Insurance Requirements
+### 2. Insurance Requirements (Implemented)
 
 **Mandatory Coverage (Pflichtversicherung):**
 - Haftpflichtversicherung (Liability insurance)
@@ -295,22 +295,44 @@ public sealed class Customer : EventSourcedAggregate<...>
 - Reduced: 500€
 - Full coverage: 0€ (additional cost)
 
-**Value Object:**
+**Value Object (Implemented):**
 ```csharp
-public sealed record InsurancePackage(
-    InsuranceType Type,
-    Money Deductible,
-    Money DailySurcharge)
+public sealed record InsurancePackage : IValueObject
 {
-    public static readonly InsurancePackage Standard =
-        new(InsuranceType.Teilkasko,
-            Money.Euro(1000),
-            Money.Euro(0));
+    public InsuranceType Type { get; }
+    public Money Deductible { get; }
+    public Money DailySurcharge { get; }
+    public bool IncludesTheftProtection { get; }
+    public bool IncludesGlassAndTires { get; }
+    public bool IncludesPersonalAccident { get; }
+    public bool IsZeroDeductible { get; }
 
-    public static readonly InsurancePackage Premium =
-        new(InsuranceType.Vollkasko,
-            Money.Euro(0),
-            Money.Euro(15));
+    // 4 predefined German market packages
+    public static readonly InsurancePackage Basic = new(
+        InsuranceType.Haftpflicht,
+        Money.EuroGross(2500.00m), // High liability
+        Money.Zero(Currency.EUR)); // Included in base price
+
+    public static readonly InsurancePackage Standard = new(
+        InsuranceType.Teilkasko,
+        Money.EuroGross(1000.00m),
+        Money.EuroGross(8.00m));
+
+    public static readonly InsurancePackage Comfort = new(
+        InsuranceType.Vollkasko,
+        Money.EuroGross(500.00m),
+        Money.EuroGross(15.00m));
+
+    public static readonly InsurancePackage Premium = new(
+        InsuranceType.VollkaskoZeroDeductible,
+        Money.Zero(Currency.EUR),
+        Money.EuroGross(25.00m));
+
+    public Money CalculateCost(int rentalDays);
+    public string GetGermanDisplayName();  // "Vollkasko (SB 500€)"
+    public string GetEnglishDisplayName(); // "Comprehensive (€500 excess)"
+    public string GetCoverageDescription();
+    public static IReadOnlyList<InsurancePackage> GetAllPackages();
 }
 ```
 
@@ -603,14 +625,14 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 3. ✅ Driving license validation (21+ age, 1 year holding period, EU recognition)
 4. ✅ Kilometer packages (100/200 km per day, unlimited, overage charging)
 5. ✅ Vehicle extras (12 German market extras with pricing)
-6. ⚠️ Cookie consent banner
+6. ✅ Insurance packages (Basic, Standard, Comfort, Premium with deductibles)
+7. ⚠️ Cookie consent banner
 
 ### Future Enhancements
 1. ⏳ B2B customer support with VAT ID
 2. ⏳ Cross-border travel policies
-3. ⏳ Insurance package selection
-4. ⏳ Framework agreements for corporate customers
-5. ⏳ Multi-language support (English, French)
+3. ⏳ Framework agreements for corporate customers
+4. ⏳ Multi-language support (English, French)
 
 ## Resources
 
