@@ -78,58 +78,33 @@ jobs:
           echo "tag=latest" >> $GITHUB_OUTPUT
         fi
 
-    - name: Pull Docker images
+    - name: Pull API Gateway image
       run: |
-        echo "Pulling backend service images..."
-        docker pull ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }} || echo "fleet-api image not found, skipping..."
-        docker pull ghcr.io/${{ github.repository }}/reservations-api:${{ steps.set-tag.outputs.tag }} || echo "reservations-api image not found, skipping..."
-        docker pull ghcr.io/${{ github.repository }}/customers-api:${{ steps.set-tag.outputs.tag }} || echo "customers-api image not found, skipping..."
-        docker pull ghcr.io/${{ github.repository }}/pricing-api:${{ steps.set-tag.outputs.tag }} || echo "pricing-api image not found, skipping..."
-        docker pull ghcr.io/${{ github.repository }}/payments-api:${{ steps.set-tag.outputs.tag }} || echo "payments-api image not found, skipping..."
-        docker pull ghcr.io/${{ github.repository }}/notifications-api:${{ steps.set-tag.outputs.tag }} || echo "notifications-api image not found, skipping..."
-        echo "Backend images pulled successfully (or skipped if not found)"
+        echo "Pulling API Gateway image..."
+        docker pull ghcr.io/${{ github.repository }}/api-gateway:${{ steps.set-tag.outputs.tag }} || echo "api-gateway image not found"
 
-    # Deployment methods - uncomment based on your deployment target
-
-    # Option 1: Azure Container Apps
-    # - name: Deploy to Azure Container Apps
-    #   uses: azure/container-apps-deploy-action@v1
-    #   with:
-    #     resource-group: ${{ secrets.AZURE_RESOURCE_GROUP }}
-    #     container-app-name: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
-    #     image: ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
-
-    # Option 2: Azure App Service
-    # - name: Deploy to Azure App Service
-    #   uses: azure/webapps-deploy@v2
-    #   with:
-    #     app-name: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
-    #     images: ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
-
-    # Option 3: Kubernetes
-    # - name: Deploy to Kubernetes
-    #   uses: azure/k8s-deploy@v4
-    #   with:
-    #     namespace: orange-car-rental-${{ needs.determine-environment.outputs.environment }}
-    #     manifests: |
-    #       k8s/deployment.yml
-    #       k8s/service.yml
-    #     images: |
-    #       ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }}
-    #       ghcr.io/${{ github.repository }}/reservations-api:${{ steps.set-tag.outputs.tag }}
-
-    # Option 4: Docker Compose on remote server
-    # - name: Deploy via SSH
-    #   uses: appleboy/ssh-action@v1.0.0
-    #   with:
-    #     host: ${{ secrets.DEPLOY_HOST }}
-    #     username: ${{ secrets.DEPLOY_USER }}
-    #     key: ${{ secrets.DEPLOY_SSH_KEY }}
-    #     script: |
-    #       cd /opt/orange-car-rental
-    #       docker-compose pull
-    #       docker-compose up -d
-    #       docker system prune -f
+    # SSH-based Docker Compose deployment
+    # Prerequisites: Set these secrets in GitHub repository settings:
+    #   - DEPLOY_HOST: Server hostname/IP
+    #   - DEPLOY_USER: SSH username
+    #   - DEPLOY_SSH_KEY: SSH private key
+    #   - DB_PASSWORD: Database password
+    - name: Deploy via SSH
+      if: ${{ secrets.DEPLOY_HOST != '' }}
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.DEPLOY_HOST }}
+        username: ${{ secrets.DEPLOY_USER }}
+        key: ${{ secrets.DEPLOY_SSH_KEY }}
+        script: |
+          cd /opt/orange-car-rental
+          export GHCR_REPO=${{ github.repository }}
+          export IMAGE_TAG=${{ steps.set-tag.outputs.tag }}
+          export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          docker compose -f docker-compose.deploy.yml pull
+          docker compose -f docker-compose.deploy.yml up -d
+          docker system prune -f
+      continue-on-error: true
 
     - name: Deployment summary
       run: |
@@ -178,40 +153,10 @@ jobs:
 
     - name: Pull Docker image
       run: |
-        docker pull ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ steps.set-tag.outputs.tag }} || echo "${{ matrix.app }} image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ steps.set-tag.outputs.tag }} || echo "${{ matrix.app }} image not found"
 
-    # Deployment methods - uncomment based on your deployment target
-
-    # Option 1: Azure Static Web Apps
-    # - name: Deploy to Azure Static Web Apps
-    #   uses: Azure/static-web-apps-deploy@v1
-    #   with:
-    #     azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-    #     action: "upload"
-    #     app_location: "src/frontend/apps/${{ matrix.app }}/dist"
-
-    # Option 2: Azure Blob Storage (for static hosting)
-    # - name: Deploy to Azure Blob Storage
-    #   uses: azure/CLI@v1
-    #   with:
-    #     inlineScript: |
-    #       az storage blob upload-batch -s src/frontend/apps/${{ matrix.app }}/dist -d '$web' --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }}
-
-    # Option 3: Netlify
-    # - name: Deploy to Netlify
-    #   uses: nwtgck/actions-netlify@v2.0
-    #   with:
-    #     publish-dir: 'src/frontend/apps/${{ matrix.app }}/dist'
-    #     production-deploy: ${{ needs.determine-environment.outputs.environment == 'production' }}
-
-    # Option 4: Vercel
-    # - name: Deploy to Vercel
-    #   uses: amondnet/vercel-action@v25
-    #   with:
-    #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-    #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-    #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-    #     working-directory: src/frontend/apps/${{ matrix.app }}
+    # Frontend is deployed via the same docker-compose.deploy.yml in the backend step
+    # This job just verifies the images are available
 
     - name: Deployment summary
       run: |

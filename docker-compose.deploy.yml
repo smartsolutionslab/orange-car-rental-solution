@@ -1,0 +1,99 @@
+# Production deployment using pre-built images from GitHub Container Registry
+# Usage: docker compose -f docker-compose.deploy.yml up -d
+#
+# Required environment variables:
+#   - GHCR_REPO: GitHub Container Registry repository (e.g., smartsolutionslab/orange-car-rental-solution)
+#   - IMAGE_TAG: Image tag to deploy (e.g., latest, develop, or commit SHA)
+#   - DB_PASSWORD: PostgreSQL password
+#
+# Example:
+#   GHCR_REPO=smartsolutionslab/orange-car-rental-solution IMAGE_TAG=latest DB_PASSWORD=securepass docker compose -f docker-compose.deploy.yml up -d
+
+services:
+  # API Gateway
+  api-gateway:
+    image: ghcr.io/${GHCR_REPO}/api-gateway:${IMAGE_TAG:-latest}
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=OrangeCarRental;Username=postgres;Password=${DB_PASSWORD:-postgres}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - orange-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Public Portal
+  public-portal:
+    image: ghcr.io/${GHCR_REPO}/public-portal:${IMAGE_TAG:-latest}
+    ports:
+      - "4301:80"
+    environment:
+      - API_URL=http://api-gateway:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - orange-network
+    restart: unless-stopped
+
+  # Call Center Portal
+  call-center-portal:
+    image: ghcr.io/${GHCR_REPO}/call-center-portal:${IMAGE_TAG:-latest}
+    ports:
+      - "4302:80"
+    environment:
+      - API_URL=http://api-gateway:8080
+    depends_on:
+      - api-gateway
+    networks:
+      - orange-network
+    restart: unless-stopped
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-postgres}
+      - POSTGRES_DB=OrangeCarRental
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - orange-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache (Optional)
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - orange-network
+    restart: unless-stopped
+
+networks:
+  orange-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
