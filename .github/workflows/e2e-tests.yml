@@ -54,6 +54,8 @@ jobs:
       - name: Install frontend dependencies
         working-directory: src/frontend
         run: yarn install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Build applications
         working-directory: src/frontend
