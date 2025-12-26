@@ -3,9 +3,9 @@ name: Unit Tests
 
 on:
   push:
-    branches: [develop, main, master]
+    branches: [develop, main]
   pull_request:
-    branches: [develop, main, master]
+    branches: [develop, main]
 
 jobs:
   test-public-portal:

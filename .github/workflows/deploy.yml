@@ -5,7 +5,7 @@ on:
     workflows: ["Backend CI", "Frontend CI"]
     types:
       - completed
-    branches: [master, develop]
+    branches: [main, develop]
   workflow_dispatch:
     inputs:
       environment:
@@ -44,7 +44,7 @@ jobs:
       run: |
         if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
           echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
-        elif [[ "${{ github.event.workflow_run.head_branch }}" == "master" ]]; then
+        elif [[ "${{ github.event.workflow_run.head_branch }}" == "main" ]]; then
           echo "environment=production" >> $GITHUB_OUTPUT
         elif [[ "${{ github.event.workflow_run.head_branch }}" == "develop" ]]; then
           echo "environment=staging" >> $GITHUB_OUTPUT

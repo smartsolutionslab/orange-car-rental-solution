@@ -14,7 +14,7 @@ The CI/CD setup consists of four main workflows:
 ## 🔄 Workflow Triggers
 
 ### Backend CI
-- **Triggers**: Push or PR to `master` or `develop` branches
+- **Triggers**: Push or PR to `main` or `develop` branches
 - **Path filters**: `src/backend/**`, `.github/workflows/backend-ci.yml`
 - **What it does**:
   - Restores dependencies and builds .NET solution
@@ -22,10 +22,10 @@ The CI/CD setup consists of four main workflows:
   - Runs integration tests (filtered by `Category=Integration`)
   - Uploads test results and coverage to Codecov
   - Builds Docker images for all microservices
-  - Pushes images to GitHub Container Registry (on `master` branch only)
+  - Pushes images to GitHub Container Registry (on `main` branch only)
 
 ### Frontend CI
-- **Triggers**: Push or PR to `master` or `develop` branches
+- **Triggers**: Push or PR to `main` or `develop` branches
 - **Path filters**: `src/frontend/**`, `.github/workflows/frontend-ci.yml`
 - **What it does**:
   - Installs dependencies for both Angular apps (public-portal, call-center-portal)
@@ -33,10 +33,10 @@ The CI/CD setup consists of four main workflows:
   - Builds applications in production mode
   - Runs tests with headless Chrome and code coverage
   - Builds Docker images for both apps
-  - Pushes images to GitHub Container Registry (on `master` branch only)
+  - Pushes images to GitHub Container Registry (on `main` branch only)
 
 ### Code Quality
-- **Triggers**: Push or PR to `master` or `develop` branches
+- **Triggers**: Push or PR to `main` or `develop` branches
 - **What it does**:
   - **Backend**:
     - Checks code formatting with `dotnet format`
@@ -55,10 +55,10 @@ The CI/CD setup consists of four main workflows:
 
 ### Deploy
 - **Triggers**:
-  - Automatically after successful CI workflow completion on `master` or `develop`
+  - Automatically after successful CI workflow completion on `main` or `develop`
   - Manual dispatch via GitHub UI
 - **What it does**:
-  - Determines target environment (staging for `develop`, production for `master`)
+  - Determines target environment (staging for `develop`, production for `main`)
   - Pulls Docker images from GitHub Container Registry
   - Deploys backend services and frontend applications
   - Sends deployment notifications
@@ -104,12 +104,12 @@ The CI/CD setup consists of four main workflows:
 ### Environments
 
 - **Staging**: Automatically deployed from `develop` branch
-- **Production**: Automatically deployed from `master` branch (with environment protection)
+- **Production**: Automatically deployed from `main` branch (with environment protection)
 
 ### Image Tagging Strategy
 
 - **Develop branch**: Images are tagged as `latest`
-- **Master branch**: Images are tagged with the commit SHA for immutability
+- **Main branch**: Images are tagged with the commit SHA for immutability
 
 ### Deployment Options
 
@@ -165,7 +165,7 @@ For production deployments, configure environment protection rules:
 1. Go to **Settings** → **Environments** → **production**
 2. Enable **Required reviewers** (recommended)
 3. Set **Wait timer** if needed
-4. Configure **Deployment branches** to allow only `master`
+4. Configure **Deployment branches** to allow only `main`
 
 ## 📊 Test Categories
 
@@ -265,7 +265,7 @@ npm audit --audit-level=high
 4. **Write meaningful commit messages** for better traceability
 5. **Tag releases** in production for rollback capability
 6. **Monitor deployment logs** in GitHub Actions
-7. **Enable branch protection** on `master` and `develop` branches
+7. **Enable branch protection** on `main` and `develop` branches
 
 ## 🐛 Troubleshooting
 

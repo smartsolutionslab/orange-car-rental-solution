@@ -2,12 +2,12 @@ name: E2E Tests - Public Portal
 
 on:
   push:
-    branches: [master, develop]
+    branches: [main, develop]
     paths:
       - 'src/frontend/apps/public-portal/**'
       - '.github/workflows/e2e-public-portal.yml'
   pull_request:
-    branches: [master, develop]
+    branches: [main, develop]
     paths:
       - 'src/frontend/apps/public-portal/**'
       - '.github/workflows/e2e-public-portal.yml'
@@ -193,12 +193,12 @@ jobs:
     name: Notify on Failure
     needs: test
     runs-on: ubuntu-latest
-    if: failure() && github.ref == 'refs/heads/master'
+    if: failure() && github.ref == 'refs/heads/main'
 
     steps:
       - name: Send notification
         run: |
-          echo "❌ E2E tests failed on master branch!"
+          echo "❌ E2E tests failed on main branch!"
           echo "Run ID: ${{ github.run_id }}"
           echo "Commit: ${{ github.sha }}"
           echo "View details: https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}"
