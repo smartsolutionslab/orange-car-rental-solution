@@ -80,7 +80,14 @@ jobs:
 
     - name: Pull Docker images
       run: |
-        docker pull ghcr.io/${{ github.repository_owner }}/api-gateway:${{ steps.set-tag.outputs.tag }} || echo "Image not found, skipping..."
+        echo "Pulling backend service images..."
+        docker pull ghcr.io/${{ github.repository }}/fleet-api:${{ steps.set-tag.outputs.tag }} || echo "fleet-api image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/reservations-api:${{ steps.set-tag.outputs.tag }} || echo "reservations-api image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/customers-api:${{ steps.set-tag.outputs.tag }} || echo "customers-api image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/pricing-api:${{ steps.set-tag.outputs.tag }} || echo "pricing-api image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/payments-api:${{ steps.set-tag.outputs.tag }} || echo "payments-api image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/notifications-api:${{ steps.set-tag.outputs.tag }} || echo "notifications-api image not found, skipping..."
+        echo "Backend images pulled successfully (or skipped if not found)"
 
     # Deployment methods - uncomment based on your deployment target
 
@@ -126,13 +133,18 @@ jobs:
 
     - name: Deployment summary
       run: |
-        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "## Backend Deployment Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **Environment**: ${{ needs.determine-environment.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
         echo "- **Image Tag**: ${{ steps.set-tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Registry**: ghcr.io/${{ github.repository_owner }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Deployed Services**:" >> $GITHUB_STEP_SUMMARY
-        echo "  - API Gateway" >> $GITHUB_STEP_SUMMARY
+        echo "- **Registry**: ghcr.io/${{ github.repository }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Services**:" >> $GITHUB_STEP_SUMMARY
+        echo "  - Fleet API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Reservations API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Customers API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Pricing API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Payments API" >> $GITHUB_STEP_SUMMARY
+        echo "  - Notifications API" >> $GITHUB_STEP_SUMMARY
 
   deploy-frontend:
     needs: determine-environment
@@ -166,7 +178,7 @@ jobs:
 
     - name: Pull Docker image
       run: |
-        docker pull ghcr.io/${{ github.repository_owner }}/${{ matrix.app }}:${{ steps.set-tag.outputs.tag }} || echo "Image not found, skipping..."
+        docker pull ghcr.io/${{ github.repository }}/${{ matrix.app }}:${{ steps.set-tag.outputs.tag }} || echo "${{ matrix.app }} image not found, skipping..."
 
     # Deployment methods - uncomment based on your deployment target
 
