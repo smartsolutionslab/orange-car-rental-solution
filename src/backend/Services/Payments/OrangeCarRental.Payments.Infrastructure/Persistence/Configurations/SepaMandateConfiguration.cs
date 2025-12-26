@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence.Configurations;
@@ -59,9 +60,12 @@ internal sealed class SepaMandateConfiguration : IEntityTypeConfiguration<SepaMa
             .HasMaxLength(20)
             .IsRequired();
 
-        // Customer reference
+        // Customer reference (value object)
         builder.Property(m => m.CustomerId)
             .HasColumnName("CustomerId")
+            .HasConversion(
+                id => id.Value,
+                value => CustomerId.From(value))
             .IsRequired();
 
         // Timestamps

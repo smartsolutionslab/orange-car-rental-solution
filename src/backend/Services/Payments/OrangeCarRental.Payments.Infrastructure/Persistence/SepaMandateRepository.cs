@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
@@ -14,13 +15,13 @@ public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMand
         return mandate ?? throw new EntityNotFoundException(typeof(SepaMandate), id);
     }
 
-    public async Task<SepaMandate?> GetActiveByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<SepaMandate?> GetActiveByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
     {
         return await context.SepaMandates
             .FirstOrDefaultAsync(m => m.CustomerId == customerId && m.Status == MandateStatus.Active, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
     {
         return await context.SepaMandates
             .Where(m => m.CustomerId == customerId)

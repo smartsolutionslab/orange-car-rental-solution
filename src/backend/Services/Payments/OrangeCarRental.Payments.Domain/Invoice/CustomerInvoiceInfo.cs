@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
@@ -12,7 +13,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     /// <summary>
     ///     Customer identifier (reference to Customers bounded context).
     /// </summary>
-    public Guid CustomerId { get; }
+    public CustomerId CustomerId { get; }
 
     /// <summary>
     ///     Customer name (person or company name).
@@ -45,7 +46,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     public string? VatId { get; }
 
     private CustomerInvoiceInfo(
-        Guid customerId,
+        CustomerId customerId,
         string name,
         string street,
         string postalCode,
@@ -66,7 +67,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     ///     Creates customer invoice information.
     /// </summary>
     public static CustomerInvoiceInfo Create(
-        Guid customerId,
+        CustomerId customerId,
         string name,
         string street,
         string postalCode,
@@ -74,8 +75,8 @@ public sealed record CustomerInvoiceInfo : IValueObject
         string country,
         string? vatId = null)
     {
-        Ensure.That(customerId, nameof(customerId))
-            .ThrowIf(customerId == Guid.Empty, "Customer ID cannot be empty");
+        Ensure.That(customerId.Value, nameof(customerId))
+            .ThrowIf(customerId.Value == Guid.Empty, "Customer ID cannot be empty");
         Ensure.That(name, nameof(name)).IsNotNullOrWhiteSpace();
         Ensure.That(street, nameof(street)).IsNotNullOrWhiteSpace();
         Ensure.That(postalCode, nameof(postalCode)).IsNotNullOrWhiteSpace();

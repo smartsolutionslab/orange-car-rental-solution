@@ -1,5 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
@@ -56,12 +58,12 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// <summary>
     ///     Referenced reservation ID.
     /// </summary>
-    public Guid ReservationId { get; init; }
+    public ReservationId ReservationId { get; init; }
 
     /// <summary>
     ///     Referenced payment ID (optional).
     /// </summary>
-    public Guid? PaymentId { get; init; }
+    public PaymentIdentifier? PaymentId { get; init; }
 
     /// <summary>
     ///     Line items.
@@ -118,12 +120,12 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// </summary>
     public static Invoice Create(
         InvoiceNumber invoiceNumber,
-        Guid reservationId,
+        ReservationId reservationId,
         CustomerInvoiceInfo customer,
         IEnumerable<InvoiceLineItem> lineItems,
         DateOnly serviceDate,
         int paymentTermDays = 14,
-        Guid? paymentId = null,
+        PaymentIdentifier? paymentId = null,
         SellerInfo? seller = null)
     {
         return new Invoice

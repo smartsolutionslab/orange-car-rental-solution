@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
@@ -20,7 +21,7 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
             .FirstOrDefaultAsync(x => x.InvoiceNumber == invoiceNumber, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices
             .Where(x => x.Customer.CustomerId == customerId)
@@ -28,7 +29,7 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Invoice?> GetByReservationIdAsync(Guid reservationId, CancellationToken cancellationToken = default)
+    public async Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices
             .FirstOrDefaultAsync(x => x.ReservationId == reservationId, cancellationToken);

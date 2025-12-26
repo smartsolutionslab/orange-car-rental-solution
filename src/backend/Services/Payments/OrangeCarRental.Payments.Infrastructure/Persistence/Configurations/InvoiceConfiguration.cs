@@ -3,7 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence.Configurations;
 
@@ -77,7 +79,12 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         // Customer information (owned entity)
         builder.OwnsOne(x => x.Customer, customerBuilder =>
         {
-            customerBuilder.Property(c => c.CustomerId).HasColumnName("CustomerId").IsRequired();
+            customerBuilder.Property(c => c.CustomerId)
+                .HasColumnName("CustomerId")
+                .IsRequired()
+                .HasConversion(
+                    id => id.Value,
+                    value => CustomerId.From(value));
             customerBuilder.Property(c => c.Name).HasColumnName("CustomerName").HasMaxLength(200).IsRequired();
             customerBuilder.Property(c => c.Street).HasColumnName("CustomerStreet").HasMaxLength(200).IsRequired();
             customerBuilder.Property(c => c.PostalCode).HasColumnName("CustomerPostalCode").HasMaxLength(10).IsRequired();
@@ -91,8 +98,16 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         });
 
         // References
-        builder.Property(x => x.ReservationId).IsRequired();
-        builder.Property(x => x.PaymentId);
+        builder.Property(x => x.ReservationId)
+            .HasConversion(
+                id => id.Value,
+                value => ReservationId.From(value))
+            .IsRequired();
+
+        builder.Property(x => x.PaymentId)
+            .HasConversion(
+                id => id.HasValue ? id.Value.Value : (Guid?)null,
+                value => value.HasValue ? PaymentIdentifier.From(value.Value) : null);
 
         // Currency (value object conversion)
         builder.Property(x => x.Currency)

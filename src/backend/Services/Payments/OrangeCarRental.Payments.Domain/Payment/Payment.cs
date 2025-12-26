@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using TxId = SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.TransactionId;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
@@ -18,12 +19,12 @@ public sealed class Payment : AggregateRoot<PaymentIdentifier>
     /// <summary>
     ///     Referenced reservation ID.
     /// </summary>
-    public Guid ReservationId { get; init; }
+    public ReservationId ReservationId { get; init; }
 
     /// <summary>
     ///     Referenced customer ID.
     /// </summary>
-    public Guid CustomerId { get; init; }
+    public CustomerId CustomerId { get; init; }
 
     /// <summary>
     ///     Payment amount.
@@ -69,8 +70,8 @@ public sealed class Payment : AggregateRoot<PaymentIdentifier>
     ///     Creates a new payment.
     /// </summary>
     public static Payment Create(
-        Guid reservationId,
-        Guid customerId,
+        ReservationId reservationId,
+        CustomerId customerId,
         Money amount,
         PaymentMethod method)
     {

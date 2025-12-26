@@ -1,6 +1,8 @@
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
@@ -18,9 +20,12 @@ public sealed class GenerateInvoiceCommandHandler(
     {
         try
         {
+            var reservationId = ReservationId.From(command.ReservationId);
+            var customerId = CustomerId.From(command.CustomerId);
+
             // Check if invoice already exists for this reservation
             var existingInvoice = await unitOfWork.Invoices
-                .GetByReservationIdAsync(command.ReservationId, cancellationToken);
+                .GetByReservationIdAsync(reservationId, cancellationToken);
 
             if (existingInvoice != null)
             {
@@ -49,7 +54,7 @@ public sealed class GenerateInvoiceCommandHandler(
 
             // Create customer invoice info
             var customerInfo = CustomerInvoiceInfo.Create(
-                customerId: command.CustomerId,
+                customerId: customerId,
                 name: command.CustomerName,
                 street: command.CustomerStreet,
                 postalCode: command.CustomerPostalCode,
@@ -60,12 +65,12 @@ public sealed class GenerateInvoiceCommandHandler(
             // Create invoice
             var invoice = Invoice.Create(
                 invoiceNumber: invoiceNumber,
-                reservationId: command.ReservationId,
+                reservationId: reservationId,
                 customer: customerInfo,
                 lineItems: [lineItem],
                 serviceDate: command.ReturnDate,
                 paymentTermDays: 14,
-                paymentId: command.PaymentId);
+                paymentId: command.PaymentId.HasValue ? PaymentIdentifier.From(command.PaymentId.Value) : null);
 
             // Generate PDF
             var pdfBytes = invoiceGenerator.GeneratePdf(invoice);

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
@@ -84,7 +85,7 @@ public static class InvoiceEndpoints
                 CancellationToken cancellationToken) =>
             {
                 var invoice = await unitOfWork.Invoices
-                    .GetByReservationIdAsync(reservationId, cancellationToken);
+                    .GetByReservationIdAsync(ReservationId.From(reservationId), cancellationToken);
 
                 if (invoice == null)
                     return TypedResults.NotFound();
@@ -102,7 +103,7 @@ public static class InvoiceEndpoints
                 CancellationToken cancellationToken) =>
             {
                 var invoices = await unitOfWork.Invoices
-                    .GetByCustomerIdAsync(customerId, cancellationToken);
+                    .GetByCustomerIdAsync(CustomerId.From(customerId), cancellationToken);
 
                 return TypedResults.Ok(invoices.Select(MapToDto).ToList() as IReadOnlyList<InvoiceDto>);
             })
@@ -233,9 +234,9 @@ public static class InvoiceEndpoints
             ServiceDate: invoice.ServiceDate,
             DueDate: invoice.DueDate,
             Status: invoice.Status.ToString(),
-            CustomerId: invoice.Customer.CustomerId,
+            CustomerId: invoice.Customer.CustomerId.Value,
             CustomerName: invoice.Customer.Name,
-            ReservationId: invoice.ReservationId,
+            ReservationId: invoice.ReservationId.Value,
             LineItems: invoice.LineItems.Select(li => new InvoiceLineItemDto(
                 Position: li.Position,
                 Description: li.Description,

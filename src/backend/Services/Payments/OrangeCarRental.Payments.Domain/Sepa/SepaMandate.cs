@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
@@ -56,7 +57,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// <summary>
     ///     Referenced customer ID.
     /// </summary>
-    public Guid CustomerId { get; init; }
+    public CustomerId CustomerId { get; init; }
 
     /// <summary>
     ///     Date when mandate was signed.
@@ -83,7 +84,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// </summary>
     public static SepaMandate Create(
         MandateReference mandateReference,
-        Guid customerId,
+        CustomerId customerId,
         IBAN iban,
         BIC bic,
         string accountHolder,

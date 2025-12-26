@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
+
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
 /// <summary>
@@ -5,7 +7,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 /// </summary>
 public interface IInvoiceRepository
 {
-
     /// <summary>
     ///     Gets an invoice by its identifier.
     /// </summary>
@@ -19,12 +20,12 @@ public interface IInvoiceRepository
     /// <summary>
     ///     Gets all invoices for a customer.
     /// </summary>
-    Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets the invoice for a reservation.
     /// </summary>
-    Task<Invoice?> GetByReservationIdAsync(Guid reservationId, CancellationToken cancellationToken = default);
+    Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets the next sequence number for invoice numbering in the given year.

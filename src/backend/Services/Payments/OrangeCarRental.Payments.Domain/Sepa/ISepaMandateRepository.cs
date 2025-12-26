@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
@@ -7,12 +8,12 @@ public interface ISepaMandateRepository : IRepository<SepaMandate, SepaMandateId
     /// <summary>
     ///     Gets the active mandate for a customer.
     /// </summary>
-    Task<SepaMandate?> GetActiveByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+    Task<SepaMandate?> GetActiveByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets all mandates for a customer.
     /// </summary>
-    Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets a mandate by its reference.

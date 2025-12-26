@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence.Configurations;
@@ -20,13 +21,19 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
                 value => PaymentIdentifier.From(value))
             .IsRequired();
 
-        // Foreign keys
+        // Foreign keys (value objects)
         builder.Property(p => p.ReservationId)
             .HasColumnName("ReservationId")
+            .HasConversion(
+                id => id.Value,
+                value => ReservationId.From(value))
             .IsRequired();
 
         builder.Property(p => p.CustomerId)
             .HasColumnName("CustomerId")
+            .HasConversion(
+                id => id.Value,
+                value => CustomerId.From(value))
             .IsRequired();
 
         // Money value object - complex type mapping
