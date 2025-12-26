@@ -9,11 +9,25 @@ RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 COPY package.json yarn.lock ./
 COPY apps/public-portal/package.json ./apps/public-portal/
 
+# Copy lib package.json files for workspace resolution
+COPY libs/shared/package.json ./libs/shared/
+COPY libs/auth/package.json ./libs/auth/
+COPY libs/i18n/package.json ./libs/i18n/
+COPY libs/shared-ui/package.json ./libs/shared-ui/
+COPY libs/ui-components/package.json ./libs/ui-components/
+COPY libs/util/package.json ./libs/util/
+COPY libs/location-api/package.json ./libs/location-api/
+COPY libs/vehicle-api/package.json ./libs/vehicle-api/
+COPY libs/reservation-api/package.json ./libs/reservation-api/
+COPY libs/customer-api/package.json ./libs/customer-api/
+COPY libs/pricing-api/package.json ./libs/pricing-api/
+
 # Install dependencies
 RUN yarn install --frozen-lockfile
 
 # Copy source code
 COPY apps/public-portal/ ./apps/public-portal/
+COPY libs/ ./libs/
 
 # Build application
 WORKDIR /app/apps/public-portal
