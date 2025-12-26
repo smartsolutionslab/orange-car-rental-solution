@@ -71,10 +71,13 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  webServer: {
-    command: 'npm run start:dev',
-    url: 'http://localhost:4301',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 120000,
-  },
+  /* In CI with PLAYWRIGHT_SKIP_WEB_SERVER=true, we serve the built app externally */
+  ...(process.env['PLAYWRIGHT_SKIP_WEB_SERVER'] ? {} : {
+    webServer: {
+      command: 'yarn start:dev',
+      url: 'http://localhost:4301',
+      reuseExistingServer: !process.env['CI'],
+      timeout: 180000,
+    },
+  }),
 });
