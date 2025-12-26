@@ -2,12 +2,12 @@ name: E2E Tests - Public Portal
 
 on:
   push:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'src/frontend/apps/public-portal/**'
       - '.github/workflows/e2e-public-portal.yml'
   pull_request:
-    branches: [main, develop]
+    branches: [master, develop]
     paths:
       - 'src/frontend/apps/public-portal/**'
       - '.github/workflows/e2e-public-portal.yml'
@@ -36,20 +36,22 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: src/frontend/apps/public-portal/package-lock.json
+          cache: 'yarn'
+          cache-dependency-path: src/frontend/yarn.lock
 
       - name: Install dependencies
-        working-directory: src/frontend/apps/public-portal
-        run: npm ci
+        working-directory: src/frontend
+        run: yarn install --frozen-lockfile
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Install Playwright browsers
         working-directory: src/frontend/apps/public-portal
-        run: npx playwright install --with-deps ${{ matrix.browser }}
+        run: yarn playwright install --with-deps ${{ matrix.browser }}
 
       - name: Run E2E tests
         working-directory: src/frontend/apps/public-portal
-        run: npx playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}
+        run: yarn playwright test --project=${{ matrix.browser }} --shard=${{ matrix.shard }}
         env:
           CI: true
 
@@ -100,9 +102,23 @@ jobs:
         with:
           path: all-reports
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Playwright
+        run: npm install -g @playwright/test
+
       - name: Merge Playwright reports
         run: |
-          npx playwright merge-reports --reporter html ./all-reports/playwright-report-*
+          if ls ./all-reports/playwright-report-* 1> /dev/null 2>&1; then
+            npx playwright merge-reports --reporter html ./all-reports/playwright-report-*
+          else
+            echo "No Playwright reports found to merge"
+            mkdir -p playwright-report
+            echo "<html><body><h1>No test results available</h1></body></html>" > playwright-report/index.html
+          fi
 
       - name: Upload merged report
         uses: actions/upload-artifact@v4
@@ -127,7 +143,7 @@ jobs:
     name: Notify on Failure
     needs: test
     runs-on: ubuntu-latest
-    if: failure() && github.ref == 'refs/heads/main'
+    if: failure() && github.ref == 'refs/heads/master'
 
     steps:
       - name: Send notification
