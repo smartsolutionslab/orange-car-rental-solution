@@ -90,8 +90,8 @@ jobs:
     #   - DEPLOY_SSH_KEY: SSH private key
     #   - DB_PASSWORD: Database password
     - name: Deploy via SSH
-      if: ${{ secrets.DEPLOY_HOST != '' }}
       uses: appleboy/ssh-action@v1.0.0
+      if: vars.ENABLE_SSH_DEPLOY == 'true'
       with:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USER }}
