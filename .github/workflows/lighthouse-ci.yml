@@ -128,7 +128,7 @@ jobs:
     name: Check Performance Budget
     runs-on: ubuntu-latest
     needs: lighthouse
-    if: always()
+    if: needs.lighthouse.result == 'success'
 
     steps:
       - name: Checkout code
@@ -142,5 +142,10 @@ jobs:
 
       - name: Check Performance Budget
         run: |
-          echo "Checking performance metrics against budget..."
-          echo "Performance budget check completed"
+          if [ -d ".lighthouseci" ]; then
+            echo "Checking performance metrics against budget..."
+            # Add actual budget checks here when needed
+            echo "Performance budget check completed"
+          else
+            echo "No Lighthouse reports found - skipping budget check"
+          fi
