@@ -1,4 +1,5 @@
 using Shouldly;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
@@ -6,11 +7,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Tests.Sepa;
 
 public class SepaMandateTests
 {
-    private readonly MandateReference _validReference = MandateReference.Create(1, new DateOnly(2025, 1, 15));
+    private readonly MandateReference _validReference = MandateReference.Create(1, TestDates.Today);
     private readonly IBAN _validIBAN = IBAN.Create("DE89370400440532013000");
     private readonly BIC _validBIC = BIC.Create("DEUTDEDBFRA");
-    private readonly CustomerId _customerId = CustomerId.From(Guid.CreateVersion7());
-    private const string ValidAccountHolder = "Max Mustermann";
+    private readonly CustomerId _customerId = CustomerId.From(TestIds.Customer1);
+    private static string ValidAccountHolder => TestCustomer.MaxMustermann.FullName;
 
     [Fact]
     public void Create_ValidData_CreatesSepaMandate()

@@ -13,6 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.Payments.Domain\OrangeCarRental.Payments.Domain.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Testing\OrangeCarRental.BuildingBlocks.Testing.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit"/>

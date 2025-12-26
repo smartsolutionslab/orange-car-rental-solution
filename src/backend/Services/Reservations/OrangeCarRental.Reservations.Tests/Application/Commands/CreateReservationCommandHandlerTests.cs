@@ -1,6 +1,7 @@
 using Moq;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -247,8 +248,8 @@ public class CreateReservationCommandHandlerTests
     public async Task HandleAsync_WithDifferentLocations_ShouldCreateCorrectly()
     {
         // Arrange
-        var pickupLocation = LocationCode.From("BER-HBF");
-        var dropoffLocation = LocationCode.From("MUC-FLG");
+        var pickupLocation = LocationCode.From(TestLocations.BerlinHbf);
+        var dropoffLocation = LocationCode.From(TestLocations.MunichAirport);
 
         var command = CreateValidCommand() with
         {
@@ -303,16 +304,15 @@ public class CreateReservationCommandHandlerTests
 
     private static CreateReservationCommand CreateValidCommand()
     {
-        var pickupDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7));
-        var returnDate = pickupDate.AddDays(3);
+        var (pickup, returnDate) = TestDates.RentalPeriod();
 
         return new CreateReservationCommand(
-            VehicleIdentifier.New(),
-            CustomerIdentifier.New(),
+            VehicleIdentifier.From(TestIds.Vehicle1),
+            CustomerIdentifier.From(TestIds.Customer1),
             VehicleCategory.SUV,
-            BookingPeriod.Of(pickupDate, returnDate),
-            LocationCode.From("BER-HBF"),
-            LocationCode.From("BER-HBF"),
+            BookingPeriod.Of(pickup, returnDate),
+            LocationCode.From(TestLocations.BerlinHbf),
+            LocationCode.From(TestLocations.BerlinHbf),
             null // TotalPrice will be calculated
         );
     }

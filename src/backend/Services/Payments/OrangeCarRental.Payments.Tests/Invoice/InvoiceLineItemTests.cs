@@ -1,5 +1,6 @@
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Tests.Invoice;
@@ -10,21 +11,16 @@ public class InvoiceLineItemTests
     public void ForVehicleRental_CreatesCorrectLineItem()
     {
         // Arrange
-        var position = 1;
-        var vehicleDescription = "VW Golf Kombi";
-        var rentalDays = 5;
-        var dailyRateNet = 50.00m;
-        var pickupDate = new DateOnly(2025, 1, 15);
-        var returnDate = new DateOnly(2025, 1, 20);
+        var (pickupDate, returnDate) = TestDates.RentalPeriod(startDaysFromNow: 7, rentalDays: 5);
 
         // Act
         var lineItem = InvoiceLineItem.ForVehicleRental(
-            position,
-            vehicleDescription,
-            rentalDays,
-            dailyRateNet,
-            pickupDate,
-            returnDate);
+            position: 1,
+            vehicleDescription: "VW Golf Kombi",
+            rentalDays: 5,
+            dailyRateNet: 50.00m,
+            pickupDate: pickupDate,
+            returnDate: returnDate);
 
         // Assert
         lineItem.Position.ShouldBe(1);
@@ -32,7 +28,7 @@ public class InvoiceLineItemTests
         lineItem.Quantity.Value.ShouldBe(5);
         lineItem.Quantity.Unit.ShouldBe("Tage");
         lineItem.UnitPrice.NetAmount.ShouldBe(50.00m);
-        lineItem.VatRate.Value.ShouldBe(0.19m);
+        lineItem.VatRate.Value.ShouldBe(TestMoney.GermanVatRate);
         lineItem.ServicePeriodStart.ShouldBe(pickupDate);
         lineItem.ServicePeriodEnd.ShouldBe(returnDate);
     }
@@ -40,14 +36,11 @@ public class InvoiceLineItemTests
     [Fact]
     public void ForVehicleRental_SingleDay_UsesSingularUnit()
     {
-        // Arrange & Act
-        var lineItem = InvoiceLineItem.ForVehicleRental(
-            1,
-            "VW Golf",
-            1, // Single day
-            50.00m,
-            new DateOnly(2025, 1, 15),
-            new DateOnly(2025, 1, 15));
+        // Arrange
+        var singleDay = TestDates.FutureDays(7);
+
+        // Act
+        var lineItem = InvoiceLineItem.ForVehicleRental(1, "VW Golf", 1, 50.00m, singleDay, singleDay);
 
         // Assert
         lineItem.Quantity.Unit.ShouldBe("Tag");
@@ -57,13 +50,8 @@ public class InvoiceLineItemTests
     public void TotalNet_CalculatesCorrectly()
     {
         // Arrange
-        var lineItem = InvoiceLineItem.ForVehicleRental(
-            1,
-            "VW Golf",
-            5,
-            50.00m,
-            new DateOnly(2025, 1, 15),
-            new DateOnly(2025, 1, 20));
+        var (pickup, returnDate) = TestDates.RentalPeriod(rentalDays: 5);
+        var lineItem = InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate);
 
         // Act & Assert
         lineItem.TotalNet.ShouldBe(250.00m); // 5 * 50
@@ -73,13 +61,8 @@ public class InvoiceLineItemTests
     public void VatAmount_CalculatesCorrectly()
     {
         // Arrange
-        var lineItem = InvoiceLineItem.ForVehicleRental(
-            1,
-            "VW Golf",
-            5,
-            50.00m,
-            new DateOnly(2025, 1, 15),
-            new DateOnly(2025, 1, 20));
+        var (pickup, returnDate) = TestDates.RentalPeriod(rentalDays: 5);
+        var lineItem = InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate);
 
         // Act & Assert
         lineItem.VatAmount.ShouldBe(47.50m); // 250 * 0.19 = 47.5
@@ -89,13 +72,8 @@ public class InvoiceLineItemTests
     public void TotalGross_CalculatesCorrectly()
     {
         // Arrange
-        var lineItem = InvoiceLineItem.ForVehicleRental(
-            1,
-            "VW Golf",
-            5,
-            50.00m,
-            new DateOnly(2025, 1, 15),
-            new DateOnly(2025, 1, 20));
+        var (pickup, returnDate) = TestDates.RentalPeriod(rentalDays: 5);
+        var lineItem = InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate);
 
         // Act & Assert
         lineItem.TotalGross.ShouldBe(297.50m); // 250 + 47.5

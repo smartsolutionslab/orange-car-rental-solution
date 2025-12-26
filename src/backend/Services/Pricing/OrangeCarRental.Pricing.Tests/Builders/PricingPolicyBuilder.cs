@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
@@ -9,8 +10,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
 /// </summary>
 public class PricingPolicyBuilder
 {
-    private CategoryCode _categoryCode = CategoryCode.From("KLEIN");
-    private Money _dailyRate = Money.Euro(49.99m);
+    private CategoryCode _categoryCode = CategoryCode.From(TestVehicleCategories.Klein);
+    private Money _dailyRate = TestMoney.EuroNet(TestVehicleCategories.GetDailyRateNet(TestVehicleCategories.Klein));
     private DateTime? _effectiveFrom;
     private DateTime? _effectiveUntil;
     private LocationCode? _locationCode;
@@ -25,22 +26,22 @@ public class PricingPolicyBuilder
     }
 
     /// <summary>
-    /// Sets the category as Kleinwagen (compact).
+    /// Sets the category as Kleinwagen (small car).
     /// </summary>
-    public PricingPolicyBuilder AsCompact()
+    public PricingPolicyBuilder AsSmall()
     {
-        _categoryCode = CategoryCode.From("KLEIN");
-        _dailyRate = Money.Euro(40.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Klein);
+        _dailyRate = TestMoney.DailyRates.Klein;
         return this;
     }
 
     /// <summary>
-    /// Sets the category as Kompaktklasse.
+    /// Sets the category as Kompaktklasse (compact).
     /// </summary>
-    public PricingPolicyBuilder AsCompactClass()
+    public PricingPolicyBuilder AsCompact()
     {
-        _categoryCode = CategoryCode.From("KOMPAKT");
-        _dailyRate = Money.Euro(50.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Kompakt);
+        _dailyRate = TestMoney.DailyRates.Kompakt;
         return this;
     }
 
@@ -49,8 +50,8 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsMidSize()
     {
-        _categoryCode = CategoryCode.From("MITTEL");
-        _dailyRate = Money.Euro(60.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Mittel);
+        _dailyRate = TestMoney.DailyRates.Mittel;
         return this;
     }
 
@@ -59,8 +60,8 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsSuv()
     {
-        _categoryCode = CategoryCode.From("SUV");
-        _dailyRate = Money.Euro(90.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Suv);
+        _dailyRate = TestMoney.DailyRates.Suv;
         return this;
     }
 
@@ -69,8 +70,8 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsUpperClass()
     {
-        _categoryCode = CategoryCode.From("OBER");
-        _dailyRate = Money.Euro(80.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Ober);
+        _dailyRate = TestMoney.DailyRates.Ober;
         return this;
     }
 
@@ -79,8 +80,8 @@ public class PricingPolicyBuilder
     /// </summary>
     public PricingPolicyBuilder AsLuxury()
     {
-        _categoryCode = CategoryCode.From("LUXUS");
-        _dailyRate = Money.Euro(150.00m);
+        _categoryCode = CategoryCode.From(TestVehicleCategories.Luxus);
+        _dailyRate = TestMoney.DailyRates.Luxus;
         return this;
     }
 
@@ -191,20 +192,17 @@ public class PricingPolicyBuilder
     /// Creates a budget-friendly policy (Kleinwagen at low rate).
     /// </summary>
     public static PricingPolicyBuilder Budget() => new PricingPolicyBuilder()
-        .AsCompact()
-        .WithDailyRate(35.00m);
+        .AsSmall();
 
     /// <summary>
     /// Creates a premium policy (Luxus at high rate).
     /// </summary>
     public static PricingPolicyBuilder Premium() => new PricingPolicyBuilder()
-        .AsLuxury()
-        .WithDailyRate(200.00m);
+        .AsLuxury();
 
     /// <summary>
-    /// Creates a family-friendly policy (Mittelklasse or SUV).
+    /// Creates a family-friendly policy (SUV).
     /// </summary>
     public static PricingPolicyBuilder Family() => new PricingPolicyBuilder()
-        .AsMidSize()
-        .WithDailyRate(65.00m);
+        .AsSuv();
 }

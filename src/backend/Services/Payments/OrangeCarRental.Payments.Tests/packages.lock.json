@@ -194,6 +194,12 @@
           "Eventuous": "[0.15.1, )"
         }
       },
+      "orangecarrental.buildingblocks.testing": {
+        "type": "Project",
+        "dependencies": {
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+        }
+      },
       "orangecarrental.payments.domain": {
         "type": "Project",
         "dependencies": {

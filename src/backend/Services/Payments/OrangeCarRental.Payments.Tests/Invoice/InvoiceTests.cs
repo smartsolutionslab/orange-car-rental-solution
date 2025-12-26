@@ -1,4 +1,5 @@
 using Shouldly;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
@@ -11,21 +12,13 @@ public class InvoiceTests
     {
         // Arrange
         var invoiceNumber = InvoiceNumber.Create(1, 2025);
-        var reservationId = ReservationId.From(Guid.CreateVersion7());
-        var customerId = CustomerId.From(Guid.CreateVersion7());
-        var customer = CustomerInvoiceInfo.Create(
-            customerId: customerId,
-            name: "Max Mustermann",
-            street: "Musterstraße 123",
-            postalCode: "10115",
-            city: "Berlin",
-            country: "Deutschland");
+        var reservationId = ReservationId.From(TestIds.Reservation1);
+        var customerId = CustomerId.From(TestIds.Customer1);
+        var (pickup, returnDate) = TestDates.RentalPeriod();
+        var customer = CreateTestCustomer(customerId);
         var lineItems = new[]
         {
-            InvoiceLineItem.ForVehicleRental(
-                1, "VW Golf", 5, 50.00m,
-                new DateOnly(2025, 1, 15),
-                new DateOnly(2025, 1, 20))
+            InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate)
         };
 
         // Act
@@ -34,14 +27,14 @@ public class InvoiceTests
             reservationId: reservationId,
             customer: customer,
             lineItems: lineItems,
-            serviceDate: new DateOnly(2025, 1, 20));
+            serviceDate: returnDate);
 
         // Assert
         invoice.Id.Value.ShouldNotBe(Guid.Empty);
         invoice.InvoiceNumber.ShouldBe(invoiceNumber);
         invoice.ReservationId.Value.ShouldBe(reservationId.Value);
         invoice.Customer.CustomerId.Value.ShouldBe(customerId.Value);
-        invoice.Customer.Name.ShouldBe("Max Mustermann");
+        invoice.Customer.Name.ShouldBe(TestCustomer.MaxMustermann.FullName);
         invoice.Status.ShouldBe(InvoiceStatus.Created);
         invoice.LineItems.Count.ShouldBe(1);
     }
@@ -50,12 +43,10 @@ public class InvoiceTests
     public void Create_CalculatesTotalsCorrectly()
     {
         // Arrange
+        var (pickup, returnDate) = TestDates.RentalPeriod(startDaysFromNow: 7, rentalDays: 5);
         var lineItems = new[]
         {
-            InvoiceLineItem.ForVehicleRental(
-                1, "VW Golf", 5, 50.00m,
-                new DateOnly(2025, 1, 15),
-                new DateOnly(2025, 1, 20)),
+            InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate),
             InvoiceLineItem.ForAdditionalService(
                 2, "GPS Navigation",
                 BuildingBlocks.Domain.ValueObjects.Quantity.Days(5),
@@ -219,32 +210,30 @@ public class InvoiceTests
         invoice.Seller.ManagingDirector.Value.ShouldNotBeNullOrEmpty();
     }
 
-    private static CustomerInvoiceInfo CreateTestCustomer()
+    private static CustomerInvoiceInfo CreateTestCustomer(CustomerId? customerId = null)
     {
         return CustomerInvoiceInfo.Create(
-            customerId: CustomerId.From(Guid.CreateVersion7()),
-            name: "Max Mustermann",
-            street: "Musterstraße 123",
-            postalCode: "10115",
-            city: "Berlin",
-            country: "Deutschland");
+            customerId: customerId ?? CustomerId.From(TestIds.Customer1),
+            name: TestCustomer.MaxMustermann.FullName,
+            street: TestCustomer.MaxMustermann.Street,
+            postalCode: TestCustomer.MaxMustermann.PostalCode,
+            city: TestCustomer.MaxMustermann.City,
+            country: TestCustomer.MaxMustermann.Country);
     }
 
     private static InvoiceLineItem CreateTestLineItem()
     {
-        return InvoiceLineItem.ForVehicleRental(
-            1, "VW Golf", 5, 50.00m,
-            new DateOnly(2025, 1, 15),
-            new DateOnly(2025, 1, 20));
+        var (pickup, returnDate) = TestDates.RentalPeriod(startDaysFromNow: 7, rentalDays: 5);
+        return InvoiceLineItem.ForVehicleRental(1, "VW Golf", 5, 50.00m, pickup, returnDate);
     }
 
     private static Domain.Invoice.Invoice CreateTestInvoice(IEnumerable<InvoiceLineItem>? lineItems = null)
     {
         return Domain.Invoice.Invoice.Create(
             invoiceNumber: InvoiceNumber.Create(1, 2025),
-            reservationId: ReservationId.From(Guid.CreateVersion7()),
+            reservationId: ReservationId.From(TestIds.Reservation1),
             customer: CreateTestCustomer(),
             lineItems: lineItems ?? [CreateTestLineItem()],
-            serviceDate: new DateOnly(2025, 1, 20));
+            serviceDate: TestDates.DefaultReturn);
     }
 }

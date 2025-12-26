@@ -1,4 +1,5 @@
 using Moq;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
@@ -292,7 +293,7 @@ public class CalculatePriceQueryHandlerTests
         var returnDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)); // 7 days
 
         var query = new CalculatePriceQuery(
-            CategoryCode.From("MITTEL"),
+            CategoryCode.From(TestVehicleCategories.Mittel),
             pickupDate,
             returnDate,
             null);
@@ -311,7 +312,8 @@ public class CalculatePriceQueryHandlerTests
         var result = await handler.HandleAsync(query, CancellationToken.None);
 
         // Assert
+        var expectedNetTotal = TestMoney.DailyRates.Mittel.NetAmount * 7;
         result.TotalDays.ShouldBe(7);
-        result.TotalPriceNet.ShouldBe(420.00m); // 7 days * 60.00
+        result.TotalPriceNet.ShouldBe(expectedNetTotal);
     }
 }

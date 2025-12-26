@@ -1,5 +1,6 @@
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
@@ -18,8 +19,8 @@ public class PricingPolicyTests
         // Assert
         policy.ShouldNotBeNull();
         policy.Id.Value.ShouldNotBe(Guid.Empty);
-        policy.CategoryCode.Value.ShouldBe("KLEIN");
-        policy.DailyRate.NetAmount.ShouldBe(49.99m);
+        policy.CategoryCode.Value.ShouldBe(TestVehicleCategories.Klein);
+        policy.DailyRate.NetAmount.ShouldBe(TestMoney.DailyRates.Klein.NetAmount);
         policy.IsActive.ShouldBeTrue();
         policy.EffectiveFrom.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-5), DateTime.UtcNow.AddSeconds(1));
         policy.EffectiveUntil.ShouldBeNull();
@@ -48,13 +49,13 @@ public class PricingPolicyTests
     {
         // Arrange & Act
         var policy = PricingPolicyBuilder.Default()
-            .ForLocation("BER-HBF")
+            .ForLocation(TestLocations.BerlinHbf)
             .Build();
 
         // Assert
         policy.LocationCode.ShouldNotBeNull();
         string locationCode = policy.LocationCode!; // Implicit conversion to string
-        locationCode.ShouldBe("BER-HBF");
+        locationCode.ShouldBe(TestLocations.BerlinHbf);
     }
 
     [Fact]
@@ -71,8 +72,8 @@ public class PricingPolicyTests
 
         var evt = (PricingPolicyCreated)createdEvent;
         evt.PricingPolicyId.ShouldBe(policy.Id);
-        evt.CategoryCode.Value.ShouldBe("KLEIN");
-        evt.DailyRate.NetAmount.ShouldBe(49.99m);
+        evt.CategoryCode.Value.ShouldBe(TestVehicleCategories.Klein);
+        evt.DailyRate.NetAmount.ShouldBe(TestMoney.DailyRates.Klein.NetAmount);
         evt.EffectiveFrom.ShouldBe(policy.EffectiveFrom);
     }
 
@@ -81,7 +82,8 @@ public class PricingPolicyTests
     {
         // Arrange
         var policy = PricingPolicyBuilder.Default().Build();
-        var newRate = Money.Euro(59.99m);
+        var originalRate = policy.DailyRate;
+        var newRate = TestMoney.EuroNet(59.99m);
 
         // Act
         var updatedPolicy = policy.UpdateDailyRate(newRate);
@@ -90,17 +92,15 @@ public class PricingPolicyTests
         updatedPolicy.ShouldNotBeSameAs(policy); // New instance (immutable)
         updatedPolicy.Id.ShouldBe(policy.Id); // Same ID
         updatedPolicy.DailyRate.ShouldBe(newRate);
-        policy.DailyRate.NetAmount.ShouldBe(49.99m); // Original unchanged
+        policy.DailyRate.ShouldBe(originalRate); // Original unchanged
     }
 
     [Fact]
     public void UpdateDailyRate_WithSameRate_ShouldReturnSameInstance()
     {
         // Arrange
-        var dailyRate = Money.Euro(49.99m);
-        var policy = PricingPolicyBuilder.Default()
-            .WithDailyRate(49.99m)
-            .Build();
+        var policy = PricingPolicyBuilder.Default().Build();
+        var dailyRate = policy.DailyRate;
 
         // Act
         var updatedPolicy = policy.UpdateDailyRate(dailyRate);
@@ -115,7 +115,8 @@ public class PricingPolicyTests
         // Arrange
         var policy = PricingPolicyBuilder.Default().Build();
         policy.ClearDomainEvents(); // Clear creation event
-        var newRate = Money.Euro(59.99m);
+        var oldRate = policy.DailyRate;
+        var newRate = TestMoney.EuroNet(59.99m);
 
         // Act
         var updatedPolicy = policy.UpdateDailyRate(newRate);
@@ -128,8 +129,8 @@ public class PricingPolicyTests
 
         var evt = (PricingPolicyUpdated)updatedEvent;
         evt.PricingPolicyId.ShouldBe(policy.Id);
-        evt.CategoryCode.Value.ShouldBe("KLEIN");
-        evt.OldDailyRate.NetAmount.ShouldBe(49.99m);
+        evt.CategoryCode.Value.ShouldBe(TestVehicleCategories.Klein);
+        evt.OldDailyRate.NetAmount.ShouldBe(oldRate.NetAmount);
         evt.NewDailyRate.ShouldBe(newRate);
     }
 
@@ -183,7 +184,7 @@ public class PricingPolicyTests
 
         var evt = (PricingPolicyDeactivated)deactivatedEvent;
         evt.PricingPolicyId.ShouldBe(policy.Id);
-        evt.CategoryCode.Value.ShouldBe("KLEIN");
+        evt.CategoryCode.Value.ShouldBe(TestVehicleCategories.Klein);
     }
 
     [Fact]

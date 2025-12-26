@@ -20,6 +20,7 @@
     <ProjectReference Include="..\OrangeCarRental.Fleet.Application\OrangeCarRental.Fleet.Application.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj"/>
     <ProjectReference Include="..\..\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Testing\OrangeCarRental.BuildingBlocks.Testing.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit"/>

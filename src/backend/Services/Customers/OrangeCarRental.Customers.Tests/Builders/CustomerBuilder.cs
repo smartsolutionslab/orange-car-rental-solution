@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Builders;
@@ -8,20 +9,28 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Builders;
 /// </summary>
 public class CustomerBuilder
 {
-    private CustomerName _name = CustomerName.Of("Max", "Mustermann", Salutation.Herr);
-    private Email _email = Email.From("max.mustermann@example.com");
-    private PhoneNumber _phone = PhoneNumber.From("0151 12345678");
-    private BirthDate _birthDate = BirthDate.Of(new DateOnly(1990, 1, 1)); // 35 years old
-    private Address _address = Address.Of("Hauptstraße 123", "Berlin", "10115", "Deutschland");
+    private CustomerName _name = CustomerName.Of(
+        TestCustomer.MaxMustermann.FirstName,
+        TestCustomer.MaxMustermann.LastName,
+        Salutation.Herr);
+    private Email _email = Email.From(TestCustomer.MaxMustermann.Email);
+    private PhoneNumber _phone = PhoneNumber.From(TestCustomer.MaxMustermann.Phone);
+    private BirthDate _birthDate = BirthDate.Of(TestDates.Adult30);
+    private Address _address = Address.Of(
+        TestCustomer.MaxMustermann.Street,
+        TestCustomer.MaxMustermann.City,
+        TestCustomer.MaxMustermann.PostalCode,
+        TestCustomer.MaxMustermann.Country);
     private DriversLicense _license;
 
     public CustomerBuilder()
     {
         // Default license: issued 5 years ago, expires in 5 years
-        // Use UtcNow to match DriversLicense validation which uses UtcNow
-        var issueDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(-5));
-        var expiryDate = DateOnly.FromDateTime(DateTime.UtcNow.AddYears(5));
-        _license = DriversLicense.Of("DE123456789", "Deutschland", issueDate, expiryDate);
+        _license = DriversLicense.Of(
+            TestCustomer.MaxMustermann.LicenseNumber,
+            TestCustomer.MaxMustermann.LicenseCountry,
+            TestDates.LicenseIssued5YearsAgo,
+            TestDates.LicenseExpiry5Years);
     }
 
     /// <summary>
@@ -245,21 +254,36 @@ public class CustomerBuilder
     /// Creates Max Mustermann (default German male customer).
     /// </summary>
     public static CustomerBuilder MaxMustermann() => new CustomerBuilder()
-        .AsMale("Max", "Mustermann")
-        .WithEmail("max.mustermann@example.com")
-        .WithPhone("0151 12345678")
-        .WithAge(35)
-        .InBerlin();
+        .AsMale(TestCustomer.MaxMustermann.FirstName, TestCustomer.MaxMustermann.LastName)
+        .WithEmail(TestCustomer.MaxMustermann.Email)
+        .WithPhone(TestCustomer.MaxMustermann.Phone)
+        .WithAge(30)
+        .WithAddress(
+            TestCustomer.MaxMustermann.Street,
+            TestCustomer.MaxMustermann.City,
+            TestCustomer.MaxMustermann.PostalCode,
+            TestCustomer.MaxMustermann.Country);
 
     /// <summary>
-    /// Creates Anna Schmidt (default German female customer).
+    /// Creates Erika Musterfrau (default German female customer).
     /// </summary>
-    public static CustomerBuilder AnnaSchmidt() => new CustomerBuilder()
-        .AsFemale("Anna", "Schmidt")
-        .WithEmail("anna.schmidt@example.com")
-        .WithPhone("0160 98765432")
-        .WithAge(28)
-        .InMunich();
+    public static CustomerBuilder ErikaMusterfrau() => new CustomerBuilder()
+        .AsFemale(TestCustomer.ErikaMusterfrau.FirstName, TestCustomer.ErikaMusterfrau.LastName)
+        .WithEmail(TestCustomer.ErikaMusterfrau.Email)
+        .WithPhone(TestCustomer.ErikaMusterfrau.Phone)
+        .WithAge(25)
+        .WithAddress(
+            TestCustomer.ErikaMusterfrau.Street,
+            TestCustomer.ErikaMusterfrau.City,
+            TestCustomer.ErikaMusterfrau.PostalCode,
+            TestCustomer.ErikaMusterfrau.Country);
+
+    /// <summary>
+    /// Creates Anna Schmidt (alternative female customer).
+    /// </summary>
+    public static CustomerBuilder AnnaSchmidt() => ErikaMusterfrau()
+        .WithName("Anna", "Schmidt", Salutation.Frau)
+        .WithEmail("anna.schmidt@example.com");
 
     /// <summary>
     /// Creates a customer at minimum age (18).

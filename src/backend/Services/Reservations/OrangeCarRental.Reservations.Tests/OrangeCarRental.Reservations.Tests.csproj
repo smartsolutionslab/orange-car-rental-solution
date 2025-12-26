@@ -19,6 +19,7 @@
     <ProjectReference Include="..\OrangeCarRental.Reservations.Domain\OrangeCarRental.Reservations.Domain.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Reservations.Application\OrangeCarRental.Reservations.Application.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj"/>
+    <ProjectReference Include="..\..\..\BuildingBlocks\OrangeCarRental.BuildingBlocks.Testing\OrangeCarRental.BuildingBlocks.Testing.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Using Include="Xunit"/>

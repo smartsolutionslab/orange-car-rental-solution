@@ -567,6 +567,12 @@
           "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
         }
       },
+      "orangecarrental.buildingblocks.testing": {
+        "type": "Project",
+        "dependencies": {
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+        }
+      },
       "orangecarrental.customers.application": {
         "type": "Project",
         "dependencies": {

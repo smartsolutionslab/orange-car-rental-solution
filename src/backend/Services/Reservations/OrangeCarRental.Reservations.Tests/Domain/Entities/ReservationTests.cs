@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -7,14 +8,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Domain.Entities;
 
 public class ReservationTests
 {
-    private readonly VehicleIdentifier validVehicleIdentifier = VehicleIdentifier.New();
-    private readonly CustomerIdentifier validCustomerIdentifier = CustomerIdentifier.New();
-    private readonly BookingPeriod validPeriod = BookingPeriod.Of(
-        DateOnly.FromDateTime(DateTime.UtcNow.AddDays(7)),
-        DateOnly.FromDateTime(DateTime.UtcNow.AddDays(10)));
-    private readonly LocationCode validPickupLocation = LocationCode.From("BER-HBF");
-    private readonly LocationCode validDropoffLocation = LocationCode.From("MUC-FLG");
-    private readonly Money validTotalPrice = Money.Euro(299.99m);
+    private readonly VehicleIdentifier validVehicleIdentifier = VehicleIdentifier.From(TestIds.Vehicle1);
+    private readonly CustomerIdentifier validCustomerIdentifier = CustomerIdentifier.From(TestIds.Customer1);
+    private readonly BookingPeriod validPeriod = BookingPeriod.Of(TestDates.DefaultPickup, TestDates.DefaultReturn);
+    private readonly LocationCode validPickupLocation = LocationCode.From(TestLocations.BerlinHbf);
+    private readonly LocationCode validDropoffLocation = LocationCode.From(TestLocations.MunichAirport);
+    private readonly Money validTotalPrice = TestMoney.EuroNet(299.99m);
 
     [Fact]
     public void Create_WithValidData_ShouldCreateReservation()

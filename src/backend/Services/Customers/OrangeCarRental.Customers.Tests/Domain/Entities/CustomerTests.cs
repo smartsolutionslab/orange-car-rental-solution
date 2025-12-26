@@ -213,7 +213,7 @@ public class CustomerTests
         // Assert - using .Value to access nullable struct properties
         customer.Name!.Value.FirstName.Value.ShouldBe("Max");
         customer.Name!.Value.LastName.Value.ShouldBe("Mustermann");
-        customer.Email!.Value.Value.ShouldBe("max.mustermann@example.com");
+        customer.Email!.Value.Value.ShouldBe("max.mustermann@example.de");
         customer.Address!.Value.City.Value.ShouldBe("Berlin");
     }
 

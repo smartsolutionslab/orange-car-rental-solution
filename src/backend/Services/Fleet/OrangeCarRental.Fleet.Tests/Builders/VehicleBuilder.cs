@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
@@ -13,8 +14,8 @@ public class VehicleBuilder
 {
     private VehicleName _name = VehicleName.From("BMW X5");
     private VehicleCategory _category = VehicleCategory.SUV;
-    private LocationCode _location = Locations.BerlinHauptbahnhof;
-    private Money _dailyRate = Money.Euro(89.99m);
+    private LocationCode _location = LocationCode.From(TestLocations.BerlinHbf);
+    private Money _dailyRate = TestMoney.DailyRates.Suv;
     private SeatingCapacity _seats = SeatingCapacity.From(5);
     private FuelType _fuelType = FuelType.Diesel;
     private TransmissionType _transmission = TransmissionType.Automatic;
@@ -50,7 +51,7 @@ public class VehicleBuilder
         _category = VehicleCategory.Kompaktklasse;
         _name = VehicleName.From("VW Golf");
         _seats = SeatingCapacity.From(5);
-        _dailyRate = Money.Euro(49.99m);
+        _dailyRate = TestMoney.DailyRates.Kompakt;
         return this;
     }
 
@@ -62,7 +63,7 @@ public class VehicleBuilder
         _category = VehicleCategory.Mittelklasse;
         _name = VehicleName.From("VW Passat");
         _seats = SeatingCapacity.From(5);
-        _dailyRate = Money.Euro(69.99m);
+        _dailyRate = TestMoney.DailyRates.Mittel;
         return this;
     }
 
@@ -74,7 +75,7 @@ public class VehicleBuilder
         _category = VehicleCategory.SUV;
         _name = VehicleName.From("BMW X5");
         _seats = SeatingCapacity.From(5);
-        _dailyRate = Money.Euro(89.99m);
+        _dailyRate = TestMoney.DailyRates.Suv;
         return this;
     }
 
@@ -86,7 +87,7 @@ public class VehicleBuilder
         _category = VehicleCategory.Luxus;
         _name = VehicleName.From("Mercedes S-Class");
         _seats = SeatingCapacity.From(5);
-        _dailyRate = Money.Euro(149.99m);
+        _dailyRate = TestMoney.DailyRates.Luxus;
         return this;
     }
 
@@ -246,30 +247,27 @@ public class VehicleBuilder
     /// Creates a BMW X5 SUV (default premium vehicle).
     /// </summary>
     public static VehicleBuilder BmwX5() => new VehicleBuilder()
+        .AsSuv()
         .WithName("BMW X5")
-        .WithCategory(VehicleCategory.SUV)
         .WithDetails("BMW", "X5 xDrive40i", 2024)
-        .WithDailyRate(89.99m)
         .AsElectric();
 
     /// <summary>
     /// Creates a VW Golf Compact car.
     /// </summary>
     public static VehicleBuilder VwGolf() => new VehicleBuilder()
+        .AsCompact()
         .WithName("VW Golf")
-        .WithCategory(VehicleCategory.Kompaktklasse)
         .WithDetails("Volkswagen", "Golf 8", 2023)
-        .WithDailyRate(49.99m)
         .WithFuelType(FuelType.Petrol);
 
     /// <summary>
     /// Creates a Tesla Model 3 electric car.
     /// </summary>
     public static VehicleBuilder TeslaModel3() => new VehicleBuilder()
+        .AsMidSize()
         .WithName("Tesla Model 3")
-        .WithCategory(VehicleCategory.Mittelklasse)
         .WithDetails("Tesla", "Model 3 Long Range", 2024)
-        .WithDailyRate(94.99m)
         .AsElectric()
         .WithTransmission(TransmissionType.Automatic);
 }
