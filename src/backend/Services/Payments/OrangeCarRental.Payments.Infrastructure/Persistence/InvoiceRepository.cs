@@ -23,7 +23,7 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
     public async Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(Guid customerId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices
-            .Where(x => x.CustomerId == customerId)
+            .Where(x => x.Customer.CustomerId == customerId)
             .OrderByDescending(x => x.InvoiceDate)
             .ToListAsync(cancellationToken);
     }

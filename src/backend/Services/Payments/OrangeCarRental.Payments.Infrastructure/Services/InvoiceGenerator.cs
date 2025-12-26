@@ -51,7 +51,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
             {
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().Text(invoice.SellerName)
+                    c.Item().Text(invoice.Seller.CompanyName)
                         .Bold().FontSize(18).FontColor(Colors.Orange.Medium);
                     c.Item().Text("Autovermietung")
                         .FontSize(12).FontColor(Colors.Grey.Darken2);
@@ -74,20 +74,20 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                 // Sender address (small line)
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().Text($"{invoice.SellerName} · {invoice.SellerStreet} · {invoice.SellerPostalCode} {invoice.SellerCity}")
+                    c.Item().Text($"{invoice.Seller.CompanyName} · {invoice.Seller.Street} · {invoice.Seller.PostalCode} {invoice.Seller.City}")
                         .FontSize(7).FontColor(Colors.Grey.Darken1);
 
                     c.Item().PaddingTop(5);
 
                     // Customer address
-                    c.Item().Text(invoice.CustomerName).FontSize(11);
-                    c.Item().Text(invoice.CustomerStreet);
-                    c.Item().Text($"{invoice.CustomerPostalCode} {invoice.CustomerCity}");
-                    c.Item().Text(invoice.CustomerCountry);
+                    c.Item().Text(invoice.Customer.Name).FontSize(11);
+                    c.Item().Text(invoice.Customer.Street);
+                    c.Item().Text($"{invoice.Customer.PostalCode} {invoice.Customer.City}");
+                    c.Item().Text(invoice.Customer.Country);
 
-                    if (!string.IsNullOrEmpty(invoice.CustomerVatId))
+                    if (!string.IsNullOrEmpty(invoice.Customer.VatId))
                     {
-                        c.Item().PaddingTop(3).Text($"USt-IdNr.: {invoice.CustomerVatId}")
+                        c.Item().PaddingTop(3).Text($"USt-IdNr.: {invoice.Customer.VatId}")
                             .FontSize(9).FontColor(Colors.Grey.Darken2);
                     }
                 });
@@ -121,7 +121,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                         {
                             r.RelativeItem().Text("Kunden-Nr.:").Bold();
                             r.ConstantItem(80).AlignRight()
-                                .Text(invoice.CustomerId.ToString()[..8].ToUpperInvariant());
+                                .Text(invoice.Customer.CustomerId.ToString()[..8].ToUpperInvariant());
                         });
 
                         c.Item().Row(r =>
@@ -140,7 +140,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
         container.PaddingVertical(20).Column(column =>
         {
             // Greeting
-            column.Item().Text($"Sehr geehrte(r) {invoice.CustomerName},")
+            column.Item().Text($"Sehr geehrte(r) {invoice.Customer.Name},")
                 .FontSize(10);
 
             column.Item().PaddingTop(5).Text("vielen Dank für Ihre Buchung. Nachfolgend finden Sie die Rechnung für Ihre Fahrzeugmiete:")
@@ -156,14 +156,14 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                 {
                     row.RelativeItem().Text("Nettobetrag:");
                     row.ConstantItem(100).AlignRight()
-                        .Text(FormatCurrency(invoice.TotalNet, invoice.CurrencyCode));
+                        .Text(FormatCurrency(invoice.TotalNet, invoice.Currency.Code));
                 });
 
                 totalsColumn.Item().Row(row =>
                 {
                     row.RelativeItem().Text("MwSt. (19%):");
                     row.ConstantItem(100).AlignRight()
-                        .Text(FormatCurrency(invoice.TotalVat, invoice.CurrencyCode));
+                        .Text(FormatCurrency(invoice.TotalVat, invoice.Currency.Code));
                 });
 
                 totalsColumn.Item().PaddingTop(5).LineHorizontal(1);
@@ -172,7 +172,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                 {
                     row.RelativeItem().Text("Gesamtbetrag:").Bold().FontSize(12);
                     row.ConstantItem(100).AlignRight()
-                        .Text(FormatCurrency(invoice.TotalGross, invoice.CurrencyCode))
+                        .Text(FormatCurrency(invoice.TotalGross, invoice.Currency.Code))
                         .Bold().FontSize(12);
                 });
             });
@@ -182,7 +182,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
             {
                 paymentCol.Item().Text("Zahlungsinformationen").Bold().FontSize(11);
                 paymentCol.Item().PaddingTop(5).Text(
-                    $"Bitte überweisen Sie den Betrag von {FormatCurrency(invoice.TotalGross, invoice.CurrencyCode)} " +
+                    $"Bitte überweisen Sie den Betrag von {FormatCurrency(invoice.TotalGross, invoice.Currency.Code)} " +
                     $"bis zum {invoice.DueDate.ToString("dd.MM.yyyy", GermanCulture)} auf folgendes Konto:");
 
                 paymentCol.Item().PaddingTop(10).Border(1).BorderColor(Colors.Grey.Lighten2)
@@ -191,7 +191,7 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                         bankCol.Item().Row(r =>
                         {
                             r.ConstantItem(100).Text("Kontoinhaber:").Bold();
-                            r.RelativeItem().Text(invoice.SellerName);
+                            r.RelativeItem().Text(invoice.Seller.CompanyName);
                         });
                         bankCol.Item().Row(r =>
                         {
@@ -272,16 +272,16 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                 });
 
                 table.Cell().Background(backgroundColor).Padding(5).AlignCenter()
-                    .Text($"{item.Quantity} {item.Unit}");
+                    .Text($"{item.Quantity.Value} {item.Quantity.Unit}");
 
                 table.Cell().Background(backgroundColor).Padding(5).AlignRight()
-                    .Text(FormatCurrency(item.UnitPriceNet, invoice.CurrencyCode));
+                    .Text(FormatCurrency(item.UnitPrice.NetAmount, invoice.Currency.Code));
 
                 table.Cell().Background(backgroundColor).Padding(5).AlignCenter()
-                    .Text($"{item.VatRate * 100:0}%");
+                    .Text($"{item.VatRate.Value * 100:0}%");
 
                 table.Cell().Background(backgroundColor).Padding(5).AlignRight()
-                    .Text(FormatCurrency(item.TotalNet, invoice.CurrencyCode));
+                    .Text(FormatCurrency(item.TotalNet, invoice.Currency.Code));
             }
         });
     }
@@ -297,33 +297,33 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                 // Company info
                 row.RelativeItem().Column(c =>
                 {
-                    c.Item().Text(invoice.SellerName).Bold().FontSize(8);
-                    c.Item().Text($"{invoice.SellerStreet}").FontSize(8);
-                    c.Item().Text($"{invoice.SellerPostalCode} {invoice.SellerCity}").FontSize(8);
+                    c.Item().Text(invoice.Seller.CompanyName).Bold().FontSize(8);
+                    c.Item().Text($"{invoice.Seller.Street}").FontSize(8);
+                    c.Item().Text($"{invoice.Seller.PostalCode} {invoice.Seller.City}").FontSize(8);
                 });
 
                 // Contact
                 row.RelativeItem().Column(c =>
                 {
                     c.Item().Text("Kontakt").Bold().FontSize(8);
-                    c.Item().Text($"Tel: {invoice.SellerPhone}").FontSize(8);
-                    c.Item().Text($"E-Mail: {invoice.SellerEmail}").FontSize(8);
+                    c.Item().Text($"Tel: {invoice.Seller.Phone}").FontSize(8);
+                    c.Item().Text($"E-Mail: {invoice.Seller.Email}").FontSize(8);
                 });
 
                 // Legal info
                 row.RelativeItem().Column(c =>
                 {
                     c.Item().Text("Handelsregister").Bold().FontSize(8);
-                    c.Item().Text($"AG Berlin {invoice.TradeRegisterNumber}").FontSize(8);
-                    c.Item().Text($"Geschäftsführer: {invoice.ManagingDirector}").FontSize(8);
+                    c.Item().Text($"AG Berlin {invoice.Seller.TradeRegisterNumber}").FontSize(8);
+                    c.Item().Text($"Geschäftsführer: {invoice.Seller.ManagingDirector.Value}").FontSize(8);
                 });
 
                 // Tax info
                 row.RelativeItem().Column(c =>
                 {
                     c.Item().Text("Steuernummern").Bold().FontSize(8);
-                    c.Item().Text($"USt-IdNr.: {invoice.VatId}").FontSize(8);
-                    c.Item().Text($"Steuernr.: {invoice.TaxNumber}").FontSize(8);
+                    c.Item().Text($"USt-IdNr.: {invoice.Seller.VatId}").FontSize(8);
+                    c.Item().Text($"Steuernr.: {invoice.Seller.TaxNumber}").FontSize(8);
                 });
             });
 

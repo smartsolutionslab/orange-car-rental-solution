@@ -24,7 +24,7 @@ public sealed class RefundPaymentCommandHandler(
             throw new InvalidOperationException($"Payment with status {payment.Status} cannot be refunded. Only Captured payments can be refunded.");
         }
 
-        if (string.IsNullOrEmpty(payment.TransactionId))
+        if (!payment.TransactionId.HasValue)
         {
             throw new InvalidOperationException("Payment does not have a transaction ID");
         }
@@ -33,7 +33,7 @@ public sealed class RefundPaymentCommandHandler(
         {
             // Process refund with external provider
             var (success, errorMessage) = await paymentService.RefundPaymentAsync(
-                payment.TransactionId,
+                payment.TransactionId.Value.Value,
                 payment.Amount.GrossAmount,
                 payment.Amount.Currency.Code,
                 cancellationToken);

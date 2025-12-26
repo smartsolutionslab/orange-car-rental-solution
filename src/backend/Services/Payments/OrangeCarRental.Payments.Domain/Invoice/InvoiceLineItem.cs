@@ -6,7 +6,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 ///     A line item on an invoice.
 ///     German invoices require detailed breakdown of services.
 /// </summary>
-public sealed record InvoiceLineItem
+public sealed record InvoiceLineItem : IValueObject
 {
     /// <summary>
     ///     Line item number (1-based).
@@ -19,34 +19,29 @@ public sealed record InvoiceLineItem
     public string Description { get; init; } = string.Empty;
 
     /// <summary>
-    ///     Quantity (e.g., number of rental days).
+    ///     Quantity with unit of measure.
     /// </summary>
-    public int Quantity { get; init; }
-
-    /// <summary>
-    ///     Unit of measure (e.g., "Tag" for day, "Stück" for piece).
-    /// </summary>
-    public string Unit { get; init; } = "Tag";
+    public Quantity Quantity { get; init; }
 
     /// <summary>
     ///     Net price per unit.
     /// </summary>
-    public decimal UnitPriceNet { get; init; }
+    public Money UnitPrice { get; init; }
 
     /// <summary>
-    ///     VAT rate (e.g., 0.19 for 19%).
+    ///     VAT rate for this line item.
     /// </summary>
-    public decimal VatRate { get; init; } = 0.19m;
+    public VatRate VatRate { get; init; }
 
     /// <summary>
     ///     Total net amount for this line (Quantity * UnitPriceNet).
     /// </summary>
-    public decimal TotalNet => Quantity * UnitPriceNet;
+    public decimal TotalNet => Quantity.Value * UnitPrice.NetAmount;
 
     /// <summary>
     ///     VAT amount for this line.
     /// </summary>
-    public decimal VatAmount => Math.Round(TotalNet * VatRate, 2);
+    public decimal VatAmount => VatRate.CalculateVatAmount(TotalNet);
 
     /// <summary>
     ///     Total gross amount for this line (Net + VAT).
@@ -78,10 +73,9 @@ public sealed record InvoiceLineItem
         {
             Position = position,
             Description = $"Fahrzeugmiete: {vehicleDescription}",
-            Quantity = rentalDays,
-            Unit = rentalDays == 1 ? "Tag" : "Tage",
-            UnitPriceNet = dailyRateNet,
-            VatRate = 0.19m,
+            Quantity = Quantity.Days(rentalDays),
+            UnitPrice = Money.Euro(dailyRateNet),
+            VatRate = VatRate.GermanStandard,
             ServicePeriodStart = pickupDate,
             ServicePeriodEnd = returnDate
         };
@@ -93,8 +87,7 @@ public sealed record InvoiceLineItem
     public static InvoiceLineItem ForAdditionalService(
         int position,
         string description,
-        int quantity,
-        string unit,
+        Quantity quantity,
         decimal unitPriceNet)
     {
         return new InvoiceLineItem
@@ -102,9 +95,45 @@ public sealed record InvoiceLineItem
             Position = position,
             Description = description,
             Quantity = quantity,
-            Unit = unit,
-            UnitPriceNet = unitPriceNet,
-            VatRate = 0.19m
+            UnitPrice = Money.Euro(unitPriceNet),
+            VatRate = VatRate.GermanStandard
+        };
+    }
+
+    /// <summary>
+    ///     Creates a line item for insurance.
+    /// </summary>
+    public static InvoiceLineItem ForInsurance(
+        int position,
+        string insuranceDescription,
+        int rentalDays,
+        decimal dailyRateNet)
+    {
+        return new InvoiceLineItem
+        {
+            Position = position,
+            Description = $"Versicherung: {insuranceDescription}",
+            Quantity = Quantity.Days(rentalDays),
+            UnitPrice = Money.Euro(dailyRateNet),
+            VatRate = VatRate.GermanStandard
+        };
+    }
+
+    /// <summary>
+    ///     Creates a line item for kilometer surcharge.
+    /// </summary>
+    public static InvoiceLineItem ForKilometerSurcharge(
+        int position,
+        int extraKilometers,
+        decimal pricePerKilometer)
+    {
+        return new InvoiceLineItem
+        {
+            Position = position,
+            Description = "Kilometerüberschreitung",
+            Quantity = Quantity.Kilometers(extraKilometers),
+            UnitPrice = Money.Euro(pricePerKilometer),
+            VatRate = VatRate.GermanStandard
         };
     }
 }

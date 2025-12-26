@@ -32,7 +32,7 @@ public class SepaMandateTests
         mandate.CustomerId.ShouldBe(_customerId);
         mandate.IBAN.ShouldBe(_validIBAN);
         mandate.BIC.ShouldBe(_validBIC);
-        mandate.AccountHolder.ShouldBe(ValidAccountHolder);
+        mandate.AccountHolder.Value.ShouldBe(ValidAccountHolder);
         mandate.Status.ShouldBe(MandateStatus.Active);
         mandate.SignedAt.ShouldBe(signedAt);
         mandate.RevokedAt.ShouldBeNull();

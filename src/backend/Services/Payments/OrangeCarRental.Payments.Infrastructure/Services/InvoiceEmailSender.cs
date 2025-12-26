@@ -53,10 +53,10 @@ public sealed class InvoiceEmailSender(ILogger<InvoiceEmailSender> logger) : IIn
             // var response = await httpClient.PostAsJsonAsync("/api/notifications/send-invoice-email", new
             // {
             //     RecipientEmail = recipientEmail,
-            //     RecipientName = invoice.CustomerName,
+            //     RecipientName = invoice.Customer.Name,
             //     InvoiceNumber = invoice.InvoiceNumber.Value,
             //     InvoiceDate = invoice.InvoiceDate,
-            //     TotalAmount = FormatCurrency(invoice.TotalGross, invoice.CurrencyCode),
+            //     TotalAmount = FormatCurrency(invoice.TotalGross, invoice.Currency.Code),
             //     PdfDocument = Convert.ToBase64String(invoice.PdfDocument)
             // }, cancellationToken);
 
@@ -90,7 +90,7 @@ public sealed class InvoiceEmailSender(ILogger<InvoiceEmailSender> logger) : IIn
     {
         var invoiceDateFormatted = invoice.InvoiceDate.ToString("dd.MM.yyyy", GermanCulture);
         var dueDateFormatted = invoice.DueDate.ToString("dd.MM.yyyy", GermanCulture);
-        var totalFormatted = FormatCurrency(invoice.TotalGross, invoice.CurrencyCode);
+        var totalFormatted = FormatCurrency(invoice.TotalGross, invoice.Currency.Code);
 
         return $$"""
             <!DOCTYPE html>
@@ -113,7 +113,7 @@ public sealed class InvoiceEmailSender(ILogger<InvoiceEmailSender> logger) : IIn
                     <p style="margin: 5px 0 0 0;">Autovermietung</p>
                 </div>
                 <div class="content">
-                    <p>Sehr geehrte(r) {{invoice.CustomerName}},</p>
+                    <p>Sehr geehrte(r) {{invoice.Customer.Name}},</p>
 
                     <p>vielen Dank für Ihre Buchung bei Orange Car Rental.</p>
 
@@ -139,10 +139,10 @@ public sealed class InvoiceEmailSender(ILogger<InvoiceEmailSender> logger) : IIn
                     <strong>Ihr Orange Car Rental Team</strong></p>
                 </div>
                 <div class="footer">
-                    <p><strong>{{invoice.SellerName}}</strong></p>
-                    <p>{{invoice.SellerStreet}} | {{invoice.SellerPostalCode}} {{invoice.SellerCity}}</p>
-                    <p>Tel: {{invoice.SellerPhone}} | E-Mail: {{invoice.SellerEmail}}</p>
-                    <p>USt-IdNr.: {{invoice.VatId}} | Handelsregister: AG Berlin {{invoice.TradeRegisterNumber}}</p>
+                    <p><strong>{{invoice.Seller.CompanyName}}</strong></p>
+                    <p>{{invoice.Seller.Street}} | {{invoice.Seller.PostalCode}} {{invoice.Seller.City}}</p>
+                    <p>Tel: {{invoice.Seller.Phone}} | E-Mail: {{invoice.Seller.Email}}</p>
+                    <p>USt-IdNr.: {{invoice.Seller.VatId}} | Handelsregister: AG Berlin {{invoice.Seller.TradeRegisterNumber}}</p>
                     <p style="margin-top: 10px; font-size: 10px;">
                         Diese E-Mail wurde automatisch erstellt. Bitte antworten Sie nicht direkt auf diese Nachricht.
                     </p>

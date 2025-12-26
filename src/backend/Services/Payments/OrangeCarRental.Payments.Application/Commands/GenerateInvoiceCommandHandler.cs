@@ -47,17 +47,21 @@ public sealed class GenerateInvoiceCommandHandler(
                 pickupDate: command.PickupDate,
                 returnDate: command.ReturnDate);
 
+            // Create customer invoice info
+            var customerInfo = CustomerInvoiceInfo.Create(
+                customerId: command.CustomerId,
+                name: command.CustomerName,
+                street: command.CustomerStreet,
+                postalCode: command.CustomerPostalCode,
+                city: command.CustomerCity,
+                country: command.CustomerCountry,
+                vatId: command.CustomerVatId);
+
             // Create invoice
             var invoice = Invoice.Create(
                 invoiceNumber: invoiceNumber,
                 reservationId: command.ReservationId,
-                customerId: command.CustomerId,
-                customerName: command.CustomerName,
-                customerStreet: command.CustomerStreet,
-                customerPostalCode: command.CustomerPostalCode,
-                customerCity: command.CustomerCity,
-                customerCountry: command.CustomerCountry,
-                customerVatId: command.CustomerVatId,
+                customer: customerInfo,
                 lineItems: [lineItem],
                 serviceDate: command.ReturnDate,
                 paymentTermDays: 14,

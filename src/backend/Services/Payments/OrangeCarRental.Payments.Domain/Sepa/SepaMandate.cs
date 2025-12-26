@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 
@@ -8,9 +9,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
 /// </summary>
 public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
 {
-    // Orange Car Rental's Creditor Identifier (Gläubiger-Identifikationsnummer)
-    // This is a unique identifier assigned by the Bundesbank
+    /// <summary>
+    ///     Orange Car Rental's Creditor Identifier (Gläubiger-Identifikationsnummer).
+    ///     This is a unique identifier assigned by the Bundesbank.
+    /// </summary>
     public const string CreditorId = "DE98ZZZ09999999999";
+
+    /// <summary>
+    ///     Creditor company name.
+    /// </summary>
     public const string CreditorName = "Orange Car Rental GmbH";
 
     private SepaMandate()
@@ -18,23 +25,57 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
         MandateReference = null!;
         IBAN = null!;
         BIC = null!;
-        AccountHolder = string.Empty;
+        AccountHolder = default;
     }
 
-    // Mandate Information
+    /// <summary>
+    ///     Unique mandate reference.
+    /// </summary>
     public MandateReference MandateReference { get; init; }
+
+    /// <summary>
+    ///     Bank account IBAN.
+    /// </summary>
     public IBAN IBAN { get; init; }
+
+    /// <summary>
+    ///     Bank identifier code.
+    /// </summary>
     public BIC BIC { get; init; }
-    public string AccountHolder { get; init; }
+
+    /// <summary>
+    ///     Account holder name.
+    /// </summary>
+    public PersonName AccountHolder { get; init; }
+
+    /// <summary>
+    ///     Mandate status.
+    /// </summary>
     public MandateStatus Status { get; init; }
 
-    // Customer Reference
+    /// <summary>
+    ///     Referenced customer ID.
+    /// </summary>
     public Guid CustomerId { get; init; }
 
-    // Timestamps
+    /// <summary>
+    ///     Date when mandate was signed.
+    /// </summary>
     public DateTime SignedAt { get; init; }
+
+    /// <summary>
+    ///     Date when mandate was revoked.
+    /// </summary>
     public DateTime? RevokedAt { get; init; }
+
+    /// <summary>
+    ///     Date of last usage.
+    /// </summary>
     public DateTime? LastUsedAt { get; init; }
+
+    /// <summary>
+    ///     Created timestamp.
+    /// </summary>
     public DateTime CreatedAt { get; init; }
 
     /// <summary>
@@ -48,8 +89,6 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
         string accountHolder,
         DateTime signedAt)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(accountHolder, nameof(accountHolder));
-
         return new SepaMandate
         {
             Id = SepaMandateIdentifier.New(),
@@ -57,7 +96,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
             CustomerId = customerId,
             IBAN = iban,
             BIC = bic,
-            AccountHolder = accountHolder,
+            AccountHolder = PersonName.Of(accountHolder),
             Status = MandateStatus.Active,
             SignedAt = signedAt,
             CreatedAt = DateTime.UtcNow
