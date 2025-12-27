@@ -11,15 +11,15 @@ Both Angular applications are successfully set up and running:
 cd apps/public-portal
 npm start
 ```
-- **URL:** http://localhost:4200
+- **URL:** http://localhost:4301
 - **Purpose:** Customer portal for browsing vehicles, making reservations, viewing bookings
 
 ### Call Center Portal
 ```bash
 cd apps/call-center-portal
-npm start -- --port 4201
+npm start
 ```
-- **URL:** http://localhost:4201
+- **URL:** http://localhost:4302
 - **Purpose:** Internal portal for call center agents to manage bookings and customers
 
 ## Architecture
@@ -28,7 +28,7 @@ npm start -- --port 4201
 ```
 src/frontend/
 ├── apps/
-│   ├── public-portal/          ✅ Running on :4200
+│   ├── public-portal/          ✅ Running on :4301
 │   │   ├── src/
 │   │   │   ├── app/           # Application components
 │   │   │   ├── styles.css     # Tailwind CSS with Orange brand colors
@@ -36,7 +36,7 @@ src/frontend/
 │   │   ├── angular.json
 │   │   └── package.json
 │   │
-│   └── call-center-portal/     ✅ Running on :4201
+│   └── call-center-portal/     ✅ Running on :4302
 │       ├── src/
 │       │   ├── app/           # Application components
 │       │   ├── styles.css     # Tailwind CSS with dashboard styles
@@ -155,7 +155,7 @@ npm start
 **Terminal 2 - Call Center Portal:**
 ```bash
 cd src/frontend/apps/call-center-portal
-npm start -- --port 4201
+npm start
 ```
 
 ### Build for Production
@@ -297,5 +297,5 @@ Both frontend applications are successfully set up and running! The foundation i
 - ✅ Development servers running
 
 **URLs:**
-- Public Portal: http://localhost:4200
-- Call Center Portal: http://localhost:4201
+- Public Portal: http://localhost:4301
+- Call Center Portal: http://localhost:4302

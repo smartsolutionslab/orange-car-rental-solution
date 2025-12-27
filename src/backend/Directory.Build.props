@@ -8,7 +8,7 @@
     <NoWarn>$(NoWarn);CA1014</NoWarn>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>SmartSolutionsLab.$(AssemblyName)</RootNamespace>
-    <Company>Smart Soltuions Lab</Company>
+    <Company>Smart Solutions Lab</Company>
     <Product>Orange Car Rental System</Product>
     <Copyright>Copyright © 2025 Smart Solutions Lab</Copyright>
 

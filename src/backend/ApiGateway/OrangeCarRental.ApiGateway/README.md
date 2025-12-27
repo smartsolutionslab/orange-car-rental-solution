@@ -6,7 +6,7 @@ YARP-based reverse proxy that routes requests to backend microservices using Asp
 
 - **Service Discovery Integration** - Automatically discovers Fleet and Reservations APIs through Aspire
 - **Dynamic Routing** - Routes `/api/vehicles/*` to Fleet API and `/api/reservations/*` to Reservations API
-- **CORS Support** - Configured for frontend applications on ports 4200 and 4201
+- **CORS Support** - Configured for frontend applications on ports 4300-4302
 - **Health Monitoring** - `/health` endpoint for load balancers
 - **Scalar UI** - Interactive API documentation (development only)
 
@@ -78,7 +78,7 @@ builder.Services.ConfigureHttpClientDefaults(http =>
 ## Request Flow
 
 ```
-Frontend (localhost:4200)
+Frontend (localhost:4300)
   ↓
 API Gateway (localhost:5002)
   ↓ /api/vehicles/* → Fleet API
@@ -123,10 +123,12 @@ dotnet test --filter ClassName=ApiGatewayTests
 ## CORS Configuration
 
 Configured to accept requests from:
-- `http://localhost:4200` (Public Portal)
-- `http://localhost:4201` (Call Center Portal)
-- `https://localhost:4200`
-- `https://localhost:4201`
+- `http://localhost:4300` (Shell)
+- `http://localhost:4301` (Public Portal)
+- `http://localhost:4302` (Call Center Portal)
+- `https://localhost:4300`
+- `https://localhost:4301`
+- `https://localhost:4302`
 
 ## Monitoring
 

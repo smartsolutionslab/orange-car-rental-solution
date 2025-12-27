@@ -1,6 +1,6 @@
 # Orange Car Rental - Deployment Status Report
 
-**Generated**: 2025-11-22
+**Generated**: 2025-12-27
 **Environment**: Local Development
 **Status**: ✅ OPERATIONAL
 
@@ -29,8 +29,8 @@ The Orange Car Rental microservices application is fully deployed and operationa
 | Reservations API | ✅ Running | Healthy | Database connected |
 | Pricing API | ✅ Running | Healthy | Database connected |
 | **Frontend** |
-| Public Portal | ✅ Running | Healthy | Port 4201 - Verified |
-| Call Center Portal | ⚠️ Port Conflict | Warning | Port 4201 in use |
+| Public Portal | ✅ Running | Healthy | Port 4301 - Verified |
+| Call Center Portal | ✅ Running | Healthy | Port 4302 - Verified |
 | **Databases** |
 | Customers DB | ✅ Ready | Seeded | 5 records |
 | Fleet DB | ✅ Ready | Seeded | 10 records |
@@ -171,7 +171,7 @@ Requires JWT authentication via Keycloak.
 ```
 
 **Status**: ✅ Operational
-- URL: http://localhost:4201
+- URL: http://localhost:4301
 - Title: PublicPortal
 - API Connection: Configured to API Gateway
 - Framework: Angular 19
@@ -212,14 +212,6 @@ Requires JWT authentication via Keycloak.
 
 ## Known Issues
 
-### Port Conflicts
-
-**Call Center Portal**:
-- Status: ⚠️ Port 4201 already in use
-- Impact: Cannot start via Aspire
-- Workaround: Frontend already running on port 4201 from earlier session
-- Resolution: Kill existing process or use different port
-
 **No Critical Issues**: All essential services operational.
 
 ---
@@ -251,8 +243,9 @@ Requires JWT authentication via Keycloak.
 ### CORS
 ```csharp
 AllowedOrigins:
-  - http://localhost:4200
-  - http://localhost:4201
+  - http://localhost:4300  // Shell
+  - http://localhost:4301  // Public Portal
+  - http://localhost:4302  // Call Center Portal
 AllowedMethods: Any
 AllowedHeaders: Any
 ```
@@ -291,7 +284,9 @@ curl http://localhost:5002/api/vehicles/{id}
 
 ### Access Frontend
 ```
-http://localhost:4201
+http://localhost:4300  # Shell (microfrontend host)
+http://localhost:4301  # Public Portal
+http://localhost:4302  # Call Center Portal
 ```
 
 ---
@@ -328,7 +323,7 @@ http://localhost:4201
 1. Check Aspire Dashboard for service status
 2. Review logs in Aspire Dashboard
 3. Verify Docker Desktop is running
-4. Check port availability (5002, 4201, 8080, 1433)
+4. Check port availability (5002, 4300-4302, 8080, 1433)
 5. Validate connection strings
 
 ### Logs Location
@@ -374,6 +369,6 @@ The Orange Car Rental application is **fully operational** in the local developm
 
 ---
 
-**Report Generated**: 2025-11-22 21:40 UTC
+**Report Generated**: 2025-12-27
 **Environment**: Windows 11, .NET 9, Docker Desktop
 **Status**: Production-ready for local development

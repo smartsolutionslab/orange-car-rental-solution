@@ -301,8 +301,8 @@ const config: ModuleFederationConfig = {
   name: 'shell',
 
   remotes: {
-    'publicPortal': 'http://localhost:4201/remoteEntry.json',
-    'callCenterPortal': 'http://localhost:4202/remoteEntry.json',
+    'publicPortal': 'http://localhost:4301/remoteEntry.json',
+    'callCenterPortal': 'http://localhost:4302/remoteEntry.json',
   },
 
   shared: {
@@ -773,10 +773,10 @@ services:
     build:
       context: ./src/frontend/apps/shell
     ports:
-      - "4200:80"
+      - "4300:80"
     environment:
-      - REMOTE_PUBLIC_PORTAL_URL=http://localhost:4201
-      - REMOTE_CALLCENTER_URL=http://localhost:4202
+      - REMOTE_PUBLIC_PORTAL_URL=http://localhost:4301
+      - REMOTE_CALLCENTER_URL=http://localhost:4302
     networks:
       - microfrontend-network
 
@@ -784,7 +784,7 @@ services:
     build:
       context: ./src/frontend/apps/public-portal
     ports:
-      - "4201:80"
+      - "4301:80"
     networks:
       - microfrontend-network
 
@@ -792,7 +792,7 @@ services:
     build:
       context: ./src/frontend/apps/call-center-portal
     ports:
-      - "4202:80"
+      - "4302:80"
     networks:
       - microfrontend-network
 
@@ -999,7 +999,7 @@ Use Playwright for full user journey tests:
 // e2e/microfrontend-navigation.spec.ts
 test('should navigate between microfrontends', async ({ page }) => {
   // Start at shell
-  await page.goto('http://localhost:4200');
+  await page.goto('http://localhost:4300');
 
   // Navigate to public portal route
   await page.click('a[href="/vehicles"]');
@@ -1037,11 +1037,11 @@ import http from 'k6/http';
 
 export default function() {
   // Load shell
-  http.get('http://localhost:4200');
+  http.get('http://localhost:4300');
 
   // Load remotes
-  http.get('http://localhost:4201/remoteEntry.json');
-  http.get('http://localhost:4202/remoteEntry.json');
+  http.get('http://localhost:4301/remoteEntry.json');
+  http.get('http://localhost:4302/remoteEntry.json');
 }
 ```
 
@@ -1243,6 +1243,6 @@ This migration strategy provides a clear path from the current multi-app monorep
 ---
 
 **Document Version**: 1.0
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-12-27
 **Author**: Engineering Team
 **Status**: Awaiting Approval

@@ -9,8 +9,8 @@ This guide provides step-by-step instructions for testing the Orange Car Rental 
 ## Architecture Summary
 
 ```
-Shell (4200) ──┬──> Public Portal (4201)
-               └──> Call Center Portal (4202)
+Shell (4300) ──┬──> Public Portal (4301)
+               └──> Call Center Portal (4302)
 ```
 
 - **Shell**: Host application that loads remotes dynamically
@@ -49,27 +49,27 @@ npx concurrently \
 cd src/frontend/apps/shell
 npm start
 ```
-Open: http://localhost:4200
+Open: http://localhost:4300
 
 **Terminal 2 - Public Portal:**
 ```bash
 cd src/frontend/apps/public-portal
 npm run start:dev
 ```
-Open: http://localhost:4201
+Open: http://localhost:4301
 
 **Terminal 3 - Call Center Portal:**
 ```bash
 cd src/frontend/apps/call-center-portal
 npm run start:dev
 ```
-Open: http://localhost:4202
+Open: http://localhost:4302
 
 ---
 
 ## Verification Checklist
 
-### 1. Shell Application (http://localhost:4200)
+### 1. Shell Application (http://localhost:4300)
 
 **Expected:**
 - ✅ Orange header with "Orange Car Rental"
@@ -84,7 +84,7 @@ Open: http://localhost:4202
 - Click "Booking" → should load public portal routes
 - Click "Admin" → should load call center portal (check console for federation)
 
-### 2. Public Portal Standalone (http://localhost:4201)
+### 2. Public Portal Standalone (http://localhost:4301)
 
 **Expected:**
 - ✅ Vehicle list component loads
@@ -97,7 +97,7 @@ Open: http://localhost:4202
 - `/register` - Registration page
 - `/booking` - Booking page (requires auth)
 
-### 3. Call Center Portal Standalone (http://localhost:4202)
+### 3. Call Center Portal Standalone (http://localhost:4302)
 
 **Expected:**
 - ✅ Vehicles component loads
@@ -144,7 +144,7 @@ When navigating from Shell to remotes:
 
 **Solution:**
 1. Verify all 3 apps are running
-2. Check ports: Shell (4200), Public (4201), Call Center (4202)
+2. Check ports: Shell (4300), Public (4301), Call Center (4302)
 3. Verify `federation.manifest.json` URLs are correct
 
 ### Issue 2: CORS Errors
@@ -169,7 +169,7 @@ When navigating from Shell to remotes:
 ### Issue 4: 404 on Remote Entry
 
 **Symptoms:**
-- 404 error for `http://localhost:4201/remoteEntry.json`
+- 404 error for `http://localhost:4301/remoteEntry.json`
 
 **Solution:**
 - Native Federation generates this file at build/serve time
@@ -275,21 +275,21 @@ Add to `main.ts` in each app:
 
 **Shell:**
 ```bash
-curl http://localhost:4200/assets/federation.manifest.json
+curl http://localhost:4300/assets/federation.manifest.json
 ```
 
 **Expected:**
 ```json
 {
-  "publicPortal": "http://localhost:4201/remoteEntry.json",
-  "callCenterPortal": "http://localhost:4202/remoteEntry.json"
+  "publicPortal": "http://localhost:4301/remoteEntry.json",
+  "callCenterPortal": "http://localhost:4302/remoteEntry.json"
 }
 ```
 
 ### Check Remote Entry
 
 ```bash
-curl http://localhost:4201/remoteEntry.json
+curl http://localhost:4301/remoteEntry.json
 ```
 
 Should return a valid JSON response with module exports.
@@ -363,5 +363,5 @@ If you encounter issues:
 ---
 
 **Document Version**: 1.0
-**Last Updated**: 2025-11-23
+**Last Updated**: 2025-12-27
 **Status**: Ready for Testing

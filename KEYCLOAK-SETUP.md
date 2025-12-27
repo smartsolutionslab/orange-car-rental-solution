@@ -82,18 +82,18 @@ Go to **Realm Roles** and create the following roles:
    - **Direct access grants**: `ON`
    - Click "Next"
 4. Configure Login settings:
-   - **Valid redirect URIs**: `http://localhost:4200/*`
-   - **Valid post logout redirect URIs**: `http://localhost:4200/*`
-   - **Web origins**: `http://localhost:4200`
+   - **Valid redirect URIs**: `http://localhost:4300/*`
+   - **Valid post logout redirect URIs**: `http://localhost:4300/*`
+   - **Web origins**: `http://localhost:4300`
    - Click "Save"
 
 ### 5.2 Call Center Portal Client (Angular SPA)
 
 1. Create client with ID: `call-center-portal`
 2. Same configuration as public-portal but use:
-   - **Valid redirect URIs**: `http://localhost:4201/*`
-   - **Valid post logout redirect URIs**: `http://localhost:4201/*`
-   - **Web origins**: `http://localhost:4201`
+   - **Valid redirect URIs**: `http://localhost:4302/*`
+   - **Valid post logout redirect URIs**: `http://localhost:4302/*`
+   - **Web origins**: `http://localhost:4302`
 
 ### 5.3 Backend API Client (Confidential)
 
