@@ -10,15 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.CommandS
 /// Implementation of IReservationCommandService using event sourcing.
 /// Orchestrates loading aggregates from the event store, executing commands, and saving events.
 /// </summary>
-public sealed class ReservationCommandService : IReservationCommandService
+public sealed class ReservationCommandService(IEventSourcedReservationRepository repository)
+    : IReservationCommandService
 {
-    private readonly IEventSourcedReservationRepository _repository;
-
-    public ReservationCommandService(IEventSourcedReservationRepository repository)
-    {
-        _repository = repository;
-    }
-
     /// <inheritdoc />
     public async Task<Reservation> CreateAsync(
         VehicleIdentifier vehicleId,
@@ -30,9 +24,15 @@ public sealed class ReservationCommandService : IReservationCommandService
         CancellationToken cancellationToken = default)
     {
         var reservation = new Reservation();
-        reservation.Create(vehicleId, customerId, period, pickupLocationCode, dropoffLocationCode, totalPrice);
+        reservation.Create(
+            vehicleId,
+            customerId,
+            period,
+            pickupLocationCode,
+            dropoffLocationCode,
+            totalPrice);
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }
@@ -42,14 +42,14 @@ public sealed class ReservationCommandService : IReservationCommandService
         ReservationIdentifier reservationId,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await _repository.LoadAsync(reservationId, cancellationToken);
+        var reservation = await repository.LoadAsync(reservationId, cancellationToken);
 
         if (!reservation.State.HasBeenCreated)
             throw new InvalidOperationException($"Reservation with ID '{reservationId.Value}' not found.");
 
         reservation.Confirm();
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }
@@ -60,14 +60,14 @@ public sealed class ReservationCommandService : IReservationCommandService
         string? reason = null,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await _repository.LoadAsync(reservationId, cancellationToken);
+        var reservation = await repository.LoadAsync(reservationId, cancellationToken);
 
         if (!reservation.State.HasBeenCreated)
             throw new InvalidOperationException($"Reservation with ID '{reservationId.Value}' not found.");
 
         reservation.Cancel(reason);
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }
@@ -77,14 +77,14 @@ public sealed class ReservationCommandService : IReservationCommandService
         ReservationIdentifier reservationId,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await _repository.LoadAsync(reservationId, cancellationToken);
+        var reservation = await repository.LoadAsync(reservationId, cancellationToken);
 
         if (!reservation.State.HasBeenCreated)
             throw new InvalidOperationException($"Reservation with ID '{reservationId.Value}' not found.");
 
         reservation.MarkAsActive();
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }
@@ -94,14 +94,14 @@ public sealed class ReservationCommandService : IReservationCommandService
         ReservationIdentifier reservationId,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await _repository.LoadAsync(reservationId, cancellationToken);
+        var reservation = await repository.LoadAsync(reservationId, cancellationToken);
 
         if (!reservation.State.HasBeenCreated)
             throw new InvalidOperationException($"Reservation with ID '{reservationId.Value}' not found.");
 
         reservation.Complete();
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }
@@ -111,14 +111,14 @@ public sealed class ReservationCommandService : IReservationCommandService
         ReservationIdentifier reservationId,
         CancellationToken cancellationToken = default)
     {
-        var reservation = await _repository.LoadAsync(reservationId, cancellationToken);
+        var reservation = await repository.LoadAsync(reservationId, cancellationToken);
 
         if (!reservation.State.HasBeenCreated)
             throw new InvalidOperationException($"Reservation with ID '{reservationId.Value}' not found.");
 
         reservation.MarkAsNoShow();
 
-        await _repository.SaveAsync(reservation, cancellationToken);
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return reservation;
     }

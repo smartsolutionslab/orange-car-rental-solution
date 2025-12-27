@@ -7,17 +7,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.EventSou
 /// Event-sourced repository for Reservation aggregates.
 /// Uses Eventuous IEventReader/IEventWriter for event persistence and aggregate rehydration.
 /// </summary>
-public sealed class EventSourcedReservationRepository : IEventSourcedReservationRepository
+public sealed class EventSourcedReservationRepository(IEventReader eventReader, IEventWriter eventWriter)
+    : IEventSourcedReservationRepository
 {
-    private readonly IEventReader _eventReader;
-    private readonly IEventWriter _eventWriter;
     private const string StreamPrefix = "Reservation-";
-
-    public EventSourcedReservationRepository(IEventReader eventReader, IEventWriter eventWriter)
-    {
-        _eventReader = eventReader;
-        _eventWriter = eventWriter;
-    }
 
     /// <summary>
     /// Loads a Reservation aggregate from the event store by replaying its events.
@@ -30,7 +23,7 @@ public sealed class EventSourcedReservationRepository : IEventSourcedReservation
         var reservation = new Reservation();
 
         // Read events from the stream and fold them into the aggregate
-        var events = await _eventReader.ReadStream(streamName, StreamReadPosition.Start, failIfNotFound: false, cancellationToken);
+        var events = await eventReader.ReadStream(streamName, StreamReadPosition.Start, failIfNotFound: false, cancellationToken);
         reservation.Load(events.Select(e => e.Payload).ToList());
 
         return reservation;
@@ -54,7 +47,7 @@ public sealed class EventSourcedReservationRepository : IEventSourcedReservation
             ? ExpectedStreamVersion.NoStream
             : new ExpectedStreamVersion(currentVersion - reservation.Changes.Count);
 
-        await _eventWriter.Store(
+        await eventWriter.Store(
             streamName,
             expectedVersion,
             reservation.Changes.ToList(),
