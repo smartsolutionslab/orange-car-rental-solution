@@ -30,8 +30,8 @@ This guide covers the complete deployment process for Orange Car Rental, from in
 │  └──────────────────────────────────────────────────────────┘  │
 │                              │                                   │
 │  ┌───────────────────┐  ┌───────────────────┐  ┌─────────────┐│
-│  │   PostgreSQL      │  │  Azure Key Vault  │  │ Application ││
-│  │   Flexible Server │  │   (Secrets)       │  │  Insights   ││
+│  │   Azure SQL       │  │  Azure Key Vault  │  │ Application ││
+│  │   Database        │  │   (Secrets)       │  │  Insights   ││
 │  └───────────────────┘  └───────────────────┘  └─────────────┘│
 │                                                                   │
 │  ┌───────────────────┐  ┌───────────────────┐                  │
@@ -123,7 +123,7 @@ az deployment sub create \
 - Resource Group
 - Azure Kubernetes Service (AKS)
 - Azure Container Registry (ACR)
-- Azure Database for PostgreSQL
+- Azure SQL Database
 - Azure Key Vault
 - Application Insights
 - Log Analytics Workspace
@@ -454,14 +454,14 @@ kubectl logs <pod-name> -n orange-production
 ```bash
 # Test database connectivity from pod
 kubectl exec -it deployment/vehicles-api -n orange-production -- /bin/bash
-psql -h postgres -U pgadmin -d orangecarrental
+sqlcmd -S sqlserver -U sa -d orangecarrental
 
 # Check database secrets
 kubectl get secret database-secrets -n orange-production -o yaml
 
 # Port forward to database
-kubectl port-forward svc/postgres 5432:5432 -n orange-production
-psql -h localhost -U pgadmin -d orangecarrental
+kubectl port-forward svc/sqlserver 1433:1433 -n orange-production
+sqlcmd -S localhost -U sa -d orangecarrental
 ```
 
 ### Ingress Issues
@@ -712,7 +712,7 @@ infrastructure/
 │   ├── modules/                   # Bicep modules
 │   │   ├── acr.bicep
 │   │   ├── aks.bicep
-│   │   ├── postgres.bicep
+│   │   ├── sqlserver.bicep
 │   │   ├── keyvault.bicep
 │   │   ├── appinsights.bicep
 │   │   ├── loganalytics.bicep
@@ -736,7 +736,7 @@ k8s/
 │   ├── reservations-api-deployment.yaml
 │   ├── customers-api-deployment.yaml
 │   ├── locations-api-deployment.yaml
-│   ├── postgres-deployment.yaml
+│   ├── sqlserver-deployment.yaml
 │   ├── keycloak-deployment.yaml
 │   ├── configmap.yaml
 │   ├── ingress.yaml
