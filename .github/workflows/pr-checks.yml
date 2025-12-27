@@ -74,7 +74,7 @@ jobs:
         run: yarn workspace @orange-car-rental/${{ matrix.app }} test:coverage
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: src/frontend/apps/${{ matrix.app }}/coverage/lcov.info
           flags: ${{ matrix.app }}

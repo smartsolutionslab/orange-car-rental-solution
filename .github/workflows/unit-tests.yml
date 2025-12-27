@@ -40,7 +40,7 @@ jobs:
         run: echo "Coverage skipped"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./src/frontend/apps/public-portal/coverage/lcov.info
           flags: public-portal
@@ -85,7 +85,7 @@ jobs:
         run: echo "Coverage skipped"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./src/frontend/apps/call-center-portal/coverage/lcov.info
           flags: call-center-portal
@@ -124,7 +124,7 @@ jobs:
         run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --filter "FullyQualifiedName!~IntegrationTests&FullyQualifiedName!~Infrastructure"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           files: ./src/backend/**/coverage.cobertura.xml
           flags: backend
