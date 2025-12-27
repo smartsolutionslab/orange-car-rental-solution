@@ -54,6 +54,6 @@
     "eslint": "9.39.2",
     "keycloak-js": "26.2.2",
     "puppeteer": "^24.34.0",
-    "typescript-eslint": "8.50.0"
+    "typescript-eslint": "8.50.1"
   }
 }
