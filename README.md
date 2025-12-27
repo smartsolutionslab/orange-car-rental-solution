@@ -353,7 +353,7 @@ This project includes **complete production-ready deployment infrastructure** fo
 **Infrastructure Components:**
 - ✅ **Azure Kubernetes Service (AKS)** - Managed Kubernetes cluster with auto-scaling
 - ✅ **Azure Container Registry (ACR)** - Private Docker registry
-- ✅ **Azure Database for PostgreSQL** - Managed database with automated backups
+- ✅ **Azure SQL Database** - Managed database with automated backups
 - ✅ **Azure Key Vault** - Secure secrets management
 - ✅ **Application Insights** - Monitoring and observability
 - ✅ **NGINX Ingress Controller** - Load balancing with SSL/TLS

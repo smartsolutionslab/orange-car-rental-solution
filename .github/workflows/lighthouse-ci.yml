@@ -14,19 +14,19 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
-        image: postgres:15
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
         env:
-          POSTGRES_DB: orange_rental
-          POSTGRES_USER: orange_user
-          POSTGRES_PASSWORD: test_password
+          ACCEPT_EULA: Y
+          MSSQL_SA_PASSWORD: TestPassword123!
+          MSSQL_PID: Developer
         ports:
-          - 5432:5432
+          - 1433:1433
         options: >-
-          --health-cmd pg_isready
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P TestPassword123! -Q 'SELECT 1' -C"
           --health-interval 10s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 10
 
     steps:
       - name: Checkout code
@@ -65,7 +65,7 @@ jobs:
           sleep 30
         env:
           ASPNETCORE_ENVIRONMENT: Development
-          ConnectionStrings__DefaultConnection: Host=localhost;Database=orange_rental;Username=orange_user;Password=test_password
+          ConnectionStrings__DefaultConnection: Server=localhost;Database=orange_rental;User Id=sa;Password=TestPassword123!;TrustServerCertificate=True
         continue-on-error: true
 
       - name: Serve Public Portal

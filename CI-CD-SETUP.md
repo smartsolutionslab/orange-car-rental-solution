@@ -41,7 +41,7 @@ dotnet test              # Backend tests
 - Pull requests to these branches
 
 **Services:**
-- PostgreSQL database
+- SQL Server database
 - Keycloak authentication server
 
 **Jobs:**

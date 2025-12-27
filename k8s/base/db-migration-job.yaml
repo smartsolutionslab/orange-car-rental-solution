@@ -17,16 +17,22 @@ spec:
       initContainers:
       # Wait for database to be ready
       - name: wait-for-db
-        image: postgres:15-alpine
+        image: mcr.microsoft.com/mssql-tools18
         command:
         - sh
         - -c
         - |
-          until pg_isready -h postgres -p 5432; do
+          until /opt/mssql-tools18/bin/sqlcmd -S sqlserver -U sa -P "$SA_PASSWORD" -Q "SELECT 1" -C; do
             echo "Waiting for database to be ready..."
             sleep 5
           done
           echo "Database is ready!"
+        env:
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: password
       containers:
       - name: migrate
         image: orangecarrental.azurecr.io/db-migrator:latest
@@ -74,18 +80,18 @@ spec:
           restartPolicy: OnFailure
           containers:
           - name: backup
-            image: postgres:15-alpine
+            image: mcr.microsoft.com/mssql-tools18
             env:
-            - name: PGHOST
-              value: "postgres"
-            - name: PGDATABASE
+            - name: SQLSERVER_HOST
+              value: "sqlserver"
+            - name: SQLSERVER_DATABASE
               value: "orangecarrental"
-            - name: PGUSER
+            - name: SQLSERVER_USER
               valueFrom:
                 secretKeyRef:
                   name: database-secrets
                   key: username
-            - name: PGPASSWORD
+            - name: SQLSERVER_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: database-secrets
@@ -99,9 +105,12 @@ spec:
             - sh
             - -c
             - |
-              BACKUP_FILE="backup-$(date +%Y%m%d-%H%M%S).sql.gz"
+              BACKUP_FILE="backup-$(date +%Y%m%d-%H%M%S).bak"
               echo "Creating backup: $BACKUP_FILE"
-              pg_dump | gzip > /tmp/$BACKUP_FILE
+
+              # Create SQL Server backup
+              /opt/mssql-tools18/bin/sqlcmd -S $SQLSERVER_HOST -U $SQLSERVER_USER -P $SQLSERVER_PASSWORD -C \
+                -Q "BACKUP DATABASE [$SQLSERVER_DATABASE] TO DISK='/tmp/$BACKUP_FILE' WITH FORMAT, COMPRESSION"
 
               # Upload to Azure Storage (requires azure-cli)
               az storage blob upload \
