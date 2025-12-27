@@ -229,24 +229,24 @@ dotnet list package --vulnerable --include-transitive
 ### Frontend
 
 ```bash
-# Install dependencies
-cd src/frontend/apps/public-portal
-npm ci
+# Install dependencies (from src/frontend directory)
+cd src/frontend
+yarn install --frozen-lockfile
 
 # Run tests
-npm run test
+yarn workspace @orange-car-rental/public-portal test
 
 # Run linting
-npm run lint
+yarn workspace @orange-car-rental/public-portal lint
 
 # Check formatting
-npx prettier --check "src/**/*.{ts,html,css,scss,json}"
+yarn workspace @orange-car-rental/public-portal format:check
 
 # Build for production
-npm run build -- --configuration production
+yarn workspace @orange-car-rental/public-portal build:production
 
 # Check for vulnerabilities
-npm audit --audit-level=high
+yarn audit
 ```
 
 ## 🔐 Security Features
