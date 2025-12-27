@@ -29,9 +29,9 @@ spec:
           name: http
         env:
         - name: KC_DB
-          value: "postgres"
+          value: "mssql"
         - name: KC_DB_URL
-          value: "jdbc:postgresql://postgres:5432/keycloak"
+          value: "jdbc:sqlserver://sqlserver:1433;databaseName=keycloak;encrypt=true;trustServerCertificate=true"
         - name: KC_DB_USERNAME
           valueFrom:
             secretKeyRef:

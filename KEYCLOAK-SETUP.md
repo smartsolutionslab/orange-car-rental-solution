@@ -248,7 +248,7 @@ Before deploying to production:
 2. ⚠️ Use HTTPS for all communication
 3. ⚠️ Set `KC_HOSTNAME` to your production domain
 4. ⚠️ Enable `KC_HOSTNAME_STRICT=true`
-5. ⚠️ Use proper PostgreSQL credentials
+5. ⚠️ Use proper SQL Server credentials
 6. ⚠️ Configure email server for password resets
 7. ⚠️ Set up backup for Keycloak database
 8. ⚠️ Configure session timeouts appropriately
