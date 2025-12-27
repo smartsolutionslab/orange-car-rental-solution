@@ -43,7 +43,7 @@ jobs:
         run: yarn workspace @orange-car-rental/public-portal build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: public-portal-build
           path: src/frontend/apps/public-portal/dist/
@@ -107,7 +107,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-results-${{ matrix.browser }}-${{ strategy.job-index }}
           path: src/frontend/apps/public-portal/test-results/
@@ -115,7 +115,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report-${{ matrix.browser }}-${{ strategy.job-index }}
           path: src/frontend/apps/public-portal/playwright-report/
@@ -123,7 +123,7 @@ jobs:
 
       - name: Upload test screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: screenshots-${{ matrix.browser }}-${{ strategy.job-index }}
           path: src/frontend/apps/public-portal/test-results/**/*.png
@@ -131,7 +131,7 @@ jobs:
 
       - name: Upload test videos
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: videos-${{ matrix.browser }}-${{ strategy.job-index }}
           path: src/frontend/apps/public-portal/test-results/**/*.webm
@@ -171,7 +171,7 @@ jobs:
           fi
 
       - name: Upload merged report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: merged-playwright-report
           path: playwright-report/

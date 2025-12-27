@@ -88,7 +88,7 @@ jobs:
           echo "📦 Bundle size: $BUNDLE_SIZE" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ matrix.app }}-${{ matrix.environment }}
           path: src/frontend/apps/${{ matrix.app }}/dist/
@@ -150,7 +150,7 @@ jobs:
 
       - name: Upload publish artifacts
         if: matrix.configuration == 'Release'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: backend-release
           path: src/backend/ApiGateway/OrangeCarRental.ApiGateway/publish/
