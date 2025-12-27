@@ -1,0 +1,22 @@
+# CODEOWNERS - Define code owners for automatic review requests
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owners for everything in the repo
+* @smartsolutionslab/core-team
+
+# Backend services
+/src/backend/ @smartsolutionslab/backend-team
+
+# Frontend applications
+/src/frontend/ @smartsolutionslab/frontend-team
+
+# Infrastructure and DevOps
+/.github/ @smartsolutionslab/devops-team
+/k8s/ @smartsolutionslab/devops-team
+/docker-compose*.yml @smartsolutionslab/devops-team
+
+# Documentation
+*.md @smartsolutionslab/core-team
+
+# Architecture Decision Records
+/docs/adr/ @smartsolutionslab/architects
