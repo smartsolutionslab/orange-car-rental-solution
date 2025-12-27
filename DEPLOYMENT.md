@@ -760,6 +760,6 @@ k8s/
 
 ---
 
-**Last Updated:** 2024-01-21
+**Last Updated:** 2025-12-27
 **Maintained by:** DevOps Team
 **Contact:** devops@orange-rental.de

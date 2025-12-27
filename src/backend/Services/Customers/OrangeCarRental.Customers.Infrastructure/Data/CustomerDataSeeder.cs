@@ -22,8 +22,7 @@ public class CustomerDataSeeder(
         var existingCount = await context.Customers.CountAsync();
         if (existingCount > 0)
         {
-            logger.LogInformation("Customers database already contains {Count} customers. Skipping seed.",
-                existingCount);
+            logger.LogInformation("Customers database already contains {Count} customers. Skipping seed.", existingCount);
             return;
         }
 

@@ -9,7 +9,7 @@ resources:
 - reservations-api-deployment.yaml
 - customers-api-deployment.yaml
 - locations-api-deployment.yaml
-- postgres-deployment.yaml
+- sqlserver-deployment.yaml
 - keycloak-deployment.yaml
 - configmap.yaml
 - federation-manifest-configmap.yaml

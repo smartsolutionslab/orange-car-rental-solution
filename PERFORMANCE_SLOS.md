@@ -292,6 +292,6 @@ Environment: Production (3 replicas, Standard_D2s_v3 nodes)
 ---
 
 **Owner:** DevOps Team
-**Last Review:** 2024-01-21
-**Next Review:** 2024-04-21
+**Last Review:** 2025-12-27
+**Next Review:** 2026-03-27
 **Contact:** devops@orange-rental.de
