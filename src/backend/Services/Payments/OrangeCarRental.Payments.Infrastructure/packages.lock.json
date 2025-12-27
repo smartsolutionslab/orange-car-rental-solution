@@ -92,9 +92,9 @@
       },
       "QuestPDF": {
         "type": "Direct",
-        "requested": "[2024.12.3, )",
-        "resolved": "2024.12.3",
-        "contentHash": "gdIoEC9cTnySnDdbwcguUfSS2+444rGEeecQH5n0IKUA9Tm4473eRrFjPk5HoD5I2BxjuyDW+WCGnwKa+OIXsw=="
+        "requested": "[2025.12.1, )",
+        "resolved": "2025.12.1",
+        "contentHash": "sMLWrK4+C8VDvCxzhENKsYm25386P9s31p2d2NTmWKO8ToMYc2bn5fZt6niXS1d7fdrlMkKgRciysUZCGvg73w=="
       },
       "Azure.Core": {
         "type": "Transitive",
