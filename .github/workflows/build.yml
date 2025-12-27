@@ -177,19 +177,19 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Shell production artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: shell-production
           path: src/frontend/apps/shell/dist/
 
       - name: Download Public Portal production artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: public-portal-production
           path: src/frontend/apps/public-portal/dist/
 
       - name: Download Call Center Portal production artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: call-center-portal-production
           path: src/frontend/apps/call-center-portal/dist/
