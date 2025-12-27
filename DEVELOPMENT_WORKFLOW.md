@@ -24,7 +24,7 @@ We follow **GitFlow** with these branches:
 
 ### Permanent Branches
 
-#### `master` (Production)
+#### `main` (Production)
 - **Purpose:** Production-ready code
 - **Protection:** ✅ Protected, requires PR + reviews
 - **Deploy:** Auto-deploys to production
@@ -74,8 +74,8 @@ hotfix/{issue-number}-{short-description}
 - `hotfix/99-critical-security-fix`
 - `hotfix/101-payment-gateway-down`
 
-**Created from:** `master` ⚠️
-**Merged into:** `master` AND `develop`
+**Created from:** `main` ⚠️
+**Merged into:** `main` AND `develop`
 **For:** Production-critical fixes only
 
 #### Release Branches
@@ -87,7 +87,7 @@ release/v{major}.{minor}.{patch}
 - `release/v1.1.0`
 
 **Created from:** `develop`
-**Merged into:** `master` AND `develop`
+**Merged into:** `main` AND `develop`
 **Purpose:** Final testing and version bump
 
 ---
@@ -489,7 +489,7 @@ IMO: You might want to consider caching this result.
          ▼
 ┌─────────────────┐
 │  Create Release │
-│  PR to master   │
+│  PR to main   │
 └────────┬────────┘
          │
          ▼
@@ -501,7 +501,7 @@ IMO: You might want to consider caching this result.
 ### Workflow Files
 
 #### 1. Backend CI (`.github/workflows/backend-ci.yml`)
-**Triggers:** Push to `master`/`develop`, PRs to `master`/`develop`
+**Triggers:** Push to `main`/`develop`, PRs to `main`/`develop`
 **Jobs:**
 - Restore .NET dependencies
 - Build solution (Release config)
@@ -509,12 +509,12 @@ IMO: You might want to consider caching this result.
 - Run integration tests (Category=Integration)
 - Code coverage with Codecov
 - Build Docker images
-- Push images to GHCR (on master only)
+- Push images to GHCR (on main only)
 
 **Required env/secrets:** None (uses GITHUB_TOKEN)
 
 #### 2. Frontend CI (`.github/workflows/frontend-ci.yml`)
-**Triggers:** Push to `master`/`develop`, PRs to `master`/`develop`
+**Triggers:** Push to `main`/`develop`, PRs to `main`/`develop`
 **Matrix:** `[public-portal, call-center-portal]`
 **Jobs:**
 - Install npm dependencies
@@ -522,10 +522,10 @@ IMO: You might want to consider caching this result.
 - Build production bundle
 - Run tests with coverage
 - Build Docker images
-- Push images to GHCR (on master only)
+- Push images to GHCR (on main only)
 
 #### 3. Code Quality (`.github/workflows/code-quality.yml`)
-**Triggers:** PRs to `master`/`develop`
+**Triggers:** PRs to `main`/`develop`
 **Jobs:**
 - **Backend Quality:**
   - Code formatting check (`dotnet format`)
@@ -542,7 +542,7 @@ IMO: You might want to consider caching this result.
   - Dependency review
 
 #### 4. Deploy (`.github/workflows/deploy.yml`)
-**Triggers:** Manual workflow_dispatch, Push to `master`
+**Triggers:** Manual workflow_dispatch, Push to `main`
 **Jobs:** (To be configured for your environment)
 - Deploy to Azure
 - Run database migrations
@@ -662,14 +662,14 @@ Related to #88"
 
 ### Setting Up Branch Protection
 
-#### For `master` Branch
+#### For `main` Branch
 
 1. Go to: https://github.com/smartsolutionslab/orange-car-rental-solution/settings/branches
-2. Click "Add rule" or edit "master"
+2. Click "Add rule" or edit "main"
 3. Configure:
 
 ```
-Branch name pattern: master
+Branch name pattern: main
 
 ✅ Require a pull request before merging
    ✅ Require approvals: 2
@@ -702,7 +702,7 @@ Branch name pattern: master
 
 #### For `develop` Branch
 
-Same as master but:
+Same as main but:
 ```
 ✅ Require approvals: 1 (instead of 2)
 ```
@@ -786,7 +786,7 @@ None
 - [ ] Security scan passed
 - [ ] Documentation updated
 - [ ] Release notes reviewed" \
-  --base master \
+  --base main \
   --head release/v1.1.0
 ```
 
@@ -798,8 +798,8 @@ None
 
 #### 4. Tag Release
 ```bash
-git checkout master
-git pull origin master
+git checkout main
+git pull origin main
 
 # Create annotated tag
 git tag -a v1.1.0 -m "Release v1.1.0
@@ -820,19 +820,19 @@ git push origin v1.1.0
 gh release create v1.1.0 \
   --title "Version 1.1.0" \
   --notes-file RELEASE_NOTES.md \
-  --target master
+  --target main
 ```
 
 #### 6. Merge Back to Develop
 ```bash
 # Ensure any release fixes are in develop
 git checkout develop
-git merge master
+git merge main
 git push origin develop
 ```
 
 #### 7. Deploy to Production
-- Deployment auto-triggers from master push
+- Deployment auto-triggers from main push
 - Manual approval required in GitHub Actions
 - Monitor logs and metrics
 - Rollback plan ready
@@ -842,9 +842,9 @@ git push origin develop
 For critical production bugs:
 
 ```bash
-# Create hotfix from master
-git checkout master
-git pull origin master
+# Create hotfix from main
+git checkout main
+git pull origin main
 git checkout -b hotfix/99-critical-security-fix
 
 # Make fix
@@ -854,12 +854,12 @@ git commit -m "fix(security): patch XSS vulnerability
 Closes #99"
 git push -u origin hotfix/99-critical-security-fix
 
-# Create PR to master (expedited review)
-gh pr create --base master --head hotfix/99-critical-security-fix
+# Create PR to main (expedited review)
+gh pr create --base main --head hotfix/99-critical-security-fix
 
 # After merge, also merge to develop
 git checkout develop
-git merge master
+git merge main
 git push origin develop
 ```
 

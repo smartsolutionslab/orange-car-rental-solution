@@ -13,7 +13,7 @@ All workflows are located in `.github/workflows/`:
 ### 1. **unit-tests.yml** - Unit Testing
 
 **Triggers:**
-- Push to `develop`, `main`, or `master`
+- Push to `develop` or `main`
 - Pull requests to these branches
 
 **Jobs:**
@@ -37,7 +37,7 @@ dotnet test              # Backend tests
 ### 2. **integration-tests.yml** - Integration Testing
 
 **Triggers:**
-- Push to `develop`, `main`, or `master`
+- Push to `develop` or `main`
 - Pull requests to these branches
 
 **Services:**
@@ -57,7 +57,7 @@ dotnet test              # Backend tests
 ### 3. **e2e-tests.yml** - End-to-End Testing
 
 **Triggers:**
-- Push to `develop`, `main`, or `master`
+- Push to `develop` or `main`
 - Pull requests to these branches
 - Daily schedule at 2 AM UTC
 - Manual workflow dispatch
@@ -92,7 +92,7 @@ TEST_GUEST_EMAIL
 ### 4. **build.yml** - Build and Lint
 
 **Triggers:**
-- Push to `develop`, `main`, or `master`
+- Push to `develop` or `main`
 - Pull requests to these branches
 
 **Jobs:**
@@ -116,7 +116,7 @@ TEST_GUEST_EMAIL
 ### 5. **deploy.yml** - Deployment
 
 **Triggers:**
-- Push to `main` or `master` (production)
+- Push to `main` (production)
 - Push to `develop` (staging)
 - Tags matching `v*` (releases)
 - Manual workflow dispatch with environment selection
@@ -181,7 +181,7 @@ Configure these in your GitHub repository settings (`Settings > Secrets and vari
 - **Environment**: `staging`
 
 ### Production Deployment
-- **Trigger**: Push to `main`/`master` or version tags
+- **Trigger**: Push to `main` or version tags
 - **Automatic**: Yes
 - **Approval**: Required (configured in GitHub Environment)
 - **Environment**: `production`

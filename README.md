@@ -4,10 +4,10 @@ A modern, cloud-ready car rental software system built with Domain-Driven Design
 
 **Target Market:** 🇩🇪 German market with full GDPR/DSGVO compliance, German language support, and VAT handling
 
-[![E2E Tests](https://github.com/YOUR_USERNAME/orange-car-rental/workflows/E2E%20Tests%20-%20Public%20Portal/badge.svg)](https://github.com/YOUR_USERNAME/orange-car-rental/actions)
-[![Unit Tests](https://github.com/YOUR_USERNAME/orange-car-rental/workflows/Unit%20Tests/badge.svg)](https://github.com/YOUR_USERNAME/orange-car-rental/actions)
-[![PR Checks](https://github.com/YOUR_USERNAME/orange-car-rental/workflows/Pull%20Request%20Checks/badge.svg)](https://github.com/YOUR_USERNAME/orange-car-rental/actions)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/orange-car-rental/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/orange-car-rental)
+[![E2E Tests](https://github.com/smartsolutionslab/orange-car-rental-solution/workflows/E2E%20Tests%20-%20Public%20Portal/badge.svg)](https://github.com/smartsolutionslab/orange-car-rental-solution/actions)
+[![Unit Tests](https://github.com/smartsolutionslab/orange-car-rental-solution/workflows/Unit%20Tests/badge.svg)](https://github.com/smartsolutionslab/orange-car-rental-solution/actions)
+[![PR Checks](https://github.com/smartsolutionslab/orange-car-rental-solution/workflows/Pull%20Request%20Checks/badge.svg)](https://github.com/smartsolutionslab/orange-car-rental-solution/actions)
+[![codecov](https://codecov.io/gh/smartsolutionslab/orange-car-rental-solution/branch/main/graph/badge.svg)](https://codecov.io/gh/smartsolutionslab/orange-car-rental-solution)
 
 ## Features
 
@@ -76,8 +76,8 @@ The easiest way to run the entire system locally:
 
 ```bash
 # Clone the repository
-git clone https://github.com/YOUR_USERNAME/orange-car-rental.git
-cd orange-car-rental
+git clone https://github.com/smartsolutionslab/orange-car-rental-solution.git
+cd orange-car-rental-solution
 
 # Start all services with .NET Aspire
 cd src/backend/AppHost

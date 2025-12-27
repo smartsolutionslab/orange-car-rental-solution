@@ -30,8 +30,8 @@ Thank you for your interest in contributing to Orange Car Rental! This document 
 
 1. **Fork and Clone**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/orange-car-rental.git
-   cd orange-car-rental
+   git clone https://github.com/smartsolutionslab/orange-car-rental-solution.git
+   cd orange-car-rental-solution
    ```
 
 2. **Run Automated Setup**
