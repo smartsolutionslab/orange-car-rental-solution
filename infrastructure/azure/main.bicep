@@ -53,18 +53,18 @@ module aks './modules/aks.bicep' = {
   }
 }
 
-// Azure Database for PostgreSQL
-module postgres './modules/postgres.bicep' = {
+// Azure SQL Database
+module sqlServer './modules/sqlserver.bicep' = {
   scope: rg
-  name: 'postgres-deployment'
+  name: 'sqlserver-deployment'
   params: {
     location: location
-    serverName: '${prefix}-${environment}-postgres'
-    adminUsername: 'pgadmin'
+    serverName: '${prefix}-${environment}-sql'
+    adminUsername: 'sqladmin'
     databaseName: 'orangecarrental'
-    tier: environment == 'production' ? 'GeneralPurpose' : 'Burstable'
-    skuName: environment == 'production' ? 'Standard_D4s_v3' : 'Standard_B2s'
-    storageSizeGB: environment == 'production' ? 256 : 64
+    skuName: environment == 'production' ? 'S3' : 'Basic'
+    skuTier: environment == 'production' ? 'Standard' : 'Basic'
+    maxSizeGB: environment == 'production' ? 250 : 2
     backupRetentionDays: environment == 'production' ? 35 : 7
     tags: tags
   }
@@ -132,7 +132,7 @@ module actionGroup './modules/actiongroup.bicep' = {
 output resourceGroupName string = rg.name
 output acrLoginServer string = acr.outputs.loginServer
 output aksClusterName string = aks.outputs.clusterName
-output postgresServerName string = postgres.outputs.serverName
+output sqlServerName string = sqlServer.outputs.serverName
 output keyVaultName string = keyVault.outputs.keyVaultName
 output appInsightsConnectionString string = appInsights.outputs.connectionString
 output logAnalyticsWorkspaceId string = logAnalytics.outputs.workspaceId
