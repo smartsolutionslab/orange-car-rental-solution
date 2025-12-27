@@ -13,8 +13,11 @@ Your Orange Car Rental application is production-ready for local development. He
 
 **Access Points** (currently active):
 ```bash
-# Frontend - Try the user interface
-http://localhost:4201
+# Shell - Main microfrontend host
+http://localhost:4300
+
+# Public Portal - Customer-facing interface
+http://localhost:4301
 
 # Aspire Dashboard - Monitor everything
 https://localhost:17161
@@ -33,7 +36,7 @@ http://localhost:5002/api/vehicles
 ### 2. Test the Booking Flow
 
 **End-to-End Test:**
-1. Open http://localhost:4201
+1. Open http://localhost:4301
 2. Browse available vehicles (33 vehicles seeded)
 3. Filter by location, category, or price
 4. Select a vehicle and check details
@@ -152,7 +155,7 @@ Admin: admin / admin
 
 ```typescript
 test('search for available vehicles', async ({ page }) => {
-  await page.goto('http://localhost:4201');
+  await page.goto('http://localhost:4301');
 
   // Should show vehicles from seed data
   await expect(page.locator('.vehicle-card')).toHaveCount(20); // First page
@@ -486,7 +489,7 @@ Track your progress:
 ```bash
 cd src/backend/AppHost/OrangeCarRental.AppHost
 dotnet run
-# Then open http://localhost:4201
+# Then open http://localhost:4300 (Shell) or http://localhost:4301 (Public Portal)
 ```
 
 Happy coding! 🚗💨

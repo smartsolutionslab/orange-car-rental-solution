@@ -5,9 +5,10 @@ This directory contains end-to-end tests for the Orange Car Rental application u
 ## Prerequisites
 
 - Node.js 18+ installed
-- Backend API running on `http://localhost:5000`
-- Public Portal running on `http://localhost:4200`
-- Call Center Portal running on `http://localhost:4201`
+- Backend API running on `http://localhost:5002`
+- Shell running on `http://localhost:4300`
+- Public Portal running on `http://localhost:4301`
+- Call Center Portal running on `http://localhost:4302`
 - Test Keycloak users configured
 
 ## Installation
@@ -44,7 +45,7 @@ Create a `.env` file in project root:
 
 ```env
 # Base URLs (optional, defaults provided)
-BASE_URL=http://localhost:4200
+BASE_URL=http://localhost:4300
 
 # Test User Credentials
 TEST_CUSTOMER_USERNAME=test-customer@example.com

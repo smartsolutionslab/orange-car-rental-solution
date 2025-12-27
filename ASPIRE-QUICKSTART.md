@@ -56,8 +56,9 @@ The Aspire Dashboard provides:
 | Application | URL | Description |
 |-------------|-----|-------------|
 | Aspire Dashboard | https://localhost:17161 | Service orchestration and monitoring |
-| Public Portal | http://localhost:4200 | Customer-facing booking interface |
-| Call Center Portal | http://localhost:4201 | Agent reservation management |
+| Shell | http://localhost:4300 | Microfrontend host application |
+| Public Portal | http://localhost:4301 | Customer-facing booking interface |
+| Call Center Portal | http://localhost:4302 | Agent reservation management |
 | API Gateway | http://localhost:5002 | REST API endpoint |
 | Keycloak | http://localhost:8080 | Authentication server |
 
