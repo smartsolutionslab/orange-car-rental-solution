@@ -294,7 +294,7 @@ Each microservice has its own database for:
 ## Additional Resources
 
 - [.NET Aspire Documentation](https://learn.microsoft.com/en-us/dotnet/aspire/)
-- [Project DATABASE.md](./DATABASE.md) - Database setup details
+- Database migrations run automatically via the `db-migrator` service
 - [Keycloak Documentation](https://www.keycloak.org/documentation)
 - [YARP Documentation](https://microsoft.github.io/reverse-proxy/)
 

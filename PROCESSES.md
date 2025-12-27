@@ -767,7 +767,7 @@ public class NotificationWorker : BackgroundService
 3. Implement cache-aside pattern in query handlers
 4. Monitor cache hit/miss rates
 
-**See BACKING-SERVICES.md for detailed Redis implementation guide.**
+**Redis is configured via .NET Aspire in the AppHost project.**
 
 ---
 

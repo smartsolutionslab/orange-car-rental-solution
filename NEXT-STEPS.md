@@ -50,7 +50,6 @@ http://localhost:5002/api/vehicles
 **Read in this order:**
 1. [ASPIRE-QUICKSTART.md](./ASPIRE-QUICKSTART.md) - Development workflow
 2. [DEPLOYMENT-STATUS.md](./DEPLOYMENT-STATUS.md) - Current system state
-3. [DATABASE.md](./DATABASE.md) - Database details
 
 ---
 
@@ -429,7 +428,7 @@ jobs:
 ### Documentation
 - Check [ASPIRE-QUICKSTART.md](./ASPIRE-QUICKSTART.md) for common issues
 - Review [DEPLOYMENT-STATUS.md](./DEPLOYMENT-STATUS.md) for system status
-- Consult [DATABASE.md](./DATABASE.md) for database help
+- Check [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) for troubleshooting
 
 ### Troubleshooting
 1. Check Aspire Dashboard logs first

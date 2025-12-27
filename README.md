@@ -133,7 +133,6 @@ Complete guides for operating and developing the Orange Car Rental system:
 
 ### Quick Start & Operations
 - 📘 [**ASPIRE-QUICKSTART.md**](./ASPIRE-QUICKSTART.md) - Quick start guide for .NET Aspire development
-- 🛠️ [**SERVICE-MANAGEMENT.md**](./SERVICE-MANAGEMENT.md) - Starting, stopping, and managing all services
 - 📊 [**DEPLOYMENT-STATUS.md**](./DEPLOYMENT-STATUS.md) - Current system status and health report
 - 🗺️ [**NEXT-STEPS.md**](./NEXT-STEPS.md) - Recommended development tasks and roadmap
 
@@ -152,8 +151,8 @@ Complete guides for operating and developing the Orange Car Rental system:
 - 🔍 [**TROUBLESHOOTING.md**](./TROUBLESHOOTING.md) - Common issues and solutions
 
 ### Database
-- 🗄️ [**DATABASE.md**](./DATABASE.md) - Database setup and management
-- 📝 [**Seed Data Script**](./scripts/db/seed-test-data-sqlserver.sql) - Test data for development
+- 🗄️ Database migrations are handled automatically by EF Core via .NET Aspire
+- 📝 Seed data is applied automatically on service startup
 
 ## Project Structure
 
@@ -181,8 +180,8 @@ orange-car-rental/
 │           ├── data-access/         # API clients
 │           └── util/                # Utilities
 │
-├── docs/                            # Documentation
-├── scripts/                         # Build and deployment scripts
+├── infrastructure/                  # Azure deployment templates
+├── monitoring/                      # Monitoring configuration
 ├── ARCHITECTURE.md                  # Architecture documentation
 └── README.md                        # This file
 ```

@@ -322,7 +322,6 @@ http://localhost:4201
 
 ### Documentation
 - [ASPIRE-QUICKSTART.md](./ASPIRE-QUICKSTART.md) - Quick start guide
-- [DATABASE.md](./DATABASE.md) - Database setup details
 - [README.md](./README.md) - Project overview
 
 ### Troubleshooting
