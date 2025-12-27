@@ -1,2 +1,3 @@
-// Export UI components
-// Example: export * from './button.component';
+// Export shared UI components
+export * from './layout';
+export * from './navigation';

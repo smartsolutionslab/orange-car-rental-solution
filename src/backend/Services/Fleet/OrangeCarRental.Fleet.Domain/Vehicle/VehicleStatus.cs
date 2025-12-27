@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Current status of a vehicle.
+///     Current status of a vehicle.
 /// </summary>
 public enum VehicleStatus
 {

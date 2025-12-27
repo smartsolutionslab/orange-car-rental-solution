@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
 
@@ -7,34 +8,44 @@ public static class PricingEndpoints
     public static IEndpointRouteBuilder MapPricingEndpoints(this IEndpointRouteBuilder app)
     {
         var pricing = app.MapGroup("/api/pricing")
-            .WithTags("Pricing")
-            .WithOpenApi();
+            .WithTags("Pricing");
 
         // POST /api/pricing/calculate - Calculate rental price
         pricing.MapPost("/calculate", async (
-            CalculatePriceQuery query,
-            CalculatePriceQueryHandler handler,
-            CancellationToken cancellationToken) =>
-        {
-            try
+                CalculatePriceRequest request,
+                CalculatePriceQueryHandler handler,
+                CancellationToken cancellationToken) =>
             {
-                var result = await handler.HandleAsync(query, cancellationToken);
-                return Results.Ok(result);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Results.BadRequest(new { message = ex.Message });
-            }
-            catch (ArgumentException ex)
-            {
-                return Results.BadRequest(new { message = ex.Message });
-            }
-        })
-        .WithName("CalculatePrice")
-        .WithSummary("Calculate rental price")
-        .WithDescription("Calculates the total rental price for a vehicle category and period with German VAT (19%). Supports location-specific pricing if configured.")
-        .Produces<PriceCalculationResult>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status400BadRequest);
+                try
+                {
+                    // Map request DTO to query with value objects
+                    var query = new CalculatePriceQuery(
+                        CategoryCode.From(request.CategoryCode),
+                        request.PickupDate,
+                        request.ReturnDate,
+                        !string.IsNullOrWhiteSpace(request.LocationCode)
+                            ? LocationCode.From(request.LocationCode)
+                            : null);
+
+                    var result = await handler.HandleAsync(query, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+            })
+            .WithName("CalculatePrice")
+            .WithSummary("Calculate rental price")
+            .WithDescription(
+                "Calculates the total rental price for a vehicle category and period with German VAT (19%). Supports location-specific pricing if configured.")
+            .Produces<PriceCalculationResult>()
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .AllowAnonymous();
 
         return app;
     }

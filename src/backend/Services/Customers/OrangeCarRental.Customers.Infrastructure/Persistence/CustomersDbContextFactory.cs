@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 
 /// <summary>
-/// Design-time factory for creating CustomersDbContext instances.
-/// Used by EF Core tools for migrations.
+///     Design-time factory for creating CustomersDbContext instances.
+///     Used by EF Core tools for migrations.
 /// </summary>
 public class CustomersDbContextFactory : IDesignTimeDbContextFactory<CustomersDbContext>
 {

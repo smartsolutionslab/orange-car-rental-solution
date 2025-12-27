@@ -1,7 +1,18 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Vehicle, VehicleSearchQuery, VehicleSearchResult } from './vehicle.model';
+import type {
+  Vehicle,
+  VehicleId,
+  DailyRate,
+  VehicleSearchQuery,
+  VehicleSearchResult,
+  AddVehicleRequest,
+  AddVehicleResult,
+} from '@orange-car-rental/vehicle-api';
+import { VehicleStatus } from '@orange-car-rental/vehicle-api';
+import type { LocationCode } from '@orange-car-rental/location-api';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
 import { ConfigService } from './config.service';
 
 /**
@@ -9,7 +20,7 @@ import { ConfigService } from './config.service';
  * Handles vehicle search and related operations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VehicleService {
   private readonly http = inject(HttpClient);
@@ -25,23 +36,7 @@ export class VehicleService {
    * @returns Observable of search results with vehicles and pagination
    */
   searchVehicles(query?: VehicleSearchQuery): Observable<VehicleSearchResult> {
-    let params = new HttpParams();
-
-    if (query) {
-      // Add query parameters only if they have values
-      if (query.pickupDate) params = params.set('pickupDate', query.pickupDate);
-      if (query.returnDate) params = params.set('returnDate', query.returnDate);
-      if (query.locationCode) params = params.set('locationCode', query.locationCode);
-      if (query.categoryCode) params = params.set('categoryCode', query.categoryCode);
-      if (query.minSeats !== undefined) params = params.set('minSeats', query.minSeats.toString());
-      if (query.fuelType) params = params.set('fuelType', query.fuelType);
-      if (query.transmissionType) params = params.set('transmissionType', query.transmissionType);
-      if (query.maxDailyRateGross !== undefined) params = params.set('maxDailyRateGross', query.maxDailyRateGross.toString());
-      if (query.status) params = params.set('status', query.status);
-      if (query.pageNumber !== undefined) params = params.set('pageNumber', query.pageNumber.toString());
-      if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
-    }
-
+    const params = HttpParamsBuilder.fromObject(query);
     return this.http.get<VehicleSearchResult>(this.apiUrl, { params });
   }
 
@@ -50,7 +45,52 @@ export class VehicleService {
    * @param id Vehicle ID
    * @returns Observable of vehicle details
    */
-  getVehicleById(id: string): Observable<Vehicle> {
+  getVehicleById(id: VehicleId): Observable<Vehicle> {
     return this.http.get<Vehicle>(`${this.apiUrl}/${id}`);
+  }
+
+  /**
+   * Add a new vehicle to the fleet
+   * @param request Add vehicle request with vehicle details
+   * @returns Observable of the created vehicle result
+   */
+  addVehicle(request: AddVehicleRequest): Observable<AddVehicleResult> {
+    return this.http.post<AddVehicleResult>(this.apiUrl, request);
+  }
+
+  /**
+   * Update vehicle status
+   * @param vehicleId Vehicle ID
+   * @param status New status
+   * @returns Observable of void
+   */
+  updateVehicleStatus(vehicleId: VehicleId, status: VehicleStatus): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${vehicleId}/status?status=${status}`, {});
+  }
+
+  /**
+   * Update vehicle location
+   * @param vehicleId Vehicle ID
+   * @param locationCode New location code
+   * @returns Observable of void
+   */
+  updateVehicleLocation(vehicleId: VehicleId, locationCode: LocationCode): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/${vehicleId}/location?locationCode=${locationCode}`,
+      {},
+    );
+  }
+
+  /**
+   * Update vehicle daily rate
+   * @param vehicleId Vehicle ID
+   * @param dailyRateNet New daily rate (net amount in EUR, VAT will be calculated)
+   * @returns Observable of void
+   */
+  updateVehicleDailyRate(vehicleId: VehicleId, dailyRateNet: DailyRate): Observable<void> {
+    return this.http.put<void>(
+      `${this.apiUrl}/${vehicleId}/daily-rate?dailyRateNet=${dailyRateNet}`,
+      {},
+    );
   }
 }

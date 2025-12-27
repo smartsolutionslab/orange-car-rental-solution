@@ -1,0 +1,55 @@
+@if (totalPages() > 1) {
+  <div class="pagination-container">
+    @if (showItemRange() && totalItems() && pageSize()) {
+      <div class="pagination-info">
+        Zeige {{ rangeStart() }} - {{ rangeEnd() }} von {{ totalItems() }} {{ totalItems() === 1 ? itemLabel() : itemLabelPlural() }}
+      </div>
+    }
+
+    <div class="pagination">
+      <button
+        class="btn-pagination"
+        (click)="previousPage()"
+        [disabled]="currentPage() === 1"
+      >
+        <lib-icon name="chevron-left-filled" variant="filled" [customSize]="20" />
+        {{ previousLabel() }}
+      </button>
+
+      <div class="page-numbers">
+        @if (showLeadingFirstPage()) {
+          <button class="btn-page" (click)="goToPage(1)">1</button>
+          @if (showLeadingDots()) {
+            <span class="pagination-ellipsis">...</span>
+          }
+        }
+
+        @for (p of visiblePages(); track p) {
+          <button
+            class="btn-page"
+            [class.active]="p === currentPage()"
+            (click)="goToPage(p)"
+          >
+            {{ p }}
+          </button>
+        }
+
+        @if (showTrailingLastPage()) {
+          @if (showTrailingDots()) {
+            <span class="pagination-ellipsis">...</span>
+          }
+          <button class="btn-page" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+        }
+      </div>
+
+      <button
+        class="btn-pagination"
+        (click)="nextPage()"
+        [disabled]="currentPage() === totalPages()"
+      >
+        {{ nextLabel() }}
+        <lib-icon name="chevron-right-filled" variant="filled" [customSize]="20" />
+      </button>
+    </div>
+  </div>
+}

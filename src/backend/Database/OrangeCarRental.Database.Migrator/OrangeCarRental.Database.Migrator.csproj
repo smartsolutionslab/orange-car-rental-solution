@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Infrastructure\OrangeCarRental.Customers.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Fleet\OrangeCarRental.Fleet.Infrastructure\OrangeCarRental.Fleet.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Location\OrangeCarRental.Location.Infrastructure\OrangeCarRental.Location.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Notifications\OrangeCarRental.Notifications.Infrastructure\OrangeCarRental.Notifications.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Payments\OrangeCarRental.Payments.Infrastructure\OrangeCarRental.Payments.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Infrastructure\OrangeCarRental.Pricing.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Infrastructure\OrangeCarRental.Reservations.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

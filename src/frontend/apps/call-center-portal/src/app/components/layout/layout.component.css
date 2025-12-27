@@ -50,6 +50,7 @@
   margin: 0 auto;
   padding: 1.5rem 1rem;
   width: 100%;
+  background-color: #f0f0f0;
 }
 
 .layout--full-width .layout__body {

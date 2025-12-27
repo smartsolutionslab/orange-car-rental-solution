@@ -1,332 +1,590 @@
 <div class="page-header">
-  <h1>Buchungsverwaltung</h1>
-  <p class="subtitle">Verwalten Sie alle Reservierungen und Buchungen</p>
+  <h1>{{ 'reservations.title' | translate }}</h1>
+  <p class="subtitle">{{ 'reservations.subtitle' | translate }}</p>
 </div>
 
+<!-- Statistics Dashboard -->
 <div class="dashboard-grid">
-  <div class="stat-card">
-    <div class="stat-icon">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Heutige Buchungen</h3>
-      <p class="stat-value">{{ todayReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--success">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Aktive Buchungen</h3>
-      <p class="stat-value">{{ activeReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--warning">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Anstehend</h3>
-      <p class="stat-value">{{ pendingReservations() }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--info">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Gesamt</h3>
-      <p class="stat-value">{{ totalReservations() }}</p>
-    </div>
-  </div>
+  <ui-stat-card
+    [label]="'reservations.stats.todayBookings' | translate"
+    [value]="todayReservations()"
+    [loading]="loading()"
+    iconName="calendar-filled"
+  />
+  <ui-stat-card
+    [label]="'reservations.stats.activeBookings' | translate"
+    [value]="activeReservations()"
+    [loading]="loading()"
+    variant="success"
+  />
+  <ui-stat-card
+    [label]="'reservations.stats.pending' | translate"
+    [value]="pendingReservations()"
+    [loading]="loading()"
+    variant="warning"
+  />
+  <ui-stat-card
+    [label]="'reservations.stats.total' | translate"
+    [value]="totalCount()"
+    [loading]="loading()"
+    variant="info"
+    iconName="clock-filled"
+  />
 </div>
 
 <!-- Success Message -->
 @if (successMessage()) {
-  <div class="success-message">
-    <svg viewBox="0 0 24 24" fill="currentColor">
-      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-    </svg>
-    {{ successMessage() }}
-  </div>
+  <ui-success-alert [message]="successMessage()!"></ui-success-alert>
+}
+
+<!-- Error Message -->
+@if (error()) {
+  <ui-error-alert [message]="error()!"></ui-error-alert>
 }
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Reservierungsübersicht</h2>
+    <h2>{{ 'reservations.overview' | translate }}</h2>
     <button class="btn-primary" disabled>
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
-      Neue Buchung
+      <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
+      {{ 'common.actions.newBooking' | translate }}
     </button>
   </div>
 
-  <!-- Search Filters -->
-  <div class="filters-section">
-    <div class="filter-group">
-      <label for="statusFilter">Status</label>
-      <select id="statusFilter" [(ngModel)]="searchStatus" (change)="applyFilters()">
-        <option value="">Alle</option>
-        <option value="Pending">Ausstehend</option>
-        <option value="Confirmed">Bestätigt</option>
-        <option value="Active">Aktiv</option>
-        <option value="Completed">Abgeschlossen</option>
-        <option value="Cancelled">Storniert</option>
-      </select>
+  <!-- Advanced Filters Section -->
+  <div class="filters-panel">
+    <div class="filters-header">
+      <h3>{{ 'reservations.filters.title' | translate }}</h3>
+      <div class="filters-actions">
+        @if (activeFiltersCount() > 0) {
+          <span class="active-filters-badge">{{
+            'common.messages.activeFilters' | translate: { count: activeFiltersCount() }
+          }}</span>
+        }
+        <button class="btn-secondary btn-sm" (click)="clearFilters()">
+          <lib-icon name="x-filled" variant="filled" size="sm" aria-hidden="true" />
+          {{ 'common.actions.reset' | translate }}
+        </button>
+      </div>
     </div>
 
-    <div class="filter-group">
-      <label for="customerFilter">Kunden-ID</label>
-      <input
-        type="text"
-        id="customerFilter"
-        [(ngModel)]="searchCustomerId"
-        placeholder="Kunden-ID eingeben..."
-      />
+    <!-- Filter Grid -->
+    <div class="filters-grid">
+      <!-- Status Filter -->
+      <div class="filter-group">
+        <label for="statusFilter">{{ 'reservations.filters.status' | translate }}</label>
+        <ui-select-reservation-status
+          id="statusFilter"
+          [(ngModel)]="searchStatus"
+          [placeholder]="'reservations.filters.allStatus' | translate"
+        />
+      </div>
+
+      <!-- Customer ID Filter -->
+      <div class="filter-group">
+        <label for="customerFilter">{{ 'reservations.filters.customerId' | translate }}</label>
+        <input
+          type="text"
+          id="customerFilter"
+          [(ngModel)]="searchCustomerId"
+          [placeholder]="'reservations.filters.customerIdPlaceholder' | translate"
+        />
+      </div>
+
+      <!-- Pickup Date From -->
+      <div class="filter-group">
+        <label for="dateFromFilter">{{ 'reservations.filters.pickupFrom' | translate }}</label>
+        <input type="date" id="dateFromFilter" [(ngModel)]="searchPickupDateFrom" />
+      </div>
+
+      <!-- Pickup Date To -->
+      <div class="filter-group">
+        <label for="dateToFilter">{{ 'reservations.filters.pickupTo' | translate }}</label>
+        <input type="date" id="dateToFilter" [(ngModel)]="searchPickupDateTo" />
+      </div>
+
+      <!-- Location Filter -->
+      <div class="filter-group">
+        <label for="locationFilter">{{ 'reservations.filters.location' | translate }}</label>
+        <ui-select-location
+          id="locationFilter"
+          [(ngModel)]="searchLocation"
+          [placeholder]="'reservations.filters.allLocations' | translate"
+        />
+      </div>
+
+      <!-- Min Price Filter -->
+      <div class="filter-group">
+        <label for="minPriceFilter">{{ 'reservations.filters.minPrice' | translate }}</label>
+        <input
+          type="number"
+          id="minPriceFilter"
+          [(ngModel)]="searchMinPrice"
+          placeholder="0"
+          min="0"
+        />
+      </div>
+
+      <!-- Max Price Filter -->
+      <div class="filter-group">
+        <label for="maxPriceFilter">{{ 'reservations.filters.maxPrice' | translate }}</label>
+        <input
+          type="number"
+          id="maxPriceFilter"
+          [(ngModel)]="searchMaxPrice"
+          placeholder="1000"
+          min="0"
+        />
+      </div>
+
+      <!-- Apply Filters Button -->
+      <div class="filter-group filter-actions">
+        <button class="btn-primary btn-block" (click)="applyFilters()" [disabled]="loading()">
+          <lib-icon name="filter-filled" variant="filled" [customSize]="18" aria-hidden="true" />
+          {{ 'common.actions.applyFilters' | translate }}
+        </button>
+      </div>
     </div>
 
-    <button class="btn-secondary" (click)="clearFilters()">Filter zurücksetzen</button>
+    <!-- Sorting and Grouping Controls -->
+    <div class="controls-row">
+      <!-- Sorting -->
+      <div class="control-group">
+        <label>{{ 'common.sorting.label' | translate }}</label>
+        <div class="sort-controls">
+          <select [(ngModel)]="sortBy" (change)="applyFilters()">
+            @for (option of sortOptions; track option.value) {
+              <option [value]="option.value">{{ option.labelKey | translate }}</option>
+            }
+          </select>
+          <button
+            class="btn-icon"
+            (click)="changeSortBy(sortBy())"
+            [title]="
+              sortOrder() === 'asc'
+                ? ('common.sorting.ascending' | translate)
+                : ('common.sorting.descending' | translate)
+            "
+            [attr.aria-label]="
+              sortOrder() === 'asc'
+                ? ('common.sorting.ascending' | translate)
+                : ('common.sorting.descending' | translate)
+            "
+          >
+            @if (sortOrder() === 'asc') {
+              <lib-icon
+                name="chevron-up-filled"
+                variant="filled"
+                [customSize]="20"
+                aria-hidden="true"
+              />
+            } @else {
+              <lib-icon
+                name="chevron-down-filled"
+                variant="filled"
+                [customSize]="20"
+                aria-hidden="true"
+              />
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Grouping -->
+      <div class="control-group">
+        <label>{{ 'common.grouping.label' | translate }}</label>
+        <select [(ngModel)]="groupBy" (change)="changeGroupBy(groupBy())">
+          @for (option of groupOptions; track option.value) {
+            <option [value]="option.value">{{ option.labelKey | translate }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Page Size -->
+      <div class="control-group">
+        <label>{{ 'common.pagination.entriesPerPage' | translate }}</label>
+        <ui-select-page-size [(ngModel)]="pageSize" (ngModelChange)="applyFilters()" />
+      </div>
+    </div>
+
+    <!-- Result Count -->
+    <div class="results-info">
+      <p>
+        {{
+          'reservations.results.showing'
+            | translate
+              : {
+                  from: (currentPage() - 1) * pageSize() + 1,
+                  to: Math.min(currentPage() * pageSize(), totalCount()),
+                  total: totalCount(),
+                }
+        }}
+      </p>
+    </div>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Lade Reservierungen...</p>
-    </div>
+    <ui-loading-state [message]="'reservations.loading' | translate"></ui-loading-state>
   }
 
-  <!-- Error State -->
-  @if (error()) {
-    <div class="error-state">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      <p>{{ error() }}</p>
-    </div>
-  }
+  <!-- Reservations Table/List -->
+  @if (!loading() && reservations().length > 0) {
+    <!-- Grouped Display -->
+    @if (groupBy() !== 'none') {
+      <div class="grouped-reservations">
+        @for (groupKey of groupKeys(); track groupKey) {
+          <div class="group-section">
+            <div class="group-header">
+              <h3>{{ groupKey }}</h3>
+              <span class="group-count"
+                >{{ groupedReservations()[groupKey].length }}
+                {{ 'reservations.groups.bookings' | translate }}</span
+              >
+            </div>
+            <div class="reservations-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.location' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.price' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.status' | translate }}</th>
+                    <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (
+                    reservation of groupedReservations()[groupKey];
+                    track reservation.reservationId
+                  ) {
+                    <tr>
+                      <td>
+                        <span class="reservation-id" [title]="reservation.reservationId">
+                          {{ reservation.reservationId.substring(0, 8) }}...
+                        </span>
+                      </td>
+                      <td>{{ reservation.customerId.substring(0, 8) }}...</td>
+                      <td>{{ formatDate(reservation.pickupDate) }}</td>
+                      <td>{{ formatDate(reservation.returnDate) }}</td>
+                      <td>{{ reservation.pickupLocationCode }}</td>
+                      <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
+                      <td>
+                        <ui-status-badge
+                          type="reservation"
+                          [status]="reservation.status"
+                        ></ui-status-badge>
+                      </td>
+                      <td class="actions-cell">
+                        <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
+                          {{ 'common.actions.details' | translate }}
+                        </button>
+                        @if (canConfirm(reservation)) {
+                          <button
+                            class="btn-sm btn-success"
+                            (click)="confirmReservation(reservation)"
+                          >
+                            {{ 'common.actions.confirm' | translate }}
+                          </button>
+                        }
+                        @if (canCancel(reservation)) {
+                          <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
+                            {{ 'reservations.cancel.button' | translate }}
+                          </button>
+                        }
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        }
+      </div>
+    }
 
-  <!-- Reservations Table -->
-  @if (!loading() && !error() && reservations().length > 0) {
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>Reservierungs-ID</th>
-            <th>Kunden-ID</th>
-            <th>Abholung</th>
-            <th>Rückgabe</th>
-            <th>Tage</th>
-            <th>Preis</th>
-            <th>Status</th>
-            <th>Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (reservation of reservations(); track reservation.reservationId) {
+    <!-- Ungrouped Display -->
+    @else {
+      <div class="reservations-table">
+        <table>
+          <thead>
             <tr>
-              <td><span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span></td>
-              <td><span class="id-badge">{{ reservation.customerId.substring(0, 8) }}</span></td>
-              <td>{{ formatDate(reservation.pickupDate) }}</td>
-              <td>{{ formatDate(reservation.returnDate) }}</td>
-              <td>{{ reservation.rentalDays }}</td>
-              <td>{{ reservation.totalPriceGross.toFixed(2) }} {{ reservation.currency }}</td>
-              <td><span class="status-badge" [ngClass]="getStatusClass(reservation.status)">{{ reservation.status }}</span></td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-icon" (click)="viewDetails(reservation)" title="Details anzeigen">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                    </svg>
+              <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.location' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.price' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.status' | translate }}</th>
+              <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (reservation of reservations(); track reservation.reservationId) {
+              <tr>
+                <td>
+                  <span class="reservation-id" [title]="reservation.reservationId">
+                    {{ reservation.reservationId.substring(0, 8) }}...
+                  </span>
+                </td>
+                <td>{{ reservation.customerId.substring(0, 8) }}...</td>
+                <td>{{ formatDate(reservation.pickupDate) }}</td>
+                <td>{{ formatDate(reservation.returnDate) }}</td>
+                <td>{{ reservation.pickupLocationCode }}</td>
+                <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
+                <td>
+                  <ui-status-badge
+                    type="reservation"
+                    [status]="reservation.status"
+                  ></ui-status-badge>
+                </td>
+                <td class="actions-cell">
+                  <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
+                    {{ 'common.actions.details' | translate }}
                   </button>
                   @if (canConfirm(reservation)) {
-                    <button class="btn-icon btn-icon-success" (click)="confirmReservation(reservation)" title="Bestätigen" [disabled]="actionInProgress()">
-                      <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-                      </svg>
+                    <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">
+                      {{ 'common.actions.confirm' | translate }}
                     </button>
                   }
                   @if (canCancel(reservation)) {
-                    <button class="btn-icon btn-icon-danger" (click)="showCancelDialog(reservation)" title="Stornieren" [disabled]="actionInProgress()">
-                      <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-                      </svg>
+                    <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
+                      {{ 'reservations.cancel.button' | translate }}
                     </button>
                   }
-                </div>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <!-- Pagination -->
+    <ui-pagination
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [totalItems]="totalCount()"
+      [pageSize]="pageSize()"
+      [showItemRange]="true"
+      [itemLabel]="'reservations.itemLabel' | translate"
+      [itemLabelPlural]="'reservations.itemLabelPlural' | translate"
+      (pageChange)="goToPage($event)"
+    />
   }
 
-  <!-- No Results -->
-  @if (!loading() && !error() && reservations().length === 0) {
-    <div class="no-results">
-      <svg class="no-results-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM5 7V5h14v2H5zm2 4h10v2H7zm0 4h7v2H7z"/>
-      </svg>
-      <h3>Keine Reservierungen gefunden</h3>
-      <p>Versuchen Sie, die Filter zu ändern oder zu löschen.</p>
-    </div>
+  <!-- Empty State -->
+  @if (!loading() && reservations().length === 0) {
+    <ui-empty-state
+      icon="reservation"
+      [title]="'reservations.empty.title' | translate"
+      [description]="'reservations.empty.description' | translate"
+      [showAction]="activeFiltersCount() > 0"
+      [actionLabel]="'reservations.empty.resetFilters' | translate"
+      (action)="clearFilters()"
+    ></ui-empty-state>
   }
 </div>
 
 <!-- Details Modal -->
-@if (showDetails() && selectedReservation()) {
-  <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal-content" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Reservierungsdetails</h2>
-        <button class="btn-close" (click)="closeDetails()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="detail-grid">
-          <div class="detail-item">
-            <label>Reservierungs-ID</label>
-            <p>{{ selectedReservation()!.reservationId }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Kunden-ID</label>
-            <p>{{ selectedReservation()!.customerId }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Fahrzeug-ID</label>
-            <p>{{ selectedReservation()!.vehicleId }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Status</label>
-            <p><span class="status-badge" [ngClass]="getStatusClass(selectedReservation()!.status)">{{ selectedReservation()!.status }}</span></p>
-          </div>
-          <div class="detail-item">
-            <label>Abholort</label>
-            <p>{{ selectedReservation()!.pickupLocationCode }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Rückgabeort</label>
-            <p>{{ selectedReservation()!.dropoffLocationCode }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Abholdatum</label>
-            <p>{{ formatDate(selectedReservation()!.pickupDate) }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Rückgabedatum</label>
-            <p>{{ formatDate(selectedReservation()!.returnDate) }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Mietdauer</label>
-            <p>{{ selectedReservation()!.rentalDays }} Tage</p>
-          </div>
-          <div class="detail-item">
-            <label>Preis (Netto)</label>
-            <p>{{ selectedReservation()!.totalPriceNet.toFixed(2) }} {{ selectedReservation()!.currency }}</p>
-          </div>
-          <div class="detail-item">
-            <label>MwSt. (19%)</label>
-            <p>{{ selectedReservation()!.totalPriceVat.toFixed(2) }} {{ selectedReservation()!.currency }}</p>
-          </div>
-          <div class="detail-item">
-            <label>Gesamt (Brutto)</label>
-            <p><strong>{{ selectedReservation()!.totalPriceGross.toFixed(2) }} {{ selectedReservation()!.currency }}</strong></p>
-          </div>
-          <div class="detail-item">
-            <label>Erstellt am</label>
-            <p>{{ formatDate(selectedReservation()!.createdAt) }}</p>
-          </div>
-          @if (selectedReservation()!.confirmedAt) {
-            <div class="detail-item">
-              <label>Bestätigt am</label>
-              <p>{{ formatDate(selectedReservation()!.confirmedAt!) }}</p>
-            </div>
-          }
+<ui-modal
+  [isOpen]="showDetails() && !!selectedReservation()"
+  [title]="'reservations.details.title' | translate"
+  size="lg"
+  (close)="closeDetails()"
+>
+  <ng-container modal-body>
+    @if (selectedReservation()) {
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>{{ 'common.labels.reservationId' | translate }}</label>
+          <p>{{ selectedReservation()!.reservationId }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'common.labels.customerId' | translate }}</label>
+          <p>{{ selectedReservation()!.customerId }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.vehicleId' | translate }}</label>
+          <p>{{ selectedReservation()!.vehicleId }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'common.labels.status' | translate }}</label>
+          <p>
+            <ui-status-badge
+              type="reservation"
+              [status]="selectedReservation()!.status"
+            ></ui-status-badge>
+          </p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.pickupDate' | translate }}</label>
+          <p>{{ formatDate(selectedReservation()!.pickupDate) }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.returnDate' | translate }}</label>
+          <p>{{ formatDate(selectedReservation()!.returnDate) }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.pickupLocation' | translate }}</label>
+          <p>{{ selectedReservation()!.pickupLocationCode }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.returnLocation' | translate }}</label>
+          <p>{{ selectedReservation()!.dropoffLocationCode }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.rentalDays' | translate }}</label>
+          <p>{{ selectedReservation()!.rentalDays }}</p>
+        </div>
+        <div class="detail-item">
+          <label>{{ 'reservations.details.createdAt' | translate }}</label>
+          <p>{{ formatDate(selectedReservation()!.createdAt) }}</p>
         </div>
       </div>
-      <div class="modal-footer">
-        @if (canConfirm(selectedReservation()!)) {
-          <button class="btn-success" (click)="confirmReservation(selectedReservation()!)" [disabled]="actionInProgress()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            Bestätigen
-          </button>
-        }
-        @if (canCancel(selectedReservation()!)) {
-          <button class="btn-danger" (click)="showCancelDialog(selectedReservation()!)" [disabled]="actionInProgress()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-            Stornieren
-          </button>
-        }
-        <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
-      </div>
-    </div>
-  </div>
-}
 
-<!-- Cancel Reservation Modal -->
-@if (showCancelModal() && selectedReservation()) {
-  <div class="modal-overlay" (click)="closeCancelModal()">
-    <div class="modal-content modal-content-small" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Reservierung stornieren</h2>
-        <button class="btn-close" (click)="closeCancelModal()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <p class="modal-description">
-          Möchten Sie die Reservierung <strong>{{ selectedReservation()!.reservationId.substring(0, 8) }}</strong> wirklich stornieren?
-        </p>
-        <div class="form-group">
-          <label for="cancelReason">Stornierungsgrund *</label>
-          <textarea
-            id="cancelReason"
-            [(ngModel)]="cancelReason"
-            placeholder="Bitte geben Sie den Grund für die Stornierung ein..."
-            rows="4"
-            [disabled]="actionInProgress()"
-          ></textarea>
-          @if (error() && !cancelReason().trim()) {
-            <span class="error-text">{{ error() }}</span>
-          }
+      <div class="price-section">
+        <h3>{{ 'reservations.pricing.title' | translate }}</h3>
+        <div class="price-breakdown">
+          <div class="price-row">
+            <span>{{ 'reservations.pricing.netAmount' | translate }}:</span>
+            <span>{{ formatPrice(selectedReservation()!.totalPriceNet) }}</span>
+          </div>
+          <div class="price-row">
+            <span>{{ 'reservations.pricing.vat' | translate }}:</span>
+            <span>{{ formatPrice(selectedReservation()!.totalPriceVat) }}</span>
+          </div>
+          <div class="price-row total">
+            <span
+              ><strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong></span
+            >
+            <span
+              ><strong>{{ formatPrice(selectedReservation()!.totalPriceGross) }}</strong></span
+            >
+          </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-danger" (click)="cancelReservation()" [disabled]="actionInProgress() || !cancelReason().trim()">
-          @if (actionInProgress()) {
-            <div class="button-spinner"></div>
-          } @else {
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-          }
-          Stornieren
-        </button>
-        <button class="btn-secondary" (click)="closeCancelModal()" [disabled]="actionInProgress()">Abbrechen</button>
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    @if (selectedReservation() && canConfirm(selectedReservation()!)) {
+      <button
+        class="btn-success"
+        (click)="confirmReservation(selectedReservation()!)"
+        [disabled]="actionInProgress()"
+      >
+        {{ 'reservations.confirm.button' | translate }}
+      </button>
+    }
+    @if (selectedReservation() && canCancel(selectedReservation()!)) {
+      <button
+        class="btn-danger"
+        (click)="showCancelDialog(selectedReservation()!)"
+        [disabled]="actionInProgress()"
+      >
+        {{ 'reservations.cancel.button' | translate }}
+      </button>
+    }
+    <button class="btn-secondary" (click)="closeDetails()">
+      {{ 'common.actions.close' | translate }}
+    </button>
+  </ng-container>
+</ui-modal>
+
+<!-- Cancel Modal -->
+<ui-modal
+  [isOpen]="showCancelModal() && !!selectedReservation()"
+  [title]="'reservations.cancel.title' | translate"
+  size="sm"
+  (close)="closeCancelModal()"
+>
+  <ng-container modal-body>
+    @if (selectedReservation()) {
+      <p>{{ 'reservations.cancel.message' | translate }}</p>
+      <p>
+        <strong>{{ 'common.labels.reservationId' | translate }}:</strong>
+        {{ selectedReservation()!.reservationId.substring(0, 8) }}...
+      </p>
+
+      <div class="form-group">
+        <label for="cancelReason">{{ 'reservations.cancel.reason' | translate }} *</label>
+        <textarea
+          id="cancelReason"
+          [(ngModel)]="cancelReason"
+          rows="4"
+          [placeholder]="'reservations.cancel.reasonPlaceholder' | translate"
+          class="form-control"
+        ></textarea>
       </div>
-    </div>
-  </div>
-}
+
+      @if (error()) {
+        <ui-error-state variant="inline" [message]="error()!"></ui-error-state>
+      }
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    <button class="btn-secondary" (click)="closeCancelModal()">
+      {{ 'common.actions.cancel' | translate }}
+    </button>
+    <button
+      class="btn-danger"
+      (click)="cancelReservation()"
+      [disabled]="!cancelReason() || actionInProgress()"
+    >
+      {{
+        actionInProgress()
+          ? ('reservations.cancel.inProgress' | translate)
+          : ('reservations.cancel.execute' | translate)
+      }}
+    </button>
+  </ng-container>
+</ui-modal>
+
+<!-- Confirm Modal -->
+<ui-modal
+  [isOpen]="showConfirmModal() && !!selectedReservation()"
+  [title]="'reservations.confirm.title' | translate"
+  size="sm"
+  (close)="closeConfirmModal()"
+>
+  <ng-container modal-body>
+    @if (selectedReservation()) {
+      <p>{{ 'reservations.confirm.message' | translate }}</p>
+      <p>
+        <strong>{{ 'common.labels.reservationId' | translate }}:</strong>
+        {{ selectedReservation()!.reservationId.substring(0, 8) }}...
+      </p>
+      <p>
+        <strong>{{ 'reservations.table.customer' | translate }}:</strong>
+        {{ selectedReservation()!.customerId.substring(0, 8) }}...
+      </p>
+      <p>
+        <strong>{{ 'reservations.details.pickupDate' | translate }}:</strong>
+        {{ formatDate(selectedReservation()!.pickupDate) }}
+      </p>
+      <p>
+        <strong>{{ 'reservations.pricing.grossAmount' | translate }}:</strong>
+        {{ formatPrice(selectedReservation()!.totalPriceGross) }}
+      </p>
+
+      @if (error()) {
+        <ui-error-state variant="inline" [message]="error()!"></ui-error-state>
+      }
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    <button class="btn-secondary" (click)="closeConfirmModal()">
+      {{ 'common.actions.cancel' | translate }}
+    </button>
+    <button class="btn-success" (click)="executeConfirmation()" [disabled]="actionInProgress()">
+      {{
+        actionInProgress()
+          ? ('reservations.confirm.inProgress' | translate)
+          : ('reservations.confirm.execute' | translate)
+      }}
+    </button>
+  </ng-container>
+</ui-modal>

@@ -1,15 +1,21 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
 /// <summary>
-/// Handler for ChangeCustomerStatusCommand.
-/// Loads the customer, changes account status, and persists changes.
+///     Handler for ChangeCustomerStatusCommand.
+///     Loads the customer, changes account status, and persists via event sourcing.
 /// </summary>
-public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository customers)
+public sealed class ChangeCustomerStatusCommandHandler(
+    ICustomerCommandService commandService,
+    ICustomersUnitOfWork unitOfWork)
+    : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
-    /// Handles the change customer status command.
+    ///     Handles the change customer status command.
     /// </summary>
     /// <param name="command">The command with new status and reason.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -20,43 +26,27 @@ public sealed class ChangeCustomerStatusCommandHandler(ICustomerRepository custo
         ChangeCustomerStatusCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load customer
-        var customerId = CustomerId.From(command.CustomerId);
-        var customer = await customers.GetByIdAsync(customerId, cancellationToken);
+        var (customerId, newStatusValue, reason) = command;
+        var newStatus = newStatusValue.ParseCustomerStatus();
 
-        if (customer is null)
-        {
-            throw new InvalidOperationException(
-                $"Customer with ID '{command.CustomerId}' not found.");
-        }
+        // Get current status from read model for the response
+        var existingCustomer = await unitOfWork.Customers.GetByIdAsync(customerId, cancellationToken);
+        var oldStatus = existingCustomer.Status;
 
-        // Parse and validate new status
-        if (!Enum.TryParse<CustomerStatus>(command.NewStatus, ignoreCase: true, out var newStatus))
-        {
-            throw new ArgumentException(
-                $"Invalid customer status: '{command.NewStatus}'. Valid values are: Active, Suspended, Blocked.",
-                nameof(command.NewStatus));
-        }
+        // Change status via event-sourced command service
+        var customer = await commandService.ChangeStatusAsync(
+            customerId,
+            newStatus,
+            reason,
+            cancellationToken);
 
-        // Store old status before change
-        var oldStatus = customer.Status;
-
-        // Change status (domain method handles validation and returns new instance)
-        customer = customer.ChangeStatus(newStatus, command.Reason);
-
-        // Persist changes (repository updates with the new immutable instance)
-        await customers.UpdateAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
-
-        // Return result
-        return new ChangeCustomerStatusResult
-        {
-            CustomerId = customer.Id.Value,
-            OldStatus = oldStatus.ToString(),
-            NewStatus = customer.Status.ToString(),
-            Success = true,
-            Message = $"Customer status changed from {oldStatus} to {customer.Status}",
-            UpdatedAtUtc = customer.UpdatedAtUtc
-        };
+        return new ChangeCustomerStatusResult(
+            customer.Id,
+            oldStatus.ToString(),
+            customer.Status.ToString(),
+            true,
+            $"Customer status changed from {oldStatus} to {customer.Status}",
+            customer.UpdatedAtUtc
+        );
     }
 }

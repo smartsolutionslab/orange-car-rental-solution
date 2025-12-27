@@ -1,1 +1,8 @@
 .claude/
+
+# Test results
+test-results.txt
+test-results.txt--filter
+
+# Windows null device artifact
+nul

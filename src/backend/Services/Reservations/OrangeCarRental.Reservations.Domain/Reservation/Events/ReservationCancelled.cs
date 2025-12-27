@@ -3,9 +3,10 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 
 /// <summary>
-/// Domain event raised when a reservation is cancelled.
+///     Domain event raised when a reservation is cancelled.
 /// </summary>
 public sealed record ReservationCancelled(
     ReservationIdentifier ReservationId,
-    string? CancellationReason
+    string? CancellationReason,
+    DateTime CancelledAtUtc
 ) : DomainEvent;

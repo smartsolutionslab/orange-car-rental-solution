@@ -1,23 +1,24 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {
+import type { ReservationId, GuestReservationResponse } from '@orange-car-rental/reservation-api';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
+import { ConfigService } from './config.service';
+import type {
   Reservation,
   CreateReservationRequest,
   CreateReservationResponse,
   GuestReservationRequest,
-  GuestReservationResponse,
   ReservationSearchQuery,
-  ReservationSearchResult
-} from './reservation.model';
-import { ConfigService } from './config.service';
+  ReservationSearchResult,
+} from '../types';
 
 /**
  * Service for accessing the Reservations API
  * Handles creating and managing reservations
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ReservationService {
   private readonly http = inject(HttpClient);
@@ -50,7 +51,7 @@ export class ReservationService {
    * @param id Reservation ID
    * @returns Observable of reservation details
    */
-  getReservation(id: string): Observable<Reservation> {
+  getReservation(id: ReservationId): Observable<Reservation> {
     return this.http.get<Reservation>(`${this.apiUrl}/${id}`);
   }
 
@@ -60,19 +61,8 @@ export class ReservationService {
    * @returns Observable of search results with reservations and pagination
    */
   searchReservations(query?: ReservationSearchQuery): Observable<ReservationSearchResult> {
-    let params = new HttpParams();
-
-    if (query) {
-      if (query.customerId) params = params.set('customerId', query.customerId);
-      if (query.vehicleId) params = params.set('vehicleId', query.vehicleId);
-      if (query.status) params = params.set('status', query.status);
-      if (query.pickupDateFrom) params = params.set('pickupDateFrom', query.pickupDateFrom);
-      if (query.pickupDateTo) params = params.set('pickupDateTo', query.pickupDateTo);
-      if (query.pageNumber !== undefined) params = params.set('pageNumber', query.pageNumber.toString());
-      if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
-    }
-
-    return this.http.get<ReservationSearchResult>(this.apiUrl, { params });
+    const params = HttpParamsBuilder.fromObject(query);
+    return this.http.get<ReservationSearchResult>(`${this.apiUrl}/search`, { params });
   }
 
   /**
@@ -81,8 +71,8 @@ export class ReservationService {
    * @param reason Cancellation reason
    * @returns Observable of void
    */
-  cancelReservation(id: string, reason: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${id}/cancel`, { reason });
+  cancelReservation(id: ReservationId, reason: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/cancel`, { cancellationReason: reason });
   }
 
   /**
@@ -90,7 +80,7 @@ export class ReservationService {
    * @param id Reservation ID
    * @returns Observable of void
    */
-  confirmReservation(id: string): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${id}/confirm`, {});
+  confirmReservation(id: ReservationId): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${id}/confirm`, {});
   }
 }

@@ -1,23 +1,30 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Represents the manufacturer/brand of a vehicle (e.g., BMW, Volkswagen, Mercedes-Benz).
+///     Represents the manufacturer/brand of a vehicle (e.g., BMW, Volkswagen, Mercedes-Benz).
 /// </summary>
-public readonly record struct Manufacturer
+/// <param name="Value">The manufacturer name value.</param>
+public readonly record struct Manufacturer(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private Manufacturer(string value) => Value = value;
-
-    public static Manufacturer Of(string value)
+    public static Manufacturer From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim() ?? string.Empty;
 
-        var trimmed = value.Trim();
-        if (trimmed.Length > 100)
-            throw new ArgumentException("Manufacturer name cannot exceed 100 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         return new Manufacturer(trimmed);
+    }
+
+    public static Manufacturer? FromNullable(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return From(value);
     }
 
     public static implicit operator string(Manufacturer manufacturer) => manufacturer.Value;

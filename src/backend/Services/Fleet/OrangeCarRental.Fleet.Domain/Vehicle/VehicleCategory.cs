@@ -1,20 +1,14 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
-/// German car rental standard categories.
+///     Vehicle category (e.g., Kleinwagen, Mittelklasse, Oberklasse, SUV, Transporter).
+///     German car rental standard categories.
 /// </summary>
-public readonly record struct VehicleCategory
+public readonly record struct VehicleCategory : IValueObject
 {
-    public string Code { get; }
-    public string Name { get; }
-
-    private VehicleCategory(string code, string name)
-    {
-        Code = code;
-        Name = name;
-    }
-
     // Standard German car rental categories
     public static readonly VehicleCategory Kleinwagen = new("KLEIN", "Kleinwagen");
     public static readonly VehicleCategory Kompaktklasse = new("KOMPAKT", "Kompaktklasse");
@@ -25,32 +19,47 @@ public readonly record struct VehicleCategory
     public static readonly VehicleCategory Transporter = new("TRANS", "Transporter");
     public static readonly VehicleCategory Luxus = new("LUXUS", "Luxusklasse");
 
-    private static readonly Dictionary<string, VehicleCategory> _categories = new()
+    private static readonly Dictionary<string, VehicleCategory> categories = new()
     {
-        { "KLEIN", Kleinwagen },
-        { "KOMPAKT", Kompaktklasse },
-        { "MITTEL", Mittelklasse },
-        { "OBER", Oberklasse },
-        { "SUV", SUV },
-        { "KOMBI", Kombi },
-        { "TRANS", Transporter },
-        { "LUXUS", Luxus }
+        { Kleinwagen.Code, Kleinwagen },
+        { Kompaktklasse.Code, Kompaktklasse },
+        { Mittelklasse.Code, Mittelklasse },
+        { Oberklasse.Code, Oberklasse },
+        { SUV.Code, SUV },
+        { Kombi.Code, Kombi },
+        { Transporter.Code, Transporter },
+        { Luxus.Code, Luxus }
     };
 
-    public static VehicleCategory FromCode(string code)
+    private VehicleCategory(string code, string name)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
-
-        string upperCode = code.ToUpperInvariant();
-        if (!_categories.TryGetValue(upperCode, out VehicleCategory category))
-        {
-            throw new ArgumentException($"Unknown vehicle category code: {code}", nameof(code));
-        }
-
-        return category;
+        Code = code;
+        Name = name;
     }
 
-    public static IReadOnlyCollection<VehicleCategory> All => _categories.Values.ToList();
+    public string Code { get; }
+    public string Name { get; }
+
+    public static IReadOnlyCollection<VehicleCategory> All => categories.Values.ToList();
+
+    public static VehicleCategory From(string code)
+    {
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace();
+
+        var upperCode = code.ToUpperInvariant();
+        Ensure.That(code, nameof(code))
+            .ThrowIf(!categories.TryGetValue(upperCode, out var category), $"Unknown vehicle category code: {code}");
+
+        return categories[upperCode];
+    }
+
+    public static VehicleCategory? FromNullable(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return From(value);
+    }
 
     public override string ToString() => $"{Name} ({Code})";
 }

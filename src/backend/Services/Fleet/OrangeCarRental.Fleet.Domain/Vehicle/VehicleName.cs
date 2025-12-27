@@ -1,21 +1,23 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Vehicle name value object.
+///     Vehicle name value object.
 /// </summary>
-public readonly record struct VehicleName
+/// <param name="Value">The vehicle name value.</param>
+public readonly record struct VehicleName(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private VehicleName(string value) => Value = value;
-
-    public static VehicleName Of(string value)
+    public static VehicleName From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim() ?? string.Empty;
 
-        if (value.Length > 100) throw new ArgumentException("Vehicle name cannot exceed 100 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
-        return new VehicleName(value.Trim());
+        return new VehicleName(trimmed);
     }
 
     public static implicit operator string(VehicleName name) => name.Value;

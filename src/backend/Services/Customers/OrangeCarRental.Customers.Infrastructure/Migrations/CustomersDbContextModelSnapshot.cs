@@ -19,12 +19,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("customers")
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Customers.Domain.Aggregates.Customer", b =>
+            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
@@ -39,18 +39,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                         .HasMaxLength(254)
                         .HasColumnType("nvarchar(254)")
                         .HasColumnName("Email");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("FirstName");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("LastName");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -72,8 +60,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("UpdatedAtUtc");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Address", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Aggregates.Customer.Address#Address", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Address", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Address#Address", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("City")
                                 .IsRequired()
                                 .HasMaxLength(100)
@@ -99,8 +89,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                                 .HasColumnName("Address_Street");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("DriversLicense", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Aggregates.Customer.DriversLicense#DriversLicense", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "DriversLicense", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.DriversLicense#DriversLicense", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<DateOnly>("ExpiryDate")
                                 .HasColumnType("date")
                                 .HasColumnName("DriversLicense_ExpiryDate");
@@ -120,6 +112,28 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Migrations
                                 .HasMaxLength(20)
                                 .HasColumnType("nvarchar(20)")
                                 .HasColumnName("DriversLicense_LicenseNumber");
+                        });
+
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Name", "SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer.Customer.Name#CustomerName", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.Property<string>("FirstName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("FirstName");
+
+                            b1.Property<string>("LastName")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("LastName");
+
+                            b1.Property<string>("Salutation")
+                                .HasMaxLength(20)
+                                .HasColumnType("nvarchar(20)")
+                                .HasColumnName("Salutation");
                         });
 
                     b.HasKey("Id");

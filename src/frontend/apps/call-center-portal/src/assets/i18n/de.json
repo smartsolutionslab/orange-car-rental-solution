@@ -1,0 +1,449 @@
+{
+  "common": {
+    "appName": "Orange Car Rental - Call Center",
+    "actions": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "close": "Schließen",
+      "search": "Suchen",
+      "reset": "Zurücksetzen",
+      "apply": "Anwenden",
+      "confirm": "Bestätigen",
+      "delete": "Löschen",
+      "edit": "Bearbeiten",
+      "add": "Hinzufügen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "submit": "Absenden",
+      "login": "Anmelden",
+      "logout": "Abmelden",
+      "details": "Details",
+      "viewDetails": "Details anzeigen",
+      "newBooking": "Neue Buchung",
+      "applyFilters": "Filter anwenden",
+      "clearFilters": "Filter zurücksetzen",
+      "resetFilters": "Filter zurücksetzen"
+    },
+    "labels": {
+      "email": "E-Mail",
+      "phone": "Telefonnummer",
+      "firstName": "Vorname",
+      "lastName": "Nachname",
+      "dateOfBirth": "Geburtsdatum",
+      "street": "Straße",
+      "city": "Stadt",
+      "postalCode": "Postleitzahl",
+      "country": "Land",
+      "status": "Status",
+      "location": "Standort",
+      "category": "Kategorie",
+      "price": "Preis",
+      "total": "Gesamt",
+      "date": "Datum",
+      "from": "Von",
+      "to": "Bis",
+      "all": "Alle",
+      "none": "Keine",
+      "customerId": "Kunden-ID",
+      "vehicleId": "Fahrzeug-ID",
+      "reservationId": "Reservierungs-ID",
+      "createdAt": "Erstellt am",
+      "registered": "Registriert",
+      "actions": "Aktionen"
+    },
+    "messages": {
+      "loading": "Lade...",
+      "saving": "Wird gespeichert...",
+      "error": "Ein Fehler ist aufgetreten",
+      "success": "Erfolgreich gespeichert",
+      "noResults": "Keine Ergebnisse gefunden",
+      "required": "Dieses Feld ist erforderlich",
+      "confirmAction": "Möchten Sie diese Aktion wirklich durchführen?",
+      "activeFilters": "{{count}} aktive Filter"
+    },
+    "placeholders": {
+      "search": "Suchen...",
+      "select": "Bitte wählen...",
+      "enterValue": "Wert eingeben...",
+      "lastName": "Mustermann"
+    },
+    "pagination": {
+      "showing": "Zeige",
+      "of": "von",
+      "entries": "Einträge",
+      "entriesPerPage": "Einträge pro Seite",
+      "page": "Seite"
+    },
+    "sorting": {
+      "label": "Sortierung",
+      "ascending": "Aufsteigend",
+      "descending": "Absteigend"
+    },
+    "grouping": {
+      "label": "Gruppierung",
+      "none": "Keine Gruppierung"
+    }
+  },
+  "navigation": {
+    "vehicles": "Fahrzeuge",
+    "reservations": "Buchungen",
+    "customers": "Kunden",
+    "locations": "Standorte",
+    "contact": "Kontakt"
+  },
+  "reservations": {
+    "title": "Buchungsverwaltung",
+    "subtitle": "Verwalten Sie alle Reservierungen und Buchungen",
+    "overview": "Reservierungsübersicht",
+    "stats": {
+      "todayBookings": "Heutige Buchungen",
+      "activeBookings": "Aktive Buchungen",
+      "pending": "Anstehend",
+      "total": "Gesamt"
+    },
+    "filters": {
+      "title": "Filter & Sortierung",
+      "status": "Status",
+      "allStatus": "Alle Status",
+      "customerId": "Kunden-ID",
+      "customerIdPlaceholder": "Kunden-ID eingeben...",
+      "pickupFrom": "Abholung von",
+      "pickupTo": "Abholung bis",
+      "location": "Standort",
+      "allLocations": "Alle Standorte",
+      "minPrice": "Min. Preis (€)",
+      "maxPrice": "Max. Preis (€)"
+    },
+    "sorting": {
+      "pickupDate": "Abholdatum",
+      "price": "Preis",
+      "status": "Status",
+      "createdDate": "Erstellungsdatum"
+    },
+    "grouping": {
+      "none": "Keine Gruppierung",
+      "byStatus": "Nach Status",
+      "byPickupDate": "Nach Abholdatum",
+      "byLocation": "Nach Standort"
+    },
+    "dateGroups": {
+      "today": "Heute",
+      "tomorrow": "Morgen",
+      "thisWeek": "Diese Woche",
+      "later": "Später"
+    },
+    "table": {
+      "reservationId": "Reservierungs-ID",
+      "customer": "Kunde",
+      "pickupDate": "Abholdatum",
+      "returnDate": "Rückgabedatum",
+      "location": "Standort",
+      "price": "Preis",
+      "status": "Status",
+      "actions": "Aktionen"
+    },
+    "groups": {
+      "bookings": "Buchungen"
+    },
+    "results": {
+      "showing": "Zeige {{from}} - {{to}} von {{total}} Reservierungen"
+    },
+    "details": {
+      "title": "Reservierungsdetails",
+      "vehicleId": "Fahrzeug-ID",
+      "pickupDate": "Abholdatum",
+      "returnDate": "Rückgabedatum",
+      "pickupLocation": "Abholort",
+      "returnLocation": "Rückgabeort",
+      "rentalDays": "Miettage",
+      "createdAt": "Erstellt am"
+    },
+    "pricing": {
+      "title": "Preisübersicht",
+      "netAmount": "Nettobetrag",
+      "vat": "MwSt. (19%)",
+      "grossAmount": "Gesamtbetrag"
+    },
+    "confirm": {
+      "title": "Reservierung bestätigen",
+      "message": "Möchten Sie diese Reservierung wirklich bestätigen?",
+      "button": "Bestätigen",
+      "inProgress": "Wird bestätigt...",
+      "execute": "Bestätigung durchführen"
+    },
+    "cancel": {
+      "title": "Reservierung stornieren",
+      "message": "Möchten Sie diese Reservierung wirklich stornieren?",
+      "reason": "Stornierungsgrund",
+      "reasonPlaceholder": "Bitte geben Sie einen Grund für die Stornierung ein...",
+      "button": "Stornieren",
+      "inProgress": "Wird storniert...",
+      "execute": "Stornierung bestätigen"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "confirmed": "Bestätigt",
+      "active": "Aktiv",
+      "completed": "Abgeschlossen",
+      "cancelled": "Storniert"
+    },
+    "empty": {
+      "title": "Keine Reservierungen gefunden",
+      "description": "Versuchen Sie, die Filter anzupassen, um weitere Ergebnisse zu sehen.",
+      "resetFilters": "Filter zurücksetzen"
+    },
+    "loading": "Reservierungen werden geladen...",
+    "itemLabel": "Reservierung",
+    "itemLabelPlural": "Reservierungen"
+  },
+  "customers": {
+    "title": "Kundenverwaltung",
+    "subtitle": "Suchen und verwalten Sie Kundeninformationen",
+    "search": {
+      "title": "Kundensuche",
+      "email": "E-Mail",
+      "phone": "Telefonnummer",
+      "lastName": "Nachname",
+      "button": "Suchen",
+      "searching": "Suche nach Kunden...",
+      "minCriteria": "Bitte geben Sie mindestens ein Suchkriterium ein"
+    },
+    "results": {
+      "title": "Suchergebnisse",
+      "found": "{{count}} Kunde(n) gefunden",
+      "noResults": "Keine Kunden gefunden"
+    },
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "dateOfBirth": "Geburtsdatum",
+      "city": "Stadt",
+      "registered": "Registriert",
+      "actions": "Aktionen"
+    },
+    "details": {
+      "title": "Kundendetails",
+      "personalInfo": "Persönliche Informationen",
+      "customerId": "Kunden-ID",
+      "address": "Adresse",
+      "license": {
+        "title": "Führerschein",
+        "number": "Führerscheinnummer",
+        "issueCountry": "Ausstellungsland",
+        "issueDate": "Ausstellungsdatum",
+        "expiryDate": "Ablaufdatum"
+      },
+      "reservations": {
+        "title": "Reservierungen",
+        "loading": "Lade Reservierungen...",
+        "period": "Zeitraum",
+        "duration": "Dauer",
+        "days": "Tag(e)",
+        "pickupLocation": "Abholort",
+        "price": "Preis",
+        "noResults": "Keine Reservierungen gefunden"
+      }
+    },
+    "edit": {
+      "title": "Kunde bearbeiten",
+      "success": "Kundendaten erfolgreich aktualisiert",
+      "error": "Fehler beim Speichern der Kundendaten"
+    },
+    "loading": "Kunden werden geladen...",
+    "error": "Fehler bei der Kundensuche"
+  },
+  "vehicles": {
+    "title": "Fahrzeugverwaltung",
+    "subtitle": "Verwalten Sie Ihre Fahrzeugflotte",
+    "overview": "Fahrzeugübersicht",
+    "addNew": "Neues Fahrzeug",
+    "loading": "Lade Fahrzeuge...",
+    "stats": {
+      "total": "Gesamte Fahrzeuge",
+      "available": "Verfügbar",
+      "rented": "Vermietet",
+      "maintenance": "In Wartung"
+    },
+    "filters": {
+      "location": "Standort",
+      "category": "Fahrzeugklasse",
+      "status": "Status",
+      "fuelType": "Kraftstoffart",
+      "transmission": "Getriebe",
+      "allStatuses": "Alle Status",
+      "allLocations": "Alle Standorte",
+      "allCategories": "Alle Kategorien"
+    },
+    "table": {
+      "vehicle": "Fahrzeug",
+      "category": "Kategorie",
+      "location": "Standort",
+      "licensePlate": "Kennzeichen",
+      "dailyRate": "Tagespreis",
+      "status": "Status",
+      "actions": "Aktionen"
+    },
+    "add": {
+      "title": "Neues Fahrzeug",
+      "button": "Fahrzeug hinzufügen"
+    },
+    "edit": {
+      "title": "Fahrzeug bearbeiten",
+      "success": "Fahrzeug erfolgreich aktualisiert",
+      "error": "Fehler beim Speichern des Fahrzeugs"
+    },
+    "details": {
+      "title": "Fahrzeugdetails",
+      "info": "Fahrzeuginformationen",
+      "vehicleId": "Fahrzeug-ID",
+      "manufacturerModel": "Hersteller & Modell",
+      "year": "Baujahr",
+      "notAssigned": "Nicht zugewiesen",
+      "locationPricing": "Standort & Preise",
+      "dailyRateNet": "Tagespreis (Netto)",
+      "dailyRateGross": "Tagespreis (Brutto)",
+      "vat": "MwSt (19%)",
+      "features": "Ausstattung",
+      "transmission": "Getriebe",
+      "fuelType": "Kraftstoff",
+      "seats": "Sitzplätze",
+      "specifications": "Spezifikationen",
+      "manufacturer": "Hersteller",
+      "model": "Modell",
+      "dailyRate": "Tagessatz"
+    },
+    "noResults": {
+      "title": "Keine Fahrzeuge gefunden",
+      "description": "Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen."
+    },
+    "ariaLabels": {
+      "viewDetails": "Fahrzeugdetails anzeigen"
+    },
+    "status": {
+      "available": "Verfügbar",
+      "rented": "Vermietet",
+      "maintenance": "Wartung",
+      "outOfService": "Außer Betrieb"
+    },
+    "category": {
+      "economy": "Kleinwagen",
+      "compact": "Kompaktklasse",
+      "midSize": "Mittelklasse",
+      "luxury": "Oberklasse",
+      "van": "Van/Transporter",
+      "suv": "SUV"
+    },
+    "fuelType": {
+      "petrol": "Benzin",
+      "diesel": "Diesel",
+      "electric": "Elektro",
+      "hybrid": "Hybrid"
+    },
+    "transmission": {
+      "automatic": "Automatik",
+      "manual": "Schaltgetriebe"
+    },
+    "empty": {
+      "title": "Keine Fahrzeuge gefunden",
+      "description": "Versuchen Sie, die Filter anzupassen, oder fügen Sie ein neues Fahrzeug hinzu."
+    }
+  },
+  "locations": {
+    "title": "Standortverwaltung",
+    "subtitle": "Verwalten Sie alle Mietstandorte",
+    "overview": "Standortübersicht",
+    "loading": "Lade Standorte...",
+    "error": "Fehler beim Laden der Standorte",
+    "vehiclesCount": "Fahrzeuge",
+    "stats": {
+      "total": "Gesamt Standorte",
+      "active": "Aktive Standorte",
+      "vehicles": "Fahrzeuge Gesamt",
+      "available": "Verfügbar",
+      "utilizationRate": "Auslastung"
+    },
+    "search": {
+      "placeholder": "Nach Stadt, Name oder Code suchen..."
+    },
+    "table": {
+      "location": "Standort",
+      "city": "Stadt",
+      "vehicles": "Fahrzeuge",
+      "available": "Verfügbar",
+      "rented": "Vermietet",
+      "utilization": "Auslastung",
+      "actions": "Aktionen"
+    },
+    "details": {
+      "title": "Standortdetails",
+      "info": "Standortinformationen",
+      "locationCode": "Standortcode",
+      "name": "Name",
+      "fullAddress": "Vollständige Adresse",
+      "address": "Adresse",
+      "vehicleDistribution": "Fahrzeugverteilung",
+      "vehiclesAtLocation": "Fahrzeuge am Standort",
+      "loadingVehicles": "Lade Fahrzeuge...",
+      "noVehicles": "Keine Fahrzeuge an diesem Standort"
+    },
+    "ariaLabels": {
+      "viewDetails": "Standortdetails anzeigen"
+    },
+    "utilization": {
+      "high": "Hohe Auslastung",
+      "medium": "Mittlere Auslastung",
+      "low": "Niedrige Auslastung"
+    },
+    "empty": {
+      "title": "Keine Standorte verfügbar",
+      "description": "Es wurden keine Standorte gefunden."
+    }
+  },
+  "contact": {
+    "title": "Kontakt & Support",
+    "subtitle": "Kontaktinformationen und Support-Tools",
+    "info": {
+      "title": "Kontaktinformationen",
+      "phone": {
+        "title": "Telefon",
+        "hours": "Mo-Fr: 8:00 - 18:00 Uhr"
+      },
+      "email": {
+        "title": "E-Mail",
+        "responseTime": "Antwort innerhalb von 24h"
+      },
+      "headquarters": {
+        "title": "Hauptsitz",
+        "country": "Deutschland"
+      },
+      "support": {
+        "title": "Support",
+        "hotline": "24/7 Notfall-Hotline"
+      }
+    },
+    "quickLinks": {
+      "title": "Schnellzugriff",
+      "knowledgeBase": "Wissensdatenbank",
+      "faq": "FAQ",
+      "chatSupport": "Chat Support",
+      "createTicket": "Ticket erstellen"
+    }
+  },
+  "dayOfWeek": {
+    "monday": "Montag",
+    "tuesday": "Dienstag",
+    "wednesday": "Mittwoch",
+    "thursday": "Donnerstag",
+    "friday": "Freitag",
+    "saturday": "Samstag",
+    "sunday": "Sonntag"
+  },
+  "errors": {
+    "generic": "Ein Fehler ist aufgetreten",
+    "network": "Netzwerkfehler. Bitte überprüfen Sie Ihre Verbindung.",
+    "notFound": "Die angeforderte Ressource wurde nicht gefunden",
+    "unauthorized": "Sie sind nicht berechtigt, diese Aktion durchzuführen",
+    "validation": "Bitte überprüfen Sie Ihre Eingaben"
+  }
+}

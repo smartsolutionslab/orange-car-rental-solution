@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: federation-manifest
+  labels:
+    app: shell
+    component: frontend
+    microfrontend: host
+data:
+  federation.manifest.json: |
+    {
+      "publicPortal": "https://public.orange-rental.de/remoteEntry.json",
+      "callCenterPortal": "https://admin.orange-rental.de/remoteEntry.json"
+    }

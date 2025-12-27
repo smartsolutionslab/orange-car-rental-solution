@@ -1,12 +1,12 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 /// <summary>
-/// Service for managing customers via the Customers API.
+///     Service for managing customers via the Customers API.
 /// </summary>
 public interface ICustomersService
 {
     /// <summary>
-    /// Register a new customer.
+    ///     Register a new customer.
     /// </summary>
     /// <param name="request">Customer registration data</param>
     /// <param name="cancellationToken">Cancellation token</param>

@@ -1,22 +1,22 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Vehicle category code for pricing (e.g., KLEIN, KOMPAKT, MITTEL).
-/// Maps to VehicleCategory from Fleet service.
+///     Vehicle category code for pricing (e.g., KLEIN, KOMPAKT, MITTEL).
+///     Maps to VehicleCategory from Fleet service.
 /// </summary>
-public readonly record struct CategoryCode
+/// <param name="Value">The category code value.</param>
+public readonly record struct CategoryCode(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private CategoryCode(string value) => Value = value;
-
-    public static CategoryCode Of(string value)
+    public static CategoryCode From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;
 
-        var trimmed = value.Trim().ToUpperInvariant();
-        if (trimmed.Length > 20)
-            throw new ArgumentException("Category code cannot exceed 20 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(20);
 
         return new CategoryCode(trimmed);
     }

@@ -1,20 +1,26 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.EventStore.Extensions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
+using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.EventSourcing;
+using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -24,7 +30,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
     .Enrich.WithProperty("Application", "CustomersAPI")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -34,11 +41,15 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context (connection string provided by Aspire)
 builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContextOptions: options =>
@@ -47,8 +58,15 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
         sqlOptions.MigrationsAssembly("OrangeCarRental.Customers.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<ICustomersUnitOfWork, CustomersUnitOfWork>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
+// Register event sourcing (type mappings for serialization)
+builder.Services.AddCustomerEventSourcing();
+
+// Register event publisher (for domain event publishing)
+builder.Services.AddCustomerEventPublisher();
 
 // Register command handlers
 builder.Services.AddScoped<RegisterCustomerCommandHandler>();
@@ -66,18 +84,8 @@ builder.Services.AddScoped<CustomerDataSeeder>();
 
 var app = builder.Build();
 
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<CustomersDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<CustomersDbContext>();
-
 // Seed database with sample data (development only)
-await app.SeedCustomersDataAsync();
+await app.Services.SeedCustomersDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -106,8 +114,12 @@ app.UseSerilogRequestLogging(options =>
 app.UseCors();
 app.UseHttpsRedirection();
 
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Map API endpoints
 app.MapCustomerEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

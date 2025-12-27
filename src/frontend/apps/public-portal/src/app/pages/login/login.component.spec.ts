@@ -1,0 +1,250 @@
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router, provideRouter } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { LoginComponent } from './login.component';
+import { AuthService } from '../../services/auth.service';
+import { TEST_EMAILS, TEST_PASSWORDS } from '@orange-car-rental/shared/testing';
+
+describe('LoginComponent', () => {
+  let component: LoginComponent;
+  let fixture: ComponentFixture<LoginComponent>;
+  let authService: jasmine.SpyObj<AuthService>;
+  let router: Router;
+
+  beforeEach(async () => {
+    const authServiceSpy = jasmine.createSpyObj('AuthService', [
+      'loginWithPassword',
+      'getPostLoginRedirect',
+    ]);
+    authServiceSpy.getPostLoginRedirect.and.returnValue('/my-bookings');
+
+    await TestBed.configureTestingModule({
+      imports: [LoginComponent, ReactiveFormsModule, TranslateModule.forRoot()],
+      providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
+    }).compileComponents();
+
+    authService = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    router = TestBed.inject(Router);
+    spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
+  });
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(LoginComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  describe('Form Validation', () => {
+    it('should initialize with empty form', () => {
+      expect(component.loginForm.get('email')?.value).toBe('');
+      expect(component.loginForm.get('password')?.value).toBe('');
+      expect(component.loginForm.get('rememberMe')?.value).toBe(false);
+    });
+
+    it('should require email', () => {
+      const emailControl = component.loginForm.get('email');
+      emailControl?.setValue('');
+      expect(emailControl?.hasError('required')).toBeTruthy();
+    });
+
+    it('should validate email format', () => {
+      const emailControl = component.loginForm.get('email');
+      emailControl?.setValue(TEST_EMAILS.INVALID);
+      emailControl?.markAsTouched();
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['emailTouched'].set(true);
+      expect(emailControl?.hasError('email')).toBeTruthy();
+      expect(component.emailError()).toBe('auth.validation.emailInvalid');
+    });
+
+    it('should accept valid email', () => {
+      const emailControl = component.loginForm.get('email');
+      emailControl?.setValue(TEST_EMAILS.VALID);
+      expect(emailControl?.hasError('email')).toBeFalsy();
+    });
+
+    it('should require password', () => {
+      const passwordControl = component.loginForm.get('password');
+      passwordControl?.setValue('');
+      expect(passwordControl?.hasError('required')).toBeTruthy();
+    });
+
+    it('should show email required error when touched', () => {
+      const emailControl = component.loginForm.get('email');
+      emailControl?.setValue('');
+      emailControl?.markAsTouched();
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['emailTouched'].set(true);
+      expect(component.emailError()).toBe('auth.validation.emailRequired');
+    });
+
+    it('should show password required error when touched', () => {
+      const passwordControl = component.loginForm.get('password');
+      passwordControl?.setValue('');
+      passwordControl?.markAsTouched();
+      // Trigger the computed signal to re-run by setting the internal signal
+      component['passwordTouched'].set(true);
+      expect(component.passwordError()).toBe('auth.validation.passwordRequired');
+    });
+
+    it('should mark form as invalid when fields are empty', () => {
+      expect(component.loginForm.valid).toBeFalsy();
+    });
+
+    it('should mark form as valid when all fields are filled correctly', () => {
+      component.loginForm.patchValue({
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.VALID,
+      });
+      expect(component.loginForm.valid).toBeTruthy();
+    });
+  });
+
+  describe('Password Visibility Toggle', () => {
+    it('should start with password hidden', () => {
+      expect(component.showPassword()).toBeFalsy();
+    });
+
+    it('should toggle password visibility', () => {
+      expect(component.showPassword()).toBeFalsy();
+      component.togglePasswordVisibility();
+      expect(component.showPassword()).toBeTruthy();
+      component.togglePasswordVisibility();
+      expect(component.showPassword()).toBeFalsy();
+    });
+  });
+
+  describe('Form Submission', () => {
+    beforeEach(() => {
+      component.loginForm.patchValue({
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.VALID,
+        rememberMe: true,
+      });
+    });
+
+    it('should not submit if form is invalid', async () => {
+      component.loginForm.patchValue({ email: '', password: '' });
+      await component.onSubmit();
+      expect(authService.loginWithPassword).not.toHaveBeenCalled();
+    });
+
+    it('should call authService.loginWithPassword with correct parameters on valid form', async () => {
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
+      // navigate spy already returns Promise.resolve(true) from beforeEach
+
+      await component.onSubmit();
+
+      expect(authService.loginWithPassword).toHaveBeenCalledWith(
+        TEST_EMAILS.VALID,
+        TEST_PASSWORDS.VALID,
+        true,
+      );
+    });
+
+    it('should navigate to redirect URL from auth service on successful login', async () => {
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
+      // navigate spy already returns Promise.resolve(true) from beforeEach
+
+      await component.onSubmit();
+
+      expect(authService.getPostLoginRedirect).toHaveBeenCalled();
+      expect(router.navigate).toHaveBeenCalledWith(['/my-bookings']);
+    });
+
+    it('should set loading state during submission', async () => {
+      // Create a deferred promise to control resolution timing
+      let resolveLogin!: () => void;
+      const deferredPromise = new Promise<void>((resolve) => {
+        resolveLogin = resolve;
+      });
+      authService.loginWithPassword.and.returnValue(deferredPromise);
+
+      const submitPromise = component.onSubmit();
+      expect(component.isLoading()).toBeTruthy();
+
+      resolveLogin();
+      await submitPromise;
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should show error message on 401 error', async () => {
+      const error = { status: 401, message: 'Unauthorized' };
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
+
+      await component.onSubmit();
+
+      expect(component.errorMessage()).toBe('auth.errors.invalidCredentials');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should show error message on 403 error', async () => {
+      const error = { status: 403, message: 'Forbidden' };
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
+
+      await component.onSubmit();
+
+      expect(component.errorMessage()).toBe('auth.errors.accountLocked');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should show network error message', async () => {
+      const error = { message: 'Network error' };
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
+
+      await component.onSubmit();
+
+      expect(component.errorMessage()).toBe('auth.errors.networkError');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should show generic error message on unknown error', async () => {
+      const error = { status: 500, message: 'Server error' };
+      authService.loginWithPassword.and.returnValue(Promise.reject(error));
+
+      await component.onSubmit();
+
+      expect(component.errorMessage()).toBe('auth.errors.loginFailed');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should clear error message on new submission', async () => {
+      component.errorMessage.set('Previous error');
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
+      // navigate spy already returns Promise.resolve(true) from beforeEach
+
+      await component.onSubmit();
+
+      expect(component.errorMessage()).toBeNull();
+    });
+  });
+
+  describe('UI State', () => {
+    it('should disable submit button when loading', () => {
+      component.isLoading.set(true);
+      fixture.detectChanges();
+      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
+      expect(submitButton.disabled).toBeTruthy();
+    });
+
+    it('should show spinner when loading', () => {
+      component.isLoading.set(true);
+      fixture.detectChanges();
+      const spinner = fixture.nativeElement.querySelector('.spinner');
+      expect(spinner).toBeTruthy();
+    });
+
+    it('should display error message in alert', () => {
+      component.errorMessage.set('Test error message');
+      fixture.detectChanges();
+      const errorAlert = fixture.nativeElement.querySelector('.error-alert');
+      expect(errorAlert).toBeTruthy();
+      expect(errorAlert.textContent).toContain('Test error message');
+    });
+  });
+});

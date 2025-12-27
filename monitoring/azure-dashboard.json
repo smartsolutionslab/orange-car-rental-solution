@@ -1,0 +1,221 @@
+{
+  "properties": {
+    "lenses": [
+      {
+        "order": 0,
+        "parts": [
+          {
+            "position": {
+              "x": 0,
+              "y": 0,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/HubsExtension/PartType/MarkdownPart",
+              "settings": {
+                "content": {
+                  "settings": {
+                    "content": "# Orange Car Rental - System Monitoring\n\nComprehensive monitoring dashboard for all microservices\n\n**Services:**\n- Vehicles API\n- Reservations API\n- Customers API\n- Locations API\n- Public Portal\n- Call Center Portal",
+                    "title": "System Overview",
+                    "subtitle": "Real-time monitoring"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 6,
+              "y": 0,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "requests/count",
+                      "aggregationType": 7,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Total Requests (Last 24h)",
+                  "visualization": {
+                    "chartType": 2,
+                    "legendVisualization": {
+                      "isVisible": true,
+                      "position": 2
+                    },
+                    "axisVisualization": {
+                      "x": {
+                        "isVisible": true
+                      },
+                      "y": {
+                        "isVisible": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 4,
+              "colSpan": 4,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "requests/duration",
+                      "aggregationType": 4,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Average Response Time",
+                  "visualization": {
+                    "chartType": 2
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 4,
+              "y": 4,
+              "colSpan": 4,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "requests/failed",
+                      "aggregationType": 7,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Failed Requests",
+                  "visualization": {
+                    "chartType": 2,
+                    "color": "red"
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 8,
+              "y": 4,
+              "colSpan": 4,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "availabilityResults/availabilityPercentage",
+                      "aggregationType": 4,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Availability %",
+                  "visualization": {
+                    "chartType": 3
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 8,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "dependencies/duration",
+                      "aggregationType": 4,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Database Query Performance",
+                  "visualization": {
+                    "chartType": 2
+                  }
+                }
+              }
+            }
+          },
+          {
+            "position": {
+              "x": 6,
+              "y": 8,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "type": "Extension/Microsoft_Azure_Monitoring/PartType/MetricsChartPart",
+              "settings": {
+                "content": {
+                  "metrics": [
+                    {
+                      "name": "exceptions/count",
+                      "aggregationType": 7,
+                      "namespace": "Microsoft.Insights/components"
+                    }
+                  ],
+                  "title": "Exception Count",
+                  "visualization": {
+                    "chartType": 2,
+                    "color": "orange"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "model": {
+        "timeRange": {
+          "value": {
+            "relative": {
+              "duration": 24,
+              "timeUnit": 1
+            }
+          },
+          "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+        }
+      }
+    }
+  },
+  "name": "Orange Car Rental Dashboard",
+  "type": "Microsoft.Portal/dashboards",
+  "location": "westeurope",
+  "tags": {
+    "environment": "production",
+    "service": "orange-car-rental"
+  }
+}

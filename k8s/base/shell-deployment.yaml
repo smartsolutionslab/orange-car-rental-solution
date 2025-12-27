@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shell
+  labels:
+    app: shell
+    component: frontend
+    microfrontend: host
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: shell
+  template:
+    metadata:
+      labels:
+        app: shell
+        component: frontend
+        microfrontend: host
+    spec:
+      containers:
+      - name: shell
+        image: orangecarrental.azurecr.io/shell:latest
+        ports:
+        - containerPort: 80
+          name: http
+        env:
+        - name: API_BASE_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: api.base.url
+        - name: KEYCLOAK_URL
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: keycloak.url
+        - name: KEYCLOAK_REALM
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: keycloak.realm
+        - name: KEYCLOAK_CLIENT_ID
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: keycloak.client.id
+        # Federation manifest URLs for production
+        - name: PUBLIC_PORTAL_URL
+          value: "https://public.orangecarrental.com/remoteEntry.json"
+        - name: CALLCENTER_PORTAL_URL
+          value: "https://admin.orangecarrental.com/remoteEntry.json"
+        volumeMounts:
+        - name: federation-manifest
+          mountPath: /usr/share/nginx/html/assets/federation.manifest.json
+          subPath: federation.manifest.json
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+      volumes:
+      - name: federation-manifest
+        configMap:
+          name: federation-manifest
+          items:
+          - key: federation.manifest.json
+            path: federation.manifest.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shell
+  labels:
+    app: shell
+    component: frontend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+    app: shell

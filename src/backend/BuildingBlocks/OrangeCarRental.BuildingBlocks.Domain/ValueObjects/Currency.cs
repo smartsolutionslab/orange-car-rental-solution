@@ -1,45 +1,41 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
-/// Represents a currency using ISO 4217 codes.
+///     Represents a currency using ISO 4217 codes.
 /// </summary>
-public readonly record struct Currency
+/// <param name="Code">Three-letter currency code (ISO 4217).</param>
+public readonly record struct Currency(string Code) : IValueObject
 {
     /// <summary>
-    /// Three-letter currency code (ISO 4217).
-    /// </summary>
-    public string Code { get; }
-
-    private Currency(string code) => Code = code;
-
-    public static Currency Of(string code)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(code, nameof(code));
-
-        if (code.Length != 3) throw new ArgumentException("Currency code must be exactly 3 characters (ISO 4217)", nameof(code));
-
-        return new Currency(code.ToUpperInvariant());
-    }
-
-    /// <summary>
-    /// Euro currency.
+    ///     Euro currency.
     /// </summary>
     public static readonly Currency EUR = new("EUR");
 
     /// <summary>
-    /// US Dollar currency.
+    ///     US Dollar currency.
     /// </summary>
     public static readonly Currency USD = new("USD");
 
     /// <summary>
-    /// British Pound currency.
+    ///     British Pound currency.
     /// </summary>
     public static readonly Currency GBP = new("GBP");
 
     /// <summary>
-    /// Swiss Franc currency.
+    ///     Swiss Franc currency.
     /// </summary>
     public static readonly Currency CHF = new("CHF");
+
+    public static Currency From(string code)
+    {
+        Ensure.That(code, nameof(code))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(3, 3);
+
+        return new Currency(code.ToUpperInvariant());
+    }
 
     public override string ToString() => Code;
 }

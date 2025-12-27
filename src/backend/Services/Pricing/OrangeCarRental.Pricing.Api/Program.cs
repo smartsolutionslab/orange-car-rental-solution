@@ -1,14 +1,18 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Domain;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -18,7 +22,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
     .Enrich.WithProperty("Application", "PricingAPI")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -28,11 +33,15 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context (connection string provided by Aspire)
 builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOptions: options =>
@@ -41,7 +50,8 @@ builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOpt
         sqlOptions.MigrationsAssembly("OrangeCarRental.Pricing.Infrastructure"));
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IPricingUnitOfWork, PricingUnitOfWork>();
 builder.Services.AddScoped<IPricingPolicyRepository, PricingPolicyRepository>();
 
 // Register application services
@@ -52,18 +62,8 @@ builder.Services.AddScoped<PricingDataSeeder>();
 
 var app = builder.Build();
 
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<PricingDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<PricingDbContext>();
-
 // Seed database with sample data (development only)
-await app.SeedPricingDataAsync();
+await app.Services.SeedPricingDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -91,8 +91,12 @@ app.UseSerilogRequestLogging(options =>
 
 app.UseCors("AllowFrontend");
 
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Map API endpoints
 app.MapPricingEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

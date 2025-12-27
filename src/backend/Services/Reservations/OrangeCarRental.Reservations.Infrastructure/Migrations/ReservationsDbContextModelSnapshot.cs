@@ -19,12 +19,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migratio
 #pragma warning disable 612, 618
             modelBuilder
                 .HasDefaultSchema("reservations")
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "10.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates.Reservation", b =>
+            modelBuilder.Entity("SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Reservation", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier")
@@ -51,7 +51,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migratio
                         .HasColumnType("datetime2")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("CustomerIdentifier")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CustomerId");
 
@@ -73,23 +73,27 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migratio
                         .HasColumnType("nvarchar(20)")
                         .HasColumnName("Status");
 
-                    b.Property<Guid>("VehicleId")
+                    b.Property<Guid>("VehicleIdentifier")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("VehicleId");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Period", "SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates.Reservation.Period#BookingPeriod", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "Period", "SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Reservation.Period#BookingPeriod", b1 =>
                         {
-                            b1.Property<DateTime>("PickupDate")
+                            b1.IsRequired();
+
+                            b1.Property<DateOnly>("PickupDate")
                                 .HasColumnType("date")
                                 .HasColumnName("PickupDate");
 
-                            b1.Property<DateTime>("ReturnDate")
+                            b1.Property<DateOnly>("ReturnDate")
                                 .HasColumnType("date")
                                 .HasColumnName("ReturnDate");
                         });
 
-                    b.ComplexProperty<Dictionary<string, object>>("TotalPrice", "SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Aggregates.Reservation.TotalPrice#Money", b1 =>
+                    b.ComplexProperty(typeof(Dictionary<string, object>), "TotalPrice", "SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Reservation.TotalPrice#Money", b1 =>
                         {
+                            b1.IsRequired();
+
                             b1.Property<string>("Currency")
                                 .IsRequired()
                                 .HasMaxLength(3)
@@ -109,7 +113,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migratio
 
                     b.HasIndex("CreatedAt");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerIdentifier");
 
                     b.HasIndex("DropoffLocationCode");
 
@@ -117,7 +121,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Migratio
 
                     b.HasIndex("Status");
 
-                    b.HasIndex("VehicleId");
+                    b.HasIndex("VehicleIdentifier");
 
                     b.ToTable("Reservations", "reservations");
                 });

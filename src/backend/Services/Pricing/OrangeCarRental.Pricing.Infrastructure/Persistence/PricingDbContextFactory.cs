@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 
 /// <summary>
-/// Design-time factory for creating PricingDbContext instances.
-/// Used by EF Core tools for migrations.
+///     Design-time factory for creating PricingDbContext instances.
+///     Used by EF Core tools for migrations.
 /// </summary>
 public class PricingDbContextFactory : IDesignTimeDbContextFactory<PricingDbContext>
 {

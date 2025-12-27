@@ -1,105 +1,100 @@
-import { Component, output, signal, OnInit, inject } from '@angular/core';
+import { Component, output, signal, inject, DestroyRef, type OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import type { ISODateString } from '@orange-car-rental/shared';
+import type { LocationCode } from '@orange-car-rental/location-api';
+import type {
+  CategoryCode,
+  SeatingCapacity,
+  FuelType,
+  TransmissionType,
+} from '@orange-car-rental/vehicle-api';
+import type { VehicleSearchQuery } from './types';
+import { SelectCategoryComponent } from '../select-category/select-category.component';
+import { SelectFuelTypeComponent } from '../select-fuel-type/select-fuel-type.component';
+import { SelectTransmissionComponent } from '../select-transmission/select-transmission.component';
+import { SelectLocationComponent } from '../select-location/select-location.component';
+import { SelectSeatsComponent } from '../select-seats/select-seats.component';
+import { IconComponent } from '../icon/icon.component';
 
-/**
- * Vehicle search query interface
- */
-export interface VehicleSearchQuery {
-  pickupDate?: string;
-  returnDate?: string;
-  locationCode?: string;
-  categoryCode?: string;
-  minSeats?: number;
-  fuelType?: string;
-  transmissionType?: string;
-  maxDailyRateGross?: number;
-  pageNumber?: number;
-  pageSize?: number;
-}
+export type { VehicleSearchQuery } from './types';
 
-/**
- * Reusable vehicle search component with date range picker
- *
- * Features:
- * - Pickup and return date selection
- * - Location filter
- * - Vehicle category filter
- * - Fuel type filter
- * - Transmission type filter
- * - Min seats filter
- *
- * Emits search parameters when user clicks search button
- */
+/** Default pickup/return time for vehicle search */
+const DEFAULT_SEARCH_TIME = '10:00';
+/** Default rental duration in days */
+const DEFAULT_RENTAL_DAYS = 3;
+
 @Component({
   selector: 'ocr-vehicle-search',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    SelectCategoryComponent,
+    SelectFuelTypeComponent,
+    SelectTransmissionComponent,
+    SelectLocationComponent,
+    SelectSeatsComponent,
+    IconComponent,
+  ],
   templateUrl: './vehicle-search.component.html',
-  styleUrl: './vehicle-search.component.css'
+  styleUrl: './vehicle-search.component.css',
 })
 export class VehicleSearchComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
 
-  // Output event for search
   search = output<VehicleSearchQuery>();
 
-  // Form state
   protected readonly searchForm: FormGroup;
   protected readonly searching = signal(false);
 
-  // Minimum dates for validation
   protected readonly today = new Date().toISOString().split('T')[0];
   protected readonly minReturnDate = signal(this.today);
 
   constructor() {
-    // Initialize form with default values
     this.searchForm = this.fb.group({
       pickupDate: [''],
-      pickupTime: ['10:00'],
+      pickupTime: [DEFAULT_SEARCH_TIME],
       returnDate: [''],
-      returnTime: ['10:00'],
+      returnTime: [DEFAULT_SEARCH_TIME],
       locationCode: [''],
       categoryCode: [''],
       fuelType: [''],
       transmissionType: [''],
-      minSeats: [null]
+      minSeats: [null],
     });
   }
 
   ngOnInit(): void {
-    // Set default dates (tomorrow for pickup, +3 days for return)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
     const returnDate = new Date(tomorrow);
-    returnDate.setDate(returnDate.getDate() + 3);
+    returnDate.setDate(returnDate.getDate() + DEFAULT_RENTAL_DAYS);
 
     this.searchForm.patchValue({
       pickupDate: tomorrow.toISOString().split('T')[0],
-      returnDate: returnDate.toISOString().split('T')[0]
+      returnDate: returnDate.toISOString().split('T')[0],
     });
 
-    // Update min return date when pickup date changes
-    this.searchForm.get('pickupDate')?.valueChanges.subscribe(pickupDate => {
+    this.searchForm.get('pickupDate')?.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((pickupDate) => {
       if (pickupDate) {
         const pickup = new Date(pickupDate);
         pickup.setDate(pickup.getDate() + 1);
         this.minReturnDate.set(pickup.toISOString().split('T')[0]);
 
-        // Ensure return date is after pickup date
         const currentReturnDate = this.searchForm.get('returnDate')?.value;
         if (currentReturnDate && currentReturnDate <= pickupDate) {
           this.searchForm.patchValue({
-            returnDate: pickup.toISOString().split('T')[0]
+            returnDate: pickup.toISOString().split('T')[0],
           });
         }
       }
     });
   }
 
-  /**
-   * Handle search form submission
-   */
   protected onSearch(): void {
     if (this.searchForm.invalid) {
       return;
@@ -107,50 +102,48 @@ export class VehicleSearchComponent implements OnInit {
 
     const formValue = this.searchForm.value;
 
-    // Combine date and time into ISO 8601 format
-    const pickupDateTime = formValue.pickupDate && formValue.pickupTime
-      ? `${formValue.pickupDate}T${formValue.pickupTime}:00`
-      : undefined;
+    const pickupDateTime =
+      formValue.pickupDate && formValue.pickupTime
+        ? `${formValue.pickupDate}T${formValue.pickupTime}:00`
+        : undefined;
 
-    const returnDateTime = formValue.returnDate && formValue.returnTime
-      ? `${formValue.returnDate}T${formValue.returnTime}:00`
-      : undefined;
+    const returnDateTime =
+      formValue.returnDate && formValue.returnTime
+        ? `${formValue.returnDate}T${formValue.returnTime}:00`
+        : undefined;
 
-    // Build search query
     const query: VehicleSearchQuery = {
-      pickupDate: pickupDateTime,
-      returnDate: returnDateTime,
-      locationCode: formValue.locationCode || undefined,
-      categoryCode: formValue.categoryCode || undefined,
-      fuelType: formValue.fuelType || undefined,
-      transmissionType: formValue.transmissionType || undefined,
-      minSeats: formValue.minSeats || undefined
+      pickupDate: pickupDateTime ? (pickupDateTime as ISODateString) : undefined,
+      returnDate: returnDateTime ? (returnDateTime as ISODateString) : undefined,
+      locationCode: formValue.locationCode ? (formValue.locationCode as LocationCode) : undefined,
+      categoryCode: formValue.categoryCode ? (formValue.categoryCode as CategoryCode) : undefined,
+      fuelType: formValue.fuelType ? (formValue.fuelType as FuelType) : undefined,
+      transmissionType: formValue.transmissionType
+        ? (formValue.transmissionType as TransmissionType)
+        : undefined,
+      minSeats: formValue.minSeats ? (formValue.minSeats as SeatingCapacity) : undefined,
     };
 
-    // Remove undefined values
     const cleanQuery = Object.fromEntries(
-      Object.entries(query).filter(([_, value]) => value !== undefined)
+      Object.entries(query).filter(([, value]) => value !== undefined)
     ) as VehicleSearchQuery;
 
     this.search.emit(cleanQuery);
   }
 
-  /**
-   * Reset form to default values
-   */
   protected onReset(): void {
     this.searchForm.reset({
       pickupDate: '',
-      pickupTime: '10:00',
+      pickupTime: DEFAULT_SEARCH_TIME,
       returnDate: '',
-      returnTime: '10:00',
+      returnTime: DEFAULT_SEARCH_TIME,
       locationCode: '',
       categoryCode: '',
       fuelType: '',
       transmissionType: '',
-      minSeats: null
+      minSeats: null,
     });
 
-    this.ngOnInit(); // Reinitialize default dates
+    this.ngOnInit();
   }
 }

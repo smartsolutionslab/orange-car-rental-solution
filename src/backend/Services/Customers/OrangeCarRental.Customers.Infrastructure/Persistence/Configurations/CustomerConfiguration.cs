@@ -5,8 +5,8 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Customer aggregate.
-/// Configures mappings for value objects, complex types, and soft delete.
+///     Entity configuration for Customer aggregate.
+///     Configures mappings for value objects, complex types, and soft delete.
 /// </summary>
 internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 {
@@ -14,32 +14,47 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
     {
         builder.ToTable("Customers");
 
-        // Primary key - CustomerId struct with Guid value
+        // Primary key - CustomerIdentifier struct with Guid value
         builder.HasKey(c => c.Id);
         builder.Property(c => c.Id)
             .HasColumnName("CustomerId")
             .HasConversion(
                 id => id.Value,
-                value => CustomerId.From(value))
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
-        // Simple string properties
-        builder.Property(c => c.FirstName)
-            .HasColumnName("FirstName")
-            .HasMaxLength(100)
-            .IsRequired();
+        // CustomerName value object - stored as complex type
+        builder.ComplexProperty(c => c.Name, name =>
+        {
+            name.Property(n => n.FirstName)
+                .HasColumnName("FirstName")
+                .HasConversion(
+                    fn => fn.Value,
+                    value => FirstName.Of(value))
+                .HasMaxLength(100)
+                .IsRequired();
 
-        builder.Property(c => c.LastName)
-            .HasColumnName("LastName")
-            .HasMaxLength(100)
-            .IsRequired();
+            name.Property(n => n.LastName)
+                .HasColumnName("LastName")
+                .HasConversion(
+                    ln => ln.Value,
+                    value => LastName.Of(value))
+                .HasMaxLength(100)
+                .IsRequired();
+
+            name.Property(n => n.Salutation)
+                .HasColumnName("Salutation")
+                .HasConversion<string?>()
+                .HasMaxLength(20);
+        });
 
         // Email value object - converted to string
+        // Note: Using .Value.Value because Email? is a nullable struct wrapping a string
         builder.Property(c => c.Email)
             .HasColumnName("Email")
             .HasConversion(
-                email => email.Value,
-                value => Email.Of(value))
+                email => email!.Value.Value,
+                value => Email.From(value))
             .HasMaxLength(254)
             .IsRequired();
 
@@ -47,14 +62,17 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Property(c => c.PhoneNumber)
             .HasColumnName("PhoneNumber")
             .HasConversion(
-                phone => phone.Value,
-                value => PhoneNumber.Of(value))
+                phone => phone!.Value.Value,
+                value => PhoneNumber.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
-        // DateOfBirth
+        // BirthDate value object - converted to DateOnly
         builder.Property(c => c.DateOfBirth)
             .HasColumnName("DateOfBirth")
+            .HasConversion(
+                bd => bd!.Value.Value,
+                value => BirthDate.Of(value))
             .HasColumnType("date")
             .IsRequired();
 
@@ -68,11 +86,17 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
 
             address.Property(a => a.City)
                 .HasColumnName("Address_City")
+                .HasConversion(
+                    city => city.Value,
+                    value => City.From(value))
                 .HasMaxLength(100)
                 .IsRequired();
 
             address.Property(a => a.PostalCode)
                 .HasColumnName("Address_PostalCode")
+                .HasConversion(
+                    pc => pc.Value,
+                    value => PostalCode.From(value))
                 .HasMaxLength(10)
                 .IsRequired();
 
@@ -144,11 +168,9 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         // Note: Indexes on complex property members (Address.City, Address.PostalCode, DriversLicense.ExpiryDate)
         // need to be added via migration Up() method using SQL if needed for performance
 
-        // Ignore domain events (not persisted)
-        builder.Ignore(c => c.DomainEvents);
-
         // Computed properties (not persisted)
         builder.Ignore(c => c.FullName);
+        builder.Ignore(c => c.FormalName);
         builder.Ignore(c => c.Age);
     }
 }

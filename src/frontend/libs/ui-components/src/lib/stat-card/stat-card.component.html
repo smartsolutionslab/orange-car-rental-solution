@@ -1,0 +1,22 @@
+<div class="stat-card" [class.stat-card--loading]="loading()">
+  <div [class]="iconClass()">
+    @if (iconName()) {
+      <lib-icon [name]="iconName()!" variant="filled" size="lg" />
+    } @else {
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path [attr.d]="defaultIconPath()"/>
+      </svg>
+    }
+  </div>
+  <div class="stat-content">
+    <h3 class="stat-label">{{ label() }}</h3>
+    @if (loading()) {
+      <p class="stat-value stat-value--loading">--</p>
+    } @else {
+      <p class="stat-value">{{ value() }}</p>
+    }
+    @if (subtitle()) {
+      <p class="stat-subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+</div>

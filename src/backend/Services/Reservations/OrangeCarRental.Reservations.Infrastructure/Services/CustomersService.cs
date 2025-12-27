@@ -5,21 +5,11 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 /// <summary>
-/// HTTP client implementation for calling the Customers API.
+///     HTTP client implementation for calling the Customers API.
 /// </summary>
-public sealed class CustomersService : ICustomersService
+public sealed class CustomersService(HttpClient httpClient) : ICustomersService
 {
-    private readonly HttpClient _httpClient;
-    private readonly JsonSerializerOptions _jsonOptions;
-
-    public CustomersService(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        _jsonOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        };
-    }
+    private readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public async Task<Guid> RegisterCustomerAsync(
         RegisterCustomerDto request,
@@ -43,11 +33,11 @@ public sealed class CustomersService : ICustomersService
             request.LicenseExpiryDate
         };
 
-        var json = JsonSerializer.Serialize(requestBody, _jsonOptions);
+        var json = JsonSerializer.Serialize(requestBody, jsonOptions);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         // Call Customers API
-        var response = await _httpClient.PostAsync("/api/customers", content, cancellationToken);
+        var response = await httpClient.PostAsync("/api/customers", content, cancellationToken);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -58,18 +48,13 @@ public sealed class CustomersService : ICustomersService
 
         // Deserialize response to get the customer ID
         var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var result = JsonSerializer.Deserialize<RegisterCustomerResponse>(responseJson, _jsonOptions);
-
-        if (result is null)
-        {
-            throw new InvalidOperationException("Failed to deserialize customer registration response from Customers API");
-        }
-
+        var result = JsonSerializer.Deserialize<RegisterCustomerResponse>(responseJson, jsonOptions) ?? throw new InvalidOperationException(
+                "Failed to deserialize customer registration response from Customers API");
         return result.CustomerId;
     }
 
     /// <summary>
-    /// Response model from Customers API register endpoint.
+    ///     Response model from Customers API register endpoint.
     /// </summary>
     private sealed record RegisterCustomerResponse(Guid CustomerId);
 }

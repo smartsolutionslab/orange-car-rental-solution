@@ -1,16 +1,27 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.EventStore.Extensions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.EventSourcing;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add Aspire service defaults (OpenTelemetry, health checks, service discovery, resilience)
+builder.AddServiceDefaults();
 
 // Configure Serilog
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -20,7 +31,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.WithMachineName()
     .Enrich.WithEnvironmentName()
     .Enrich.WithProperty("Application", "ReservationsAPI")
-    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+    .WriteTo.Console(
+        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -30,11 +42,15 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.WithOrigins("http://localhost:4200", "http://localhost:4201")
-              .AllowAnyHeader()
-              .AllowAnyMethod();
+        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
+
+// Add JWT Authentication and Authorization
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddOrangeCarRentalAuthorization();
 
 // Register database context (connection string provided by Aspire)
 builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDbContextOptions: options =>
@@ -43,45 +59,39 @@ builder.AddSqlServerDbContext<ReservationsDbContext>("reservations", configureDb
         sqlOptions.MigrationsAssembly("OrangeCarRental.Reservations.Infrastructure"));
 });
 
-// Register HTTP client for Pricing API
-var pricingApiUrl = builder.Configuration["PRICING_API_URL"] ?? "http://localhost:5002";
-Log.Information("Pricing API URL: {PricingApiUrl}", pricingApiUrl);
-
+// Register HTTP client for Pricing API (service discovery configured via AddServiceDefaults)
 builder.Services.AddHttpClient<IPricingService, PricingService>(client =>
 {
-    client.BaseAddress = new Uri(pricingApiUrl);
+    client.BaseAddress = new Uri("http://pricing-api");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Register HTTP client for Customers API
-var customersApiUrl = builder.Configuration["CUSTOMERS_API_URL"] ?? "http://localhost:5001";
-Log.Information("Customers API URL: {CustomersApiUrl}", customersApiUrl);
-
+// Register HTTP client for Customers API (service discovery configured via AddServiceDefaults)
 builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
 {
-    client.BaseAddress = new Uri(customersApiUrl);
+    client.BaseAddress = new Uri("http://customers-api");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Register repositories
+// Register Unit of Work and repositories
+builder.Services.AddScoped<IReservationsUnitOfWork, ReservationsUnitOfWork>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
+// Register event sourcing (type mappings for serialization)
+builder.Services.AddReservationEventSourcing();
+
+// Register event publisher (for domain event publishing)
+builder.Services.AddReservationEventPublisher();
 
 // Register application handlers
 builder.Services.AddScoped<CreateReservationCommandHandler>();
 builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
 builder.Services.AddScoped<GetReservationQueryHandler>();
+builder.Services.AddScoped<SearchReservationsQueryHandler>();
+builder.Services.AddScoped<ConfirmReservationCommandHandler>();
+builder.Services.AddScoped<CancelReservationCommandHandler>();
 
 var app = builder.Build();
-
-// Check if running as migration job
-if (args.Contains("--migrate-only"))
-{
-    var exitCode = await app.RunMigrationsAndExitAsync<ReservationsDbContext>();
-    Environment.Exit(exitCode);
-}
-
-// Apply database migrations (auto in dev/Aspire, manual in production)
-await app.MigrateDatabaseAsync<ReservationsDbContext>();
 
 // Seed database with sample data (development only)
 await app.SeedReservationsDataAsync();
@@ -113,8 +123,12 @@ app.UseSerilogRequestLogging(options =>
 app.UseCors();
 app.UseHttpsRedirection();
 
+// Add Authentication and Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Map API endpoints
 app.MapReservationEndpoints();
-app.MapHealthEndpoints();
+app.MapDefaultEndpoints();
 
 app.Run();

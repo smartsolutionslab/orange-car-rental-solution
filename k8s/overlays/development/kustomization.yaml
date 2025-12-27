@@ -1,0 +1,58 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: orange-dev
+
+bases:
+- ../../base
+
+namePrefix: dev-
+
+commonLabels:
+  environment: development
+
+images:
+- name: orangecarrental.azurecr.io/public-portal
+  newTag: dev-latest
+- name: orangecarrental.azurecr.io/vehicles-api
+  newTag: dev-latest
+- name: orangecarrental.azurecr.io/reservations-api
+  newTag: dev-latest
+- name: orangecarrental.azurecr.io/customers-api
+  newTag: dev-latest
+- name: orangecarrental.azurecr.io/locations-api
+  newTag: dev-latest
+
+replicas:
+- name: public-portal
+  count: 1
+- name: vehicles-api
+  count: 1
+- name: reservations-api
+  count: 1
+- name: customers-api
+  count: 1
+- name: locations-api
+  count: 1
+- name: keycloak
+  count: 1
+
+configMapGenerator:
+- name: app-config
+  behavior: merge
+  literals:
+  - api.base.url=https://api-dev.orange-rental.de
+  - keycloak.url=https://auth-dev.orange-rental.de
+  - app.environment=development
+
+patches:
+- patch: |-
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/requests/memory
+      value: "128Mi"
+    - op: replace
+      path: /spec/template/spec/containers/0/resources/limits/memory
+      value: "256Mi"
+  target:
+    kind: Deployment
+    name: public-portal

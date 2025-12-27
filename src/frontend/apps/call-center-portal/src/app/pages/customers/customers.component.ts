@@ -1,10 +1,34 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { createCustomerId } from '@orange-car-rental/reservation-api';
+import { logError } from '@orange-car-rental/util';
+import {
+  formatDateDE,
+  getReservationStatusClass,
+  calculateAge,
+  ModalComponent,
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  StatusBadgeComponent,
+  SuccessAlertComponent,
+  IconComponent,
+} from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
-import { Customer, UpdateCustomerRequest } from '../../services/customer.model';
-import { Reservation } from '../../services/reservation.model';
+import { DEFAULT_PAGE_SIZE, UI_TIMING } from '../../constants/app.constants';
+import type { Customer, UpdateCustomerRequest, CustomerFormValues, Reservation } from '../../types';
+import type {
+  EmailAddress,
+  PhoneNumber,
+  ISODateString,
+  PostalCode,
+  CountryCode,
+} from '@orange-car-rental/shared';
+import type { CityName } from '@orange-car-rental/location-api';
+import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 
 /**
  * Customers management page for call center
@@ -13,13 +37,25 @@ import { Reservation } from '../../services/reservation.model';
 @Component({
   selector: 'app-customers',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    ModalComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    StatusBadgeComponent,
+    SuccessAlertComponent,
+    IconComponent,
+  ],
   templateUrl: './customers.component.html',
-  styleUrl: './customers.component.css'
+  styleUrl: './customers.component.css',
 })
 export class CustomersComponent {
   private readonly customerService = inject(CustomerService);
   private readonly reservationService = inject(ReservationService);
+  private readonly translate = inject(TranslateService);
 
   protected readonly customers = signal<Customer[]>([]);
   protected readonly loading = signal(false);
@@ -32,8 +68,8 @@ export class CustomersComponent {
   protected readonly saving = signal(false);
   protected readonly successMessage = signal<string | null>(null);
 
-  // Edit form data
-  protected readonly editForm = signal<UpdateCustomerRequest>({
+  // Edit form data - uses plain strings for form binding
+  protected readonly editForm = signal<CustomerFormValues>({
     firstName: '',
     lastName: '',
     email: '',
@@ -46,7 +82,7 @@ export class CustomersComponent {
     licenseNumber: '',
     licenseIssueCountry: '',
     licenseIssueDate: '',
-    licenseExpiryDate: ''
+    licenseExpiryDate: '',
   });
 
   // Search filters
@@ -67,7 +103,7 @@ export class CustomersComponent {
     const lastName = this.searchLastName().trim();
 
     if (!email && !phone && !lastName) {
-      this.error.set('Bitte geben Sie mindestens ein Suchkriterium ein');
+      this.error.set(this.translate.instant('customers.search.minCriteria'));
       return;
     }
 
@@ -76,10 +112,10 @@ export class CustomersComponent {
     this.searchPerformed.set(true);
 
     const query = {
-      email: email || undefined,
-      phoneNumber: phone || undefined,
-      lastName: lastName || undefined,
-      pageSize: 50
+      ...(email && { email: email as EmailAddress }),
+      ...(phone && { phoneNumber: phone as PhoneNumber }),
+      ...(lastName && { lastName }),
+      pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS,
     };
 
     this.customerService.searchCustomers(query).subscribe({
@@ -89,10 +125,10 @@ export class CustomersComponent {
         this.loading.set(false);
       },
       error: (err) => {
-        console.error('Error searching customers:', err);
-        this.error.set('Fehler bei der Kundensuche');
+        logError('CustomersComponent', 'Error searching customers', err);
+        this.error.set(this.translate.instant('customers.error'));
         this.loading.set(false);
-      }
+      },
     });
   }
 
@@ -125,6 +161,7 @@ export class CustomersComponent {
     this.showDetails.set(false);
     this.selectedCustomer.set(null);
     this.customerReservations.set([]);
+    this.editMode.set(false);
   }
 
   /**
@@ -133,89 +170,61 @@ export class CustomersComponent {
   private loadCustomerReservations(customerId: string): void {
     this.loadingReservations.set(true);
 
-    this.reservationService.searchReservations({ customerId, pageSize: 100 }).subscribe({
-      next: (result) => {
-        this.customerReservations.set(result.reservations);
-        this.loadingReservations.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading customer reservations:', err);
-        this.loadingReservations.set(false);
-      }
-    });
+    this.reservationService
+      .searchReservations({
+        customerId: createCustomerId(customerId),
+        pageSize: DEFAULT_PAGE_SIZE.CUSTOMER_RESERVATIONS,
+      })
+      .subscribe({
+        next: (result) => {
+          this.customerReservations.set(result.reservations);
+          this.loadingReservations.set(false);
+        },
+        error: (err) => {
+          logError('CustomersComponent', 'Error loading customer reservations', err);
+          this.loadingReservations.set(false);
+        },
+      });
   }
 
+  // Helpers - using shared utilities
+  protected formatDate = formatDateDE;
+  protected getStatusClass = getReservationStatusClass;
+  protected calculateAge = calculateAge;
+
   /**
-   * Format date for display
+   * Update edit form field
    */
-  protected formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
+  protected updateEditForm(field: keyof CustomerFormValues, value: string): void {
+    this.editForm.update((form) => ({
+      ...form,
+      [field]: value,
+    }));
   }
 
   /**
-   * Get status badge class
-   */
-  protected getStatusClass(status: string): string {
-    switch (status.toLowerCase()) {
-      case 'confirmed':
-      case 'active':
-        return 'status-success';
-      case 'pending':
-        return 'status-warning';
-      case 'cancelled':
-        return 'status-error';
-      case 'completed':
-        return 'status-info';
-      default:
-        return '';
-    }
-  }
-
-  /**
-   * Calculate customer age
-   */
-  protected calculateAge(dateOfBirth: string): number {
-    const today = new Date();
-    const birthDate = new Date(dateOfBirth);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age;
-  }
-
-  /**
-   * Enter edit mode and populate form
+   * Enter edit mode
    */
   protected enterEditMode(): void {
     const customer = this.selectedCustomer();
-    if (!customer) return;
-
-    this.editForm.set({
-      firstName: customer.firstName,
-      lastName: customer.lastName,
-      email: customer.email,
-      phoneNumber: customer.phoneNumber,
-      dateOfBirth: customer.dateOfBirth,
-      street: customer.street,
-      city: customer.city,
-      postalCode: customer.postalCode,
-      country: customer.country,
-      licenseNumber: customer.licenseNumber,
-      licenseIssueCountry: customer.licenseIssueCountry,
-      licenseIssueDate: customer.licenseIssueDate,
-      licenseExpiryDate: customer.licenseExpiryDate
-    });
-    this.editMode.set(true);
-    this.error.set(null);
+    if (customer) {
+      this.editForm.set({
+        firstName: customer.firstName ?? '',
+        lastName: customer.lastName ?? '',
+        email: customer.email ?? '',
+        phoneNumber: customer.phoneNumber ?? '',
+        dateOfBirth: customer.dateOfBirth ?? '',
+        street: customer.street ?? '',
+        city: customer.city ?? '',
+        postalCode: customer.postalCode ?? '',
+        country: customer.country ?? '',
+        licenseNumber: customer.licenseNumber ?? '',
+        licenseIssueCountry: customer.licenseIssueCountry ?? '',
+        licenseIssueDate: customer.licenseIssueDate ?? '',
+        licenseExpiryDate: customer.licenseExpiryDate ?? '',
+      });
+      this.editMode.set(true);
+    }
   }
 
   /**
@@ -223,7 +232,6 @@ export class CustomersComponent {
    */
   protected cancelEdit(): void {
     this.editMode.set(false);
-    this.error.set(null);
   }
 
   /**
@@ -233,78 +241,42 @@ export class CustomersComponent {
     const customer = this.selectedCustomer();
     if (!customer) return;
 
-    const form = this.editForm();
-
-    // Validation
-    if (!form.firstName?.trim() || !form.lastName?.trim()) {
-      this.error.set('Vorname und Nachname sind erforderlich');
-      return;
-    }
-
-    if (!form.email?.trim() || !this.isValidEmail(form.email)) {
-      this.error.set('Gültige E-Mail-Adresse ist erforderlich');
-      return;
-    }
-
-    if (!form.phoneNumber?.trim()) {
-      this.error.set('Telefonnummer ist erforderlich');
-      return;
-    }
-
-    if (!form.dateOfBirth) {
-      this.error.set('Geburtsdatum ist erforderlich');
-      return;
-    }
-
-    if (!form.licenseNumber?.trim()) {
-      this.error.set('Führerscheinnummer ist erforderlich');
-      return;
-    }
-
     this.saving.set(true);
     this.error.set(null);
 
-    this.customerService.updateCustomer(customer.id, form).subscribe({
+    // Convert form values to UpdateCustomerRequest with type assertions
+    const formValues = this.editForm();
+    const request: UpdateCustomerRequest = {
+      firstName: formValues.firstName,
+      lastName: formValues.lastName,
+      email: formValues.email as EmailAddress,
+      phoneNumber: formValues.phoneNumber as PhoneNumber,
+      dateOfBirth: formValues.dateOfBirth as ISODateString,
+      street: formValues.street,
+      city: formValues.city as CityName,
+      postalCode: formValues.postalCode as PostalCode,
+      country: formValues.country as CountryCode,
+      licenseNumber: formValues.licenseNumber as LicenseNumber,
+      licenseIssueCountry: formValues.licenseIssueCountry as CountryCode,
+      licenseIssueDate: formValues.licenseIssueDate as ISODateString,
+      licenseExpiryDate: formValues.licenseExpiryDate as ISODateString,
+    };
+
+    this.customerService.updateCustomer(customer.id, request).subscribe({
       next: (updatedCustomer) => {
         this.selectedCustomer.set(updatedCustomer);
         this.editMode.set(false);
         this.saving.set(false);
-        this.successMessage.set('Kundendaten erfolgreich aktualisiert');
-
-        // Update in list
-        const customers = this.customers();
-        const index = customers.findIndex(c => c.id === updatedCustomer.id);
-        if (index !== -1) {
-          customers[index] = updatedCustomer;
-          this.customers.set([...customers]);
-        }
-
-        // Clear success message after 3 seconds
-        setTimeout(() => this.successMessage.set(null), 3000);
+        this.successMessage.set(this.translate.instant('customers.edit.success'));
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
+        // Refresh the customer list
+        this.searchCustomers();
       },
       error: (err) => {
-        console.error('Error updating customer:', err);
-        this.error.set('Fehler beim Aktualisieren der Kundendaten');
+        logError('CustomersComponent', 'Error updating customer', err);
+        this.error.set(this.translate.instant('customers.edit.error'));
         this.saving.set(false);
-      }
+      },
     });
-  }
-
-  /**
-   * Validate email format
-   */
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  }
-
-  /**
-   * Update a field in the edit form
-   */
-  protected updateEditForm<K extends keyof UpdateCustomerRequest>(field: K, value: UpdateCustomerRequest[K]): void {
-    this.editForm.update(form => ({
-      ...form,
-      [field]: value
-    }));
   }
 }

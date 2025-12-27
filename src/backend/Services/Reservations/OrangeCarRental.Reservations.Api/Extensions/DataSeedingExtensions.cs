@@ -1,42 +1,45 @@
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 
 /// <summary>
-/// Extension methods for data seeding in the Reservations API.
+///     Extension methods for data seeding in the Reservations API.
+///     Uses C# 14 Extension Members syntax.
 /// </summary>
 public static class DataSeedingExtensions
 {
     /// <summary>
-    /// Seeds the Reservations database with sample data if running in Development environment.
+    ///     C# 14 Extension Members for IApplicationBuilder data seeding.
     /// </summary>
-    public static async Task SeedReservationsDataAsync(this IApplicationBuilder app)
+    extension(IApplicationBuilder app)
     {
-        using var scope = app.ApplicationServices.CreateScope();
-        var services = scope.ServiceProvider;
-        var environment = services.GetRequiredService<IHostEnvironment>();
-
-        // Only seed in development
-        if (!environment.IsDevelopment())
+        /// <summary>
+        ///     Seeds the Reservations database with sample data if running in Development environment.
+        /// </summary>
+        public async Task SeedReservationsDataAsync()
         {
-            return;
-        }
+            using var scope = app.ApplicationServices.CreateScope();
+            var services = scope.ServiceProvider;
+            var environment = services.GetRequiredService<IHostEnvironment>();
 
-        var logger = services.GetRequiredService<ILogger<ReservationsDataSeeder>>();
+            // Only seed in development
+            if (!environment.IsDevelopment()) return;
 
-        try
-        {
-            var context = services.GetRequiredService<ReservationsDbContext>();
+            var logger = services.GetRequiredService<ILogger<ReservationsDataSeeder>>();
 
-            var seeder = new ReservationsDataSeeder(context, logger);
-            await seeder.SeedAsync();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "An error occurred while seeding the Reservations database.");
-            // Don't throw - seeding failures shouldn't prevent the app from starting
+            try
+            {
+                var context = services.GetRequiredService<ReservationsDbContext>();
+
+                var seeder = new ReservationsDataSeeder(context, logger);
+                await seeder.SeedAsync();
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An error occurred while seeding the Reservations database.");
+                // Don't throw - seeding failures shouldn't prevent the app from starting
+            }
         }
     }
 }

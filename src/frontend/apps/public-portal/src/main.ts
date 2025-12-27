@@ -1,11 +1,15 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { registerLocaleData } from '@angular/common';
-import localeDe from '@angular/common/locales/de';
-import { appConfig } from './app/app.config';
-import { App } from './app/app';
+import { initFederation } from '@angular-architects/native-federation';
 
-// Register German locale data for pipes
-registerLocaleData(localeDe);
+(async () => {
+  try {
+    await initFederation('/assets/federation.manifest.json');
+  } catch (err) {
+    console.error('Federation initialization error:', err);
+  }
 
-bootstrapApplication(App, appConfig)
-  .catch((err) => console.error(err));
+  try {
+    await import('./bootstrap');
+  } catch (err) {
+    console.error('Bootstrap error:', err);
+  }
+})();

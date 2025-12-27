@@ -1,12 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Vehicle aggregate.
+///     Entity configuration for Vehicle aggregate.
 /// </summary>
 internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 {
@@ -28,7 +30,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("Name")
             .HasConversion(
                 name => name.Value,
-                value => VehicleName.Of(value))
+                value => VehicleName.From(value))
             .HasMaxLength(100)
             .IsRequired();
 
@@ -37,16 +39,16 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("CategoryCode")
             .HasConversion(
                 category => category.Code,
-                code => VehicleCategory.FromCode(code))
+                code => VehicleCategory.From(code))
             .HasMaxLength(20)
             .IsRequired();
 
-        // Location - stored as code
-        builder.Property(v => v.CurrentLocation)
+        // LocationCode - stored as string
+        builder.Property(v => v.CurrentLocationCode)
             .HasColumnName("LocationCode")
             .HasConversion(
-                location => location.Code.Value,
-                code => Location.FromCode(LocationCode.Of(code)))
+                code => code.Value,
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -67,7 +69,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });
@@ -77,7 +79,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("Seats")
             .HasConversion(
                 seats => seats.Value,
-                value => SeatingCapacity.Of(value))
+                value => SeatingCapacity.From(value))
             .IsRequired();
 
         // Enums
@@ -99,9 +101,12 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasMaxLength(20)
             .IsRequired();
 
-        // Simple properties
+        // LicensePlate value object
         builder.Property(v => v.LicensePlate)
             .HasColumnName("LicensePlate")
+            .HasConversion(
+                licensePlate => licensePlate.HasValue ? licensePlate.Value.Value : null,
+                value => value != null ? LicensePlate.From(value) : null)
             .HasMaxLength(20);
 
         // Nullable value objects - Manufacturer, Model, Year
@@ -109,24 +114,28 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasColumnName("Manufacturer")
             .HasConversion(
                 manufacturer => manufacturer.HasValue ? manufacturer.Value.Value : null,
-                value => value != null ? Manufacturer.Of(value) : null)
+                value => value != null ? Manufacturer.From(value) : null)
             .HasMaxLength(100);
 
         builder.Property(v => v.Model)
             .HasColumnName("Model")
             .HasConversion(
                 model => model.HasValue ? model.Value.Value : null,
-                value => value != null ? VehicleModel.Of(value) : null)
+                value => value != null ? VehicleModel.From(value) : null)
             .HasMaxLength(100);
 
         builder.Property(v => v.Year)
             .HasColumnName("Year")
             .HasConversion(
                 year => year.HasValue ? year.Value.Value : (int?)null,
-                value => value.HasValue ? ManufacturingYear.Of(value.Value) : null);
+                value => value.HasValue ? ManufacturingYear.From(value.Value) : null);
 
+        // ImageUrl value object
         builder.Property(v => v.ImageUrl)
             .HasColumnName("ImageUrl")
+            .HasConversion(
+                imageUrl => imageUrl.HasValue ? imageUrl.Value.Value : null,
+                value => value != null ? ImageUrl.From(value) : null)
             .HasMaxLength(500);
 
         // Ignore domain events (not persisted)
@@ -134,7 +143,7 @@ internal sealed class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 
         // Indexes for common queries
         builder.HasIndex(v => v.Status);
-        builder.HasIndex(v => v.CurrentLocation);
+        builder.HasIndex(v => v.CurrentLocationCode);
         builder.HasIndex(v => v.Category);
     }
 }

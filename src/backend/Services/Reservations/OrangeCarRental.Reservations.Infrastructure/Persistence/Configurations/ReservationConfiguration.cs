@@ -1,11 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for Reservation aggregate.
+///     Entity configuration for Reservation aggregate.
 /// </summary>
 internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
 {
@@ -22,13 +24,20 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 value => ReservationIdentifier.From(value))
             .IsRequired();
 
-        // Foreign keys (references to other services)
-        builder.Property(r => r.VehicleId)
+        // Foreign keys (references to other services) - using internal value objects
+        // Note: Using .Value.Value for nullable struct access
+        builder.Property(r => r.VehicleIdentifier)
             .HasColumnName("VehicleId")
+            .HasConversion(
+                id => id!.Value.Value,
+                value => VehicleIdentifier.From(value))
             .IsRequired();
 
-        builder.Property(r => r.CustomerId)
+        builder.Property(r => r.CustomerIdentifier)
             .HasColumnName("CustomerId")
+            .HasConversion(
+                id => id!.Value.Value,
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
         // BookingPeriod value object - complex type mapping
@@ -45,20 +54,20 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .IsRequired();
         });
 
-        // LocationCode value objects
+        // LocationCode value objects - nullable struct access
         builder.Property(r => r.PickupLocationCode)
             .HasColumnName("PickupLocationCode")
             .HasConversion(
-                locationCode => locationCode.Value,
-                value => LocationCode.Of(value))
+                locationCode => locationCode!.Value.Value,
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
         builder.Property(r => r.DropoffLocationCode)
             .HasColumnName("DropoffLocationCode")
             .HasConversion(
-                locationCode => locationCode.Value,
-                value => LocationCode.Of(value))
+                locationCode => locationCode!.Value.Value,
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -79,7 +88,7 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });
@@ -109,12 +118,9 @@ internal sealed class ReservationConfiguration : IEntityTypeConfiguration<Reserv
         builder.Property(r => r.CompletedAt)
             .HasColumnName("CompletedAt");
 
-        // Ignore domain events (not persisted)
-        builder.Ignore(r => r.DomainEvents);
-
         // Indexes for common queries
-        builder.HasIndex(r => r.VehicleId);
-        builder.HasIndex(r => r.CustomerId);
+        builder.HasIndex(r => r.VehicleIdentifier);
+        builder.HasIndex(r => r.CustomerIdentifier);
         builder.HasIndex(r => r.Status);
         builder.HasIndex(r => r.PickupLocationCode);
         builder.HasIndex(r => r.DropoffLocationCode);

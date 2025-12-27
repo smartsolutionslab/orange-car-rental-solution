@@ -1,27 +1,21 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import type { ApiConfig } from '@orange-car-rental/shared';
 
 /**
- * Configuration service
- * Loads runtime configuration from public/config.json
+ * Configuration service that holds runtime configuration
+ * Implements ApiConfig interface for use with shared services
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class ConfigService {
-  private readonly http = inject(HttpClient);
-  private config: { apiUrl: string } | null = null;
+export class ConfigService implements ApiConfig {
+  private config: ApiConfig = { apiUrl: 'http://localhost:5002' };
 
   get apiUrl(): string {
-    return this.config?.apiUrl || 'http://localhost:5002';
+    return this.config.apiUrl;
   }
 
-  async loadConfig(): Promise<void> {
-    try {
-      this.config = await this.http.get<{ apiUrl: string }>('/config.json').toPromise() as { apiUrl: string };
-    } catch (error) {
-      console.error('Failed to load config, using defaults', error);
-      this.config = { apiUrl: 'http://localhost:5002' };
-    }
+  setConfig(config: ApiConfig): void {
+    this.config = config;
   }
 }

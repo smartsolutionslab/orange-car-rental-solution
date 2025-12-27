@@ -1,26 +1,34 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Driver's license value object.
-/// Represents a driver's license with validation for EU/German requirements.
+///     Result of driver's license validation for rental eligibility.
 /// </summary>
-public readonly record struct DriversLicense
+/// <param name="IsValid">Whether the license is valid for rental.</param>
+/// <param name="Issues">List of validation issues if any.</param>
+public sealed record LicenseValidationResult(bool IsValid, IReadOnlyList<string> Issues)
 {
-    public string LicenseNumber { get; }
-    public string IssueCountry { get; }
-    public DateOnly IssueDate { get; }
-    public DateOnly ExpiryDate { get; }
+    public static LicenseValidationResult Valid => new(true, []);
+}
 
-    private DriversLicense(string licenseNumber, string issueCountry, DateOnly issueDate, DateOnly expiryDate)
-    {
-        LicenseNumber = licenseNumber;
-        IssueCountry = issueCountry;
-        IssueDate = issueDate;
-        ExpiryDate = expiryDate;
-    }
-
+/// <summary>
+///     Driver's license value object.
+///     Represents a driver's license with validation for EU/German requirements.
+/// </summary>
+/// <param name="LicenseNumber">The license number.</param>
+/// <param name="IssueCountry">The country that issued the license.</param>
+/// <param name="IssueDate">The date the license was issued.</param>
+/// <param name="ExpiryDate">The date the license expires.</param>
+public readonly record struct DriversLicense(
+    string LicenseNumber,
+    string IssueCountry,
+    DateOnly IssueDate,
+    DateOnly ExpiryDate) : IValueObject
+{
     /// <summary>
-    /// Creates a driver's license value object.
+    ///     Creates a driver's license value object.
     /// </summary>
     /// <param name="licenseNumber">The license number (alphanumeric).</param>
     /// <param name="issueCountry">The country that issued the license.</param>
@@ -33,60 +41,29 @@ public readonly record struct DriversLicense
         DateOnly issueDate,
         DateOnly expiryDate)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(licenseNumber, nameof(licenseNumber));
-        ArgumentException.ThrowIfNullOrWhiteSpace(issueCountry, nameof(issueCountry));
+        var normalizedLicenseNumber = licenseNumber?.Trim().ToUpperInvariant() ?? string.Empty;
+        var normalizedIssueCountry = issueCountry?.Trim() ?? string.Empty;
 
-        var normalizedLicenseNumber = licenseNumber.Trim().ToUpperInvariant();
-        var normalizedIssueCountry = issueCountry.Trim();
+        Ensure.That(normalizedLicenseNumber, nameof(licenseNumber))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(5, 20)
+            .AndSatisfies(
+                num => num.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)),
+                "License number must contain only letters, digits, and spaces");
 
-        // Validate license number format (alphanumeric, spaces allowed)
-        if (!normalizedLicenseNumber.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c)))
-        {
-            throw new ArgumentException(
-                "License number must contain only letters, digits, and spaces",
-                nameof(licenseNumber));
-        }
+        Ensure.That(normalizedIssueCountry, nameof(issueCountry))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
-        // Validate length
-        if (normalizedLicenseNumber.Length < 5 || normalizedLicenseNumber.Length > 20)
-        {
-            throw new ArgumentException(
-                "License number must be between 5 and 20 characters",
-                nameof(licenseNumber));
-        }
-
-        // Validate dates
-        if (issueDate > DateOnly.FromDateTime(DateTime.UtcNow))
-        {
-            throw new ArgumentException(
-                "License issue date cannot be in the future",
-                nameof(issueDate));
-        }
-
-        if (expiryDate <= issueDate)
-        {
-            throw new ArgumentException(
-                "License expiry date must be after issue date",
-                nameof(expiryDate));
-        }
-
-        // Validate that license was issued at least 18 years after a reasonable birth year
-        // (This is a sanity check - actual age validation is done in the Customer aggregate)
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var minimumIssueDate = new DateOnly(1950, 1, 1);
-        if (issueDate < minimumIssueDate)
-        {
-            throw new ArgumentException(
-                $"License issue date cannot be before {minimumIssueDate}",
-                nameof(issueDate));
-        }
 
-        // Validate country
-        if (normalizedIssueCountry.Length > 100)
-        {
-            throw new ArgumentException(
-                "Issue country name is too long (max 100 characters)",
-                nameof(issueCountry));
-        }
+        Ensure.That(issueDate, nameof(issueDate))
+            .IsGreaterThanOrEqual(minimumIssueDate)
+            .IsLessThanOrEqual(today);
+
+        Ensure.That(expiryDate, nameof(expiryDate))
+            .IsGreaterThan(issueDate);
 
         return new DriversLicense(
             normalizedLicenseNumber,
@@ -96,7 +73,7 @@ public readonly record struct DriversLicense
     }
 
     /// <summary>
-    /// Checks if the license is currently valid (not expired).
+    ///     Checks if the license is currently valid (not expired).
     /// </summary>
     public bool IsValid()
     {
@@ -105,35 +82,55 @@ public readonly record struct DriversLicense
     }
 
     /// <summary>
-    /// Checks if the license will be valid on a specific date.
+    ///     Checks if the license will be valid on a specific date.
     /// </summary>
     /// <param name="date">The date to check.</param>
-    public bool IsValidOn(DateOnly date)
-    {
-        return date >= IssueDate && date <= ExpiryDate;
-    }
+    public bool IsValidOn(DateOnly date) => date >= IssueDate && date <= ExpiryDate;
 
     /// <summary>
-    /// Checks if the license is from an EU member state.
-    /// EU licenses are generally recognized across all member states.
+    ///     Checks if the license is from an EU member state.
+    ///     EU licenses are generally recognized across all member states.
     /// </summary>
     public bool IsEuLicense()
     {
         var euCountries = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "Germany", "Deutschland", "France", "Italy", "Spain", "Netherlands",
-            "Belgium", "Austria", "Poland", "Portugal", "Greece", "Sweden",
-            "Denmark", "Finland", "Ireland", "Czech Republic", "Romania",
-            "Hungary", "Slovakia", "Bulgaria", "Croatia", "Slovenia",
-            "Lithuania", "Latvia", "Estonia", "Luxembourg", "Malta", "Cyprus"
+            "Germany",
+            "Deutschland",
+            "France",
+            "Italy",
+            "Spain",
+            "Netherlands",
+            "Belgium",
+            "Austria",
+            "Poland",
+            "Portugal",
+            "Greece",
+            "Sweden",
+            "Denmark",
+            "Finland",
+            "Ireland",
+            "Czech Republic",
+            "Romania",
+            "Hungary",
+            "Slovakia",
+            "Bulgaria",
+            "Croatia",
+            "Slovenia",
+            "Lithuania",
+            "Latvia",
+            "Estonia",
+            "Luxembourg",
+            "Malta",
+            "Cyprus"
         };
 
         return euCountries.Contains(IssueCountry);
     }
 
     /// <summary>
-    /// Gets the number of days until the license expires.
-    /// Returns negative number if already expired.
+    ///     Gets the number of days until the license expires.
+    ///     Returns negative number if already expired.
     /// </summary>
     public int DaysUntilExpiry()
     {
@@ -142,7 +139,76 @@ public readonly record struct DriversLicense
     }
 
     /// <summary>
-    /// Creates an anonymized driver's license for GDPR compliance.
+    ///     Checks if the license has been held for the specified number of years.
+    ///     German car rental requires licenses held for at least 1 year.
+    /// </summary>
+    /// <param name="years">The minimum number of years the license must have been held.</param>
+    /// <param name="asOfDate">The date to check against (defaults to today).</param>
+    public bool HasBeenHeldForYears(int years, DateOnly? asOfDate = null)
+    {
+        var checkDate = asOfDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        var yearsHeld = (checkDate.DayNumber - IssueDate.DayNumber) / 365.25;
+        return yearsHeld >= years;
+    }
+
+    /// <summary>
+    ///     Gets the number of complete years the license has been held.
+    /// </summary>
+    /// <param name="asOfDate">The date to calculate from (defaults to today).</param>
+    public int YearsHeld(DateOnly? asOfDate = null)
+    {
+        var checkDate = asOfDate ?? DateOnly.FromDateTime(DateTime.UtcNow);
+        return (int)((checkDate.DayNumber - IssueDate.DayNumber) / 365.25);
+    }
+
+    /// <summary>
+    ///     Validates the license meets German car rental requirements:
+    ///     - License must be valid on the rental date
+    ///     - License must have been held for at least 1 year
+    ///     - License must be from EU or recognized international license
+    /// </summary>
+    /// <param name="rentalDate">The start date of the rental.</param>
+    /// <returns>True if the license is valid for rental in Germany.</returns>
+    public bool IsValidForGermanRental(DateOnly rentalDate)
+    {
+        // Must be valid on rental date
+        if (!IsValidOn(rentalDate))
+            return false;
+
+        // Must have been held for at least 1 year
+        if (!HasBeenHeldForYears(1, rentalDate))
+            return false;
+
+        // EU licenses are always valid
+        // Non-EU licenses may require additional validation (international driving permit)
+        return true; // Basic validation - additional checks may be needed for non-EU
+    }
+
+    /// <summary>
+    ///     Gets detailed validation result for German rental requirements.
+    /// </summary>
+    /// <param name="rentalDate">The start date of the rental.</param>
+    public LicenseValidationResult ValidateForGermanRental(DateOnly rentalDate)
+    {
+        var issues = new List<string>();
+
+        if (!IsValidOn(rentalDate))
+            issues.Add($"License expires before rental date ({ExpiryDate:dd.MM.yyyy})");
+
+        if (!HasBeenHeldForYears(1, rentalDate))
+        {
+            var yearsHeld = YearsHeld(rentalDate);
+            issues.Add($"License must be held for at least 1 year (currently held for {yearsHeld} years)");
+        }
+
+        if (!IsEuLicense())
+            issues.Add("Non-EU license may require International Driving Permit");
+
+        return new LicenseValidationResult(issues.Count == 0, issues);
+    }
+
+    /// <summary>
+    ///     Creates an anonymized driver's license for GDPR compliance.
     /// </summary>
     public static DriversLicense Anonymized()
     {

@@ -1,19 +1,59 @@
 {
-  "name": "frontend",
+  "name": "@orange-car-rental/frontend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "libs/*"
+  ],
+  "resolutions": {
+    "@parcel/source-map": "npm:source-map@^0.7.4",
+    "oxc-parser": "0.39.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "scripts": {
+    "postinstall": "patch-package",
+    "start:public": "yarn workspace @orange-car-rental/public-portal start:dev",
+    "start:call-center": "yarn workspace @orange-car-rental/call-center-portal start:dev",
+    "build:public": "yarn workspace @orange-car-rental/public-portal build",
+    "build:call-center": "yarn workspace @orange-car-rental/call-center-portal build",
+    "test:public": "yarn workspace @orange-car-rental/public-portal test:ci",
+    "test:call-center": "yarn workspace @orange-car-rental/call-center-portal test:ci",
+    "test:all": "yarn workspace @orange-car-rental/public-portal test:ci && yarn workspace @orange-car-rental/call-center-portal test:ci",
+    "lint": "yarn workspace @orange-car-rental/public-portal lint && yarn workspace @orange-car-rental/call-center-portal lint",
+    "build:all": "yarn workspace @orange-car-rental/public-portal build && yarn workspace @orange-car-rental/call-center-portal build",
+    "lint:all": "yarn workspace @orange-car-rental/public-portal lint && yarn workspace @orange-car-rental/call-center-portal lint"
+  },
   "devDependencies": {
-    "@angular/cli": "^20.3.7",
-    "autoprefixer": "^10.4.21",
+    "@angular-architects/native-federation": "21.0.3",
+    "@angular/cli": "^21.0.4",
+    "autoprefixer": "10.4.23",
+    "concurrently": "^9.2.1",
+    "magic-string": "^0.30.17",
+    "patch-package": "^8.0.0",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.16"
+    "postinstall-postinstall": "^2.1.0",
+    "prettier": "^3.5.3",
+    "tailwindcss": "4.1.18"
+  },
+  "dependencies": {
+    "@angular-devkit/build-angular": "^21.0.4",
+    "@angular/animations": "21.0.6",
+    "@angular/build": "^21.0.4",
+    "@angular/common": "21.0.6",
+    "@angular/compiler": "21.0.6",
+    "@angular/compiler-cli": "21.0.6",
+    "@angular/core": "21.0.6",
+    "@angular/forms": "21.0.6",
+    "@angular/platform-browser": "21.0.6",
+    "@angular/router": "21.0.6",
+    "@ngx-translate/core": "^17.0.0",
+    "@ngx-translate/http-loader": "^17.0.0",
+    "@softarc/native-federation-node": "3.4.2",
+    "@types/node": "24.10.4",
+    "angular-eslint": "^21.1.0",
+    "eslint": "9.39.2",
+    "keycloak-js": "26.2.2",
+    "puppeteer": "^24.34.0",
+    "typescript-eslint": "8.50.0"
   }
 }

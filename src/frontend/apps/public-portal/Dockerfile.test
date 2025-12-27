@@ -1,0 +1,25 @@
+# Dockerfile for E2E Testing Environment
+FROM mcr.microsoft.com/playwright:v1.48.0-jammy
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci
+
+# Install Playwright browsers (already included in base image)
+RUN npx playwright install --with-deps
+
+# Copy application code
+COPY . .
+
+# Build the application
+RUN npm run build:development
+
+# Expose port for dev server
+EXPOSE 4301
+
+# Default command (can be overridden)
+CMD ["npm", "run", "start:dev"]

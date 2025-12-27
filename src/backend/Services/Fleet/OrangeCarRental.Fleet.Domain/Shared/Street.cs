@@ -1,34 +1,28 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
-/// Street address value object.
-/// Represents the street portion of an address (e.g., "Europaplatz 1").
+///     Street address value object.
+///     Represents the street portion of an address (e.g., "Europaplatz 1").
 /// </summary>
-public readonly record struct Street
+public readonly record struct Street(string Value) : IValueObject
 {
-    public string Value { get; }
+    public static Street Empty => new(string.Empty);
 
-    private Street(string value)
-    {
-        Value = value;
-    }
+    public bool IsEmpty => string.IsNullOrWhiteSpace(Value);
 
-    public static Street Of(string street)
+    public static Street From(string street)
     {
         // Street can be empty/optional
         var trimmed = street?.Trim() ?? string.Empty;
 
-        if (trimmed.Length > 200)
-        {
-            throw new ArgumentException("Street address cannot exceed 200 characters", nameof(street));
-        }
+        Ensure.That(trimmed, nameof(street))
+            .ThrowIf(trimmed.Length > 200, "Street address cannot exceed 200 characters");
 
         return new Street(trimmed);
     }
-
-    public static Street Empty => new(string.Empty);
-
-    public bool IsEmpty => string.IsNullOrWhiteSpace(Value);
 
     public static implicit operator string(Street street) => street.Value;
 

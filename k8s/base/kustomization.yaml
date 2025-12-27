@@ -1,0 +1,36 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- shell-deployment.yaml
+- public-portal-deployment.yaml
+- call-center-portal-deployment.yaml
+- vehicles-api-deployment.yaml
+- reservations-api-deployment.yaml
+- customers-api-deployment.yaml
+- locations-api-deployment.yaml
+- sqlserver-deployment.yaml
+- keycloak-deployment.yaml
+- configmap.yaml
+- federation-manifest-configmap.yaml
+- ingress.yaml
+
+commonLabels:
+  project: orange-car-rental
+  managed-by: kustomize
+
+images:
+- name: orangecarrental.azurecr.io/shell
+  newTag: latest
+- name: orangecarrental.azurecr.io/public-portal
+  newTag: latest
+- name: orangecarrental.azurecr.io/call-center-portal
+  newTag: latest
+- name: orangecarrental.azurecr.io/vehicles-api
+  newTag: latest
+- name: orangecarrental.azurecr.io/reservations-api
+  newTag: latest
+- name: orangecarrental.azurecr.io/customers-api
+  newTag: latest
+- name: orangecarrental.azurecr.io/locations-api
+  newTag: latest

@@ -1,26 +1,30 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Address value object for German addresses.
-/// Represents a physical address with street, city, postal code, and country.
+///     Address value object for German addresses.
+///     Represents a physical address with street, city, postal code, and country.
 /// </summary>
-public readonly record struct Address
+/// <param name="Street">Street name and number.</param>
+/// <param name="City">City name (value object).</param>
+/// <param name="PostalCode">Postal code (value object).</param>
+/// <param name="Country">Country name.</param>
+public readonly record struct Address(
+    string Street,
+    City City,
+    PostalCode PostalCode,
+    string Country) : IValueObject
 {
-    public string Street { get; }
-    public string City { get; }
-    public string PostalCode { get; }
-    public string Country { get; }
-
-    private Address(string street, string city, string postalCode, string country)
-    {
-        Street = street;
-        City = city;
-        PostalCode = postalCode;
-        Country = country;
-    }
+    /// <summary>
+    ///     Gets the full formatted address.
+    ///     Example: "Hauptstraße 123, 10115 Berlin, Germany"
+    /// </summary>
+    public string FullAddress => $"{Street}, {PostalCode} {City}, {Country}";
 
     /// <summary>
-    /// Creates an address value object with all components.
+    ///     Creates an address value object with all components.
     /// </summary>
     /// <param name="street">Street name and number (e.g., "Hauptstraße 123").</param>
     /// <param name="city">City name (e.g., "Berlin").</param>
@@ -29,55 +33,33 @@ public readonly record struct Address
     /// <exception cref="ArgumentException">Thrown when any required field is invalid.</exception>
     public static Address Of(string street, string city, string postalCode, string country = "Germany")
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(street, nameof(street));
-        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
-        ArgumentException.ThrowIfNullOrWhiteSpace(postalCode, nameof(postalCode));
+        Ensure.That(street, nameof(street))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(200);
 
         var normalizedStreet = street.Trim();
-        var normalizedCity = city.Trim();
-        var normalizedPostalCode = postalCode.Trim();
         var normalizedCountry = (country ?? "Germany").Trim();
 
-        // Validate German postal code format (5 digits)
-        if (normalizedCountry.Equals("Germany", StringComparison.OrdinalIgnoreCase) ||
-            normalizedCountry.Equals("Deutschland", StringComparison.OrdinalIgnoreCase))
-        {
-            if (normalizedPostalCode.Length != 5 || !normalizedPostalCode.All(char.IsDigit))
-            {
-                throw new ArgumentException(
-                    "German postal code must be exactly 5 digits",
-                    nameof(postalCode));
-            }
-        }
+        Ensure.That(normalizedCountry, nameof(country))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
-        // Validate lengths
-        if (normalizedStreet.Length > 200)
-            throw new ArgumentException("Street name is too long (max 200 characters)", nameof(street));
+        // Create value objects (they handle their own validation)
+        var cityValueObject = City.From(city);
+        var postalCodeValueObject = PostalCode.From(postalCode);
 
-        if (normalizedCity.Length > 100)
-            throw new ArgumentException("City name is too long (max 100 characters)", nameof(city));
-
-        if (normalizedCountry.Length > 100)
-            throw new ArgumentException("Country name is too long (max 100 characters)", nameof(country));
-
-        return new Address(normalizedStreet, normalizedCity, normalizedPostalCode, normalizedCountry);
+        return new Address(normalizedStreet, cityValueObject, postalCodeValueObject, normalizedCountry);
     }
 
     /// <summary>
-    /// Gets the full formatted address.
-    /// Example: "Hauptstraße 123, 10115 Berlin, Germany"
-    /// </summary>
-    public string FullAddress => $"{Street}, {PostalCode} {City}, {Country}";
-
-    /// <summary>
-    /// Creates an anonymized address for GDPR compliance.
+    ///     Creates an anonymized address for GDPR compliance.
     /// </summary>
     public static Address Anonymized()
     {
         return new Address(
             "Anonymized Street",
-            "Anonymized City",
-            "00000",
+            new City("Anonymized City"),
+            new PostalCode("00000"),
             "Germany");
     }
 

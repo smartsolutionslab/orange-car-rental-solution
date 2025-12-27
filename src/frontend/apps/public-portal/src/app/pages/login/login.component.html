@@ -1,0 +1,132 @@
+<div class="login-container">
+  <div class="login-card">
+    <!-- Logo and Header -->
+    <div class="login-header">
+      <h1 class="login-title">{{ 'auth.login.title' | translate }}</h1>
+      <p class="login-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Error Message -->
+    @if (errorMessage()) {
+      <ui-error-alert [message]="errorMessage()!"></ui-error-alert>
+    }
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email" class="form-label">{{ 'auth.login.email' | translate }}</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          class="form-input"
+          [class.input-error]="emailError()"
+          [placeholder]="'common.placeholders.email' | translate"
+          autocomplete="email"
+        />
+        @if (emailError()) {
+          <span class="field-error">{{ emailError() }}</span>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <div class="label-row">
+          <label for="password" class="form-label">{{ 'auth.login.password' | translate }}</label>
+          <a routerLink="/forgot-password" class="forgot-link">{{
+            'auth.login.forgotPassword' | translate
+          }}</a>
+        </div>
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword() ? 'text' : 'password'"
+            formControlName="password"
+            class="form-input"
+            [class.input-error]="passwordError()"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+          <button
+            type="button"
+            class="password-toggle"
+            (click)="togglePasswordVisibility()"
+            [attr.aria-label]="
+              showPassword()
+                ? ('auth.login.hidePassword' | translate)
+                : ('auth.login.showPassword' | translate)
+            "
+          >
+            @if (showPassword()) {
+              <!-- Eye Slash Icon -->
+              <lib-icon name="eye-off" variant="outline" size="sm" />
+            } @else {
+              <!-- Eye Icon -->
+              <lib-icon name="eye" variant="outline" size="sm" />
+            }
+          </button>
+        </div>
+        @if (passwordError()) {
+          <span class="field-error">{{ passwordError() }}</span>
+        }
+      </div>
+
+      <!-- Remember Me -->
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" formControlName="rememberMe" class="checkbox-input" />
+          <span>{{ 'auth.login.rememberMe' | translate }}</span>
+        </label>
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" class="submit-button" [disabled]="isLoading()">
+        @if (isLoading()) {
+          <svg class="spinner" viewBox="0 0 24 24">
+            <circle
+              class="spinner-circle"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+              fill="none"
+            ></circle>
+          </svg>
+          <span>{{ 'auth.login.submitting' | translate }}</span>
+        } @else {
+          <span>{{ 'auth.login.submit' | translate }}</span>
+        }
+      </button>
+    </form>
+
+    <!-- Register Link -->
+    <div class="register-section">
+      <p class="register-text">
+        {{ 'auth.login.noAccount' | translate }}
+        <a routerLink="/register" class="register-link">{{
+          'auth.login.registerNow' | translate
+        }}</a>
+      </p>
+    </div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>{{ 'auth.login.or' | translate }}</span>
+    </div>
+
+    <!-- Social Login (Future) -->
+    <div class="social-login">
+      <button type="button" class="social-button" disabled>
+        <svg class="social-icon" viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M12.545,10.239v3.821h5.445c-0.712,2.315-2.647,3.972-5.445,3.972c-3.332,0-6.033-2.701-6.033-6.032s2.701-6.032,6.033-6.032c1.498,0,2.866,0.549,3.921,1.453l2.814-2.814C17.503,2.988,15.139,2,12.545,2C7.021,2,2.543,6.477,2.543,12s4.478,10,10.002,10c8.396,0,10.249-7.85,9.426-11.748L12.545,10.239z"
+          />
+        </svg>
+        <span>{{ 'auth.login.loginWithGoogle' | translate }}</span>
+      </button>
+    </div>
+  </div>
+</div>

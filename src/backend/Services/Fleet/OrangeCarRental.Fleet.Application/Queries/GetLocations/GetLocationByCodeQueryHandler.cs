@@ -1,38 +1,37 @@
-using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
 
 /// <summary>
-/// Handler for GetLocationByCodeQuery.
-/// Returns a specific location by its code.
+///     Handler for GetLocationByCodeQuery.
+///     Returns a specific location by its code.
 /// </summary>
-public sealed class GetLocationByCodeQueryHandler
+public sealed class GetLocationByCodeQueryHandler(ILocationRepository locations)
+    : IQueryHandler<GetLocationByCodeQuery, LocationDto>
 {
-    public Task<LocationDto?> HandleAsync(
+    /// <summary>
+    ///     Handles the query to retrieve a specific location by code.
+    /// </summary>
+    /// <param name="query">The query containing the location code.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The location DTO.</returns>
+    public async Task<LocationDto> HandleAsync(
         GetLocationByCodeQuery query,
         CancellationToken cancellationToken = default)
     {
-        try
-        {
-            var locationCode = LocationCode.Of(query.Code);
-            var location = Location.FromCode(locationCode);
+        var location = await locations.GetByCodeAsync(query.Code, cancellationToken);
 
-            var dto = new LocationDto
-            {
-                Code = location.Code.Value,
-                Name = location.Name.Value,
-                Street = location.Address.Street.Value,
-                City = location.Address.City.Value,
-                PostalCode = location.Address.PostalCode.Value,
-                FullAddress = location.Address.FullAddress
-            };
+        var (code, name, address, _) = location;
 
-            return Task.FromResult<LocationDto?>(dto);
-        }
-        catch (ArgumentException)
-        {
-            // Location code not found
-            return Task.FromResult<LocationDto?>(null);
-        }
+        var dto = new LocationDto(
+            code.Value,
+            name.Value,
+            address.Street.Value,
+            address.City.Value,
+            address.PostalCode.Value,
+            address.FullAddress);
+
+        return dto;
     }
 }

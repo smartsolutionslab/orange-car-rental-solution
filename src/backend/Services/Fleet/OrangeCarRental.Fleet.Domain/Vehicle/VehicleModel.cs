@@ -1,23 +1,30 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
+///     Represents the model of a vehicle (e.g., Golf, 3er, E-Klasse).
 /// </summary>
-public readonly record struct VehicleModel
+/// <param name="Value">The vehicle model value.</param>
+public readonly record struct VehicleModel(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private VehicleModel(string value) => Value = value;
-
-    public static VehicleModel Of(string value)
+    public static VehicleModel From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim() ?? string.Empty;
 
-        var trimmed = value.Trim();
-        if (trimmed.Length > 100)
-            throw new ArgumentException("Model name cannot exceed 100 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         return new VehicleModel(trimmed);
+    }
+
+    public static VehicleModel? FromNullable(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) return null;
+
+        return From(value);
     }
 
     public static implicit operator string(VehicleModel model) => model.Value;

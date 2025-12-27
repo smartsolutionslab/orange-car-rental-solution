@@ -1,15 +1,20 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 
 /// <summary>
-/// Domain event raised when a new reservation is created.
+///     Domain event raised when a new reservation is created.
+///     Contains all data needed to reconstruct the reservation state.
 /// </summary>
 public sealed record ReservationCreated(
     ReservationIdentifier ReservationId,
-    Guid VehicleId,
-    Guid CustomerId,
+    VehicleIdentifier VehicleIdentifier,
+    CustomerIdentifier CustomerIdentifier,
     BookingPeriod Period,
-    Money TotalPrice
+    LocationCode PickupLocationCode,
+    LocationCode DropoffLocationCode,
+    Money TotalPrice,
+    DateTime CreatedAtUtc
 ) : DomainEvent;

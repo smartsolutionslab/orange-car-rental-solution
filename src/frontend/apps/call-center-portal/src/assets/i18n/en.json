@@ -1,0 +1,449 @@
+{
+  "common": {
+    "appName": "Orange Car Rental - Call Center",
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "search": "Search",
+      "reset": "Reset",
+      "apply": "Apply",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "login": "Login",
+      "logout": "Logout",
+      "details": "Details",
+      "viewDetails": "View details",
+      "newBooking": "New booking",
+      "applyFilters": "Apply filters",
+      "clearFilters": "Clear filters",
+      "resetFilters": "Reset filters"
+    },
+    "labels": {
+      "email": "Email",
+      "phone": "Phone number",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "dateOfBirth": "Date of birth",
+      "street": "Street",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "status": "Status",
+      "location": "Location",
+      "category": "Category",
+      "price": "Price",
+      "total": "Total",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "all": "All",
+      "none": "None",
+      "customerId": "Customer ID",
+      "vehicleId": "Vehicle ID",
+      "reservationId": "Reservation ID",
+      "createdAt": "Created at",
+      "registered": "Registered",
+      "actions": "Actions"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "error": "An error occurred",
+      "success": "Successfully saved",
+      "noResults": "No results found",
+      "required": "This field is required",
+      "confirmAction": "Are you sure you want to perform this action?",
+      "activeFilters": "{{count}} active filters"
+    },
+    "placeholders": {
+      "search": "Search...",
+      "select": "Please select...",
+      "enterValue": "Enter value...",
+      "lastName": "Doe"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "entries": "entries",
+      "entriesPerPage": "Entries per page",
+      "page": "Page"
+    },
+    "sorting": {
+      "label": "Sorting",
+      "ascending": "Ascending",
+      "descending": "Descending"
+    },
+    "grouping": {
+      "label": "Grouping",
+      "none": "No grouping"
+    }
+  },
+  "navigation": {
+    "vehicles": "Vehicles",
+    "reservations": "Reservations",
+    "customers": "Customers",
+    "locations": "Locations",
+    "contact": "Contact"
+  },
+  "reservations": {
+    "title": "Reservation Management",
+    "subtitle": "Manage all reservations and bookings",
+    "overview": "Reservations overview",
+    "stats": {
+      "todayBookings": "Today's bookings",
+      "activeBookings": "Active bookings",
+      "pending": "Pending",
+      "total": "Total"
+    },
+    "filters": {
+      "title": "Filters & Sorting",
+      "status": "Status",
+      "allStatus": "All statuses",
+      "customerId": "Customer ID",
+      "customerIdPlaceholder": "Enter customer ID...",
+      "pickupFrom": "Pickup from",
+      "pickupTo": "Pickup to",
+      "location": "Location",
+      "allLocations": "All locations",
+      "minPrice": "Min. price (€)",
+      "maxPrice": "Max. price (€)"
+    },
+    "sorting": {
+      "pickupDate": "Pickup date",
+      "price": "Price",
+      "status": "Status",
+      "createdDate": "Created date"
+    },
+    "grouping": {
+      "none": "No grouping",
+      "byStatus": "By status",
+      "byPickupDate": "By pickup date",
+      "byLocation": "By location"
+    },
+    "dateGroups": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "thisWeek": "This week",
+      "later": "Later"
+    },
+    "table": {
+      "reservationId": "Reservation ID",
+      "customer": "Customer",
+      "pickupDate": "Pickup date",
+      "returnDate": "Return date",
+      "location": "Location",
+      "price": "Price",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "groups": {
+      "bookings": "bookings"
+    },
+    "results": {
+      "showing": "Showing {{from}} - {{to}} of {{total}} reservations"
+    },
+    "details": {
+      "title": "Reservation details",
+      "vehicleId": "Vehicle ID",
+      "pickupDate": "Pickup date",
+      "returnDate": "Return date",
+      "pickupLocation": "Pickup location",
+      "returnLocation": "Return location",
+      "rentalDays": "Rental days",
+      "createdAt": "Created at"
+    },
+    "pricing": {
+      "title": "Price overview",
+      "netAmount": "Net amount",
+      "vat": "VAT (19%)",
+      "grossAmount": "Gross amount"
+    },
+    "confirm": {
+      "title": "Confirm reservation",
+      "message": "Are you sure you want to confirm this reservation?",
+      "button": "Confirm",
+      "inProgress": "Confirming...",
+      "execute": "Execute confirmation"
+    },
+    "cancel": {
+      "title": "Cancel reservation",
+      "message": "Are you sure you want to cancel this reservation?",
+      "reason": "Cancellation reason",
+      "reasonPlaceholder": "Please enter a reason for the cancellation...",
+      "button": "Cancel",
+      "inProgress": "Cancelling...",
+      "execute": "Confirm cancellation"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
+    "empty": {
+      "title": "No reservations found",
+      "description": "Try adjusting the filters to see more results.",
+      "resetFilters": "Reset filters"
+    },
+    "loading": "Loading reservations...",
+    "itemLabel": "Reservation",
+    "itemLabelPlural": "Reservations"
+  },
+  "customers": {
+    "title": "Customer Management",
+    "subtitle": "Search and manage customer information",
+    "search": {
+      "title": "Customer search",
+      "email": "Email",
+      "phone": "Phone number",
+      "lastName": "Last name",
+      "button": "Search",
+      "searching": "Searching for customers...",
+      "minCriteria": "Please enter at least one search criterion"
+    },
+    "results": {
+      "title": "Search results",
+      "found": "{{count}} customer(s) found",
+      "noResults": "No customers found"
+    },
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "dateOfBirth": "Date of birth",
+      "city": "City",
+      "registered": "Registered",
+      "actions": "Actions"
+    },
+    "details": {
+      "title": "Customer details",
+      "personalInfo": "Personal information",
+      "customerId": "Customer ID",
+      "address": "Address",
+      "license": {
+        "title": "Driver's license",
+        "number": "License number",
+        "issueCountry": "Issue country",
+        "issueDate": "Issue date",
+        "expiryDate": "Expiry date"
+      },
+      "reservations": {
+        "title": "Reservations",
+        "loading": "Loading reservations...",
+        "period": "Period",
+        "duration": "Duration",
+        "days": "day(s)",
+        "pickupLocation": "Pickup location",
+        "price": "Price",
+        "noResults": "No reservations found"
+      }
+    },
+    "edit": {
+      "title": "Edit customer",
+      "success": "Customer data successfully updated",
+      "error": "Error saving customer data"
+    },
+    "loading": "Loading customers...",
+    "error": "Error searching customers"
+  },
+  "vehicles": {
+    "title": "Vehicle Management",
+    "subtitle": "Manage your vehicle fleet",
+    "overview": "Vehicle overview",
+    "addNew": "New vehicle",
+    "loading": "Loading vehicles...",
+    "stats": {
+      "total": "Total vehicles",
+      "available": "Available",
+      "rented": "Rented",
+      "maintenance": "In maintenance"
+    },
+    "filters": {
+      "location": "Location",
+      "category": "Vehicle class",
+      "status": "Status",
+      "fuelType": "Fuel type",
+      "transmission": "Transmission",
+      "allStatuses": "All statuses",
+      "allLocations": "All locations",
+      "allCategories": "All categories"
+    },
+    "table": {
+      "vehicle": "Vehicle",
+      "category": "Category",
+      "location": "Location",
+      "licensePlate": "License plate",
+      "dailyRate": "Daily rate",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "add": {
+      "title": "New vehicle",
+      "button": "Add vehicle"
+    },
+    "edit": {
+      "title": "Edit vehicle",
+      "success": "Vehicle successfully updated",
+      "error": "Error saving vehicle"
+    },
+    "details": {
+      "title": "Vehicle details",
+      "info": "Vehicle information",
+      "vehicleId": "Vehicle ID",
+      "manufacturerModel": "Manufacturer & Model",
+      "year": "Year",
+      "notAssigned": "Not assigned",
+      "locationPricing": "Location & Pricing",
+      "dailyRateNet": "Daily rate (Net)",
+      "dailyRateGross": "Daily rate (Gross)",
+      "vat": "VAT (19%)",
+      "features": "Features",
+      "transmission": "Transmission",
+      "fuelType": "Fuel type",
+      "seats": "Seats",
+      "specifications": "Specifications",
+      "manufacturer": "Manufacturer",
+      "model": "Model",
+      "dailyRate": "Daily rate"
+    },
+    "noResults": {
+      "title": "No vehicles found",
+      "description": "No vehicles were found matching the filter criteria."
+    },
+    "ariaLabels": {
+      "viewDetails": "View vehicle details"
+    },
+    "status": {
+      "available": "Available",
+      "rented": "Rented",
+      "maintenance": "Maintenance",
+      "outOfService": "Out of service"
+    },
+    "category": {
+      "economy": "Economy",
+      "compact": "Compact",
+      "midSize": "Mid-size",
+      "luxury": "Luxury",
+      "van": "Van",
+      "suv": "SUV"
+    },
+    "fuelType": {
+      "petrol": "Petrol",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid"
+    },
+    "transmission": {
+      "automatic": "Automatic",
+      "manual": "Manual"
+    },
+    "empty": {
+      "title": "No vehicles found",
+      "description": "Try adjusting the filters, or add a new vehicle."
+    }
+  },
+  "locations": {
+    "title": "Location Management",
+    "subtitle": "Manage all rental locations",
+    "overview": "Location overview",
+    "loading": "Loading locations...",
+    "error": "Error loading locations",
+    "vehiclesCount": "Vehicles",
+    "stats": {
+      "total": "Total locations",
+      "active": "Active locations",
+      "vehicles": "Total vehicles",
+      "available": "Available",
+      "utilizationRate": "Utilization rate"
+    },
+    "search": {
+      "placeholder": "Search by city, name, or code..."
+    },
+    "table": {
+      "location": "Location",
+      "city": "City",
+      "vehicles": "Vehicles",
+      "available": "Available",
+      "rented": "Rented",
+      "utilization": "Utilization",
+      "actions": "Actions"
+    },
+    "details": {
+      "title": "Location details",
+      "info": "Location information",
+      "locationCode": "Location code",
+      "name": "Name",
+      "fullAddress": "Full address",
+      "address": "Address",
+      "vehicleDistribution": "Vehicle distribution",
+      "vehiclesAtLocation": "Vehicles at location",
+      "loadingVehicles": "Loading vehicles...",
+      "noVehicles": "No vehicles at this location"
+    },
+    "ariaLabels": {
+      "viewDetails": "View location details"
+    },
+    "utilization": {
+      "high": "High utilization",
+      "medium": "Medium utilization",
+      "low": "Low utilization"
+    },
+    "empty": {
+      "title": "No locations available",
+      "description": "No locations were found."
+    }
+  },
+  "contact": {
+    "title": "Contact & Support",
+    "subtitle": "Contact information and support tools",
+    "info": {
+      "title": "Contact Information",
+      "phone": {
+        "title": "Phone",
+        "hours": "Mon-Fri: 8:00 AM - 6:00 PM"
+      },
+      "email": {
+        "title": "Email",
+        "responseTime": "Response within 24h"
+      },
+      "headquarters": {
+        "title": "Headquarters",
+        "country": "Germany"
+      },
+      "support": {
+        "title": "Support",
+        "hotline": "24/7 Emergency Hotline"
+      }
+    },
+    "quickLinks": {
+      "title": "Quick Access",
+      "knowledgeBase": "Knowledge Base",
+      "faq": "FAQ",
+      "chatSupport": "Chat Support",
+      "createTicket": "Create Ticket"
+    }
+  },
+  "dayOfWeek": {
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Network error. Please check your connection.",
+    "notFound": "The requested resource was not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "validation": "Please check your inputs"
+  }
+}

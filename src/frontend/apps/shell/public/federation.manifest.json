@@ -1,0 +1,4 @@
+{
+  "publicPortal": "http://localhost:4301/remoteEntry.json",
+  "callCenterPortal": "http://localhost:4302/remoteEntry.json"
+}

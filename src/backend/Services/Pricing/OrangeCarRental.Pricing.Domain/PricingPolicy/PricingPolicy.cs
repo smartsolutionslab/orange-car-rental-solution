@@ -5,21 +5,12 @@ using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Pricing policy aggregate root.
-/// Defines daily rates for vehicle categories with German market pricing (19% VAT).
-/// IMMUTABLE: Properties can only be set during construction. Methods return new instances.
+///     Pricing policy aggregate root.
+///     Defines daily rates for vehicle categories with German market pricing (19% VAT).
+///     IMMUTABLE: Properties can only be set during construction. Methods return new instances.
 /// </summary>
 public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
 {
-    public CategoryCode CategoryCode { get; init; }
-    public Money DailyRate { get; init; }
-    public bool IsActive { get; init; }
-    public DateTime EffectiveFrom { get; init; }
-    public DateTime? EffectiveUntil { get; init; }
-
-    // Optional: Location-specific pricing (for future enhancement)
-    public LocationCode? LocationCode { get; init; }
-
     // For EF Core
     private PricingPolicy()
     {
@@ -46,8 +37,17 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
         AddDomainEvent(new PricingPolicyCreated(Id, CategoryCode, DailyRate, EffectiveFrom));
     }
 
+    public CategoryCode CategoryCode { get; init; }
+    public Money DailyRate { get; init; }
+    public bool IsActive { get; init; }
+    public DateTime EffectiveFrom { get; init; }
+    public DateTime? EffectiveUntil { get; init; }
+
+    // Optional: Location-specific pricing (for future enhancement)
+    public LocationCode? LocationCode { get; init; }
+
     /// <summary>
-    /// Creates a new pricing policy for a vehicle category.
+    ///     Creates a new pricing policy for a vehicle category.
     /// </summary>
     public static PricingPolicy Create(
         CategoryCode categoryCode,
@@ -66,8 +66,8 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     }
 
     /// <summary>
-    /// Updates the daily rate for this pricing policy.
-    /// Returns a new instance with the updated rate (immutable pattern).
+    ///     Updates the daily rate for this pricing policy.
+    ///     Returns a new instance with the updated rate (immutable pattern).
     /// </summary>
     public PricingPolicy UpdateDailyRate(Money newDailyRate)
     {
@@ -76,12 +76,12 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
 
         var oldRate = DailyRate;
         var updated = CreateMutatedCopy(
-            categoryCode: CategoryCode,
-            dailyRate: newDailyRate,
-            isActive: IsActive,
-            effectiveFrom: EffectiveFrom,
-            effectiveUntil: EffectiveUntil,
-            locationCode: LocationCode);
+            CategoryCode,
+            newDailyRate,
+            IsActive,
+            EffectiveFrom,
+            EffectiveUntil,
+            LocationCode);
 
         updated.AddDomainEvent(new PricingPolicyUpdated(Id, CategoryCode, oldRate, newDailyRate));
 
@@ -89,8 +89,8 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     }
 
     /// <summary>
-    /// Deactivates this pricing policy.
-    /// Returns a new instance with deactivated state (immutable pattern).
+    ///     Deactivates this pricing policy.
+    ///     Returns a new instance with deactivated state (immutable pattern).
     /// </summary>
     public PricingPolicy Deactivate()
     {
@@ -99,12 +99,12 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
-            categoryCode: CategoryCode,
-            dailyRate: DailyRate,
-            isActive: false,
-            effectiveFrom: EffectiveFrom,
-            effectiveUntil: now,
-            locationCode: LocationCode);
+            CategoryCode,
+            DailyRate,
+            false,
+            EffectiveFrom,
+            now,
+            LocationCode);
 
         updated.AddDomainEvent(new PricingPolicyDeactivated(Id, CategoryCode));
 
@@ -112,8 +112,8 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     }
 
     /// <summary>
-    /// Creates a copy of this instance with modified values (used internally for immutable updates).
-    /// Does not raise domain events - caller is responsible for that.
+    ///     Creates a copy of this instance with modified values (used internally for immutable updates).
+    ///     Does not raise domain events - caller is responsible for that.
     /// </summary>
     private PricingPolicy CreateMutatedCopy(
         CategoryCode categoryCode,
@@ -125,7 +125,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     {
         return new PricingPolicy
         {
-            Id = this.Id,  // Copy Id from original instance
+            Id = Id, // Copy Id from original instance
             CategoryCode = categoryCode,
             DailyRate = dailyRate,
             IsActive = isActive,
@@ -136,7 +136,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     }
 
     /// <summary>
-    /// Checks if this policy is valid for the given date.
+    ///     Checks if this policy is valid for the given date.
     /// </summary>
     public bool IsValidFor(DateTime date)
     {
@@ -153,7 +153,7 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     }
 
     /// <summary>
-    /// Calculates the total price for a rental period.
+    ///     Calculates the total price for a rental period.
     /// </summary>
     public Money CalculatePrice(RentalPeriod period)
     {

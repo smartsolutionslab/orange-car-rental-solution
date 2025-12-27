@@ -198,34 +198,45 @@ public sealed record GermanPostalCode : PostalCode
 - Creditor ID (Gläubiger-Identifikationsnummer)
 - Pre-notification (Vorabankündigung) - at least 5 days before debit
 
-**Value Objects:**
+**Value Objects (Implemented):**
 ```csharp
-public sealed record IBAN(string Value)
+// IBAN with MOD-97 check digit validation (ISO 13616)
+public sealed partial record IBAN : IValueObject
 {
-    public IBAN(string value) : this()
-    {
-        Value = value.Replace(" ", "").ToUpperInvariant();
+    public string Value { get; }
+    public string CountryCode => Value[..2];
+    public bool IsGerman => CountryCode == "DE";
+    public string Formatted => FormatIBAN(Value);  // DE89 3704 0044 0532 0130 00
 
-        if (!IsValidIBAN(Value))
-            throw new ArgumentException("Invalid IBAN format");
-    }
-
-    private static bool IsValidIBAN(string iban)
+    public static IBAN Create(string value)
     {
-        // IBAN validation algorithm
-        // German IBANs start with DE and are 22 characters
-        return iban.StartsWith("DE") && iban.Length == 22;
+        // Validates format and MOD-97 check digits
+        // German IBANs must be exactly 22 characters
     }
 }
 
-public sealed record BIC(string Value);
+// BIC/SWIFT validation (ISO 9362)
+public sealed partial record BIC : IValueObject
+{
+    public string BankCode => Value[..4];
+    public string CountryCode => Value[4..6];
+    public bool IsGerman => CountryCode == "DE";
+}
 
-public sealed record SepaMandate(
-    MandateReference Reference,
-    IBAN Iban,
-    BIC Bic,
-    AccountHolder AccountHolder,
-    DateTime SignedDate);
+// SEPA Mandate aggregate with status management
+public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
+{
+    public const string CreditorId = "DE98ZZZ09999999999";
+    public MandateReference MandateReference { get; init; }
+    public IBAN IBAN { get; init; }
+    public BIC BIC { get; init; }
+    public string AccountHolder { get; init; }
+    public MandateStatus Status { get; init; }
+
+    public SepaMandate RecordUsage();  // Track when mandate is used
+    public SepaMandate Revoke();       // Customer revokes mandate
+    public bool IsExpiredDueToInactivity();  // 36-month SEPA rule
+}
 ```
 
 ### 3. Payment Gateway Integration
@@ -239,40 +250,40 @@ public sealed record SepaMandate(
 
 ### 1. German Driving License
 
-**Validation Requirements:**
+**Validation Requirements (Implemented):**
 - Valid German (EU) driving license required
-- Minimum age: 21 years
+- Minimum age: 21 years for car rental
 - License held for at least 1 year
-- International licenses require additional validation
+- International licenses require International Driving Permit (warning issued)
 
-**Value Object:**
+**Value Object (Implemented):**
 ```csharp
-public sealed record DrivingLicense(
-    LicenseNumber Number,
-    LicenseType Type,
-    DateTime IssueDate,
-    DateTime? ExpiryDate,
-    Country IssuingCountry)
+public readonly record struct DriversLicense : IValueObject
 {
-    public bool IsValidInGermany()
-    {
-        // EU licenses are valid
-        if (IssuingCountry.IsEU())
-            return true;
+    public string LicenseNumber { get; }
+    public string IssueCountry { get; }
+    public DateOnly IssueDate { get; }
+    public DateOnly ExpiryDate { get; }
 
-        // International licenses need additional checks
-        return false;
-    }
+    public bool IsEuLicense();  // Recognizes all 27 EU countries
+    public bool HasBeenHeldForYears(int years, DateOnly? asOfDate = null);
+    public int YearsHeld(DateOnly? asOfDate = null);
+    public bool IsValidForGermanRental(DateOnly rentalDate);
+    public LicenseValidationResult ValidateForGermanRental(DateOnly rentalDate);
+}
 
-    public bool MeetsMinimumRequirements(DateTime rentalStartDate)
-    {
-        var licenseAge = (rentalStartDate - IssueDate).Days / 365.25;
-        return licenseAge >= 1;
-    }
+// Customer aggregate enforces rental requirements
+public sealed class Customer : EventSourcedAggregate<...>
+{
+    public const int MinimumRentalAgeYears = 21;
+    public const int MinimumRegistrationAgeYears = 18;
+    public const int MinimumLicenseHeldYears = 1;
+
+    public RentalEligibilityResult ValidateRentalEligibility(DateOnly startDate);
 }
 ```
 
-### 2. Insurance Requirements
+### 2. Insurance Requirements (Implemented)
 
 **Mandatory Coverage (Pflichtversicherung):**
 - Haftpflichtversicherung (Liability insurance)
@@ -284,22 +295,44 @@ public sealed record DrivingLicense(
 - Reduced: 500€
 - Full coverage: 0€ (additional cost)
 
-**Value Object:**
+**Value Object (Implemented):**
 ```csharp
-public sealed record InsurancePackage(
-    InsuranceType Type,
-    Money Deductible,
-    Money DailySurcharge)
+public sealed record InsurancePackage : IValueObject
 {
-    public static readonly InsurancePackage Standard =
-        new(InsuranceType.Teilkasko,
-            Money.Euro(1000),
-            Money.Euro(0));
+    public InsuranceType Type { get; }
+    public Money Deductible { get; }
+    public Money DailySurcharge { get; }
+    public bool IncludesTheftProtection { get; }
+    public bool IncludesGlassAndTires { get; }
+    public bool IncludesPersonalAccident { get; }
+    public bool IsZeroDeductible { get; }
 
-    public static readonly InsurancePackage Premium =
-        new(InsuranceType.Vollkasko,
-            Money.Euro(0),
-            Money.Euro(15));
+    // 4 predefined German market packages
+    public static readonly InsurancePackage Basic = new(
+        InsuranceType.Haftpflicht,
+        Money.EuroGross(2500.00m), // High liability
+        Money.Zero(Currency.EUR)); // Included in base price
+
+    public static readonly InsurancePackage Standard = new(
+        InsuranceType.Teilkasko,
+        Money.EuroGross(1000.00m),
+        Money.EuroGross(8.00m));
+
+    public static readonly InsurancePackage Comfort = new(
+        InsuranceType.Vollkasko,
+        Money.EuroGross(500.00m),
+        Money.EuroGross(15.00m));
+
+    public static readonly InsurancePackage Premium = new(
+        InsuranceType.VollkaskoZeroDeductible,
+        Money.Zero(Currency.EUR),
+        Money.EuroGross(25.00m));
+
+    public Money CalculateCost(int rentalDays);
+    public string GetGermanDisplayName();  // "Vollkasko (SB 500€)"
+    public string GetEnglishDisplayName(); // "Comprehensive (€500 excess)"
+    public string GetCoverageDescription();
+    public static IReadOnlyList<InsurancePackage> GetAllPackages();
 }
 ```
 
@@ -333,7 +366,7 @@ public sealed record FuelPolicy
 
 ## Additional Features for German Market
 
-### 1. Kilometer Packages
+### 1. Kilometer Packages (Implemented)
 
 **Typical Offerings:**
 - 100 km/day included
@@ -341,26 +374,30 @@ public sealed record FuelPolicy
 - Unlimited kilometers
 - Additional km charged at 0,20€/km
 
+**Value Object (Implemented):**
 ```csharp
-public sealed record KilometerPackage(
-    KilometerLimit DailyLimit,
-    Money? AdditionalKilometerRate)
+public sealed record KilometerPackage : IValueObject
 {
-    public static readonly KilometerPackage Limited100 =
-        new(new KilometerLimit(100), Money.Euro(0.20m));
+    public static readonly KilometerPackage Limited100 = new(
+        KilometerPackageType.Limited100, 100, Money.EuroGross(0.20m));
+    public static readonly KilometerPackage Limited200 = new(
+        KilometerPackageType.Limited200, 200, Money.EuroGross(0.20m));
+    public static readonly KilometerPackage Unlimited = new(
+        KilometerPackageType.Unlimited, null, null);
 
-    public static readonly KilometerPackage Unlimited =
-        new(KilometerLimit.Unlimited(), null);
-}
+    public KilometerPackageType Type { get; }
+    public int? DailyLimitKm { get; }
+    public Money? AdditionalKmRate { get; }
+    public bool IsUnlimited => Type == KilometerPackageType.Unlimited;
 
-public sealed record KilometerLimit(int? Value)
-{
-    public bool IsUnlimited => Value == null;
-    public static KilometerLimit Unlimited() => new(null);
+    public int? GetTotalAllowance(int days);
+    public Money CalculateAdditionalCharge(int totalDays, int kilometersDriven);
+    public string GetGermanDisplayName();  // "100 km/Tag inklusive"
+    public string GetEnglishDisplayName(); // "100 km/day included"
 }
 ```
 
-### 2. Additional Equipment (Extras)
+### 2. Additional Equipment (Extras) (Implemented)
 
 **Common in Germany:**
 - Navigationssystem (GPS)
@@ -370,37 +407,45 @@ public sealed record KilometerLimit(int? Value)
 - Dachgepäckträger (Roof rack)
 - Anhängerkupplung (Trailer hitch)
 
+**Value Object (Implemented):**
 ```csharp
-public sealed record VehicleExtra(
-    ExtraId Id,
-    ExtraName Name,
-    Money DailyRate,
-    bool RequiresAdvanceBooking);
-
-// Example extras
-public static class GermanMarketExtras
+public sealed record VehicleExtra : IValueObject
 {
-    public static readonly VehicleExtra GPS = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Navigationssystem"),
-        Money.Euro(5),
-        false);
+    public VehicleExtraType Type { get; }
+    public Money DailyRate { get; }
+    public bool RequiresAdvanceBooking { get; }
+    public bool IsPerRental { get; }
 
-    public static readonly VehicleExtra ChildSeat = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Kindersitz (0-4 Jahre)"),
-        Money.Euro(8),
-        true);
+    // 12 predefined German market extras
+    public static readonly VehicleExtra GPS = new(VehicleExtraType.GPS,
+        Money.EuroGross(5.00m), requiresAdvanceBooking: false, isPerRental: false);
+    public static readonly VehicleExtra ChildSeatInfant = new(VehicleExtraType.ChildSeatInfant,
+        Money.EuroGross(8.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra ChildSeatToddler = new(VehicleExtraType.ChildSeatToddler,
+        Money.EuroGross(8.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra BoosterSeat = new(VehicleExtraType.BoosterSeat,
+        Money.EuroGross(5.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra WinterTires = new(VehicleExtraType.WinterTires,
+        Money.Zero(Currency.EUR), requiresAdvanceBooking: false, isPerRental: true);
+    public static readonly VehicleExtra SnowChains = new(VehicleExtraType.SnowChains,
+        Money.EuroGross(15.00m), requiresAdvanceBooking: true, isPerRental: true);
+    public static readonly VehicleExtra RoofRack = new(VehicleExtraType.RoofRack,
+        Money.EuroGross(10.00m), requiresAdvanceBooking: true, isPerRental: false);
+    public static readonly VehicleExtra AdditionalDriver = new(VehicleExtraType.AdditionalDriver,
+        Money.EuroGross(10.00m), requiresAdvanceBooking: false, isPerRental: false);
+    public static readonly VehicleExtra CrossBorderPermit = new(VehicleExtraType.CrossBorderPermit,
+        Money.EuroGross(15.00m), requiresAdvanceBooking: false, isPerRental: true);
+    // ... plus SkiRack, BikeRack, TrailerHitch
 
-    public static readonly VehicleExtra WinterTires = new(
-        new ExtraId(Guid.NewGuid()),
-        new ExtraName("Winterreifen"),
-        Money.Euro(0), // Often included
-        false);
+    public Money CalculateCost(int rentalDays);
+    public string GetGermanDisplayName();  // "Navigationssystem", "Babyschale (0-12 Monate)"
+    public string GetEnglishDisplayName(); // "GPS Navigation", "Infant Car Seat"
+    public static IReadOnlyList<VehicleExtra> GetAllExtras();
+    public static VehicleExtra FromType(VehicleExtraType type);
 }
 ```
 
-### 3. Cross-Border Travel
+### 3. Cross-Border Travel (Implemented)
 
 **Restrictions:**
 - Most rental companies allow EU travel
@@ -408,14 +453,94 @@ public static class GermanMarketExtras
 - Additional insurance for certain countries
 - Separate daily charge for cross-border
 
+**Value Objects (Implemented):**
 ```csharp
-public sealed record CrossBorderPolicy(
-    bool AllowedInEU,
-    HashSet<Country> RestrictedCountries,
-    Money? DailySurcharge);
+// ISO 3166-1 alpha-2 country code with EU/Schengen detection
+public readonly partial record struct CountryCode : IValueObject
+{
+    public string Value { get; }
+    public bool IsEuMember { get; }
+    public bool IsSchengenArea { get; }
+    public string GetGermanName();   // "Österreich", "Frankreich"
+    public string GetEnglishName();  // "Austria", "France"
+
+    public static readonly CountryCode Germany = new("DE");
+    public static readonly CountryCode Austria = new("AT");
+    // ... plus 10 more predefined countries
+}
+
+// Travel restriction level
+public enum TravelRestriction
+{
+    Allowed,         // No restrictions
+    PermitRequired,  // Cross-border permit needed
+    Restricted,      // Special approval needed
+    Prohibited       // Not allowed
+}
+
+// Individual country travel rule
+public sealed record CountryTravelRule
+{
+    public CountryCode Country { get; }
+    public TravelRestriction Restriction { get; }
+    public Money? DailySurcharge { get; }
+    public bool RequiresAdditionalInsurance { get; }
+    public string? RestrictionReason { get; }
+    public bool IsAllowed { get; }
+    public bool RequiresAdvanceBooking { get; }
+
+    public static CountryTravelRule Allowed(CountryCode country, Money? surcharge = null);
+    public static CountryTravelRule RequiresPermit(CountryCode country, Money surcharge, bool insurance = false);
+    public static CountryTravelRule Restricted(CountryCode country, string reason, bool insurance = true);
+    public static CountryTravelRule Prohibited(CountryCode country, string reason);
+
+    public string GetGermanDescription();   // "Reisen nach Polen mit Grenzübertrittserlaubnis (15,00€/Tag)"
+    public string GetEnglishDescription();  // "Travel to Poland requires cross-border permit (€15.00/day)"
+}
+
+// Cross-border policy with country rules
+public sealed class CrossBorderPolicy : IValueObject
+{
+    public CountryTravelRule? GetRule(CountryCode country);
+    public bool IsAllowed(CountryCode country);
+    public bool RequiresPermit(CountryCode country);
+    public Money? GetDailySurcharge(CountryCode country);
+    public Money CalculateTotalSurcharge(IEnumerable<CountryCode> countries, int rentalDays);
+    public CrossBorderValidationResult Validate(IEnumerable<CountryCode> countries);
+    public IReadOnlyList<CountryCode> GetAllowedCountries();
+    public IReadOnlyList<CountryCode> GetPermitRequiredCountries();
+    public IReadOnlyList<CountryCode> GetProhibitedCountries();
+
+    // Standard German policy (22 countries defined)
+    public static CrossBorderPolicy StandardGermanPolicy => new([
+        // Allowed without permit
+        CountryTravelRule.Allowed(CountryCode.Germany),
+        CountryTravelRule.Allowed(CountryCode.Austria),
+        CountryTravelRule.Allowed(CountryCode.Switzerland, Money.EuroGross(5.00m)),
+        CountryTravelRule.Allowed(CountryCode.France),
+        // ... Western, Southern, Northern Europe
+
+        // Permit required (Eastern Europe)
+        CountryTravelRule.RequiresPermit(CountryCode.Poland, Money.EuroGross(15.00m)),
+        CountryTravelRule.RequiresPermit(CountryCode.CzechRepublic, Money.EuroGross(15.00m)),
+        // ... more Eastern European countries
+
+        // Restricted (special approval)
+        CountryTravelRule.Restricted(CountryCode.Create("GR"), "Ferry required"),
+        // ...
+
+        // Prohibited
+        CountryTravelRule.Prohibited(CountryCode.Create("UA"), "Active conflict zone"),
+        CountryTravelRule.Prohibited(CountryCode.Create("RU"), "Sanctions and insurance void"),
+        // ...
+    ]);
+
+    // Premium policy with more destinations
+    public static CrossBorderPolicy PremiumGermanPolicy => new([...]);
+}
 ```
 
-### 4. Business Customer (Geschäftskunde) Support
+### 4. Business Customer (Geschäftskunde) Support (Implemented)
 
 **B2B Features:**
 - Corporate accounts
@@ -424,31 +549,57 @@ public sealed record CrossBorderPolicy(
 - Invoice payment terms (Zahlungsziel: 14/30 days)
 - Cost center allocation
 
+**Value Objects (Implemented):**
 ```csharp
-public sealed record BusinessCustomer : Customer
+// German VAT ID (USt-IdNr.) with format validation
+public readonly partial record struct VATId : IValueObject
 {
-    public CompanyName Company { get; private set; }
-    public VATId VatId { get; private set; }
-    public PaymentTerms PaymentTerms { get; private set; }
+    public string Value { get; }
+    public string CountryCode => Value[..2];  // "DE"
+    public string NumericPart => Value[2..];  // "123456789"
+    public bool IsGerman => CountryCode == "DE";
+    public string Formatted => $"{CountryCode} {NumericPart}";
+
+    public static VATId Create(string value);  // Validates DE + 9 digits
+    public static bool TryCreate(string value, out VATId vatId);
 }
 
-public sealed record VATId(string Value)
+// Company name with German legal form detection
+public readonly record struct CompanyName : IValueObject
 {
-    public VATId(string value) : this()
-    {
-        Value = value.Replace(" ", "").ToUpperInvariant();
-
-        // German VAT ID: DE + 9 digits
-        if (!Regex.IsMatch(Value, @"^DE\d{9}$"))
-            throw new ArgumentException("Invalid German VAT ID format");
-    }
+    public string Value { get; }
+    public bool HasGermanLegalForm();  // GmbH, AG, KG, OHG, UG, etc.
 }
 
-public sealed record PaymentTerms(int DaysUntilDue)
+// Payment terms (Zahlungsziel)
+public readonly record struct PaymentTerms : IValueObject
 {
+    public int DaysUntilDue { get; }
+    public bool IsImmediate => DaysUntilDue == 0;
+
     public static readonly PaymentTerms Immediate = new(0);
+    public static readonly PaymentTerms Net7 = new(7);
     public static readonly PaymentTerms Net14 = new(14);
     public static readonly PaymentTerms Net30 = new(30);
+    public static readonly PaymentTerms Net60 = new(60);
+
+    public DateOnly CalculateDueDate(DateOnly invoiceDate);
+    public string GetGermanDisplayName();  // "Zahlungsziel 30 Tage"
+}
+```
+
+**Customer Aggregate Extension:**
+```csharp
+public sealed class Customer : EventSourcedAggregate<...>
+{
+    public CustomerType CustomerType { get; }  // Individual or Business
+    public CompanyName? CompanyName { get; }
+    public VATId? VATId { get; }
+    public PaymentTerms? PaymentTerms { get; }
+    public bool IsBusinessCustomer { get; }
+
+    public void UpgradeToBusiness(CompanyName, VATId, PaymentTerms);
+    public void UpdateBusinessDetails(CompanyName, VATId, PaymentTerms);
 }
 ```
 
@@ -575,19 +726,19 @@ public sealed record ZonedDateTime(DateTime UtcDateTime)
 7. ✅ German postal code validation
 
 ### Medium Priority
-1. ⚠️ SEPA payment method
-2. ⚠️ Invoice generation with legal requirements
-3. ⚠️ Driving license validation
-4. ⚠️ Cookie consent banner
-5. ⚠️ Kilometer packages
-6. ⚠️ Vehicle extras (GPS, child seats)
+1. ✅ SEPA payment method (IBAN/BIC validation, mandate management)
+2. ✅ Invoice generation with legal requirements (§14 UStG compliant)
+3. ✅ Driving license validation (21+ age, 1 year holding period, EU recognition)
+4. ✅ Kilometer packages (100/200 km per day, unlimited, overage charging)
+5. ✅ Vehicle extras (12 German market extras with pricing)
+6. ✅ Insurance packages (Basic, Standard, Comfort, Premium with deductibles)
+7. ⚠️ Cookie consent banner
 
 ### Future Enhancements
-1. ⏳ B2B customer support with VAT ID
-2. ⏳ Cross-border travel policies
-3. ⏳ Insurance package selection
-4. ⏳ Framework agreements for corporate customers
-5. ⏳ Multi-language support (English, French)
+1. ✅ B2B customer support with VAT ID (CustomerType, VATId, CompanyName, PaymentTerms)
+2. ✅ Cross-border travel policies (CountryCode, TravelRestriction, CountryTravelRule, CrossBorderPolicy)
+3. ⏳ Framework agreements for corporate customers
+4. ⏳ Multi-language support (English, French)
 
 ## Resources
 

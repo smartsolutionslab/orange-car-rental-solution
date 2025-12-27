@@ -1,29 +1,29 @@
 <div class="page-header">
-  <h1>Kundenverwaltung</h1>
-  <p class="subtitle">Suchen und verwalten Sie Kundeninformationen</p>
+  <h1>{{ 'customers.title' | translate }}</h1>
+  <p class="subtitle">{{ 'customers.subtitle' | translate }}</p>
 </div>
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Kundensuche</h2>
+    <h2>{{ 'customers.search.title' | translate }}</h2>
   </div>
 
   <!-- Search Form -->
   <div class="search-section">
     <div class="search-grid">
       <div class="search-field">
-        <label for="searchEmail">E-Mail</label>
+        <label for="searchEmail">{{ 'customers.search.email' | translate }}</label>
         <input
           type="email"
           id="searchEmail"
           [(ngModel)]="searchEmail"
-          placeholder="kunde@beispiel.de"
+          [placeholder]="'common.placeholders.email' | translate"
           (keyup.enter)="searchCustomers()"
         />
       </div>
 
       <div class="search-field">
-        <label for="searchPhone">Telefonnummer</label>
+        <label for="searchPhone">{{ 'customers.search.phone' | translate }}</label>
         <input
           type="tel"
           id="searchPhone"
@@ -34,12 +34,12 @@
       </div>
 
       <div class="search-field">
-        <label for="searchLastName">Nachname</label>
+        <label for="searchLastName">{{ 'customers.search.lastName' | translate }}</label>
         <input
           type="text"
           id="searchLastName"
           [(ngModel)]="searchLastName"
-          placeholder="Mustermann"
+          [placeholder]="'common.placeholders.lastName' | translate"
           (keyup.enter)="searchCustomers()"
         />
       </div>
@@ -47,52 +47,44 @@
 
     <div class="search-actions">
       <button class="btn-primary" (click)="searchCustomers()" [disabled]="loading()">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-        </svg>
-        Suchen
+        <lib-icon name="search-filled" variant="filled" size="sm" aria-hidden="true" />
+        {{ 'customers.search.button' | translate }}
       </button>
       <button class="btn-secondary" (click)="clearSearch()" [disabled]="loading()">
-        Zurücksetzen
+        {{ 'common.actions.reset' | translate }}
       </button>
     </div>
 
     @if (error()) {
-      <div class="search-error">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-        </svg>
-        {{ error() }}
-      </div>
+      <ui-error-state [message]="error()!" variant="inline"></ui-error-state>
     }
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Suche nach Kunden...</p>
-    </div>
+    <ui-loading-state [message]="'customers.search.searching' | translate"></ui-loading-state>
   }
 
   <!-- Search Results -->
   @if (!loading() && searchPerformed() && customers().length > 0) {
     <div class="results-header">
-      <h3>Suchergebnisse</h3>
-      <span class="results-count">{{ totalCustomers() }} Kunde(n) gefunden</span>
+      <h3>{{ 'customers.results.title' | translate }}</h3>
+      <span class="results-count">{{
+        'customers.results.found' | translate: { count: totalCustomers() }
+      }}</span>
     </div>
 
     <div class="table-container">
       <table class="data-table">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>E-Mail</th>
-            <th>Telefon</th>
-            <th>Geburtsdatum</th>
-            <th>Stadt</th>
-            <th>Registriert</th>
-            <th>Aktionen</th>
+            <th scope="col">{{ 'customers.table.name' | translate }}</th>
+            <th scope="col">{{ 'customers.table.email' | translate }}</th>
+            <th scope="col">{{ 'customers.table.phone' | translate }}</th>
+            <th scope="col">{{ 'customers.table.dateOfBirth' | translate }}</th>
+            <th scope="col">{{ 'customers.table.city' | translate }}</th>
+            <th scope="col">{{ 'customers.table.registered' | translate }}</th>
+            <th scope="col">{{ 'customers.table.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -105,10 +97,13 @@
               <td>{{ customer.city }}</td>
               <td>{{ formatDate(customer.createdAt) }}</td>
               <td>
-                <button class="btn-icon" (click)="viewDetails(customer)" title="Details anzeigen">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                  </svg>
+                <button
+                  class="btn-icon"
+                  (click)="viewDetails(customer)"
+                  [title]="'common.actions.viewDetails' | translate"
+                  [attr.aria-label]="'common.actions.viewDetails' | translate"
+                >
+                  <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
               </td>
             </tr>
@@ -120,334 +115,364 @@
 
   <!-- No Results -->
   @if (!loading() && searchPerformed() && customers().length === 0) {
-    <div class="no-results">
-      <svg class="no-results-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-      </svg>
-      <h3>Keine Kunden gefunden</h3>
-      <p>Versuchen Sie es mit anderen Suchkriterien.</p>
-    </div>
+    <ui-empty-state
+      icon="search"
+      [title]="'customers.results.noResults' | translate"
+      [description]="'customers.search.minCriteria' | translate"
+    ></ui-empty-state>
   }
 
   <!-- Initial State -->
   @if (!loading() && !searchPerformed()) {
-    <div class="initial-state">
-      <svg class="initial-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-      </svg>
-      <h3>Kundensuche</h3>
-      <p>Geben Sie mindestens ein Suchkriterium ein, um Kunden zu finden.</p>
-      <p class="hint">Tipp: Sie können nach E-Mail, Telefonnummer oder Nachname suchen.</p>
-    </div>
+    <ui-empty-state
+      icon="search"
+      [title]="'customers.search.title' | translate"
+      [description]="'customers.search.minCriteria' | translate"
+    ></ui-empty-state>
   }
 </div>
 
 <!-- Customer Details Modal -->
-@if (showDetails() && selectedCustomer()) {
-  <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>{{ editMode() ? 'Kunde bearbeiten' : 'Kundendetails' }}</h2>
-        <button class="btn-close" (click)="closeDetails()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Success Message -->
-        @if (successMessage()) {
-          <div class="success-message">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-            {{ successMessage() }}
+<ui-modal
+  [isOpen]="showDetails() && !!selectedCustomer()"
+  [title]="
+    editMode() ? ('customers.edit.title' | translate) : ('customers.details.title' | translate)
+  "
+  size="lg"
+  (close)="closeDetails()"
+>
+  <ng-container modal-body>
+    @if (selectedCustomer()) {
+      <!-- Success Message -->
+      @if (successMessage()) {
+        <ui-success-alert [message]="successMessage()!"></ui-success-alert>
+      }
+      <!-- Customer Information -->
+      <div class="info-section">
+        <h3>{{ 'customers.details.personalInfo' | translate }}</h3>
+
+        @if (!editMode()) {
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>{{ 'customers.details.customerId' | translate }}</label>
+              <p>
+                <span class="id-badge">{{ selectedCustomer()!.id }}</span>
+              </p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'customers.table.name' | translate }}</label>
+              <p>{{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.email' | translate }}</label>
+              <p>{{ selectedCustomer()!.email }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.phone' | translate }}</label>
+              <p>{{ selectedCustomer()!.phoneNumber }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.dateOfBirth' | translate }}</label>
+              <p>
+                {{ formatDate(selectedCustomer()!.dateOfBirth) }} ({{
+                  calculateAge(selectedCustomer()!.dateOfBirth)
+                }}
+                Jahre)
+              </p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.registered' | translate }}</label>
+              <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editFirstName">{{ 'common.labels.firstName' | translate }} *</label>
+              <input
+                type="text"
+                id="editFirstName"
+                [ngModel]="editForm().firstName"
+                (ngModelChange)="updateEditForm('firstName', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLastName">{{ 'common.labels.lastName' | translate }} *</label>
+              <input
+                type="text"
+                id="editLastName"
+                [ngModel]="editForm().lastName"
+                (ngModelChange)="updateEditForm('lastName', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editEmail">{{ 'common.labels.email' | translate }} *</label>
+              <input
+                type="email"
+                id="editEmail"
+                [ngModel]="editForm().email"
+                (ngModelChange)="updateEditForm('email', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editPhone">{{ 'common.labels.phone' | translate }} *</label>
+              <input
+                type="tel"
+                id="editPhone"
+                [ngModel]="editForm().phoneNumber"
+                (ngModelChange)="updateEditForm('phoneNumber', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editDateOfBirth">{{ 'common.labels.dateOfBirth' | translate }} *</label>
+              <input
+                type="date"
+                id="editDateOfBirth"
+                [ngModel]="editForm().dateOfBirth"
+                (ngModelChange)="updateEditForm('dateOfBirth', $event)"
+                required
+              />
+            </div>
           </div>
         }
-        <!-- Customer Information -->
-        <div class="info-section">
-          <h3>Persönliche Informationen</h3>
-
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Kunden-ID</label>
-                <p><span class="id-badge">{{ selectedCustomer()!.id }}</span></p>
-              </div>
-              <div class="detail-item">
-                <label>Name</label>
-                <p>{{ selectedCustomer()!.firstName }} {{ selectedCustomer()!.lastName }}</p>
-              </div>
-              <div class="detail-item">
-                <label>E-Mail</label>
-                <p>{{ selectedCustomer()!.email }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Telefon</label>
-                <p>{{ selectedCustomer()!.phoneNumber }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Geburtsdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.dateOfBirth) }} ({{ calculateAge(selectedCustomer()!.dateOfBirth) }} Jahre)</p>
-              </div>
-              <div class="detail-item">
-                <label>Registriert seit</label>
-                <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
-              </div>
-            </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editFirstName">Vorname *</label>
-                <input
-                  type="text"
-                  id="editFirstName"
-                  [ngModel]="editForm().firstName"
-                  (ngModelChange)="updateEditForm('firstName', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLastName">Nachname *</label>
-                <input
-                  type="text"
-                  id="editLastName"
-                  [ngModel]="editForm().lastName"
-                  (ngModelChange)="updateEditForm('lastName', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editEmail">E-Mail *</label>
-                <input
-                  type="email"
-                  id="editEmail"
-                  [ngModel]="editForm().email"
-                  (ngModelChange)="updateEditForm('email', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editPhone">Telefon *</label>
-                <input
-                  type="tel"
-                  id="editPhone"
-                  [ngModel]="editForm().phoneNumber"
-                  (ngModelChange)="updateEditForm('phoneNumber', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editDateOfBirth">Geburtsdatum *</label>
-                <input
-                  type="date"
-                  id="editDateOfBirth"
-                  [ngModel]="editForm().dateOfBirth"
-                  (ngModelChange)="updateEditForm('dateOfBirth', $event)"
-                  required
-                />
-              </div>
-            </div>
-          }
-        </div>
-
-        <!-- Address Information -->
-        <div class="info-section">
-          <h3>Adresse</h3>
-
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Straße</label>
-                <p>{{ selectedCustomer()!.street }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Stadt</label>
-                <p>{{ selectedCustomer()!.city }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Postleitzahl</label>
-                <p>{{ selectedCustomer()!.postalCode }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Land</label>
-                <p>{{ selectedCustomer()!.country }}</p>
-              </div>
-            </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editStreet">Straße</label>
-                <input
-                  type="text"
-                  id="editStreet"
-                  [ngModel]="editForm().street"
-                  (ngModelChange)="updateEditForm('street', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editCity">Stadt</label>
-                <input
-                  type="text"
-                  id="editCity"
-                  [ngModel]="editForm().city"
-                  (ngModelChange)="updateEditForm('city', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editPostalCode">Postleitzahl</label>
-                <input
-                  type="text"
-                  id="editPostalCode"
-                  [ngModel]="editForm().postalCode"
-                  (ngModelChange)="updateEditForm('postalCode', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editCountry">Land</label>
-                <input
-                  type="text"
-                  id="editCountry"
-                  [ngModel]="editForm().country"
-                  (ngModelChange)="updateEditForm('country', $event)"
-                />
-              </div>
-            </div>
-          }
-        </div>
-
-        <!-- Driver's License Information -->
-        <div class="info-section">
-          <h3>Führerschein</h3>
-
-          @if (!editMode()) {
-            <div class="detail-grid">
-              <div class="detail-item">
-                <label>Führerscheinnummer</label>
-                <p>{{ selectedCustomer()!.licenseNumber }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ausstellungsland</label>
-                <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ausstellungsdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
-              </div>
-              <div class="detail-item">
-                <label>Ablaufdatum</label>
-                <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
-              </div>
-            </div>
-          } @else {
-            <div class="form-grid">
-              <div class="form-field">
-                <label for="editLicenseNumber">Führerscheinnummer *</label>
-                <input
-                  type="text"
-                  id="editLicenseNumber"
-                  [ngModel]="editForm().licenseNumber"
-                  (ngModelChange)="updateEditForm('licenseNumber', $event)"
-                  required
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseCountry">Ausstellungsland</label>
-                <input
-                  type="text"
-                  id="editLicenseCountry"
-                  [ngModel]="editForm().licenseIssueCountry"
-                  (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseIssueDate">Ausstellungsdatum</label>
-                <input
-                  type="date"
-                  id="editLicenseIssueDate"
-                  [ngModel]="editForm().licenseIssueDate"
-                  (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
-                />
-              </div>
-              <div class="form-field">
-                <label for="editLicenseExpiryDate">Ablaufdatum</label>
-                <input
-                  type="date"
-                  id="editLicenseExpiryDate"
-                  [ngModel]="editForm().licenseExpiryDate"
-                  (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
-                />
-              </div>
-            </div>
-          }
-        </div>
-
-        <!-- Customer Reservations -->
-        <div class="info-section">
-          <h3>Reservierungen ({{ customerReservations().length }})</h3>
-
-          @if (loadingReservations()) {
-            <div class="loading-small">
-              <div class="loading-spinner-small"></div>
-              <p>Lade Reservierungen...</p>
-            </div>
-          }
-
-          @if (!loadingReservations() && customerReservations().length > 0) {
-            <div class="reservations-list">
-              @for (reservation of customerReservations(); track reservation.reservationId) {
-                <div class="reservation-card">
-                  <div class="reservation-header">
-                    <span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span>
-                    <span class="status-badge" [ngClass]="getStatusClass(reservation.status)">{{ reservation.status }}</span>
-                  </div>
-                  <div class="reservation-details">
-                    <div class="reservation-row">
-                      <span class="label">Zeitraum:</span>
-                      <span>{{ formatDate(reservation.pickupDate) }} - {{ formatDate(reservation.returnDate) }}</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Dauer:</span>
-                      <span>{{ reservation.rentalDays }} Tag(e)</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Abholort:</span>
-                      <span>{{ reservation.pickupLocationCode }}</span>
-                    </div>
-                    <div class="reservation-row">
-                      <span class="label">Preis:</span>
-                      <span><strong>{{ reservation.totalPriceGross.toFixed(2) }} {{ reservation.currency }}</strong></span>
-                    </div>
-                  </div>
-                </div>
-              }
-            </div>
-          }
-
-          @if (!loadingReservations() && customerReservations().length === 0) {
-            <p class="no-data">Keine Reservierungen gefunden</p>
-          }
-        </div>
       </div>
-      <div class="modal-footer">
+
+      <!-- Address Information -->
+      <div class="info-section">
+        <h3>{{ 'customers.details.address' | translate }}</h3>
+
         @if (!editMode()) {
-          <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
-          <button class="btn-primary" (click)="enterEditMode()">
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-            </svg>
-            Bearbeiten
-          </button>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>{{ 'common.labels.street' | translate }}</label>
+              <p>{{ selectedCustomer()!.street }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.city' | translate }}</label>
+              <p>{{ selectedCustomer()!.city }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.postalCode' | translate }}</label>
+              <p>{{ selectedCustomer()!.postalCode }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'common.labels.country' | translate }}</label>
+              <p>{{ selectedCustomer()!.country }}</p>
+            </div>
+          </div>
         } @else {
-          <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">Abbrechen</button>
-          <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
-            @if (saving()) {
-              <span class="loading-spinner-small"></span>
-            }
-            Speichern
-          </button>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editStreet">{{ 'common.labels.street' | translate }}</label>
+              <input
+                type="text"
+                id="editStreet"
+                [ngModel]="editForm().street"
+                (ngModelChange)="updateEditForm('street', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editCity">{{ 'common.labels.city' | translate }}</label>
+              <input
+                type="text"
+                id="editCity"
+                [ngModel]="editForm().city"
+                (ngModelChange)="updateEditForm('city', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editPostalCode">{{ 'common.labels.postalCode' | translate }}</label>
+              <input
+                type="text"
+                id="editPostalCode"
+                [ngModel]="editForm().postalCode"
+                (ngModelChange)="updateEditForm('postalCode', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editCountry">{{ 'common.labels.country' | translate }}</label>
+              <input
+                type="text"
+                id="editCountry"
+                [ngModel]="editForm().country"
+                (ngModelChange)="updateEditForm('country', $event)"
+              />
+            </div>
+          </div>
         }
       </div>
-    </div>
-  </div>
-}
+
+      <!-- Driver's License Information -->
+      <div class="info-section">
+        <h3>{{ 'customers.details.license.title' | translate }}</h3>
+
+        @if (!editMode()) {
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>{{ 'customers.details.license.number' | translate }}</label>
+              <p>{{ selectedCustomer()!.licenseNumber }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'customers.details.license.issueCountry' | translate }}</label>
+              <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'customers.details.license.issueDate' | translate }}</label>
+              <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
+            </div>
+            <div class="detail-item">
+              <label>{{ 'customers.details.license.expiryDate' | translate }}</label>
+              <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
+            </div>
+          </div>
+        } @else {
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="editLicenseNumber"
+                >{{ 'customers.details.license.number' | translate }} *</label
+              >
+              <input
+                type="text"
+                id="editLicenseNumber"
+                [ngModel]="editForm().licenseNumber"
+                (ngModelChange)="updateEditForm('licenseNumber', $event)"
+                required
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseCountry">{{
+                'customers.details.license.issueCountry' | translate
+              }}</label>
+              <input
+                type="text"
+                id="editLicenseCountry"
+                [ngModel]="editForm().licenseIssueCountry"
+                (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseIssueDate">{{
+                'customers.details.license.issueDate' | translate
+              }}</label>
+              <input
+                type="date"
+                id="editLicenseIssueDate"
+                [ngModel]="editForm().licenseIssueDate"
+                (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
+              />
+            </div>
+            <div class="form-field">
+              <label for="editLicenseExpiryDate">{{
+                'customers.details.license.expiryDate' | translate
+              }}</label>
+              <input
+                type="date"
+                id="editLicenseExpiryDate"
+                [ngModel]="editForm().licenseExpiryDate"
+                (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
+              />
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Customer Reservations -->
+      <div class="info-section">
+        <h3>
+          {{ 'customers.details.reservations.title' | translate }} ({{
+            customerReservations().length
+          }})
+        </h3>
+
+        @if (loadingReservations()) {
+          <ui-loading-state
+            size="sm"
+            [message]="'customers.details.reservations.loading' | translate"
+          ></ui-loading-state>
+        }
+
+        @if (!loadingReservations() && customerReservations().length > 0) {
+          <div class="reservations-list">
+            @for (reservation of customerReservations(); track reservation.reservationId) {
+              <div class="reservation-card">
+                <div class="reservation-header">
+                  <span class="id-badge">{{ reservation.reservationId.substring(0, 8) }}</span>
+                  <ui-status-badge
+                    type="reservation"
+                    [status]="reservation.status"
+                  ></ui-status-badge>
+                </div>
+                <div class="reservation-details">
+                  <div class="reservation-row">
+                    <span class="label"
+                      >{{ 'customers.details.reservations.period' | translate }}:</span
+                    >
+                    <span
+                      >{{ formatDate(reservation.pickupDate) }} -
+                      {{ formatDate(reservation.returnDate) }}</span
+                    >
+                  </div>
+                  <div class="reservation-row">
+                    <span class="label"
+                      >{{ 'customers.details.reservations.duration' | translate }}:</span
+                    >
+                    <span
+                      >{{ reservation.rentalDays }}
+                      {{ 'customers.details.reservations.days' | translate }}</span
+                    >
+                  </div>
+                  <div class="reservation-row">
+                    <span class="label"
+                      >{{ 'customers.details.reservations.pickupLocation' | translate }}:</span
+                    >
+                    <span>{{ reservation.pickupLocationCode }}</span>
+                  </div>
+                  <div class="reservation-row">
+                    <span class="label"
+                      >{{ 'customers.details.reservations.price' | translate }}:</span
+                    >
+                    <span
+                      ><strong
+                        >{{ reservation.totalPriceGross.toFixed(2) }}
+                        {{ reservation.currency }}</strong
+                      ></span
+                    >
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        @if (!loadingReservations() && customerReservations().length === 0) {
+          <p class="no-data">{{ 'customers.details.reservations.noResults' | translate }}</p>
+        }
+      </div>
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    @if (!editMode()) {
+      <button class="btn-secondary" (click)="closeDetails()">
+        {{ 'common.actions.close' | translate }}
+      </button>
+      <button class="btn-primary" (click)="enterEditMode()">
+        <lib-icon name="pencil-filled" variant="filled" size="sm" aria-hidden="true" />
+        {{ 'common.actions.edit' | translate }}
+      </button>
+    } @else {
+      <button class="btn-secondary" (click)="cancelEdit()" [disabled]="saving()">
+        {{ 'common.actions.cancel' | translate }}
+      </button>
+      <button class="btn-primary" (click)="saveCustomer()" [disabled]="saving()">
+        @if (saving()) {
+          <span class="loading-spinner-small"></span>
+        }
+        {{ 'common.actions.save' | translate }}
+      </button>
+    }
+  </ng-container>
+</ui-modal>

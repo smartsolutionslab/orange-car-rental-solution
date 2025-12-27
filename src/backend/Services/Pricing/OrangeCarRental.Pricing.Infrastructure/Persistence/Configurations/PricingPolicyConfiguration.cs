@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence.Configurations;
 
 /// <summary>
-/// Entity configuration for PricingPolicy aggregate.
+///     Entity configuration for PricingPolicy aggregate.
 /// </summary>
 internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<PricingPolicy>
 {
@@ -19,7 +20,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("PricingPolicyId")
             .HasConversion(
                 id => id.Value,
-                value => PricingPolicyIdentifier.Of(value))
+                value => PricingPolicyIdentifier.From(value))
             .IsRequired();
 
         // CategoryCode value object
@@ -27,7 +28,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("CategoryCode")
             .HasConversion(
                 code => code.Value,
-                value => CategoryCode.Of(value))
+                value => CategoryCode.From(value))
             .HasMaxLength(20)
             .IsRequired();
 
@@ -36,7 +37,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
             .HasColumnName("LocationCode")
             .HasConversion(
                 code => code!.Value.Value,
-                value => LocationCode.Of(value))
+                value => LocationCode.From(value))
             .HasMaxLength(20)
             .IsRequired(false);
 
@@ -57,7 +58,7 @@ internal sealed class PricingPolicyConfiguration : IEntityTypeConfiguration<Pric
                 .HasColumnName("Currency")
                 .HasConversion(
                     currency => currency.Code,
-                    code => SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects.Currency.Of(code))
+                    code => Currency.From(code))
                 .HasMaxLength(3)
                 .IsRequired();
         });

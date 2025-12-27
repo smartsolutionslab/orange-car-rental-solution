@@ -1,0 +1,298 @@
+<div class="booking-history-container">
+  <div class="page-header">
+    <h1>{{ 'bookingHistory.title' | translate }}</h1>
+    <p class="subtitle">{{ 'bookingHistory.subtitle' | translate }}</p>
+  </div>
+
+  <!-- Authenticated User View -->
+  @if (isAuthenticated()) {
+    <div class="reservations-content">
+      <!-- Loading State -->
+      @if (isLoading()) {
+        <ui-loading-state [message]="'bookingHistory.loading' | translate"></ui-loading-state>
+      }
+
+      <!-- Error State -->
+      @if (error()) {
+        <ui-error-state
+          [message]="error()!"
+          [showRetry]="true"
+          (retry)="loadCustomerReservations()"
+        ></ui-error-state>
+      }
+
+      <!-- Reservations Content -->
+      @if (!isLoading() && !error()) {
+        <!-- Upcoming Bookings -->
+        @if (groupedReservations().upcoming.length > 0) {
+          <section class="reservations-section">
+            <h2>{{ 'bookingHistory.sections.upcoming' | translate }}</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().upcoming; track reservation.id) {
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="upcoming"
+                  [canCancel]="canCancel(reservation)"
+                  (viewDetails)="viewDetails(reservation)"
+                  (cancel)="openCancelModal(reservation)"
+                ></ui-reservation-card>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Pending Bookings -->
+        @if (groupedReservations().pending.length > 0) {
+          <section class="reservations-section">
+            <h2>{{ 'bookingHistory.sections.pending' | translate }}</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().pending; track reservation.id) {
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="pending"
+                  [canCancel]="canCancel(reservation)"
+                  (viewDetails)="viewDetails(reservation)"
+                  (cancel)="openCancelModal(reservation)"
+                ></ui-reservation-card>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Past Bookings -->
+        @if (groupedReservations().past.length > 0) {
+          <section class="reservations-section">
+            <h2>{{ 'bookingHistory.sections.past' | translate }}</h2>
+            <div class="reservations-grid">
+              @for (reservation of groupedReservations().past; track reservation.id) {
+                <ui-reservation-card
+                  [reservation]="reservation"
+                  variant="past"
+                  [showCancel]="false"
+                  (viewDetails)="viewDetails(reservation)"
+                ></ui-reservation-card>
+              }
+            </div>
+          </section>
+        }
+
+        <!-- Empty State -->
+        @if (
+          groupedReservations().upcoming.length === 0 &&
+          groupedReservations().pending.length === 0 &&
+          groupedReservations().past.length === 0
+        ) {
+          <ui-empty-state
+            icon="reservation"
+            [title]="'bookingHistory.empty.title' | translate"
+            [description]="'bookingHistory.empty.description' | translate"
+            [showAction]="true"
+            [actionLabel]="'bookingHistory.empty.action' | translate"
+            (action)="navigateToVehicles()"
+          ></ui-empty-state>
+        }
+      }
+    </div>
+  }
+
+  <!-- Guest Lookup View -->
+  @else {
+    <div class="guest-lookup">
+      <h2>{{ 'bookingHistory.guestLookup.title' | translate }}</h2>
+      <p>{{ 'bookingHistory.guestLookup.description' | translate }}</p>
+
+      <form class="lookup-form" (ngSubmit)="onGuestLookup()">
+        <ui-form-field
+          [label]="'bookingHistory.guestLookup.reservationId' | translate"
+          inputId="reservationId"
+          [required]="true"
+        >
+          <input
+            type="text"
+            id="reservationId"
+            name="reservationId"
+            [(ngModel)]="guestLookupForm.reservationId"
+            [placeholder]="'bookingHistory.guestLookup.reservationIdPlaceholder' | translate"
+            required
+          />
+        </ui-form-field>
+
+        <ui-form-field
+          [label]="'common.labels.email' | translate"
+          inputId="email"
+          [required]="true"
+        >
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="guestLookupForm.email"
+            [placeholder]="'common.placeholders.email' | translate"
+            required
+          />
+        </ui-form-field>
+
+        @if (guestLookupError()) {
+          <ui-error-alert [message]="guestLookupError()!"></ui-error-alert>
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          {{
+            isLoading()
+              ? ('bookingHistory.guestLookup.searching' | translate)
+              : ('bookingHistory.guestLookup.searchButton' | translate)
+          }}
+        </button>
+      </form>
+
+      <!-- Guest Reservation Result -->
+      @if (guestReservation()) {
+        <div class="guest-result">
+          <h3>{{ 'bookingHistory.guestLookup.result' | translate }}</h3>
+          <ui-reservation-card
+            [reservation]="guestReservation()!"
+            variant="guest"
+            [canCancel]="canCancel(guestReservation()!)"
+            [showDetails]="false"
+            [showPrint]="true"
+            (print)="printReservation()"
+            (cancel)="openCancelModal(guestReservation()!)"
+          ></ui-reservation-card>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Detail Modal -->
+  <ui-modal
+    [isOpen]="showDetailModal() && !!detailReservation()"
+    [title]="'bookingHistory.details.title' | translate"
+    size="lg"
+    (close)="closeDetailModal()"
+  >
+    <ng-container modal-body>
+      @if (detailReservation()) {
+        <div class="detail-section">
+          <h3>{{ 'bookingHistory.details.reservation' | translate }}</h3>
+          <ui-detail-row
+            [label]="'bookingHistory.details.reservationNumber' | translate"
+            [value]="detailReservation()!.id"
+          ></ui-detail-row>
+          <ui-detail-row [label]="'common.labels.status' | translate">
+            <ui-status-badge
+              type="reservation"
+              [status]="detailReservation()!.status"
+            ></ui-status-badge>
+          </ui-detail-row>
+        </div>
+
+        <div class="detail-section">
+          <h3>{{ 'bookingHistory.details.rentalPeriod' | translate }}</h3>
+          <ui-detail-row
+            [label]="'bookingHistory.details.pickup' | translate"
+            [value]="
+              formatDate(detailReservation()!.pickupDate) +
+              ' - ' +
+              detailReservation()!.pickupLocationCode
+            "
+          ></ui-detail-row>
+          <ui-detail-row
+            [label]="'bookingHistory.details.return' | translate"
+            [value]="
+              formatDate(detailReservation()!.returnDate) +
+              ' - ' +
+              detailReservation()!.dropoffLocationCode
+            "
+          ></ui-detail-row>
+        </div>
+
+        <div class="detail-section">
+          <h3>{{ 'bookingHistory.details.pricing' | translate }}</h3>
+          <ui-detail-row
+            [label]="'bookingHistory.details.netAmount' | translate"
+            [value]="formatPrice(detailReservation()!.totalPriceNet)"
+          ></ui-detail-row>
+          <ui-detail-row
+            [label]="'bookingHistory.details.vat' | translate"
+            [value]="formatPrice(detailReservation()!.totalPriceVat)"
+          ></ui-detail-row>
+          <ui-detail-row
+            [label]="'bookingHistory.details.grossAmount' | translate"
+            [value]="formatPrice(detailReservation()!.totalPriceGross)"
+            [strong]="true"
+            [highlight]="true"
+          ></ui-detail-row>
+        </div>
+
+        <div class="detail-section">
+          <h3>{{ 'bookingHistory.details.cancellationPolicy' | translate }}</h3>
+          <p>{{ 'bookingHistory.details.cancellationFree' | translate }}</p>
+          <p>{{ 'bookingHistory.details.cancellationFee' | translate }}</p>
+        </div>
+      }
+    </ng-container>
+    <ng-container modal-footer>
+      <button class="btn-secondary" (click)="printReservation()">
+        {{ 'common.actions.print' | translate }}
+      </button>
+      <button class="btn-primary" (click)="closeDetailModal()">
+        {{ 'common.actions.close' | translate }}
+      </button>
+    </ng-container>
+  </ui-modal>
+
+  <!-- Cancel Modal -->
+  <ui-modal
+    [isOpen]="showCancelModal() && !!selectedReservation()"
+    [title]="'bookingHistory.cancel.title' | translate"
+    size="sm"
+    (close)="closeCancelModal()"
+  >
+    <ng-container modal-body>
+      @if (selectedReservation()) {
+        <p>{{ 'bookingHistory.cancel.message' | translate }}</p>
+        <p>
+          <strong>{{ 'bookingHistory.details.reservationNumber' | translate }}:</strong>
+          {{ selectedReservation()!.id }}
+        </p>
+        <p>
+          <strong>{{ 'bookingHistory.details.pickup' | translate }}:</strong>
+          {{ formatDate(selectedReservation()!.pickupDate) }}
+        </p>
+
+        <div class="form-group">
+          <label for="cancellationReason">{{ 'bookingHistory.cancel.reason' | translate }} *</label>
+          <select id="cancellationReason" [(ngModel)]="cancellationReason" class="form-control">
+            <option value="">{{ 'common.placeholders.select' | translate }}</option>
+            @for (reason of cancellationReasons; track reason) {
+              <option [value]="reason">{{ reason }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="warning-box">
+          <p>
+            <strong>{{ 'bookingHistory.cancel.warning' | translate }}:</strong>
+            {{ 'bookingHistory.cancel.warningText' | translate }}
+          </p>
+        </div>
+      }
+    </ng-container>
+    <ng-container modal-footer>
+      <button class="btn-secondary" (click)="closeCancelModal()">
+        {{ 'common.actions.cancel' | translate }}
+      </button>
+      <button
+        class="btn-danger"
+        (click)="confirmCancellation()"
+        [disabled]="!cancellationReason || isLoading()"
+      >
+        {{
+          isLoading()
+            ? ('bookingHistory.cancel.inProgress' | translate)
+            : ('bookingHistory.cancel.confirm' | translate)
+        }}
+      </button>
+    </ng-container>
+  </ui-modal>
+</div>

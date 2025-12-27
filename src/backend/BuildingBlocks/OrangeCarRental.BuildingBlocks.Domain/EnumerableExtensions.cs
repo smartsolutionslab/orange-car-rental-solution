@@ -1,30 +1,37 @@
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 
 /// <summary>
-/// Extension methods for IEnumerable to support pagination and other common query operations.
+///     Extension methods for IEnumerable to support pagination and other common query operations.
+///     Uses C# 14 Extension Members syntax.
 /// </summary>
 public static class EnumerableExtensions
 {
     /// <summary>
-    /// Applies pagination to an enumerable (in-memory collection) and returns a paged result.
+    ///     C# 14 Extension Members for IEnumerable pagination.
     /// </summary>
-    public static PagedResult<T> ToPagedResult<T>(
-        this IEnumerable<T> source,
-        SearchParameters parameters)
+    extension<TItem>(IEnumerable<TItem> source)
     {
-        var items = source as IList<T> ?? source.ToList();
-
-        var pagedItems = items
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
-            .ToList();
-
-        return new PagedResult<T>
+        /// <summary>
+        ///     Applies pagination to an enumerable (in-memory collection) and returns a paged result.
+        /// </summary>
+        public PagedResult<TItem> ToPagedResult(SearchParameters parameters)
         {
-            Items = pagedItems,
-            TotalCount = items.Count,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
-        };
+            var paging = parameters.Paging;
+
+            var items = source as IList<TItem> ?? source.ToList();
+
+            var pagedItems = items
+                .Skip(paging.Skip)
+                .Take(paging.Take)
+                .ToList();
+
+            return new PagedResult<TItem>
+            {
+                Items = pagedItems,
+                TotalCount = items.Count,
+                PageNumber = paging.PageNumber,
+                PageSize = paging.PageSize
+            };
+        }
     }
 }

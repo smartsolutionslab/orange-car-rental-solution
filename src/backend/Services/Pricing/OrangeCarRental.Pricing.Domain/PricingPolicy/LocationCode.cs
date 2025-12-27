@@ -1,25 +1,22 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 
 /// <summary>
-/// Location code for pricing (e.g., MUC-HBF, BER-AIRPORT).
-/// Maps to Location from Fleet service.
+///     Location code for pricing (e.g., MUC-HBF, BER-AIRPORT).
+///     Maps to Location from Fleet service.
 /// </summary>
-public readonly record struct LocationCode
+/// <param name="Value">The location code value.</param>
+public readonly record struct LocationCode(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private LocationCode(string value) => Value = value;
-
-    public static LocationCode Of(string value)
+    public static LocationCode From(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        var trimmed = value?.Trim().ToUpperInvariant() ?? string.Empty;
 
-        var trimmed = value.Trim().ToUpperInvariant();
-        if (trimmed.Length < 3)
-            throw new ArgumentException("Location code must be at least 3 characters long", nameof(value));
-
-        if (trimmed.Length > 20)
-            throw new ArgumentException("Location code cannot exceed 20 characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .IsNotNullOrWhiteSpace()
+            .AndHasLengthBetween(3, 20);
 
         return new LocationCode(trimmed);
     }

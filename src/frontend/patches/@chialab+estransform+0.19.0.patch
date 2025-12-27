@@ -1,0 +1,22 @@
+diff --git a/node_modules/@chialab/estransform/lib/parser.js b/node_modules/@chialab/estransform/lib/parser.js
+index 1234567..abcdefg 100644
+--- a/node_modules/@chialab/estransform/lib/parser.js
++++ b/node_modules/@chialab/estransform/lib/parser.js
+@@ -1,6 +1,6 @@
+ import { Buffer } from 'buffer';
+-import { MagicString } from '@napi-rs/magic-string';
+-import { parseAsync } from 'oxc-parser';
++import MagicString from 'magic-string';
++import { parseSync } from 'oxc-parser';
+ import { inlineSourcemap, loadSourcemap, mergeSourcemaps, removeInlineSourcemap } from './sourcemaps.js';
+
+ /**
+@@ -55,7 +55,7 @@ export async function parse(inputCode, filePath) {
+     const code = removeInlineSourcemap(inputCode);
+     const buffer = Buffer.from(code);
+     const magicCode = new MagicString(code);
+-    const result = await parseAsync(code, { sourceType: 'module', sourceFilename: filePath });
++    const result = parseSync(code, { sourceType: 'module', sourceFilename: filePath });
+     const ast = JSON.parse(result.program);
+
+     let changed = false;

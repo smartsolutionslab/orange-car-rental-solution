@@ -1,24 +1,35 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 /// <summary>
-/// Represents the seating capacity of a vehicle.
-/// Typical rental vehicles have 2-9 seats.
+///     Represents the seating capacity of a vehicle.
+///     Typical rental vehicles have 2-9 seats.
 /// </summary>
-public readonly record struct SeatingCapacity
+public readonly record struct SeatingCapacity : IValueObject
 {
+    private SeatingCapacity(int value)
+    {
+        Value = value;
+    }
+
     public int Value { get; }
 
-    private SeatingCapacity(int value) => Value = value;
-
-    public static SeatingCapacity Of(int value)
+    public static SeatingCapacity From(int value)
     {
-        if (value < 2)
-            throw new ArgumentException("Seating capacity must be at least 2", nameof(value));
-
-        if (value > 9)
-            throw new ArgumentException("Seating capacity cannot exceed 9 for rental vehicles", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsGreaterThanOrEqual(2)
+            .AndIsLessThanOrEqual(9);
 
         return new SeatingCapacity(value);
+    }
+
+    public static SeatingCapacity? From(int? value)
+    {
+        if (value == null) return null;
+
+        return From(value.Value);
     }
 
     public static implicit operator int(SeatingCapacity capacity) => capacity.Value;

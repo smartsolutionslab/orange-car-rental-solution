@@ -7,15 +7,15 @@ using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
 
 /// <summary>
-/// Seeds the Pricing database with sample pricing policies for development and testing.
-/// Creates pricing policies for all German vehicle categories with German VAT (19%).
+///     Seeds the Pricing database with sample pricing policies for development and testing.
+///     Creates pricing policies for all German vehicle categories with German VAT (19%).
 /// </summary>
 public class PricingDataSeeder(
     PricingDbContext context,
     ILogger<PricingDataSeeder> logger)
 {
     /// <summary>
-    /// Seeds the database with sample pricing policies if no policies exist.
+    ///     Seeds the database with sample pricing policies if no policies exist.
     /// </summary>
     public async Task SeedAsync()
     {
@@ -23,7 +23,8 @@ public class PricingDataSeeder(
         var existingCount = await context.PricingPolicies.CountAsync();
         if (existingCount > 0)
         {
-            logger.LogInformation("Pricing database already contains {Count} pricing policies. Skipping seed.", existingCount);
+            logger.LogInformation("Pricing database already contains {Count} pricing policies. Skipping seed.",
+                existingCount);
             return;
         }
 
@@ -45,59 +46,59 @@ public class PricingDataSeeder(
 
         // Kleinwagen (Small Car) - €29.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KLEIN"),
+            CategoryCode.From("KLEIN"),
             Money.Euro(29.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Kompaktklasse (Compact) - €39.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KOMPAKT"),
+            CategoryCode.From("KOMPAKT"),
             Money.Euro(39.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Mittelklasse (Mid-size) - €54.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("MITTEL"),
+            CategoryCode.From("MITTEL"),
             Money.Euro(54.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Oberklasse (Upper Class) - €89.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("OBER"),
+            CategoryCode.From("OBER"),
             Money.Euro(89.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // SUV - €69.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("SUV"),
+            CategoryCode.From("SUV"),
             Money.Euro(69.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Kombi (Station Wagon) - €49.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("KOMBI"),
+            CategoryCode.From("KOMBI"),
             Money.Euro(49.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Transporter (Van) - €79.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("TRANS"),
+            CategoryCode.From("TRANS"),
             Money.Euro(79.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         // Luxusklasse (Luxury) - €149.99/day net
         policies.Add(PricingPolicy.Create(
-            CategoryCode.Of("LUXUS"),
+            CategoryCode.From("LUXUS"),
             Money.Euro(149.99m),
             DateTime.UtcNow,
-            effectiveUntil: null));
+            null));
 
         return policies;
     }

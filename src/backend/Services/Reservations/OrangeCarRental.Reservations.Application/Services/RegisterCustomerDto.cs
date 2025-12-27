@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 /// <summary>
-/// DTO for registering a new customer via the Customers API.
+///     DTO for registering a new customer via the Customers API.
 /// </summary>
 public sealed record RegisterCustomerDto(
     string FirstName,

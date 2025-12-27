@@ -1,121 +1,93 @@
 <div class="page-header">
-  <h1>Fahrzeugverwaltung</h1>
-  <p class="subtitle">Verwalten Sie Ihre Fahrzeugflotte</p>
+  <h1>{{ 'vehicles.title' | translate }}</h1>
+  <p class="subtitle">{{ 'vehicles.subtitle' | translate }}</p>
 </div>
 
 <div class="dashboard-grid">
-  <div class="stat-card">
-    <div class="stat-icon">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Gesamte Fahrzeuge</h3>
-      <p class="stat-value">{{ totalVehicles }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--success">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Verfügbar</h3>
-      <p class="stat-value">{{ availableVehicles }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--warning">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>In Wartung</h3>
-      <p class="stat-value">{{ maintenanceVehicles }}</p>
-    </div>
-  </div>
-
-  <div class="stat-card">
-    <div class="stat-icon stat-icon--info">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
-      </svg>
-    </div>
-    <div class="stat-content">
-      <h3>Vermietet</h3>
-      <p class="stat-value">{{ rentedVehicles }}</p>
-    </div>
-  </div>
+  <ui-stat-card
+    [label]="'vehicles.stats.total' | translate"
+    [value]="totalVehicles()"
+    [loading]="loading()"
+    iconName="car-filled"
+  />
+  <ui-stat-card
+    [label]="'vehicles.stats.available' | translate"
+    [value]="availableVehicles()"
+    [loading]="loading()"
+    variant="success"
+  />
+  <ui-stat-card
+    [label]="'vehicles.stats.maintenance' | translate"
+    [value]="maintenanceVehicles()"
+    [loading]="loading()"
+    variant="warning"
+  />
+  <ui-stat-card
+    [label]="'vehicles.stats.rented' | translate"
+    [value]="rentedVehicles()"
+    [loading]="loading()"
+    variant="info"
+  />
 </div>
 
 <div class="content-section">
   <div class="section-header">
-    <h2>Fahrzeugübersicht</h2>
+    <h2>{{ 'vehicles.overview' | translate }}</h2>
     <button class="btn-primary" disabled>
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-      </svg>
-      Neues Fahrzeug
+      <lib-icon name="plus-filled" variant="filled" size="md" aria-hidden="true" />
+      {{ 'vehicles.addNew' | translate }}
     </button>
   </div>
 
   <!-- Filters -->
   <div class="filters-section">
     <div class="filter-group">
-      <label for="statusFilter">Status</label>
-      <select id="statusFilter" [(ngModel)]="searchStatus" (change)="applyFilters()">
-        <option value="">Alle</option>
-        <option value="Available">Verfügbar</option>
-        <option value="Rented">Vermietet</option>
-        <option value="Maintenance">Wartung</option>
-        <option value="OutOfService">Außer Betrieb</option>
-      </select>
+      <label for="statusFilter">{{ 'common.labels.status' | translate }}</label>
+      <ui-select-vehicle-status
+        id="statusFilter"
+        [ngModel]="searchStatus()"
+        (ngModelChange)="searchStatus.set($event); applyFilters()"
+        [placeholder]="'vehicles.filters.allStatuses' | translate"
+      />
     </div>
 
     <div class="filter-group">
-      <label for="locationFilter">Standort</label>
-      <select id="locationFilter" [(ngModel)]="searchLocation" (change)="applyFilters()">
-        <option value="">Alle</option>
-        @for (location of uniqueLocations; track location) {
-          <option [value]="location">{{ location }}</option>
-        }
-      </select>
+      <label for="locationFilter">{{ 'common.labels.location' | translate }}</label>
+      <ui-select-location
+        id="locationFilter"
+        [ngModel]="searchLocation()"
+        (ngModelChange)="searchLocation.set($event); applyFilters()"
+        [placeholder]="'vehicles.filters.allLocations' | translate"
+      />
     </div>
 
     <div class="filter-group">
-      <label for="categoryFilter">Kategorie</label>
-      <select id="categoryFilter" [(ngModel)]="searchCategory" (change)="applyFilters()">
-        <option value="">Alle</option>
-        @for (category of uniqueCategories; track category) {
-          <option [value]="category">{{ category }}</option>
-        }
-      </select>
+      <label for="categoryFilter">{{ 'common.labels.category' | translate }}</label>
+      <ui-select-category
+        id="categoryFilter"
+        [ngModel]="searchCategory()"
+        (ngModelChange)="searchCategory.set($event); applyFilters()"
+        [placeholder]="'vehicles.filters.allCategories' | translate"
+      />
     </div>
 
-    <button class="btn-secondary" (click)="clearFilters()">Filter zurücksetzen</button>
+    <button class="btn-secondary" (click)="clearFilters()">
+      {{ 'common.actions.resetFilters' | translate }}
+    </button>
   </div>
 
   <!-- Loading State -->
   @if (loading()) {
-    <div class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Lade Fahrzeuge...</p>
-    </div>
+    <ui-loading-state [message]="'vehicles.loading' | translate"></ui-loading-state>
   }
 
   <!-- Error State -->
   @if (error()) {
-    <div class="error-state">
-      <svg viewBox="0 0 24 24" fill="currentColor">
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
-      </svg>
-      <p>{{ error() }}</p>
-    </div>
+    <ui-error-state
+      [message]="error()!"
+      [showRetry]="true"
+      (retry)="loadVehicles()"
+    ></ui-error-state>
   }
 
   <!-- Vehicles Table -->
@@ -124,13 +96,13 @@
       <table class="data-table">
         <thead>
           <tr>
-            <th>Kennzeichen</th>
-            <th>Fahrzeug</th>
-            <th>Kategorie</th>
-            <th>Standort</th>
-            <th>Tagespreis</th>
-            <th>Status</th>
-            <th>Aktionen</th>
+            <th>{{ 'vehicles.table.licensePlate' | translate }}</th>
+            <th>{{ 'vehicles.table.vehicle' | translate }}</th>
+            <th>{{ 'vehicles.table.category' | translate }}</th>
+            <th>{{ 'vehicles.table.location' | translate }}</th>
+            <th>{{ 'vehicles.table.dailyRate' | translate }}</th>
+            <th>{{ 'vehicles.table.status' | translate }}</th>
+            <th>{{ 'common.labels.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -147,12 +119,15 @@
               <td>{{ vehicle.categoryCode }}</td>
               <td>{{ vehicle.locationCode }}</td>
               <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
-              <td><span class="status-badge" [ngClass]="getStatusClass(vehicle.status)">{{ getStatusText(vehicle.status) }}</span></td>
+              <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
               <td>
-                <button class="btn-icon" (click)="viewDetails(vehicle)" title="Details anzeigen">
-                  <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                  </svg>
+                <button
+                  class="btn-icon"
+                  (click)="viewDetails(vehicle)"
+                  [title]="'common.actions.viewDetails' | translate"
+                  [attr.aria-label]="'vehicles.ariaLabels.viewDetails' | translate"
+                >
+                  <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
                 </button>
               </td>
             </tr>
@@ -164,111 +139,131 @@
 
   <!-- No Results -->
   @if (!loading() && !error() && vehicles().length === 0) {
-    <div class="no-results">
-      <svg class="no-results-icon" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
-      </svg>
-      <h3>Keine Fahrzeuge gefunden</h3>
-      <p>Es wurden keine Fahrzeuge gefunden, die den Filterkriterien entsprechen.</p>
-    </div>
+    <ui-empty-state
+      icon="car"
+      [title]="'vehicles.noResults.title' | translate"
+      [description]="'vehicles.noResults.description' | translate"
+      [showAction]="true"
+      [actionLabel]="'common.actions.resetFilters' | translate"
+      (action)="clearFilters()"
+    ></ui-empty-state>
   }
 </div>
 
 <!-- Vehicle Details Modal -->
-@if (showDetails() && selectedVehicle()) {
-  <div class="modal-overlay" (click)="closeDetails()">
-    <div class="modal-content modal-content-large" (click)="$event.stopPropagation()">
-      <div class="modal-header">
-        <h2>Fahrzeugdetails</h2>
-        <button class="btn-close" (click)="closeDetails()">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-          </svg>
-        </button>
-      </div>
-      <div class="modal-body">
-        <!-- Vehicle Information -->
-        <div class="info-section">
-          <h3>Fahrzeuginformationen</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Fahrzeug-ID</label>
-              <p><span class="id-badge">{{ selectedVehicle()!.id }}</span></p>
-            </div>
-            <div class="detail-item">
-              <label>Kennzeichen</label>
-              <p>
-                @if (selectedVehicle()!.licensePlate) {
-                  <span class="license-plate">{{ selectedVehicle()!.licensePlate }}</span>
-                } @else {
-                  <span class="text-muted">Nicht zugewiesen</span>
-                }
-              </p>
-            </div>
-            <div class="detail-item">
-              <label>Hersteller & Modell</label>
-              <p>{{ selectedVehicle()!.manufacturer }} {{ selectedVehicle()!.model }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Baujahr</label>
-              <p>{{ selectedVehicle()!.year }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Kategorie</label>
-              <p>{{ selectedVehicle()!.categoryCode }} - {{ selectedVehicle()!.categoryName }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Status</label>
-              <p><span class="status-badge" [ngClass]="getStatusClass(selectedVehicle()!.status)">{{ getStatusText(selectedVehicle()!.status) }}</span></p>
-            </div>
+<ui-modal
+  [isOpen]="showDetails() && !!selectedVehicle()"
+  [title]="'vehicles.details.title' | translate"
+  size="lg"
+  (close)="closeDetails()"
+>
+  <ng-container modal-body>
+    @if (selectedVehicle()) {
+      <!-- Vehicle Information -->
+      <div class="info-section">
+        <h3>{{ 'vehicles.details.info' | translate }}</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.vehicleId' | translate }}</label>
+            <p>
+              <span class="id-badge">{{ selectedVehicle()!.id }}</span>
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.table.licensePlate' | translate }}</label>
+            <p>
+              @if (selectedVehicle()!.licensePlate) {
+                <span class="license-plate">{{ selectedVehicle()!.licensePlate }}</span>
+              } @else {
+                <span class="text-muted">{{ 'vehicles.details.notAssigned' | translate }}</span>
+              }
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.manufacturerModel' | translate }}</label>
+            <p>{{ selectedVehicle()!.manufacturer }} {{ selectedVehicle()!.model }}</p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.year' | translate }}</label>
+            <p>{{ selectedVehicle()!.year }}</p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.table.category' | translate }}</label>
+            <p>{{ selectedVehicle()!.categoryCode }} - {{ selectedVehicle()!.categoryName }}</p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.table.status' | translate }}</label>
+            <p>
+              <ui-status-badge
+                type="vehicle"
+                [status]="selectedVehicle()!.status"
+              ></ui-status-badge>
+            </p>
           </div>
         </div>
+      </div>
 
-        <!-- Location & Pricing -->
-        <div class="info-section">
-          <h3>Standort & Preise</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Standort</label>
-              <p>{{ selectedVehicle()!.locationCode }} - {{ selectedVehicle()!.city }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Tagespreis (Netto)</label>
-              <p>{{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
-            </div>
-            <div class="detail-item">
-              <label>MwSt (19%)</label>
-              <p>{{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Tagespreis (Brutto)</label>
-              <p><strong>{{ selectedVehicle()!.dailyRateGross.toFixed(2) }} {{ selectedVehicle()!.currency }}</strong></p>
-            </div>
+      <!-- Location & Pricing -->
+      <div class="info-section">
+        <h3>{{ 'vehicles.details.locationPricing' | translate }}</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>{{ 'vehicles.table.location' | translate }}</label>
+            <p>{{ selectedVehicle()!.locationCode }} - {{ selectedVehicle()!.city }}</p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.dailyRateNet' | translate }}</label>
+            <p>
+              {{ selectedVehicle()!.dailyRateNet.toFixed(2) }} {{ selectedVehicle()!.currency }}
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.vat' | translate }}</label>
+            <p>
+              {{ selectedVehicle()!.dailyRateVat.toFixed(2) }} {{ selectedVehicle()!.currency }}
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.dailyRateGross' | translate }}</label>
+            <p>
+              <strong
+                >{{ selectedVehicle()!.dailyRateGross.toFixed(2) }}
+                {{ selectedVehicle()!.currency }}</strong
+              >
+            </p>
           </div>
         </div>
+      </div>
 
-        <!-- Features -->
-        <div class="info-section">
-          <h3>Ausstattung</h3>
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>Getriebe</label>
-              <p>{{ selectedVehicle()!.transmissionType === 'Automatic' ? 'Automatik' : 'Manuell' }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Kraftstoff</label>
-              <p>{{ selectedVehicle()!.fuelType }}</p>
-            </div>
-            <div class="detail-item">
-              <label>Sitzplätze</label>
-              <p>{{ selectedVehicle()!.seats }}</p>
-            </div>
+      <!-- Features -->
+      <div class="info-section">
+        <h3>{{ 'vehicles.details.features' | translate }}</h3>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.transmission' | translate }}</label>
+            <p>
+              {{
+                selectedVehicle()!.transmissionType === 'Automatic'
+                  ? ('vehicles.transmission.automatic' | translate)
+                  : ('vehicles.transmission.manual' | translate)
+              }}
+            </p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.fuelType' | translate }}</label>
+            <p>{{ selectedVehicle()!.fuelType }}</p>
+          </div>
+          <div class="detail-item">
+            <label>{{ 'vehicles.details.seats' | translate }}</label>
+            <p>{{ selectedVehicle()!.seats }}</p>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn-secondary" (click)="closeDetails()">Schließen</button>
-      </div>
-    </div>
-  </div>
-}
+    }
+  </ng-container>
+  <ng-container modal-footer>
+    <button class="btn-secondary" (click)="closeDetails()">
+      {{ 'common.actions.close' | translate }}
+    </button>
+  </ng-container>
+</ui-modal>

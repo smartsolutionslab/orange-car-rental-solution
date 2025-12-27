@@ -1,8 +1,20 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { Reservation, ReservationId } from '@orange-car-rental/reservation-api';
+import { logError } from '@orange-car-rental/util';
+import {
+  StatusBadgeComponent,
+  LoadingStateComponent,
+  ErrorStateComponent,
+  calculateRentalDays,
+  formatDateLongDE,
+  IconComponent,
+} from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
-import { Reservation } from '../../services/reservation.model';
 
 /**
  * Confirmation page component
@@ -11,14 +23,23 @@ import { Reservation } from '../../services/reservation.model';
 @Component({
   selector: 'app-confirmation',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    StatusBadgeComponent,
+    LoadingStateComponent,
+    ErrorStateComponent,
+    IconComponent,
+  ],
   templateUrl: './confirmation.component.html',
-  styleUrl: './confirmation.component.css'
+  styleUrl: './confirmation.component.css',
 })
 export class ConfirmationComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
   private readonly reservationService = inject(ReservationService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly reservation = signal<Reservation | null>(null);
   protected readonly loading = signal(true);
@@ -28,12 +49,12 @@ export class ConfirmationComponent implements OnInit {
 
   ngOnInit(): void {
     // Get reservation ID from query params
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
       const reservationId = params['reservationId'];
       const customerId = params['customerId'];
 
       if (!reservationId) {
-        this.error.set('Keine Reservierungs-ID gefunden');
+        this.error.set(this.translate.instant('errors.notFound'));
         this.loading.set(false);
         return;
       }
@@ -51,17 +72,20 @@ export class ConfirmationComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.reservationService.getReservation(reservationId).subscribe({
-      next: (reservation) => {
-        this.reservation.set(reservation);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading reservation:', err);
-        this.error.set('Fehler beim Laden der Reservierung');
-        this.loading.set(false);
-      }
-    });
+    this.reservationService
+      .getReservation(reservationId as ReservationId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (reservation) => {
+          this.reservation.set(reservation);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          logError('ConfirmationComponent', 'Error loading reservation', err);
+          this.error.set(this.translate.instant('confirmation.error'));
+          this.loading.set(false);
+        },
+      });
   }
 
   /**
@@ -79,30 +103,16 @@ export class ConfirmationComponent implements OnInit {
   }
 
   /**
-   * Calculate number of rental days
+   * Calculate number of rental days using shared utility
    */
   protected getRentalDays(): number {
     const reservation = this.reservation();
     if (!reservation) return 0;
-
-    const pickup = new Date(reservation.pickupDate);
-    const returnDate = new Date(reservation.returnDate);
-    const diffTime = Math.abs(returnDate.getTime() - pickup.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays;
+    return calculateRentalDays(reservation.pickupDate, reservation.returnDate);
   }
 
   /**
-   * Format date for display
+   * Format date for display using shared utility
    */
-  protected formatDate(dateString: string): string {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  }
+  protected formatDate = formatDateLongDE;
 }

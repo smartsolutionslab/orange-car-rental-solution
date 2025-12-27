@@ -1,29 +1,31 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 /// <summary>
-/// Strongly-typed identifier for a reservation using time-ordered UUIDs.
+///     Strongly-typed identifier for a reservation using time-ordered UUIDs.
 /// </summary>
-public readonly record struct ReservationIdentifier
+public readonly record struct ReservationIdentifier(Guid Value) : IValueObject
 {
-    public Guid Value { get; }
-
-    private ReservationIdentifier(Guid value) => Value = value;
+    /// <summary>
+    ///     Empty identifier for uninitialized state detection.
+    /// </summary>
+    public static readonly ReservationIdentifier Empty = new(Guid.Empty);
 
     public static ReservationIdentifier New() => new(Guid.CreateVersion7());
 
     public static ReservationIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new ReservationIdentifier(value);
     }
 
     public static ReservationIdentifier From(string value)
     {
-        if (!Guid.TryParse(value, out var guid))
-        {
-            throw new ArgumentException($"Invalid reservation ID format: {value}", nameof(value));
-        }
-        return From(guid);
+        Ensure.That(value, nameof(value))
+            .ThrowIf(!Guid.TryParse(value, out var guid), $"Invalid reservation ID format: {value}");
+        return From(Guid.Parse(value));
     }
 
     public override string ToString() => Value.ToString();

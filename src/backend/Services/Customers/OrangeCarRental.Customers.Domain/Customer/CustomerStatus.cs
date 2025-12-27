@@ -1,7 +1,7 @@
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 /// <summary>
-/// Current status of a customer account.
+///     Current status of a customer account.
 /// </summary>
 public enum CustomerStatus
 {

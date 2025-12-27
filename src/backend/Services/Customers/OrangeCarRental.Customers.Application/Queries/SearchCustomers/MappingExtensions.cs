@@ -1,134 +1,110 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
 
 /// <summary>
-/// Extension methods for mapping between domain objects and DTOs.
+///     Extension methods for mapping between domain objects and DTOs.
+///     Uses C# 14 Extension Members syntax.
 /// </summary>
 public static class MappingExtensions
 {
     /// <summary>
-    /// Maps a Customer aggregate to a CustomerDto.
+    ///     C# 14 Extension Members for Customer mapping.
     /// </summary>
-    public static CustomerDto ToDto(this Customer customer) => new()
+    extension(Customer customer)
     {
-        Id = customer.Id.Value,
-        FirstName = customer.FirstName,
-        LastName = customer.LastName,
-        FullName = customer.FullName,
-        Email = customer.Email.Value,
-        PhoneNumber = customer.PhoneNumber.Value,
-        PhoneNumberFormatted = customer.PhoneNumber.FormattedValue,
-        DateOfBirth = customer.DateOfBirth,
-        Age = customer.Age,
-        Address = customer.Address.ToDto(),
-        DriversLicense = customer.DriversLicense.ToDto(),
-        Status = customer.Status.ToString(),
-        CanMakeReservation = customer.CanMakeReservation(),
-        RegisteredAtUtc = customer.RegisteredAtUtc,
-        UpdatedAtUtc = customer.UpdatedAtUtc
-    };
-
-    /// <summary>
-    /// Maps an Address value object to an AddressDto.
-    /// </summary>
-    public static AddressDto ToDto(this Address address) => new()
-    {
-        Street = address.Street,
-        City = address.City,
-        PostalCode = address.PostalCode,
-        Country = address.Country
-    };
-
-    /// <summary>
-    /// Maps a DriversLicense value object to a DriversLicenseDto.
-    /// </summary>
-    public static DriversLicenseDto ToDto(this DriversLicense license) => new()
-    {
-        LicenseNumber = license.LicenseNumber,
-        IssueCountry = license.IssueCountry,
-        IssueDate = license.IssueDate,
-        ExpiryDate = license.ExpiryDate,
-        IsValid = license.IsValid(),
-        IsEuLicense = license.IsEuLicense(),
-        DaysUntilExpiry = license.DaysUntilExpiry()
-    };
-
-    /// <summary>
-    /// Maps a PagedResult of Customer aggregates to a SearchCustomersResult.
-    /// </summary>
-    public static SearchCustomersResult ToDto(this PagedResult<Customer> pagedResult) => new()
-    {
-        Customers = pagedResult.Items.Select(c => c.ToDto()).ToList(),
-        TotalCount = pagedResult.TotalCount,
-        PageNumber = pagedResult.PageNumber,
-        PageSize = pagedResult.PageSize,
-        TotalPages = pagedResult.TotalPages
-    };
-
-    /// <summary>
-    /// Maps a SearchCustomersQuery to CustomerSearchParameters.
-    /// Handles parsing of primitive types to value objects.
-    /// </summary>
-    public static CustomerSearchParameters ToSearchParameters(this SearchCustomersQuery query)
-    {
-        // Parse status if provided
-        CustomerStatus? status = null;
-        if (!string.IsNullOrWhiteSpace(query.Status))
+        /// <summary>
+        ///     Maps a Customer aggregate to a CustomerDto.
+        /// </summary>
+        public CustomerDto ToDto()
         {
-            if (Enum.TryParse<CustomerStatus>(query.Status, ignoreCase: true, out var parsedStatus))
-            {
-                status = parsedStatus;
-            }
+            var name = customer.Name;
+            var email = customer.Email;
+            var phone = customer.PhoneNumber;
+            var dob = customer.DateOfBirth;
+            var address = customer.Address;
+            var license = customer.DriversLicense;
+
+            return new CustomerDto(
+                customer.Id.Value,
+                name?.FirstName.Value ?? string.Empty,
+                name?.LastName.Value ?? string.Empty,
+                customer.FullName,
+                email?.Value ?? string.Empty,
+                phone?.Value ?? string.Empty,
+                phone?.FormattedValue ?? string.Empty,
+                dob?.Value ?? DateOnly.MinValue,
+                customer.Age,
+                address.HasValue ? address.Value.ToDto() : null,
+                license.HasValue ? license.Value.ToDto() : null,
+                customer.Status.ToString(),
+                customer.CanMakeReservation(),
+                customer.RegisteredAtUtc,
+                customer.UpdatedAtUtc);
         }
+    }
 
-        // Parse email to value object if provided
-        Email? email = null;
-        if (!string.IsNullOrWhiteSpace(query.Email))
+    /// <summary>
+    ///     C# 14 Extension Members for Address mapping.
+    /// </summary>
+    extension(Address address)
+    {
+        /// <summary>
+        ///     Maps an Address value object to an AddressDto.
+        /// </summary>
+        public AddressDto ToDto() => new(
+            address.Street,
+            address.City.Value,
+            address.PostalCode.Value,
+            address.Country);
+    }
+
+    /// <summary>
+    ///     C# 14 Extension Members for DriversLicense mapping.
+    /// </summary>
+    extension(DriversLicense license)
+    {
+        /// <summary>
+        ///     Maps a DriversLicense value object to a DriversLicenseDto.
+        /// </summary>
+        public DriversLicenseDto ToDto() => new(
+            license.LicenseNumber,
+            license.IssueCountry,
+            license.IssueDate,
+            license.ExpiryDate,
+            license.IsValid(),
+            license.IsEuLicense(),
+            license.DaysUntilExpiry());
+    }
+
+    /// <summary>
+    ///     C# 14 Extension Members for SearchCustomersQuery mapping.
+    /// </summary>
+    extension(SearchCustomersQuery query)
+    {
+        /// <summary>
+        ///     Maps a SearchCustomersQuery to CustomerSearchParameters.
+        ///     Handles parsing of primitive types to value objects.
+        /// </summary>
+        public CustomerSearchParameters ToSearchParameters()
         {
-            try
-            {
-                email = Email.Of(query.Email.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid email format - leave as null to filter nothing
-            }
+            return new CustomerSearchParameters(
+                SearchTerm.FromNullable(query.SearchTerm),
+                Email.FromNullable(query.Email),
+                PhoneNumber.FromNullable(query.PhoneNumber),
+                query.Status.TryParseCustomerStatus(),
+                City.FromNullable(query.City),
+                PostalCode.FromNullable(query.PostalCode),
+                IntRange.FromNullable(query.MinAge, query.MaxAge),
+                query.LicenseExpiringWithinDays.HasValue
+                    ? IntRange.UpTo(query.LicenseExpiringWithinDays.Value)
+                    : null,
+                DateRange.Create(query.RegisteredFrom, query.RegisteredTo),
+                PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
+                SortingInfo.Create(query.SortBy, query.SortDescending)
+            );
         }
-
-        // Parse phone number to value object if provided
-        PhoneNumber? phoneNumber = null;
-        if (!string.IsNullOrWhiteSpace(query.PhoneNumber))
-        {
-            try
-            {
-                phoneNumber = PhoneNumber.Of(query.PhoneNumber.Trim());
-            }
-            catch (ArgumentException)
-            {
-                // Invalid phone number format - leave as null to filter nothing
-            }
-        }
-
-        return new CustomerSearchParameters
-        {
-            SearchTerm = query.SearchTerm?.Trim(),
-            Email = email,
-            PhoneNumber = phoneNumber,
-            Status = status,
-            City = query.City?.Trim(),
-            PostalCode = query.PostalCode?.Trim(),
-            MinAge = query.MinAge,
-            MaxAge = query.MaxAge,
-            LicenseExpiringWithinDays = query.LicenseExpiringWithinDays,
-            RegisteredFrom = query.RegisteredFrom,
-            RegisteredTo = query.RegisteredTo,
-            SortBy = query.SortBy,
-            SortDescending = query.SortDescending,
-            PageNumber = query.PageNumber ?? 1,
-            PageSize = query.PageSize ?? 20
-        };
     }
 }

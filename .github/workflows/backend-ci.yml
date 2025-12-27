@@ -2,12 +2,12 @@ name: Backend CI
 
 on:
   push:
-    branches: [master, develop]
+    branches: [main, develop]
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-ci.yml'
   pull_request:
-    branches: [master, develop]
+    branches: [main, develop]
     paths:
       - 'src/backend/**'
       - '.github/workflows/backend-ci.yml'
@@ -23,11 +23,11 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '9.0.x'
+        dotnet-version: '10.0.x'
 
     - name: Restore dependencies
       working-directory: src/backend
-      run: dotnet restore OrangeCarRental.sln
+      run: dotnet restore OrangeCarRental.sln --force-evaluate
 
     - name: Build solution
       working-directory: src/backend
@@ -68,7 +68,7 @@ jobs:
         docker build -f Services/Notifications/OrangeCarRental.Notifications.Api/Dockerfile -t ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} .
 
     - name: Log in to GitHub Container Registry
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
@@ -76,11 +76,26 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Push Docker images
-      if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
       run: |
+        # Push with SHA tag
         docker push ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }}
         docker push ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }}
+
+        # Also push with latest tag for staging deployments
+        docker tag ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }} ghcr.io/${{ github.repository }}/fleet-api:latest
+        docker tag ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }} ghcr.io/${{ github.repository }}/reservations-api:latest
+        docker tag ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }} ghcr.io/${{ github.repository }}/customers-api:latest
+        docker tag ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }} ghcr.io/${{ github.repository }}/pricing-api:latest
+        docker tag ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }} ghcr.io/${{ github.repository }}/payments-api:latest
+        docker tag ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} ghcr.io/${{ github.repository }}/notifications-api:latest
+        docker push ghcr.io/${{ github.repository }}/fleet-api:latest
+        docker push ghcr.io/${{ github.repository }}/reservations-api:latest
+        docker push ghcr.io/${{ github.repository }}/customers-api:latest
+        docker push ghcr.io/${{ github.repository }}/pricing-api:latest
+        docker push ghcr.io/${{ github.repository }}/payments-api:latest
+        docker push ghcr.io/${{ github.repository }}/notifications-api:latest

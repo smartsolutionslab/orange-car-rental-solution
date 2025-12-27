@@ -1,0 +1,30 @@
+{
+  "name": "@orange-car-rental/performance-tests",
+  "version": "1.0.0",
+  "description": "Performance and load testing for Orange Car Rental",
+  "private": true,
+  "scripts": {
+    "test:smoke": "k6 run scenarios/smoke-test.js",
+    "test:load": "k6 run scenarios/load-test.js",
+    "test:stress": "k6 run scenarios/stress-test.js",
+    "test:spike": "k6 run scenarios/spike-test.js",
+    "test:soak": "k6 run scenarios/soak-test.js",
+    "test:vehicles": "k6 run scenarios/vehicles-api-test.js",
+    "test:reservations": "k6 run scenarios/reservations-api-test.js",
+    "test:booking-flow": "k6 run scenarios/booking-flow-test.js",
+    "test:all": "npm run test:smoke && npm run test:load && npm run test:vehicles",
+    "report": "node utils/generate-report.js",
+    "cloud": "k6 cloud run scenarios/load-test.js"
+  },
+  "keywords": [
+    "k6",
+    "performance",
+    "load-testing",
+    "stress-testing"
+  ],
+  "author": "Orange Car Rental DevOps Team",
+  "license": "PROPRIETARY",
+  "devDependencies": {
+    "k6": "^0.0.0"
+  }
+}

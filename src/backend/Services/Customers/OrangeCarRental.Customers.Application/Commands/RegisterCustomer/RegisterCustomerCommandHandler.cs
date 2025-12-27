@@ -1,15 +1,20 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
 /// <summary>
-/// Handler for RegisterCustomerCommand.
-/// Validates email uniqueness, creates a new customer aggregate, and persists to the repository.
+///     Handler for RegisterCustomerCommand.
+///     Validates email uniqueness, creates a new customer aggregate, and persists via event sourcing.
 /// </summary>
-public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers)
+public sealed class RegisterCustomerCommandHandler(
+    ICustomerCommandService commandService,
+    ICustomersUnitOfWork unitOfWork)
+    : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
-    /// Handles the customer registration command.
+    ///     Handles the customer registration command.
     /// </summary>
     /// <param name="command">The registration command with customer data.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
@@ -20,49 +25,29 @@ public sealed class RegisterCustomerCommandHandler(ICustomerRepository customers
         RegisterCustomerCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Create value objects from command data
-        var email = Email.Of(command.Email);
-        var phoneNumber = PhoneNumber.Of(command.PhoneNumber);
-        var address = Address.Of(
-            command.Street,
-            command.City,
-            command.PostalCode,
-            command.Country);
-        var driversLicense = DriversLicense.Of(
-            command.LicenseNumber,
-            command.LicenseIssueCountry,
-            command.LicenseIssueDate,
-            command.LicenseExpiryDate);
+        var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
 
-        // Check email uniqueness
-        var emailExists = await customers.ExistsWithEmailAsync(email, cancellationToken);
+        // Check email uniqueness using read model
+        var emailExists = await unitOfWork.Customers.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
-            throw new InvalidOperationException(
-                $"A customer with email '{command.Email}' already exists.");
+            throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
         }
 
-        // Register new customer (domain method handles all business rules)
-        var customer = Customer.Register(
-            command.FirstName,
-            command.LastName,
+        // Create and register customer via event-sourced command service
+        var customer = await commandService.RegisterAsync(
+            customerName,
             email,
             phoneNumber,
-            command.DateOfBirth,
+            dateOfBirth,
             address,
-            driversLicense);
+            driversLicense,
+            cancellationToken);
 
-        // Persist to repository
-        await customers.AddAsync(customer, cancellationToken);
-        await customers.SaveChangesAsync(cancellationToken);
-
-        // Return result
-        return new RegisterCustomerResult
-        {
-            CustomerId = customer.Id.Value,
-            Email = customer.Email.Value,
-            Status = "Customer registered successfully",
-            RegisteredAtUtc = customer.RegisteredAtUtc
-        };
+        return new RegisterCustomerResult(
+            customer.Id.Value,
+            customer.Email?.Value ?? email.Value,
+            "Customer registered successfully",
+            customer.RegisteredAtUtc);
     }
 }

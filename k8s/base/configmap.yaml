@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  labels:
+    app: orange-car-rental
+data:
+  # API Gateway
+  api.base.url: "https://api.orange-rental.de"
+
+  # Keycloak Configuration
+  keycloak.url: "https://auth.orange-rental.de"
+  keycloak.realm: "orange-car-rental"
+  keycloak.client.id: "public-portal"
+  keycloak.authority: "https://auth.orange-rental.de/realms/orange-car-rental"
+  keycloak.audience: "orange-car-rental-api"
+
+  # Application Settings
+  app.name: "Orange Car Rental"
+  app.environment: "production"
+
+  # Feature Flags
+  feature.authentication: "true"
+  feature.similar.vehicles: "true"
+  feature.profile.prefill: "true"

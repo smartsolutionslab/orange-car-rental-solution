@@ -1,24 +1,22 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
 
 /// <summary>
-/// City name value object.
-/// Represents a city name (e.g., "Berlin", "München").
+///     City name value object.
+///     Represents a city name (e.g., "Berlin", "München").
 /// </summary>
-public readonly record struct City
+/// <param name="Value">The city name value.</param>
+public readonly record struct City(string Value) : IValueObject
 {
-    public string Value { get; }
-
-    private City(string value)
+    public static City From(string city)
     {
-        Value = value;
-    }
+        var trimmed = city?.Trim() ?? string.Empty;
 
-    public static City Of(string city)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(city, nameof(city));
-
-        var trimmed = city.Trim();
-        if (trimmed.Length > 100) throw new ArgumentException("City name cannot exceed 100 characters", nameof(city));
+        Ensure.That(trimmed, nameof(city))
+            .IsNotNullOrWhiteSpace()
+            .AndHasMaxLength(100);
 
         return new City(trimmed);
     }

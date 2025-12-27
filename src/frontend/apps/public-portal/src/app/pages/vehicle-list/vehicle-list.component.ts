@@ -1,9 +1,19 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, DestroyRef } from '@angular/core';
+import type { OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
+import { logError } from '@orange-car-rental/util';
+import {
+  LoadingStateComponent,
+  EmptyStateComponent,
+  ErrorStateComponent,
+  IconComponent,
+} from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
-import { Vehicle } from '../../services/vehicle.model';
-import { VehicleSearchComponent, VehicleSearchQuery } from '../../components/vehicle-search/vehicle-search.component';
+import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-search.component';
 
 /**
  * Vehicle list page component
@@ -12,13 +22,23 @@ import { VehicleSearchComponent, VehicleSearchQuery } from '../../components/veh
 @Component({
   selector: 'app-vehicle-list',
   standalone: true,
-  imports: [DecimalPipe, VehicleSearchComponent],
+  imports: [
+    DecimalPipe,
+    TranslateModule,
+    VehicleSearchComponent,
+    LoadingStateComponent,
+    EmptyStateComponent,
+    ErrorStateComponent,
+    IconComponent,
+  ],
   templateUrl: './vehicle-list.component.html',
-  styleUrl: './vehicle-list.component.css'
+  styleUrl: './vehicle-list.component.css',
 })
 export class VehicleListComponent implements OnInit {
   private readonly vehicleService = inject(VehicleService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly translate = inject(TranslateService);
 
   protected readonly vehicles = signal<Vehicle[]>([]);
   protected readonly loading = signal(false);
@@ -39,18 +59,21 @@ export class VehicleListComponent implements OnInit {
     this.loading.set(true);
     this.error.set(null);
 
-    this.vehicleService.searchVehicles(query).subscribe({
-      next: (result) => {
-        this.vehicles.set(result.vehicles);
-        this.totalCount.set(result.totalCount);
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading vehicles:', err);
-        this.error.set('Fehler beim Laden der Fahrzeuge. Bitte versuchen Sie es später erneut.');
-        this.loading.set(false);
-      }
-    });
+    this.vehicleService
+      .searchVehicles(query)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (result) => {
+          this.vehicles.set(result.vehicles);
+          this.totalCount.set(result.totalCount);
+          this.loading.set(false);
+        },
+        error: (err) => {
+          logError('VehicleListComponent', 'Error loading vehicles', err);
+          this.error.set(this.translate.instant('errors.generic'));
+          this.loading.set(false);
+        },
+      });
   }
 
   /**
@@ -65,8 +88,8 @@ export class VehicleListComponent implements OnInit {
         categoryCode: vehicle.categoryCode,
         pickupDate: query.pickupDate || '',
         returnDate: query.returnDate || '',
-        locationCode: query.locationCode || vehicle.locationCode
-      }
+        locationCode: query.locationCode || vehicle.locationCode,
+      },
     });
   }
 }

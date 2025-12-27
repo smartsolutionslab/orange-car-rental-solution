@@ -1,46 +1,57 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence.Repositories;
 
 /// <summary>
-/// Entity Framework implementation of ICustomerRepository.
-/// Provides data access for Customer aggregates with complex filtering and search capabilities.
+///     Entity Framework implementation of ICustomerRepository.
+///     Provides data access for Customer aggregates with complex filtering and search capabilities.
 /// </summary>
 public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRepository
 {
-    public async Task<Customer?> GetByIdAsync(CustomerId id, CancellationToken cancellationToken = default)
+    private DbSet<Customer> Customers => context.Customers;
+
+    public async Task<Customer> GetByIdAsync(
+        CustomerIdentifier id,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Customers
-            .FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+        var customer = await Customers.FirstOrDefaultAsync(c => c.Id == id, cancellationToken);
+
+        return customer ?? throw new EntityNotFoundException(typeof(Customer), id);
     }
 
-    public async Task<Customer?> GetByEmailAsync(Email email, CancellationToken cancellationToken = default)
+    public async Task<Customer> GetByEmailAsync(
+        Email email,
+        CancellationToken cancellationToken = default)
     {
         // Compare value objects directly - EF Core will use the value converter
-        return await context.Customers
-            .FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
-    }
+        var customer = await Customers.FirstOrDefaultAsync(c => c.Email == email, cancellationToken);
 
-    public async Task<bool> ExistsWithEmailAsync(Email email, CancellationToken cancellationToken = default)
-    {
-        return await context.Customers
-            .AnyAsync(c => c.Email == email, cancellationToken);
+        return customer ?? throw new EntityNotFoundException(typeof(Customer), email);
     }
 
     public async Task<bool> ExistsWithEmailAsync(
         Email email,
-        CustomerId excludeCustomerId,
         CancellationToken cancellationToken = default)
     {
-        return await context.Customers
-            .AnyAsync(c => c.Email == email && c.Id != excludeCustomerId, cancellationToken);
+        return await Customers.AnyAsync(c => c.Email == email, cancellationToken);
     }
 
-    public async Task<List<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<bool> ExistsWithEmailAsync(
+        Email email,
+        CustomerIdentifier excludeCustomerIdentifier,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Customers
+        return await Customers.AnyAsync(c => c.Email == email && c.Id != excludeCustomerIdentifier, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await Customers
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
@@ -51,107 +62,18 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
     {
         parameters.Validate();
 
-        // Start with base query
-        var query = context.Customers.AsNoTracking().AsQueryable();
-
-        // Apply filters using database-level WHERE clauses
-
-        // Name search - search in both FirstName and LastName using LIKE
-        if (!string.IsNullOrWhiteSpace(parameters.SearchTerm))
-        {
-            query = query.Where(c =>
-                EF.Functions.Like(c.FirstName, $"%{parameters.SearchTerm}%") ||
-                EF.Functions.Like(c.LastName, $"%{parameters.SearchTerm}%"));
-        }
-
-        // Email filter - use value object directly
-        if (parameters.Email is not null)
-        {
-            query = query.Where(c => c.Email == parameters.Email);
-        }
-
-        // Phone number filter - use value object directly
-        if (parameters.PhoneNumber is not null)
-        {
-            query = query.Where(c => c.PhoneNumber == parameters.PhoneNumber);
-        }
-
-        // Status filter
-        if (parameters.Status.HasValue)
-        {
-            query = query.Where(c => c.Status == parameters.Status.Value);
-        }
-
-        // City filter
-        if (!string.IsNullOrWhiteSpace(parameters.City))
-        {
-            query = query.Where(c => EF.Functions.Like(c.Address.City, $"%{parameters.City}%"));
-        }
-
-        // Postal code filter
-        if (!string.IsNullOrWhiteSpace(parameters.PostalCode))
-        {
-            query = query.Where(c => c.Address.PostalCode == parameters.PostalCode);
-        }
-
-        // Age range filtering - calculated from DateOfBirth
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
-        if (parameters.MinAge.HasValue)
-        {
-            var maxDateOfBirth = today.AddYears(-parameters.MinAge.Value);
-            query = query.Where(c => c.DateOfBirth <= maxDateOfBirth);
-        }
+        var query = Customers
+            .AsNoTracking()
+            .ApplyFilters(parameters, today)
+            .ApplySorting(parameters.Sorting, SortFieldSelectors, c => c.RegisteredAtUtc, defaultDescending: true);
 
-        if (parameters.MaxAge.HasValue)
-        {
-            var minDateOfBirth = today.AddYears(-(parameters.MaxAge.Value + 1));
-            query = query.Where(c => c.DateOfBirth >= minDateOfBirth);
-        }
-
-        // License expiry filtering
-        if (parameters.LicenseExpiringWithinDays.HasValue)
-        {
-            var expiryThreshold = today.AddDays(parameters.LicenseExpiringWithinDays.Value);
-            query = query.Where(c =>
-                c.DriversLicense.ExpiryDate >= today &&
-                c.DriversLicense.ExpiryDate <= expiryThreshold);
-        }
-
-        // Registration date range filtering
-        if (parameters.RegisteredFrom.HasValue)
-        {
-            query = query.Where(c => c.RegisteredAtUtc >= parameters.RegisteredFrom.Value);
-        }
-
-        if (parameters.RegisteredTo.HasValue)
-        {
-            query = query.Where(c => c.RegisteredAtUtc <= parameters.RegisteredTo.Value);
-        }
-
-        // Apply sorting
-        query = ApplySorting(query, parameters.SortBy, parameters.SortDescending);
-
-        // Get total count and apply pagination
-        var totalCount = await query.CountAsync(cancellationToken);
-        var items = await query
-            .Skip(parameters.Skip)
-            .Take(parameters.Take)
-            .ToListAsync(cancellationToken);
-
-        return new PagedResult<Customer>
-        {
-            Items = items,
-            TotalCount = totalCount,
-            PageNumber = parameters.PageNumber,
-            PageSize = parameters.PageSize
-        };
+        return await query.ToPagedResultAsync(parameters.Paging, cancellationToken);
     }
 
-    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default)
-    {
+    public async Task AddAsync(Customer customer, CancellationToken cancellationToken = default) =>
         await context.Customers.AddAsync(customer, cancellationToken);
-    }
 
     public Task UpdateAsync(Customer customer, CancellationToken cancellationToken = default)
     {
@@ -159,74 +81,122 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         return Task.CompletedTask;
     }
 
-    public async Task DeleteAsync(CustomerId id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(CustomerIdentifier id, CancellationToken cancellationToken = default)
     {
         var customer = await GetByIdAsync(id, cancellationToken);
-        if (customer != null)
-        {
-            context.Customers.Remove(customer);
-        }
-    }
-
-    public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        await context.SaveChangesAsync(cancellationToken);
+        context.Customers.Remove(customer);
     }
 
     /// <summary>
-    /// Applies sorting to the query based on the specified field and direction.
+    ///     Sort field selectors for customer queries.
+    ///     Note: .Value used to access nullable struct properties as EF Core queries operate
+    ///     on persisted data where these properties are guaranteed to be non-null.
     /// </summary>
-    private static IQueryable<Customer> ApplySorting(
-        IQueryable<Customer> query,
-        string? sortBy,
-        bool sortDescending)
+    private static readonly Dictionary<string, Expression<Func<Customer, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        if (string.IsNullOrWhiteSpace(sortBy))
+        ["firstname"] = c => c.Name!.Value.FirstName,
+        ["first_name"] = c => c.Name!.Value.FirstName,
+        ["lastname"] = c => c.Name!.Value.LastName,
+        ["last_name"] = c => c.Name!.Value.LastName,
+        ["email"] = c => c.Email!.Value,
+        ["phonenumber"] = c => c.PhoneNumber!.Value,
+        ["phone_number"] = c => c.PhoneNumber!.Value,
+        ["phone"] = c => c.PhoneNumber!.Value,
+        ["dateofbirth"] = c => c.DateOfBirth!.Value,
+        ["date_of_birth"] = c => c.DateOfBirth!.Value,
+        ["birthdate"] = c => c.DateOfBirth!.Value,
+        ["city"] = c => c.Address!.Value.City,
+        ["postalcode"] = c => c.Address!.Value.PostalCode,
+        ["postal_code"] = c => c.Address!.Value.PostalCode,
+        ["zip"] = c => c.Address!.Value.PostalCode,
+        ["status"] = c => c.Status,
+        ["registeredat"] = c => c.RegisteredAtUtc,
+        ["registered_at"] = c => c.RegisteredAtUtc,
+        ["created"] = c => c.RegisteredAtUtc,
+        ["createdat"] = c => c.RegisteredAtUtc,
+        ["updatedat"] = c => c.UpdatedAtUtc,
+        ["updated_at"] = c => c.UpdatedAtUtc,
+        ["modified"] = c => c.UpdatedAtUtc,
+        ["modifiedat"] = c => c.UpdatedAtUtc,
+        ["licenseexpiry"] = c => c.DriversLicense!.Value.ExpiryDate,
+        ["license_expiry"] = c => c.DriversLicense!.Value.ExpiryDate,
+        ["expirydate"] = c => c.DriversLicense!.Value.ExpiryDate
+    };
+}
+
+/// <summary>
+///     Filter extension methods for Customer queries.
+/// </summary>
+internal static class CustomerQueryExtensions
+{
+    /// <summary>
+    ///     Applies all filters from CustomerSearchParameters to the query.
+    ///     Note: Null-forgiving operators used as EF Core queries operate on persisted data
+    ///     where these properties are guaranteed to be non-null.
+    /// </summary>
+    public static IQueryable<Customer> ApplyFilters(
+        this IQueryable<Customer> query,
+        CustomerSearchParameters parameters,
+        DateOnly today)
+    {
+        // Name search - search in both FirstName and LastName using LIKE
+        if (parameters.SearchTerm is not null)
         {
-            // Default sorting: newest first
-            return query.OrderByDescending(c => c.RegisteredAtUtc);
+            var searchTermValue = parameters.SearchTerm.Value.Value;
+            query = query.Where(c =>
+                EF.Functions.Like(c.Name!.Value.FirstName.Value, $"%{searchTermValue}%") ||
+                EF.Functions.Like(c.Name!.Value.LastName.Value, $"%{searchTermValue}%"));
         }
 
-        // Normalize sort field name
-        var sortField = sortBy.Trim().ToLowerInvariant();
+        // Direct value object filters
+        query = query
+            .WhereIf(parameters.Email is not null, c => c.Email == parameters.Email)
+            .WhereIf(parameters.PhoneNumber is not null, c => c.PhoneNumber == parameters.PhoneNumber)
+            .WhereIf(parameters.Status.HasValue, c => c.Status == parameters.Status!.Value)
+            .WhereIf(parameters.City is not null, c => c.Address!.Value.City == parameters.City!.Value)
+            .WhereIf(parameters.PostalCode is not null, c => c.Address!.Value.PostalCode == parameters.PostalCode!.Value);
 
-        return sortField switch
+        // Age range filtering - calculated from DateOfBirth
+        if (parameters.AgeRange is { HasFilter: true })
         {
-            "firstname" or "first_name" =>
-                sortDescending ? query.OrderByDescending(c => c.FirstName) : query.OrderBy(c => c.FirstName),
+            if (parameters.AgeRange.Min.HasValue)
+            {
+                var maxDateOfBirth = today.AddYears(-parameters.AgeRange.Min.Value);
+                query = query.Where(c => c.DateOfBirth!.Value <= maxDateOfBirth);
+            }
 
-            "lastname" or "last_name" =>
-                sortDescending ? query.OrderByDescending(c => c.LastName) : query.OrderBy(c => c.LastName),
+            if (parameters.AgeRange.Max.HasValue)
+            {
+                var minDateOfBirth = today.AddYears(-(parameters.AgeRange.Max.Value + 1));
+                query = query.Where(c => c.DateOfBirth!.Value >= minDateOfBirth);
+            }
+        }
 
-            "email" =>
-                sortDescending ? query.OrderByDescending(c => c.Email) : query.OrderBy(c => c.Email),
+        // License expiry filtering
+        if (parameters.LicenseExpiringDays is { HasFilter: true } && parameters.LicenseExpiringDays.Max.HasValue)
+        {
+            var expiryThreshold = today.AddDays(parameters.LicenseExpiringDays.Max.Value);
+            query = query.Where(c =>
+                c.DriversLicense!.Value.ExpiryDate >= today &&
+                c.DriversLicense!.Value.ExpiryDate <= expiryThreshold);
+        }
 
-            "phonenumber" or "phone_number" or "phone" =>
-                sortDescending ? query.OrderByDescending(c => c.PhoneNumber) : query.OrderBy(c => c.PhoneNumber),
+        // Registration date range filtering
+        if (parameters.RegisteredDateRange is { HasFilter: true })
+        {
+            if (parameters.RegisteredDateRange.From.HasValue)
+            {
+                var fromDate = parameters.RegisteredDateRange.From.Value.ToDateTime(TimeOnly.MinValue);
+                query = query.Where(c => c.RegisteredAtUtc >= fromDate);
+            }
 
-            "dateofbirth" or "date_of_birth" or "birthdate" =>
-                sortDescending ? query.OrderByDescending(c => c.DateOfBirth) : query.OrderBy(c => c.DateOfBirth),
+            if (parameters.RegisteredDateRange.To.HasValue)
+            {
+                var toDate = parameters.RegisteredDateRange.To.Value.ToDateTime(TimeOnly.MaxValue);
+                query = query.Where(c => c.RegisteredAtUtc <= toDate);
+            }
+        }
 
-            "city" =>
-                sortDescending ? query.OrderByDescending(c => c.Address.City) : query.OrderBy(c => c.Address.City),
-
-            "postalcode" or "postal_code" or "zip" =>
-                sortDescending ? query.OrderByDescending(c => c.Address.PostalCode) : query.OrderBy(c => c.Address.PostalCode),
-
-            "status" =>
-                sortDescending ? query.OrderByDescending(c => c.Status) : query.OrderBy(c => c.Status),
-
-            "registeredat" or "registered_at" or "created" or "createdat" =>
-                sortDescending ? query.OrderByDescending(c => c.RegisteredAtUtc) : query.OrderBy(c => c.RegisteredAtUtc),
-
-            "updatedat" or "updated_at" or "modified" or "modifiedat" =>
-                sortDescending ? query.OrderByDescending(c => c.UpdatedAtUtc) : query.OrderBy(c => c.UpdatedAtUtc),
-
-            "licenseexpiry" or "license_expiry" or "expirydate" =>
-                sortDescending ? query.OrderByDescending(c => c.DriversLicense.ExpiryDate) : query.OrderBy(c => c.DriversLicense.ExpiryDate),
-
-            // Default: sort by registration date
-            _ => query.OrderByDescending(c => c.RegisteredAtUtc)
-        };
+        return query;
     }
 }

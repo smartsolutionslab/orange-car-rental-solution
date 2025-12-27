@@ -1,8 +1,8 @@
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 
 /// <summary>
-/// Result of creating a guest reservation.
-/// Contains both the newly created customer ID and reservation ID.
+///     Result of creating a guest reservation.
+///     Contains both the newly created customer ID and reservation ID.
 /// </summary>
 public sealed record CreateGuestReservationResult(
     Guid CustomerId,

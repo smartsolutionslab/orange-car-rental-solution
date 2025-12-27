@@ -1,0 +1,25 @@
+{
+  "common": {
+    "appName": "Orange Car Rental",
+    "actions": {
+      "login": "Login",
+      "logout": "Logout",
+      "close": "Close"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "error": "An error occurred"
+    }
+  },
+  "navigation": {
+    "home": "Home",
+    "vehicles": "Vehicles",
+    "myBookings": "My Bookings",
+    "locations": "Locations",
+    "contact": "Contact"
+  },
+  "errors": {
+    "remoteLoadFailed": "The application could not be loaded",
+    "tryAgain": "Please try again"
+  }
+}

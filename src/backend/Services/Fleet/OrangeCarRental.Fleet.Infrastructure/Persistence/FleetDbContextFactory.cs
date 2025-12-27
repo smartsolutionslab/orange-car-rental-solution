@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 
 /// <summary>
-/// Design-time factory for FleetDbContext to support EF Core migrations and database commands.
-/// This allows 'dotnet ef' commands to work without running the full Aspire application.
+///     Design-time factory for FleetDbContext to support EF Core migrations and database commands.
+///     This allows 'dotnet ef' commands to work without running the full Aspire application.
 /// </summary>
 public class FleetDbContextFactory : IDesignTimeDbContextFactory<FleetDbContext>
 {
@@ -15,8 +15,8 @@ public class FleetDbContextFactory : IDesignTimeDbContextFactory<FleetDbContext>
         // Build configuration to read from appsettings.json in the API project
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../OrangeCarRental.Fleet.Api"))
-            .AddJsonFile("appsettings.json", optional: false)
-            .AddJsonFile("appsettings.Development.json", optional: true)
+            .AddJsonFile("appsettings.json", false)
+            .AddJsonFile("appsettings.Development.json", true)
             .Build();
 
         var connectionString = configuration.GetConnectionString("FleetDatabase");
