@@ -40,5 +40,6 @@ export const routes: Routes = [
   {
     path: 'my-bookings',
     component: BookingHistoryComponent,
+    canActivate: [authGuard],
   },
 ];

@@ -53,8 +53,29 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
         return result.CustomerId;
     }
 
+    public async Task<string?> GetCustomerEmailAsync(
+        Guid customerId,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await httpClient.GetAsync($"/api/customers/{customerId}", cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            return null;
+        }
+
+        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
+        var customer = JsonSerializer.Deserialize<CustomerResponse>(responseJson, jsonOptions);
+        return customer?.Email;
+    }
+
     /// <summary>
     ///     Response model from Customers API register endpoint.
     /// </summary>
     private sealed record RegisterCustomerResponse(Guid CustomerId);
+
+    /// <summary>
+    ///     Response model from Customers API get endpoint.
+    /// </summary>
+    private sealed record CustomerResponse(Guid Id, string Email);
 }
