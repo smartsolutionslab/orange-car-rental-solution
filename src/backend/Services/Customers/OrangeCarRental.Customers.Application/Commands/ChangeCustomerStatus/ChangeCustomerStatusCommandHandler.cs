@@ -1,5 +1,4 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -7,10 +6,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Chang
 
 /// <summary>
 ///     Handler for ChangeCustomerStatusCommand.
-///     Loads the customer, changes account status, and persists via event sourcing.
+///     Loads the customer, changes account status, and persists via repository.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(
-    ICustomerCommandService commandService,
+    ICustomerRepository repository,
     ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
@@ -29,16 +28,18 @@ public sealed class ChangeCustomerStatusCommandHandler(
         var (customerId, newStatusValue, reason) = command;
         var newStatus = newStatusValue.ParseCustomerStatus();
 
-        // Get current status from read model for the response
-        var existingCustomer = await unitOfWork.Customers.GetByIdAsync(customerId, cancellationToken);
-        var oldStatus = existingCustomer.Status;
+        // Load customer from repository
+        var customer = await repository.GetByIdAsync(customerId, cancellationToken)
+            ?? throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
 
-        // Change status via event-sourced command service
-        var customer = await commandService.ChangeStatusAsync(
-            customerId,
-            newStatus,
-            reason,
-            cancellationToken);
+        var oldStatus = customer.Status;
+
+        // Execute domain logic
+        customer.ChangeStatus(newStatus, reason);
+
+        // Persist changes
+        await repository.UpdateAsync(customer, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new ChangeCustomerStatusResult(
             customer.Id,

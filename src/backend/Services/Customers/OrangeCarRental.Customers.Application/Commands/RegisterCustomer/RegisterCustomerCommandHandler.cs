@@ -1,6 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
 
@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 ///     Validates email uniqueness, creates a new customer aggregate, and persists via event sourcing.
 /// </summary>
 public sealed class RegisterCustomerCommandHandler(
-    ICustomerCommandService commandService,
+    ICustomerRepository repository,
     ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
@@ -34,15 +34,13 @@ public sealed class RegisterCustomerCommandHandler(
             throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
         }
 
-        // Create and register customer via event-sourced command service
-        var customer = await commandService.RegisterAsync(
-            customerName,
-            email,
-            phoneNumber,
-            dateOfBirth,
-            address,
-            driversLicense,
-            cancellationToken);
+        // Create customer aggregate and execute domain logic
+        var customer = new Customer();
+        customer.Register(customerName, email, phoneNumber, dateOfBirth, address, driversLicense);
+
+        // Persist to repository
+        await repository.AddAsync(customer, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new RegisterCustomerResult(
             customer.Id.Value,
