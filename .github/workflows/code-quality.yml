@@ -233,7 +233,7 @@ jobs:
       if: matrix.language == 'csharp'
       working-directory: src/backend
       run: |
-        dotnet restore OrangeCarRental.sln --locked-mode
+        dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
         dotnet build OrangeCarRental.sln --no-restore --configuration Release
 
     - name: Perform CodeQL Analysis
