@@ -48,7 +48,7 @@ jobs:
 
     - name: Restore dependencies
       working-directory: src/backend
-      run: dotnet restore OrangeCarRental.sln
+      run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
 
     - name: Build solution
       working-directory: src/backend
