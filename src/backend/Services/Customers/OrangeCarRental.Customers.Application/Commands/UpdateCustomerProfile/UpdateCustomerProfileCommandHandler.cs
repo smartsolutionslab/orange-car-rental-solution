@@ -1,13 +1,16 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
 
 /// <summary>
 ///     Handler for UpdateCustomerProfileCommand.
-///     Loads the customer, updates profile information, and persists via event sourcing.
+///     Loads the customer, updates profile information, and persists via repository.
 /// </summary>
-public sealed class UpdateCustomerProfileCommandHandler(ICustomerCommandService commandService)
+public sealed class UpdateCustomerProfileCommandHandler(
+    ICustomerRepository repository,
+    ICustomersUnitOfWork unitOfWork)
     : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
@@ -24,13 +27,16 @@ public sealed class UpdateCustomerProfileCommandHandler(ICustomerCommandService 
     {
         var (customerId, name, phoneNumber, address) = command;
 
-        // Update profile via event-sourced command service
-        var customer = await commandService.UpdateProfileAsync(
-            customerId,
-            name,
-            phoneNumber,
-            address,
-            cancellationToken);
+        // Load customer from repository
+        var customer = await repository.GetByIdAsync(customerId, cancellationToken)
+            ?? throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
+
+        // Execute domain logic
+        customer.UpdateProfile(name, phoneNumber, address);
+
+        // Persist changes
+        await repository.UpdateAsync(customer, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateCustomerProfileResult(
             customer.Id.Value,
