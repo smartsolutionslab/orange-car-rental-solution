@@ -131,7 +131,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln --locked-mode
+        run: dotnet restore OrangeCarRental.sln
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic --exclude-diagnostics IDE1006
@@ -168,7 +168,7 @@ jobs:
 
       - name: Restore dependencies
         working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln --locked-mode
+        run: dotnet restore OrangeCarRental.sln
       - name: Build
         working-directory: src/backend
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}

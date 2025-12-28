@@ -138,7 +138,7 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore dependencies
-        run: dotnet restore OrangeCarRental.sln --locked-mode
+        run: dotnet restore OrangeCarRental.sln
 
       - name: Build
         run: dotnet build --no-restore --configuration Release
