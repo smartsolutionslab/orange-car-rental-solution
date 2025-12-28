@@ -1,7 +1,5 @@
 using Eventuous.Subscriptions;
 using Microsoft.Extensions.DependencyInjection;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.CommandServices;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.EventSourcing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Projections;
 
@@ -14,7 +12,7 @@ public static class EventSourcingExtensions
 {
     /// <summary>
     /// Registers event sourcing services for the Reservations domain.
-    /// Includes event publisher, event-sourced repository, and command service.
+    /// Includes event publisher and event-sourced repository.
     /// </summary>
     public static IServiceCollection AddReservationEventPublisher(this IServiceCollection services)
     {
@@ -24,9 +22,6 @@ public static class EventSourcingExtensions
 
         // Register event-sourced repository
         services.AddScoped<IEventSourcedReservationRepository, EventSourcedReservationRepository>();
-
-        // Register command service for event-sourced operations
-        services.AddScoped<IReservationCommandService, ReservationCommandService>();
 
         return services;
     }
