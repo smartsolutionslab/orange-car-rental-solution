@@ -1,15 +1,18 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 
 /// <summary>
 ///     Handler for CreateReservationCommand.
-///     Creates a new pending reservation via event sourcing and returns the reservation details.
+///     Creates a new pending reservation via repository and returns the reservation details.
 /// </summary>
 public sealed class CreateReservationCommandHandler(
-    IReservationCommandService commandService,
+    IReservationRepository repository,
+    IReservationsUnitOfWork unitOfWork,
     IPricingService pricingService)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
@@ -23,12 +26,10 @@ public sealed class CreateReservationCommandHandler(
         Money totalPrice;
         if (command.TotalPrice.HasValue)
         {
-            // Use provided price (backward compatibility)
             totalPrice = command.TotalPrice.Value;
         }
         else
         {
-            // Calculate price via Pricing API
             var priceCalculation = await pricingService.CalculatePriceAsync(
                 vehicleCategory,
                 bookingPeriod,
@@ -38,15 +39,19 @@ public sealed class CreateReservationCommandHandler(
             totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
         }
 
-        // Create reservation via event-sourced command service
-        var reservation = await commandService.CreateAsync(
+        // Create reservation aggregate and execute domain logic
+        var reservation = new Reservation();
+        reservation.Create(
             vehicleId,
             customerId,
             bookingPeriod,
             pickupLocationCode,
             dropoffLocationCode,
-            totalPrice,
-            cancellationToken);
+            totalPrice);
+
+        // Persist to repository
+        await repository.AddAsync(reservation, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateReservationResult(
             reservation.Id.Value,
