@@ -1,5 +1,4 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
@@ -9,8 +8,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 ///     Validates email uniqueness, creates a new customer aggregate, and persists via event sourcing.
 /// </summary>
 public sealed class RegisterCustomerCommandHandler(
-    ICustomerRepository repository,
-    ICustomersUnitOfWork unitOfWork)
+    IEventSourcedCustomerRepository repository,
+    ICustomerRepository readModel)
     : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
@@ -28,7 +27,7 @@ public sealed class RegisterCustomerCommandHandler(
         var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
 
         // Check email uniqueness using read model
-        var emailExists = await unitOfWork.Customers.ExistsWithEmailAsync(email, cancellationToken);
+        var emailExists = await readModel.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
             throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
@@ -38,9 +37,8 @@ public sealed class RegisterCustomerCommandHandler(
         var customer = new Customer();
         customer.Register(customerName, email, phoneNumber, dateOfBirth, address, driversLicense);
 
-        // Persist to repository
-        await repository.AddAsync(customer, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Persist events to event store
+        await repository.SaveAsync(customer, cancellationToken);
 
         return new RegisterCustomerResult(
             customer.Id.Value,

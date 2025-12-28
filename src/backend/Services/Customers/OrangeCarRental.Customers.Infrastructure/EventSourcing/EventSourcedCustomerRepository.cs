@@ -7,17 +7,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.EventSourci
 /// Event-sourced repository for Customer aggregates.
 /// Uses Eventuous IEventReader/IEventWriter for event persistence and aggregate rehydration.
 /// </summary>
-public sealed class EventSourcedCustomerRepository : IEventSourcedCustomerRepository
+public sealed class EventSourcedCustomerRepository(IEventReader eventReader, IEventWriter eventWriter)
+    : IEventSourcedCustomerRepository
 {
-    private readonly IEventReader _eventReader;
-    private readonly IEventWriter _eventWriter;
     private const string StreamPrefix = "Customer-";
-
-    public EventSourcedCustomerRepository(IEventReader eventReader, IEventWriter eventWriter)
-    {
-        _eventReader = eventReader;
-        _eventWriter = eventWriter;
-    }
 
     /// <summary>
     /// Loads a Customer aggregate from the event store by replaying its events.
@@ -30,7 +23,7 @@ public sealed class EventSourcedCustomerRepository : IEventSourcedCustomerReposi
         var customer = new Customer();
 
         // Read events from the stream and fold them into the aggregate
-        var events = await _eventReader.ReadStream(streamName, StreamReadPosition.Start, failIfNotFound: false, cancellationToken);
+        var events = await eventReader.ReadStream(streamName, StreamReadPosition.Start, failIfNotFound: false, cancellationToken);
         customer.Load(events.Select(e => e.Payload).ToList());
 
         return customer;
@@ -54,7 +47,7 @@ public sealed class EventSourcedCustomerRepository : IEventSourcedCustomerReposi
             ? ExpectedStreamVersion.NoStream
             : new ExpectedStreamVersion(currentVersion - customer.Changes.Count);
 
-        await _eventWriter.Store(
+        await eventWriter.Store(
             streamName,
             expectedVersion,
             customer.Changes.ToList(),
@@ -84,26 +77,4 @@ public sealed class EventSourcedCustomerRepository : IEventSourcedCustomerReposi
 
     private static StreamName GetStreamName(CustomerIdentifier id) =>
         new($"{StreamPrefix}{id.Value}");
-}
-
-/// <summary>
-/// Repository interface for event-sourced Customer aggregate operations.
-/// Separates event store operations from read model queries.
-/// </summary>
-public interface IEventSourcedCustomerRepository
-{
-    /// <summary>
-    /// Loads a Customer aggregate from the event store.
-    /// </summary>
-    Task<Customer> LoadAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Saves a Customer aggregate's events to the event store.
-    /// </summary>
-    Task SaveAsync(Customer customer, CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Checks if a customer exists in the event store.
-    /// </summary>
-    Task<bool> ExistsAsync(CustomerIdentifier id, CancellationToken cancellationToken = default);
 }

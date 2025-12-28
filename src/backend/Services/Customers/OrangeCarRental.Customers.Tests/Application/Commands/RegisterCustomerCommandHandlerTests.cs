@@ -1,22 +1,19 @@
 using Moq;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Commands;
 
 public class RegisterCustomerCommandHandlerTests
 {
-    private readonly Mock<ICustomerRepository> _repositoryMock = new();
-    private readonly Mock<ICustomersUnitOfWork> _unitOfWorkMock = new();
-    private readonly Mock<ICustomerRepository> _unitOfWorkCustomersMock = new();
+    private readonly Mock<IEventSourcedCustomerRepository> _repositoryMock = new();
+    private readonly Mock<ICustomerRepository> _readModelMock = new();
     private readonly RegisterCustomerCommandHandler _handler;
 
     public RegisterCustomerCommandHandlerTests()
     {
-        _unitOfWorkMock.Setup(u => u.Customers).Returns(_unitOfWorkCustomersMock.Object);
-        _handler = new RegisterCustomerCommandHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+        _handler = new RegisterCustomerCommandHandler(_repositoryMock.Object, _readModelMock.Object);
     }
 
     [Fact]
@@ -25,17 +22,9 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _unitOfWorkCustomersMock
+        _readModelMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
-
-        _repositoryMock
-            .Setup(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
-            .Returns(Task.CompletedTask);
-
-        _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
 
         // Act
         var result = await _handler.HandleAsync(command, CancellationToken.None);
@@ -46,9 +35,8 @@ public class RegisterCustomerCommandHandlerTests
         result.Email.ShouldBe(command.Email.Value.ToLowerInvariant());
         result.Status.ShouldBe("Customer registered successfully");
 
-        _unitOfWorkCustomersMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
-        _unitOfWorkMock.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+        _readModelMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(x => x.SaveAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
@@ -57,7 +45,7 @@ public class RegisterCustomerCommandHandlerTests
         // Arrange
         var command = CreateValidCommand();
 
-        _unitOfWorkCustomersMock
+        _readModelMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(true); // Email already exists
 
@@ -68,8 +56,8 @@ public class RegisterCustomerCommandHandlerTests
         ex.Message.ShouldContain(command.Email.Value);
         ex.Message.ShouldContain("already exists");
 
-        _unitOfWorkCustomersMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
-        _repositoryMock.Verify(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
+        _readModelMock.Verify(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()), Times.Once);
+        _repositoryMock.Verify(x => x.SaveAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
@@ -79,18 +67,14 @@ public class RegisterCustomerCommandHandlerTests
         var command = CreateValidCommand();
         Customer? capturedCustomer = null;
 
-        _unitOfWorkCustomersMock
+        _readModelMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ReturnsAsync(false);
 
         _repositoryMock
-            .Setup(x => x.AddAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.SaveAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
             .Callback<Customer, CancellationToken>((c, _) => capturedCustomer = c)
             .Returns(Task.CompletedTask);
-
-        _unitOfWorkMock
-            .Setup(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()))
-            .ReturnsAsync(1);
 
         // Act
         await _handler.HandleAsync(command, CancellationToken.None);
@@ -110,7 +94,7 @@ public class RegisterCustomerCommandHandlerTests
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
 
-        _unitOfWorkCustomersMock
+        _readModelMock
             .Setup(x => x.ExistsWithEmailAsync(command.Email, It.IsAny<CancellationToken>()))
             .ThrowsAsync(new OperationCanceledException());
 

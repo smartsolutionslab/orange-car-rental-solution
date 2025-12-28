@@ -1,16 +1,14 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
 
 /// <summary>
 ///     Handler for UpdateDriversLicenseCommand.
-///     Loads the customer, updates driver's license information, and persists via repository.
+///     Loads the customer from event store, updates driver's license information, and persists via event sourcing.
 /// </summary>
 public sealed class UpdateDriversLicenseCommandHandler(
-    ICustomerRepository repository,
-    ICustomersUnitOfWork unitOfWork)
+    IEventSourcedCustomerRepository repository)
     : ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>
 {
     /// <summary>
@@ -27,16 +25,18 @@ public sealed class UpdateDriversLicenseCommandHandler(
     {
         var (customerId, driversLicense) = command;
 
-        // Load customer from repository
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken)
-            ?? throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
+        // Load customer from event store
+        var customer = await repository.LoadAsync(customerId, cancellationToken);
+        if (!customer.State.HasBeenCreated)
+        {
+            throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
+        }
 
         // Execute domain logic
         customer.UpdateDriversLicense(driversLicense);
 
-        // Persist changes
-        await repository.UpdateAsync(customer, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Persist events to event store
+        await repository.SaveAsync(customer, cancellationToken);
 
         return new UpdateDriversLicenseResult(
             customer.Id.Value,
