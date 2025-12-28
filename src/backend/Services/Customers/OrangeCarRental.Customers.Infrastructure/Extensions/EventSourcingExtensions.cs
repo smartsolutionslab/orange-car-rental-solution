@@ -1,5 +1,6 @@
 using Eventuous.Subscriptions;
 using Microsoft.Extensions.DependencyInjection;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.EventSourcing;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Projections;
 

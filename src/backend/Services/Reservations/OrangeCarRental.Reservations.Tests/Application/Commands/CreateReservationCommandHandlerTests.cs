@@ -4,7 +4,6 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -12,8 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application.Comma
 
 public class CreateReservationCommandHandlerTests
 {
-    private readonly Mock<IReservationRepository> repositoryMock = new();
-    private readonly Mock<IReservationsUnitOfWork> unitOfWorkMock = new();
+    private readonly Mock<IEventSourcedReservationRepository> repositoryMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
     private readonly CreateReservationCommandHandler handler;
 
@@ -21,7 +19,6 @@ public class CreateReservationCommandHandlerTests
     {
         handler = new CreateReservationCommandHandler(
             repositoryMock.Object,
-            unitOfWorkMock.Object,
             pricingServiceMock.Object);
     }
 
@@ -58,12 +55,9 @@ public class CreateReservationCommandHandlerTests
         result.TotalPriceNet.ShouldBe(250.00m);
 
         repositoryMock.Verify(
-            x => x.AddAsync(
+            x => x.SaveAsync(
                 It.IsAny<Reservation>(),
                 It.IsAny<CancellationToken>()),
-            Times.Once);
-        unitOfWorkMock.Verify(
-            x => x.SaveChangesAsync(It.IsAny<CancellationToken>()),
             Times.Once);
         pricingServiceMock.Verify(
             x => x.CalculatePriceAsync(
@@ -167,7 +161,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            x => x.AddAsync(
+            x => x.SaveAsync(
                 It.Is<Reservation>(r =>
                     r.VehicleIdentifier == command.VehicleIdentifier &&
                     r.CustomerIdentifier == command.CustomerIdentifier &&
@@ -233,7 +227,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            x => x.AddAsync(
+            x => x.SaveAsync(
                 It.Is<Reservation>(r =>
                     r.PickupLocationCode == pickupLocation &&
                     r.DropoffLocationCode == dropoffLocation),

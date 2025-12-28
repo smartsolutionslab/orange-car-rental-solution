@@ -11,7 +11,6 @@ using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDri
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.EventSourcing;
@@ -58,8 +57,7 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
         sqlOptions.MigrationsAssembly("OrangeCarRental.Customers.Infrastructure"));
 });
 
-// Register Unit of Work and repositories
-builder.Services.AddScoped<ICustomersUnitOfWork, CustomersUnitOfWork>();
+// Register read model repository (for queries and uniqueness checks)
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // Register event sourcing (type mappings for serialization)

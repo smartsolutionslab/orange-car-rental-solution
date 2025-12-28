@@ -1,31 +1,32 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
 
 /// <summary>
 ///     Handler for CancelReservationCommand.
-///     Cancels a reservation via repository with an optional reason.
+///     Cancels a reservation via event sourcing with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IReservationRepository repository,
-    IReservationsUnitOfWork unitOfWork)
+    IEventSourcedReservationRepository repository)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load reservation from repository
-        var reservation = await repository.GetByIdAsync(command.ReservationId, cancellationToken);
+        // Load reservation from event store
+        var reservation = await repository.LoadAsync(command.ReservationId, cancellationToken);
+        if (!reservation.State.HasBeenCreated)
+        {
+            throw new InvalidOperationException($"Reservation with ID '{command.ReservationId.Value}' not found.");
+        }
 
         // Execute domain logic
         reservation.Cancel(command.CancellationReason);
 
-        // Persist changes
-        await repository.UpdateAsync(reservation, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Persist events to event store
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return new CancelReservationResult(
             reservation.Id.Value,

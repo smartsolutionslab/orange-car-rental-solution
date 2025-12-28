@@ -1,16 +1,14 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.Customers.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
 
 /// <summary>
 ///     Handler for ChangeCustomerStatusCommand.
-///     Loads the customer, changes account status, and persists via repository.
+///     Loads the customer from event store, changes account status, and persists via event sourcing.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(
-    ICustomerRepository repository,
-    ICustomersUnitOfWork unitOfWork)
+    IEventSourcedCustomerRepository repository)
     : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
@@ -28,18 +26,20 @@ public sealed class ChangeCustomerStatusCommandHandler(
         var (customerId, newStatusValue, reason) = command;
         var newStatus = newStatusValue.ParseCustomerStatus();
 
-        // Load customer from repository
-        var customer = await repository.GetByIdAsync(customerId, cancellationToken)
-            ?? throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
+        // Load customer from event store
+        var customer = await repository.LoadAsync(customerId, cancellationToken);
+        if (!customer.State.HasBeenCreated)
+        {
+            throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
+        }
 
         var oldStatus = customer.Status;
 
         // Execute domain logic
         customer.ChangeStatus(newStatus, reason);
 
-        // Persist changes
-        await repository.UpdateAsync(customer, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Persist events to event store
+        await repository.SaveAsync(customer, cancellationToken);
 
         return new ChangeCustomerStatusResult(
             customer.Id,

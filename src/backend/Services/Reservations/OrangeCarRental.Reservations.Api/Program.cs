@@ -11,7 +11,6 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Create
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.EventSourcing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Extensions;
@@ -73,8 +72,7 @@ builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Register Unit of Work and repositories
-builder.Services.AddScoped<IReservationsUnitOfWork, ReservationsUnitOfWork>();
+// Register read model repository (for queries)
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Register event sourcing (type mappings for serialization)

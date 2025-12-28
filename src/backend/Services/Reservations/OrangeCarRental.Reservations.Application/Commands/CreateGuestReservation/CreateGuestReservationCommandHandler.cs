@@ -1,7 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
@@ -12,11 +11,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Handles guest booking by:
 ///     1. Registering the customer via the Customers API
 ///     2. Calculating the price via the Pricing API
-///     3. Creating the reservation via repository with the new customer ID
+///     3. Creating the reservation via event sourcing with the new customer ID
 /// </summary>
 public sealed class CreateGuestReservationCommandHandler(
-    IReservationRepository repository,
-    IReservationsUnitOfWork unitOfWork,
+    IEventSourcedReservationRepository repository,
     ICustomersService customersService,
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
@@ -66,9 +64,8 @@ public sealed class CreateGuestReservationCommandHandler(
             dropoffLocationCode,
             totalPrice);
 
-        // Persist to repository
-        await repository.AddAsync(reservation, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        // Persist events to event store
+        await repository.SaveAsync(reservation, cancellationToken);
 
         return new CreateGuestReservationResult(
             customerId,
