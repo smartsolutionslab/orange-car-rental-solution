@@ -710,7 +710,7 @@
       },
       "Azure.Identity": {
         "type": "CentralTransitive",
-        "requested": "[1.17.0, )",
+        "requested": "[1.17.1, )",
         "resolved": "1.17.0",
         "contentHash": "QZiMa1O5lTniWTSDPyPVdBKOS0/M5DWXTfQ2xLOot96yp8Q5A69iScGtzCIxfbg/4bmp/TynibZ2VK1v3qsSNA==",
         "dependencies": {
