@@ -9,6 +9,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Create
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetVehicleAvailability;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.LookupGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -155,6 +156,45 @@ public static class ReservationEndpoints
             .ProducesProblem(StatusCodes.Status400BadRequest)
             .ProducesProblem(StatusCodes.Status404NotFound)
             .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
+
+        // GET /api/reservations/lookup - Guest lookup by reservation ID and email
+        reservations.MapGet("/lookup", async (
+                string reservationId,
+                string email,
+                LookupGuestReservationQueryHandler handler) =>
+            {
+                try
+                {
+                    if (!Guid.TryParse(reservationId, out var id))
+                    {
+                        return Results.BadRequest(new { message = "Invalid reservation ID format." });
+                    }
+
+                    var query = new LookupGuestReservationQuery(
+                        ReservationIdentifier.From(id),
+                        email);
+                    var result = await handler.HandleAsync(query);
+                    return Results.Ok(result);
+                }
+                catch (EntityNotFoundException)
+                {
+                    return Results.NotFound(new { message = "Reservation not found or email does not match." });
+                }
+            })
+            .WithName("LookupGuestReservation")
+            .WithSummary("Lookup a guest reservation by ID and email")
+            .WithDescription("""
+
+                             Allows guests to look up their reservation without authentication.
+
+                             **Security:**
+                             - Requires both reservation ID and email to match
+                             - Email is verified against the customer record
+                             - Case-insensitive email matching
+
+                             **Use Case:** Public portal guest users who made a booking without registering.
+                             """)
+            .AllowAnonymous();
 
         // GET /api/reservations/search - Search reservations with filters
         reservations.MapGet("/search", async (

@@ -9,6 +9,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Confir
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.LookupGuestReservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -85,6 +86,7 @@ builder.Services.AddReservationEventPublisher();
 builder.Services.AddScoped<CreateReservationCommandHandler>();
 builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
 builder.Services.AddScoped<GetReservationQueryHandler>();
+builder.Services.AddScoped<LookupGuestReservationQueryHandler>();
 builder.Services.AddScoped<SearchReservationsQueryHandler>();
 builder.Services.AddScoped<ConfirmReservationCommandHandler>();
 builder.Services.AddScoped<CancelReservationCommandHandler>();

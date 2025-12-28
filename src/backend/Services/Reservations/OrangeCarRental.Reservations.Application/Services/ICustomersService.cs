@@ -14,4 +14,14 @@ public interface ICustomersService
     Task<Guid> RegisterCustomerAsync(
         RegisterCustomerDto request,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Get customer email by ID.
+    /// </summary>
+    /// <param name="customerId">Customer ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Customer email address, or null if not found</returns>
+    Task<string?> GetCustomerEmailAsync(
+        Guid customerId,
+        CancellationToken cancellationToken = default);
 }
