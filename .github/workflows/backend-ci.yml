@@ -23,8 +23,11 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
-  build-and-test:
+  build:
+    name: Build
     runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.upload.outputs.artifact-id }}
 
     steps:
     - name: Checkout code
@@ -51,9 +54,91 @@ jobs:
       working-directory: src/backend
       run: dotnet build OrangeCarRental.sln --no-restore --configuration Release
 
+    - name: Upload build artifacts
+      id: upload
+      uses: actions/upload-artifact@v6
+      with:
+        name: build-output
+        path: |
+          src/backend/**/bin/Release/
+          src/backend/**/obj/Release/
+        retention-days: 1
+
+  # Run unit tests and integration tests in parallel
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-output
+        path: src/backend
+
     - name: Run unit tests
       working-directory: src/backend
       run: dotnet test OrangeCarRental.sln --no-build --configuration Release --filter "Category=Unit" --logger "trx;LogFileName=unit-tests.trx" --collect:"XPlat Code Coverage"
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v6
+      with:
+        name: unit-test-results
+        path: '**/TestResults/**/*.trx'
+
+    - name: Upload coverage to Codecov
+      if: success()
+      uses: codecov/codecov-action@v5
+      with:
+        files: '**/coverage.cobertura.xml'
+        flags: backend-unit
+        name: backend-unit-coverage
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: '10.0.x'
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: build-output
+        path: src/backend
 
     - name: Run integration tests
       working-directory: src/backend
@@ -63,7 +148,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v6
       with:
-        name: test-results
+        name: integration-test-results
         path: '**/TestResults/**/*.trx'
 
     - name: Upload coverage to Codecov
@@ -71,49 +156,55 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         files: '**/coverage.cobertura.xml'
-        flags: backend
-        name: backend-coverage
+        flags: backend-integration
+        name: backend-integration-coverage
 
-    - name: Build Docker images
-      if: github.event_name == 'push'
-      working-directory: src/backend
-      run: |
-        docker build -f Services/Fleet/OrangeCarRental.Fleet.Api/Dockerfile -t ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }} .
-        docker build -f Services/Reservations/OrangeCarRental.Reservations.Api/Dockerfile -t ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }} .
-        docker build -f Services/Customers/OrangeCarRental.Customers.Api/Dockerfile -t ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }} .
-        docker build -f Services/Pricing/OrangeCarRental.Pricing.Api/Dockerfile -t ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }} .
-        docker build -f Services/Payments/OrangeCarRental.Payments.Api/Dockerfile -t ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }} .
-        docker build -f Services/Notifications/OrangeCarRental.Notifications.Api/Dockerfile -t ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} .
+  # Build Docker images in parallel using matrix
+  docker-build:
+    name: Docker Build (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    needs: [unit-tests, integration-tests]
+    if: github.event_name == 'push'
+
+    strategy:
+      matrix:
+        include:
+          - service: fleet-api
+            dockerfile: Services/Fleet/OrangeCarRental.Fleet.Api/Dockerfile
+          - service: reservations-api
+            dockerfile: Services/Reservations/OrangeCarRental.Reservations.Api/Dockerfile
+          - service: customers-api
+            dockerfile: Services/Customers/OrangeCarRental.Customers.Api/Dockerfile
+          - service: pricing-api
+            dockerfile: Services/Pricing/OrangeCarRental.Pricing.Api/Dockerfile
+          - service: payments-api
+            dockerfile: Services/Payments/OrangeCarRental.Payments.Api/Dockerfile
+          - service: notifications-api
+            dockerfile: Services/Notifications/OrangeCarRental.Notifications.Api/Dockerfile
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Log in to GitHub Container Registry
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
+      if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Push Docker images
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop')
-      run: |
-        # Push with SHA tag
-        docker push ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }}
-        docker push ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }}
-
-        # Also push with latest tag for staging deployments
-        docker tag ghcr.io/${{ github.repository }}/fleet-api:${{ github.sha }} ghcr.io/${{ github.repository }}/fleet-api:latest
-        docker tag ghcr.io/${{ github.repository }}/reservations-api:${{ github.sha }} ghcr.io/${{ github.repository }}/reservations-api:latest
-        docker tag ghcr.io/${{ github.repository }}/customers-api:${{ github.sha }} ghcr.io/${{ github.repository }}/customers-api:latest
-        docker tag ghcr.io/${{ github.repository }}/pricing-api:${{ github.sha }} ghcr.io/${{ github.repository }}/pricing-api:latest
-        docker tag ghcr.io/${{ github.repository }}/payments-api:${{ github.sha }} ghcr.io/${{ github.repository }}/payments-api:latest
-        docker tag ghcr.io/${{ github.repository }}/notifications-api:${{ github.sha }} ghcr.io/${{ github.repository }}/notifications-api:latest
-        docker push ghcr.io/${{ github.repository }}/fleet-api:latest
-        docker push ghcr.io/${{ github.repository }}/reservations-api:latest
-        docker push ghcr.io/${{ github.repository }}/customers-api:latest
-        docker push ghcr.io/${{ github.repository }}/pricing-api:latest
-        docker push ghcr.io/${{ github.repository }}/payments-api:latest
-        docker push ghcr.io/${{ github.repository }}/notifications-api:latest
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: ./src/backend
+        file: ./src/backend/${{ matrix.dockerfile }}
+        push: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
+        tags: |
+          ghcr.io/${{ github.repository }}/${{ matrix.service }}:${{ github.sha }}
+          ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
