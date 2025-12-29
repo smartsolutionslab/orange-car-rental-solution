@@ -5,33 +5,29 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Co
 
 /// <summary>
 ///     Handler for ConfirmReservationCommand.
-///     Confirms a pending reservation via event sourcing after payment has been received.
+///     Confirms a pending reservation after payment has been received.
 /// </summary>
 public sealed class ConfirmReservationCommandHandler(
-    IEventSourcedReservationRepository repository)
+    IReservationRepository repository)
     : ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult>
 {
     public async Task<ConfirmReservationResult> HandleAsync(
         ConfirmReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load reservation from event store
-        var reservation = await repository.LoadAsync(command.ReservationId, cancellationToken);
-        if (!reservation.State.HasBeenCreated)
-        {
-            throw new InvalidOperationException($"Reservation with ID '{command.ReservationId.Value}' not found.");
-        }
+        // Load reservation from database
+        var reservation = await repository.GetByIdAsync(command.ReservationId, cancellationToken);
 
-        // Execute domain logic
-        reservation.Confirm();
+        // Execute domain logic (returns new instance - immutable pattern)
+        var confirmedReservation = reservation.Confirm();
 
-        // Persist events to event store
-        await repository.SaveAsync(reservation, cancellationToken);
+        // Persist changes to database
+        await repository.UpdateAsync(confirmedReservation, cancellationToken);
 
         return new ConfirmReservationResult(
-            reservation.Id.Value,
-            reservation.Status.ToString(),
-            reservation.ConfirmedAt!.Value
+            confirmedReservation.Id.Value,
+            confirmedReservation.Status.ToString(),
+            confirmedReservation.ConfirmedAt!.Value
         );
     }
 }

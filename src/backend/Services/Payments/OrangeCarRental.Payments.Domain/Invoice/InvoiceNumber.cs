@@ -30,7 +30,9 @@ public sealed record InvoiceNumber : IValueObject
         var invoiceYear = year ?? DateTime.UtcNow.Year;
 
         Ensure.That(sequenceNumber, nameof(sequenceNumber)).IsPositive();
-        Ensure.That(invoiceYear, nameof(year)).IsGreaterThanOrEqual(2020).AndIsLessThanOrEqual(2099);
+        Ensure.That(invoiceYear, nameof(year))
+            .IsGreaterThanOrEqual(2020)
+            .AndIsLessThanOrEqual(2099);
 
         var value = $"{Prefix}-{invoiceYear}-{sequenceNumber:D6}";
         return new InvoiceNumber(value, invoiceYear, sequenceNumber);

@@ -23,6 +23,12 @@ public interface IInvoiceRepository
     Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     Streams all invoices for a customer.
+    ///     Memory-efficient alternative to GetByCustomerIdAsync.
+    /// </summary>
+    IAsyncEnumerable<Invoice> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Gets the invoice for a reservation.
     /// </summary>
     Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default);

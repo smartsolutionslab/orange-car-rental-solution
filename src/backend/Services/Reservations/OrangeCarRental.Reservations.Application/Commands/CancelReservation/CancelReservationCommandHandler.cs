@@ -5,34 +5,30 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Ca
 
 /// <summary>
 ///     Handler for CancelReservationCommand.
-///     Cancels a reservation via event sourcing with an optional reason.
+///     Cancels a reservation with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IEventSourcedReservationRepository repository)
+    IReservationRepository repository)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
     public async Task<CancelReservationResult> HandleAsync(
         CancelReservationCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Load reservation from event store
-        var reservation = await repository.LoadAsync(command.ReservationId, cancellationToken);
-        if (!reservation.State.HasBeenCreated)
-        {
-            throw new InvalidOperationException($"Reservation with ID '{command.ReservationId.Value}' not found.");
-        }
+        // Load reservation from database
+        var reservation = await repository.GetByIdAsync(command.ReservationId, cancellationToken);
 
-        // Execute domain logic
-        reservation.Cancel(command.CancellationReason);
+        // Execute domain logic (returns new instance - immutable pattern)
+        var cancelledReservation = reservation.Cancel(command.CancellationReason);
 
-        // Persist events to event store
-        await repository.SaveAsync(reservation, cancellationToken);
+        // Persist changes to database
+        await repository.UpdateAsync(cancelledReservation, cancellationToken);
 
         return new CancelReservationResult(
-            reservation.Id.Value,
-            reservation.Status.ToString(),
-            reservation.CancelledAt!.Value,
-            reservation.CancellationReason
+            cancelledReservation.Id.Value,
+            cancelledReservation.Status.ToString(),
+            cancelledReservation.CancelledAt!.Value,
+            cancelledReservation.CancellationReason
         );
     }
 }

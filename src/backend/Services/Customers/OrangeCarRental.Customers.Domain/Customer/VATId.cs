@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -27,17 +28,15 @@ public readonly partial record struct VATId : IValueObject
     /// <exception cref="ArgumentException">If the VAT ID format is invalid.</exception>
     public static VATId Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("VAT ID cannot be empty", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace();
 
         // Normalize: remove spaces and convert to uppercase
         var normalized = value.Replace(" ", "").ToUpperInvariant();
 
         // Validate German VAT ID format: DE + 9 digits
-        if (!GermanVATIdRegex().IsMatch(normalized))
-            throw new ArgumentException(
-                "Invalid German VAT ID format. Must be 'DE' followed by 9 digits (e.g., DE123456789)",
-                nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndMatches(@"^DE\d{9}$", "German VAT ID format (DE followed by 9 digits, e.g., DE123456789)");
 
         return new VATId(normalized);
     }

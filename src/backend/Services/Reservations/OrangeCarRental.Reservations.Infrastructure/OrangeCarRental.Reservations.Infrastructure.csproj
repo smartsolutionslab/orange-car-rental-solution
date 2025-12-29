@@ -6,8 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eventuous"/>
-    <PackageReference Include="Eventuous.Subscriptions"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design"/>

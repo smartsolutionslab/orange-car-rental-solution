@@ -29,12 +29,27 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
             .ToListAsync(cancellationToken);
     }
 
+    public IAsyncEnumerable<Location> StreamAllAsync(CancellationToken cancellationToken = default)
+    {
+        return Locations
+            .AsNoTracking()
+            .AsAsyncEnumerable();
+    }
+
     public async Task<IReadOnlyList<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default)
     {
         return await Locations
             .AsNoTracking()
             .Where(l => l.Status == LocationStatus.Active)
             .ToListAsync(cancellationToken);
+    }
+
+    public IAsyncEnumerable<Location> StreamAllActiveAsync(CancellationToken cancellationToken = default)
+    {
+        return Locations
+            .AsNoTracking()
+            .Where(l => l.Status == LocationStatus.Active)
+            .AsAsyncEnumerable();
     }
 
     public async Task<bool> ExistsAsync(LocationCode code, CancellationToken cancellationToken = default)

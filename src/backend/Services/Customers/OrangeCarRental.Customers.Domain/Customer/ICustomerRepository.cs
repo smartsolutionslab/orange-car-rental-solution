@@ -60,6 +60,13 @@ public interface ICustomerRepository
     Task<IReadOnlyList<Customer>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     Streams all customers. Memory-efficient alternative to GetAllAsync.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An async enumerable of all customers.</returns>
+    IAsyncEnumerable<Customer> StreamAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Searches customers with database-level filtering, sorting, and pagination.
     /// </summary>
     /// <param name="parameters">Search parameters including filters and pagination.</param>

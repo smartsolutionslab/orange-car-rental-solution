@@ -1,4 +1,4 @@
-using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
@@ -7,7 +7,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 ///     VAT Identification Number (Umsatzsteuer-Identifikationsnummer / USt-IdNr.) for invoices.
 ///     German format: DE + 9 digits (e.g., DE123456789).
 /// </summary>
-public readonly partial record struct VatId : IValueObject
+public readonly record struct VatId : IValueObject
 {
     public string Value { get; }
 
@@ -21,15 +21,12 @@ public readonly partial record struct VatId : IValueObject
     /// </summary>
     public static VatId From(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("VAT ID cannot be empty", nameof(value));
+        Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
         var normalized = value.Replace(" ", "").ToUpperInvariant();
 
-        if (!GermanVatIdRegex().IsMatch(normalized))
-            throw new ArgumentException(
-                "Invalid German VAT ID format. Must be 'DE' followed by 9 digits (e.g., DE123456789)",
-                nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndMatches(@"^DE\d{9}$", "German VAT ID format (DE followed by 9 digits, e.g., DE123456789)");
 
         return new VatId(normalized);
     }
@@ -53,7 +50,4 @@ public readonly partial record struct VatId : IValueObject
     public static implicit operator string(VatId vatId) => vatId.Value;
 
     public override string ToString() => Value;
-
-    [GeneratedRegex(@"^DE\d{9}$")]
-    private static partial Regex GermanVatIdRegex();
 }
