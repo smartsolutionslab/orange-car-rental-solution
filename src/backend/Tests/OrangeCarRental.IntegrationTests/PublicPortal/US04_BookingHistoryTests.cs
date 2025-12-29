@@ -284,7 +284,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
             city = "München",
             postalCode = "80331",
             country = "Germany",
-            licenseNumber = $"T{Guid.NewGuid():N}".Substring(0, 10),
+            licenseNumber = $"T{Guid.NewGuid():N}"[..10],
             licenseIssueCountry = "Germany",
             licenseIssueDate = new DateOnly(2010, 1, 1),
             licenseExpiryDate = new DateOnly(2030, 1, 1)

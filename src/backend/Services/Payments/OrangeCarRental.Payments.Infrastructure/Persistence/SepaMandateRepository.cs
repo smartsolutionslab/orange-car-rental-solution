@@ -1,12 +1,18 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
+using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Configuration;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 
-public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMandateRepository
+public sealed class SepaMandateRepository(
+    PaymentsDbContext context,
+    IOptions<SepaConfiguration> sepaOptions) : ISepaMandateRepository
 {
+    private readonly SepaConfiguration sepaConfig = sepaOptions.Value;
+
     public async Task<SepaMandate> GetByIdAsync(SepaMandateIdentifier id, CancellationToken cancellationToken = default)
     {
         var mandate = await context.SepaMandates
@@ -55,7 +61,7 @@ public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMand
 
     public async Task<IReadOnlyList<SepaMandate>> GetExpiredMandatesAsync(CancellationToken cancellationToken = default)
     {
-        var cutoffDate = DateTime.UtcNow.AddMonths(-36);
+        var cutoffDate = DateTime.UtcNow.AddMonths(-sepaConfig.MandateExpiryMonths);
 
         return await context.SepaMandates
             .Where(m => m.Status == MandateStatus.Active)
@@ -65,7 +71,7 @@ public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMand
 
     public IAsyncEnumerable<SepaMandate> StreamExpiredMandatesAsync(CancellationToken cancellationToken = default)
     {
-        var cutoffDate = DateTime.UtcNow.AddMonths(-36);
+        var cutoffDate = DateTime.UtcNow.AddMonths(-sepaConfig.MandateExpiryMonths);
 
         return context.SepaMandates
             .Where(m => m.Status == MandateStatus.Active)

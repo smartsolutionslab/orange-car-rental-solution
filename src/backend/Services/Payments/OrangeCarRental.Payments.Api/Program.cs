@@ -8,6 +8,8 @@ using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
+using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Configuration;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Services;
 
@@ -50,10 +52,15 @@ builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextO
         sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure"));
 });
 
+// Register configuration
+builder.Services.Configure<SepaConfiguration>(
+    builder.Configuration.GetSection(SepaConfiguration.SectionName));
+
 // Register Unit of Work and repositories
 builder.Services.AddScoped<IPaymentsUnitOfWork, PaymentsUnitOfWork>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<ISepaMandateRepository, SepaMandateRepository>();
 
 // Register infrastructure services
 builder.Services.AddScoped<IPaymentService, PaymentService>();

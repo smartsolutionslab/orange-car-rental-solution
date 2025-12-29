@@ -10,9 +10,9 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 ///     or if my selected vehicle is unavailable, so that I can find alternative options.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
-public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
+public class Us06SimilarVehiclesTests(DistributedApplicationFixture fixture)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     #region AC: Similar vehicles based on category, location, price
 
@@ -25,7 +25,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // First get a vehicle to know its category
         var initialResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
         initialResponse.EnsureSuccessStatusCode();
-        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
         Assert.NotNull(initialVehicles);
         Assert.True(initialVehicles.Items.Count > 0);
 
@@ -36,7 +36,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.All(result.Items, v => Assert.Equal(targetCategory, v.CategoryCode));
@@ -51,7 +51,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // First get a vehicle to know its location
         var initialResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
         initialResponse.EnsureSuccessStatusCode();
-        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
         Assert.NotNull(initialVehicles);
         Assert.True(initialVehicles.Items.Count > 0);
 
@@ -62,7 +62,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.All(result.Items, v => Assert.Equal(targetLocation, v.LocationCode));
@@ -79,7 +79,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.True(result.Items.Count > 0);
@@ -107,7 +107,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         // All returned vehicles should be available for the requested dates
@@ -132,7 +132,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // First get a vehicle
         var vehicleResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
         vehicleResponse.EnsureSuccessStatusCode();
-        var vehicles = await vehicleResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var vehicles = await vehicleResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
         Assert.NotNull(vehicles);
         Assert.True(vehicles.Items.Count > 0);
 
@@ -147,7 +147,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // Assert
         if (response.IsSuccessStatusCode)
         {
-            var result = await response.Content.ReadFromJsonAsync<SimilarVehiclesResult>(JsonOptions);
+            var result = await response.Content.ReadFromJsonAsync<SimilarVehiclesResult>(jsonOptions);
             Assert.NotNull(result);
             Assert.True(result.Vehicles.Count <= 4, "Should return maximum 4 similar vehicles");
         }
@@ -163,7 +163,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
                 $"/api/vehicles?locationCode={vehicle.LocationCode}&categoryCode={vehicle.CategoryCode}");
             filterResponse.EnsureSuccessStatusCode();
 
-            var filtered = await filterResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+            var filtered = await filterResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
             Assert.NotNull(filtered);
             // Should find vehicles with same category and location
         }
@@ -184,7 +184,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert - Per AC: Each suggestion card shows name, category, price, specs
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.True(result.Items.Count > 0);
@@ -212,7 +212,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.All(result.Items, v =>
@@ -236,7 +236,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         if (result.Items.Count >= 2)
@@ -261,7 +261,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // Get a reference vehicle
         var initialResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
         initialResponse.EnsureSuccessStatusCode();
-        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var initialVehicles = await initialResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
         Assert.NotNull(initialVehicles);
         Assert.True(initialVehicles.Items.Count > 0);
 
@@ -272,7 +272,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         // Act - Get all vehicles and filter by price range
         var response = await httpClient.GetAsync("/api/vehicles");
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
 
@@ -299,7 +299,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
         var categoriesResponse = await httpClient.GetAsync("/api/categories");
         if (categoriesResponse.IsSuccessStatusCode)
         {
-            var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>(JsonOptions);
+            var categories = await categoriesResponse.Content.ReadFromJsonAsync<List<CategoryDto>>(jsonOptions);
             Assert.NotNull(categories);
 
             if (categories.Count >= 2)
@@ -314,8 +314,8 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
                 response1.EnsureSuccessStatusCode();
                 response2.EnsureSuccessStatusCode();
 
-                var vehicles1 = await response1.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
-                var vehicles2 = await response2.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+                var vehicles1 = await response1.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
+                var vehicles2 = await response2.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
                 Assert.NotNull(vehicles1);
                 Assert.NotNull(vehicles2);
@@ -347,7 +347,7 @@ public class US06_SimilarVehiclesTests(DistributedApplicationFixture fixture)
 
         // Assert
         response.EnsureSuccessStatusCode();
-        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(jsonOptions);
 
         Assert.NotNull(result);
         Assert.True(result.Items.Count <= 4, "Should limit to 4 vehicles maximum");

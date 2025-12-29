@@ -1,5 +1,4 @@
-using System.Text;
-using System.Text.Json;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Http;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
@@ -9,13 +8,12 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services
 /// </summary>
 public sealed class CustomersService(HttpClient httpClient) : ICustomersService
 {
-    private readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private const string ServiceName = "Customers API";
 
     public async Task<Guid> RegisterCustomerAsync(
         RegisterCustomerDto request,
         CancellationToken cancellationToken = default)
     {
-        // Prepare request payload
         var requestBody = new
         {
             request.FirstName,
@@ -33,23 +31,12 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
             request.LicenseExpiryDate
         };
 
-        var json = JsonSerializer.Serialize(requestBody, jsonOptions);
-        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var result = await httpClient.PostJsonAsync<object, RegisterCustomerResponse>(
+            "/api/customers",
+            requestBody,
+            ServiceName,
+            cancellationToken);
 
-        // Call Customers API
-        var response = await httpClient.PostAsync("/api/customers", content, cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new InvalidOperationException(
-                $"Failed to register customer via Customers API. Status: {response.StatusCode}, Error: {errorContent}");
-        }
-
-        // Deserialize response to get the customer ID
-        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var result = JsonSerializer.Deserialize<RegisterCustomerResponse>(responseJson, jsonOptions) ?? throw new InvalidOperationException(
-                "Failed to deserialize customer registration response from Customers API");
         return result.CustomerId;
     }
 
@@ -57,25 +44,15 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
         Guid customerId,
         CancellationToken cancellationToken = default)
     {
-        var response = await httpClient.GetAsync($"/api/customers/{customerId}", cancellationToken);
+        var customer = await httpClient.GetJsonOrDefaultAsync<CustomerResponse>(
+            $"/api/customers/{customerId}",
+            ServiceName,
+            cancellationToken);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            return null;
-        }
-
-        var responseJson = await response.Content.ReadAsStringAsync(cancellationToken);
-        var customer = JsonSerializer.Deserialize<CustomerResponse>(responseJson, jsonOptions);
         return customer?.Email;
     }
 
-    /// <summary>
-    ///     Response model from Customers API register endpoint.
-    /// </summary>
     private sealed record RegisterCustomerResponse(Guid CustomerId);
 
-    /// <summary>
-    ///     Response model from Customers API get endpoint.
-    /// </summary>
     private sealed record CustomerResponse(Guid Id, string Email);
 }
