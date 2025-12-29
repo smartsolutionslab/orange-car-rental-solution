@@ -11,10 +11,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 ///     Handles guest booking by:
 ///     1. Registering the customer via the Customers API
 ///     2. Calculating the price via the Pricing API
-///     3. Creating the reservation via event sourcing with the new customer ID
+///     3. Creating the reservation and persisting it to the database
 /// </summary>
 public sealed class CreateGuestReservationCommandHandler(
-    IEventSourcedReservationRepository repository,
+    IReservationRepository repository,
     ICustomersService customersService,
     IPricingService pricingService)
     : ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>
@@ -54,9 +54,8 @@ public sealed class CreateGuestReservationCommandHandler(
 
         var totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
 
-        // Step 3: Create reservation aggregate and execute domain logic
-        var reservation = new Reservation();
-        reservation.Create(
+        // Step 3: Create reservation using static factory method
+        var reservation = Reservation.Create(
             vehicleId,
             CustomerIdentifier.From(customerId),
             bookingPeriod,
@@ -64,16 +63,16 @@ public sealed class CreateGuestReservationCommandHandler(
             dropoffLocationCode,
             totalPrice);
 
-        // Persist events to event store
-        await repository.SaveAsync(reservation, cancellationToken);
+        // Persist to database
+        await repository.AddAsync(reservation, cancellationToken);
 
         return new CreateGuestReservationResult(
             customerId,
             reservation.Id.Value,
-            reservation.TotalPrice!.Value.NetAmount,
-            reservation.TotalPrice!.Value.VatAmount,
-            reservation.TotalPrice!.Value.GrossAmount,
-            reservation.TotalPrice!.Value.Currency.Code
+            reservation.TotalPrice.NetAmount,
+            reservation.TotalPrice.VatAmount,
+            reservation.TotalPrice.GrossAmount,
+            reservation.TotalPrice.Currency.Code
         );
     }
 }

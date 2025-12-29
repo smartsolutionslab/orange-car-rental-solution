@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -26,11 +27,9 @@ public readonly record struct PaymentTerms : IValueObject
     /// <exception cref="ArgumentException">If days is negative or exceeds 90.</exception>
     public static PaymentTerms Create(int daysUntilDue)
     {
-        if (daysUntilDue < 0)
-            throw new ArgumentException("Days until due cannot be negative", nameof(daysUntilDue));
-
-        if (daysUntilDue > 90)
-            throw new ArgumentException("Days until due cannot exceed 90 days", nameof(daysUntilDue));
+        Ensure.That(daysUntilDue, nameof(daysUntilDue))
+            .IsNotNegative()
+            .AndIsLessThanOrEqual(90);
 
         return new PaymentTerms(daysUntilDue);
     }

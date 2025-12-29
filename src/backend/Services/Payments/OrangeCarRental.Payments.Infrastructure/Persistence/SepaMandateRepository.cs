@@ -63,6 +63,24 @@ public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMand
             .ToListAsync(cancellationToken);
     }
 
+    public IAsyncEnumerable<SepaMandate> StreamExpiredMandatesAsync(CancellationToken cancellationToken = default)
+    {
+        var cutoffDate = DateTime.UtcNow.AddMonths(-36);
+
+        return context.SepaMandates
+            .Where(m => m.Status == MandateStatus.Active)
+            .Where(m => (m.LastUsedAt ?? m.SignedAt) < cutoffDate)
+            .AsAsyncEnumerable();
+    }
+
+    public IAsyncEnumerable<SepaMandate> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    {
+        return context.SepaMandates
+            .Where(m => m.CustomerId == customerId)
+            .OrderByDescending(m => m.CreatedAt)
+            .AsAsyncEnumerable();
+    }
+
     public async Task AddAsync(SepaMandate mandate, CancellationToken cancellationToken = default) =>
         await context.SepaMandates.AddAsync(mandate, cancellationToken);
 

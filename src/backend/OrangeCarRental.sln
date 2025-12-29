@@ -7,8 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildingBlocks", "BuildingB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrangeCarRental.BuildingBlocks.Domain", "BuildingBlocks\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj", "{F39552F8-0446-4508-8CA7-A5F9B8421047}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrangeCarRental.BuildingBlocks.EventStore", "BuildingBlocks\OrangeCarRental.BuildingBlocks.EventStore\OrangeCarRental.BuildingBlocks.EventStore.csproj", "{49643F25-0928-4388-A052-AE64D72D8DEF}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrangeCarRental.BuildingBlocks.Infrastructure", "BuildingBlocks\OrangeCarRental.BuildingBlocks.Infrastructure\OrangeCarRental.BuildingBlocks.Infrastructure.csproj", "{5D779D83-9DB2-444E-9D95-0E94F01D2B8C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrangeCarRental.BuildingBlocks.Testing", "BuildingBlocks\OrangeCarRental.BuildingBlocks.Testing\OrangeCarRental.BuildingBlocks.Testing.csproj", "{F646752E-82EF-44A0-AE07-D5EE42BF733F}"
@@ -125,18 +123,6 @@ Global
 		{F39552F8-0446-4508-8CA7-A5F9B8421047}.Release|x64.Build.0 = Release|Any CPU
 		{F39552F8-0446-4508-8CA7-A5F9B8421047}.Release|x86.ActiveCfg = Release|Any CPU
 		{F39552F8-0446-4508-8CA7-A5F9B8421047}.Release|x86.Build.0 = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|x64.Build.0 = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Debug|x86.Build.0 = Debug|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|x64.ActiveCfg = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|x64.Build.0 = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|x86.ActiveCfg = Release|Any CPU
-		{49643F25-0928-4388-A052-AE64D72D8DEF}.Release|x86.Build.0 = Release|Any CPU
 		{5D779D83-9DB2-444E-9D95-0E94F01D2B8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5D779D83-9DB2-444E-9D95-0E94F01D2B8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5D779D83-9DB2-444E-9D95-0E94F01D2B8C}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -575,7 +561,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F39552F8-0446-4508-8CA7-A5F9B8421047} = {7266C4A9-E384-DC00-0EB6-47F6002CFBA7}
-		{49643F25-0928-4388-A052-AE64D72D8DEF} = {7266C4A9-E384-DC00-0EB6-47F6002CFBA7}
 		{5D779D83-9DB2-444E-9D95-0E94F01D2B8C} = {7266C4A9-E384-DC00-0EB6-47F6002CFBA7}
 		{F646752E-82EF-44A0-AE07-D5EE42BF733F} = {7266C4A9-E384-DC00-0EB6-47F6002CFBA7}
 		{DF22FFB0-9AFE-0FD9-135A-A174632D0622} = {5854FF58-B8C5-05C6-5BF2-ACE42193F22B}

@@ -18,21 +18,20 @@ public static class MappingExtensions
     {
         /// <summary>
         ///     Maps a Reservation aggregate to a ReservationDto.
-        ///     Uses .Value to access nullable struct properties.
         /// </summary>
         public ReservationDto ToDto() => new(
             reservation.Id.Value,
-            reservation.VehicleIdentifier!.Value.Value,
-            reservation.CustomerIdentifier!.Value.Value,
-            reservation.Period!.Value.PickupDate,
-            reservation.Period!.Value.ReturnDate,
-            reservation.PickupLocationCode!.Value.Value,
-            reservation.DropoffLocationCode!.Value.Value,
-            reservation.Period!.Value.Days,
-            reservation.TotalPrice!.Value.NetAmount,
-            reservation.TotalPrice!.Value.VatAmount,
-            reservation.TotalPrice!.Value.GrossAmount,
-            reservation.TotalPrice!.Value.Currency.Code,
+            reservation.VehicleIdentifier.Value,
+            reservation.CustomerIdentifier.Value,
+            reservation.Period.PickupDate,
+            reservation.Period.ReturnDate,
+            reservation.PickupLocationCode.Value,
+            reservation.DropoffLocationCode.Value,
+            reservation.Period.Days,
+            reservation.TotalPrice.NetAmount,
+            reservation.TotalPrice.VatAmount,
+            reservation.TotalPrice.GrossAmount,
+            reservation.TotalPrice.Currency.Code,
             reservation.Status.ToString(),
             reservation.CancellationReason,
             reservation.CreatedAt,

@@ -89,71 +89,6 @@
           "System.Memory.Data": "8.0.1"
         }
       },
-      "Eventuous.Application": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "4d20644k11EYcKH08lmq93JgnPjSjSE5SChwd1+CHSWm7Eb7ZuQxGDU4GDLVt9JQyudLfDnowsPe0MspnTJDCA==",
-        "dependencies": {
-          "Eventuous.Domain": "0.15.1",
-          "Eventuous.Persistence": "0.15.1"
-        }
-      },
-      "Eventuous.Diagnostics": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "qw+BMJBLdAYzuO/zSC/0gjVVqbU38hWAwbLZvchmmhrtRqDS80YO2dpSJp4JrN2gF+e+FgygoyrZCgOKq4zM1w==",
-        "dependencies": {
-          "Eventuous.Shared": "0.15.1"
-        }
-      },
-      "Eventuous.Domain": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "b6M5hA0Nv8wAcWbG2qDfroslUEBH/k+NNBLVdqCx8/U6mZs7JTtk9vtouh3dR2kuYbZldmdhNVKehwbUNXFPcA=="
-      },
-      "Eventuous.Persistence": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "1SelYyAxJPw6NyEi3TMuytDnu/6gl1ACtvK5p3IkuSUkdXUk4UfwXkE5/5QdjF7nsMBRNVltVo3WStp80Z6NhQ==",
-        "dependencies": {
-          "Eventuous.Diagnostics": "0.15.1",
-          "Eventuous.Domain": "0.15.1",
-          "Eventuous.Serialization": "0.15.1",
-          "Eventuous.Shared": "0.15.1"
-        }
-      },
-      "Eventuous.Producers": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "2mAgV5zFNmCAEvNu2k6/Xmvor8HiKhcOgvYT+lsYoDFuFyhqY38/tjdrRePs/oR6lRzDwXMA+iLpoVm1Eiui5A==",
-        "dependencies": {
-          "Eventuous.Diagnostics": "0.15.1"
-        }
-      },
-      "Eventuous.Serialization": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "jg9Crk0RyCUqTCCBEonEqIrIk0iSXnOqmF6V6yplHbPQNnWABH2oTykUYbYJPm+HEp6qwVT0K+0r5W5CDlt6aw==",
-        "dependencies": {
-          "Eventuous.Shared": "0.15.1"
-        }
-      },
-      "Eventuous.Shared": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "esM2WnErg5mchkC+v7DII53VQNKyHQ1LDCBehx38eA45b4d15B+qPJnVkh0NCTUybpI9Nu9G9LSNVafo+DP0wQ=="
-      },
-      "Eventuous.Sql.Base": {
-        "type": "Transitive",
-        "resolved": "0.15.1",
-        "contentHash": "dljz9J2/C5a6WxUC8vtdqJcsMrsmjXHutnuI0f68bUq2jy7RTyYRZekqjGv2eN2y3Gq63HIedwcLOZbs5lDylQ==",
-        "dependencies": {
-          "Eventuous.Persistence": "0.15.1",
-          "Eventuous.Producers": "0.15.1",
-          "Eventuous.Subscriptions": "0.15.1",
-          "System.Linq.Async": "6.0.1"
-        }
-      },
       "Humanizer.Core": {
         "type": "Transitive",
         "resolved": "2.14.1",
@@ -398,25 +333,25 @@
       },
       "Microsoft.Identity.Client": {
         "type": "Transitive",
-        "resolved": "4.78.0",
-        "contentHash": "vZ50HE9INSN+Ew8pCgTm0t7wzxQTqozF9L4MAsl64etXz0Teo0dbUvjpVzqDHRs6m1Vn8mHF04fGaxXrIvGpsg==",
+        "resolved": "4.76.0",
+        "contentHash": "j2FtmljuCveDJ7umBVYm6Bx3iVGA71U07Dc7byGr2Hrj7XlByZSknruCBUeYN3V75nn1VEhXegxE0MerxvxrXQ==",
         "dependencies": {
-          "Microsoft.IdentityModel.Abstractions": "8.14.0"
+          "Microsoft.IdentityModel.Abstractions": "6.35.0"
         }
       },
       "Microsoft.Identity.Client.Extensions.Msal": {
         "type": "Transitive",
-        "resolved": "4.78.0",
-        "contentHash": "DYU9o+DrDQuyZxeq91GBA9eNqBvA3ZMkLzQpF7L9dTk6FcIBM1y1IHXWqiKXTvptPF7CZE59upbyUoa+FJ5eiA==",
+        "resolved": "4.76.0",
+        "contentHash": "D0n3yMTa3gnDh1usrJmyxGWKYeqbQNCWLgQ0Tswf7S6nk9YobiCOX+M2V8EX5SPqkZxpwkTT6odAhaafu3TIeA==",
         "dependencies": {
-          "Microsoft.Identity.Client": "4.78.0",
+          "Microsoft.Identity.Client": "4.76.0",
           "System.Security.Cryptography.ProtectedData": "4.5.0"
         }
       },
       "Microsoft.IdentityModel.Abstractions": {
         "type": "Transitive",
-        "resolved": "8.14.0",
-        "contentHash": "iwbCpSjD3ehfTwBhtSNEtKPK0ICun6ov7Ibx6ISNA9bfwIyzI2Siwyi9eJFCJBwxowK9xcA1mj+jBWiigeqgcQ=="
+        "resolved": "8.0.1",
+        "contentHash": "OtlIWcyX01olfdevPKZdIPfBEvbcioDyBiE/Z2lHsopsMD7twcKtlN9kMevHmI5IIPhFpfwCIiR6qHQz1WHUIw=="
       },
       "Microsoft.IdentityModel.JsonWebTokens": {
         "type": "Transitive",
@@ -646,14 +581,6 @@
           "Microsoft.IdentityModel.Tokens": "8.0.1"
         }
       },
-      "System.Linq.Async": {
-        "type": "Transitive",
-        "resolved": "6.0.1",
-        "contentHash": "0YhHcaroWpQ9UCot3Pizah7ryAzQhNvobLMSxeDIGmnXfkQn8u5owvpOH0K6EVB+z9L7u6Cc4W17Br/+jyttEQ==",
-        "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "6.0.0"
-        }
-      },
       "System.Memory.Data": {
         "type": "Transitive",
         "resolved": "8.0.1",
@@ -696,22 +623,7 @@
         "contentHash": "U9msthvnH2Fsw7xwAvIhNHOdnIjOQTwOc8Vd0oGOsiRcGMGoBFlUD6qtYawRUoQdKH9ysxesZ9juFElt1Jw/7A=="
       },
       "orangecarrental.buildingblocks.domain": {
-        "type": "Project",
-        "dependencies": {
-          "Eventuous": "[0.15.1, )"
-        }
-      },
-      "orangecarrental.buildingblocks.eventstore": {
-        "type": "Project",
-        "dependencies": {
-          "Azure.Identity": "[1.17.1, )",
-          "Eventuous": "[0.15.1, )",
-          "Eventuous.SqlServer": "[0.15.1, )",
-          "Eventuous.Subscriptions": "[0.15.1, )",
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
-          "OrangeCarRental.Customers.Domain": "[1.0.0, )",
-          "OrangeCarRental.Reservations.Domain": "[1.0.0, )"
-        }
+        "type": "Project"
       },
       "orangecarrental.buildingblocks.infrastructure": {
         "type": "Project",
@@ -744,8 +656,6 @@
       "orangecarrental.reservations.infrastructure": {
         "type": "Project",
         "dependencies": {
-          "Eventuous": "[0.15.1, )",
-          "Eventuous.Subscriptions": "[0.15.1, )",
           "Microsoft.EntityFrameworkCore": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.1, )",
@@ -769,44 +679,12 @@
       "Azure.Identity": {
         "type": "CentralTransitive",
         "requested": "[1.17.1, )",
-        "resolved": "1.17.1",
-        "contentHash": "MSZkBrctcpiGxs9Cvr2VKKoN6qFLZlP3I6xuCWJ9iTgitI5Rgxtk5gfOSpXPZE3+CJmZ/mnqpQyGyjawFn5Vvg==",
+        "resolved": "1.17.0",
+        "contentHash": "QZiMa1O5lTniWTSDPyPVdBKOS0/M5DWXTfQ2xLOot96yp8Q5A69iScGtzCIxfbg/4bmp/TynibZ2VK1v3qsSNA==",
         "dependencies": {
-          "Azure.Core": "1.50.0",
-          "Microsoft.Identity.Client": "4.78.0",
-          "Microsoft.Identity.Client.Extensions.Msal": "4.78.0"
-        }
-      },
-      "Eventuous": {
-        "type": "CentralTransitive",
-        "requested": "[0.15.1, )",
-        "resolved": "0.15.1",
-        "contentHash": "V6QkOXmyD0necj2srRticwR0B5Sp8HrE2OgHz1Uik914gi+bSkbhLHEVLRb5qtSTZgfH3BPH/0wjz6ArRtEjww==",
-        "dependencies": {
-          "Eventuous.Application": "0.15.1"
-        }
-      },
-      "Eventuous.SqlServer": {
-        "type": "CentralTransitive",
-        "requested": "[0.15.1, )",
-        "resolved": "0.15.1",
-        "contentHash": "Tp3YJprz2PTFDf1+wuWeUAl7MxIzNXmikRWZcyxM2DXA5+3ej0zsq2O0doH20+fvHC1TEJxKpywtugt8TDTiCQ==",
-        "dependencies": {
-          "Eventuous.Persistence": "0.15.1",
-          "Eventuous.Sql.Base": "0.15.1",
-          "Eventuous.Subscriptions": "0.15.1",
-          "Microsoft.Data.SqlClient": "5.2.1",
-          "System.Linq.Async": "6.0.1"
-        }
-      },
-      "Eventuous.Subscriptions": {
-        "type": "CentralTransitive",
-        "requested": "[0.15.1, )",
-        "resolved": "0.15.1",
-        "contentHash": "pHkD8e8wwWPki0vE5VX2I6e41HNzeIsCZMyq43z6vQRV4yVb/VGam/uN3CJXx1XmIspdl0Ny4Ei3XCtRmdatJw==",
-        "dependencies": {
-          "Eventuous.Diagnostics": "0.15.1",
-          "Eventuous.Serialization": "0.15.1"
+          "Azure.Core": "1.49.0",
+          "Microsoft.Identity.Client": "4.76.0",
+          "Microsoft.Identity.Client.Extensions.Msal": "4.76.0"
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {

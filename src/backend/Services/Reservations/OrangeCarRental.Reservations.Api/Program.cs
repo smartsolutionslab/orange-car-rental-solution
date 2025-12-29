@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.EventStore.Extensions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
@@ -13,8 +12,7 @@ using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.LookupG
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.EventSourcing;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;
 
@@ -73,14 +71,11 @@ builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Register read model repository (for queries)
+// Register repository
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
-// Register event sourcing (type mappings for serialization)
-builder.Services.AddReservationEventSourcing();
-
-// Register event publisher (for domain event publishing)
-builder.Services.AddReservationEventPublisher();
+// Register data seeder
+builder.Services.AddScoped<ReservationsDataSeeder>();
 
 // Register application handlers
 builder.Services.AddScoped<CreateReservationCommandHandler>();

@@ -5,8 +5,5 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Eventuous"/>
-  </ItemGroup>
 
 </Project>

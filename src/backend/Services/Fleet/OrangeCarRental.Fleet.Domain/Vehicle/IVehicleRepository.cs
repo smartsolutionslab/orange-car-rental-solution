@@ -25,6 +25,13 @@ public interface IVehicleRepository
     /// <returns>An immutable read-only list of all vehicles.</returns>
     Task<IReadOnlyList<Vehicle>> GetAllAsync(CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Streams all vehicles. Memory-efficient alternative to GetAllAsync.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An async enumerable of all vehicles.</returns>
+    IAsyncEnumerable<Vehicle> StreamAllAsync(CancellationToken cancellationToken = default);
+
     Task<PagedResult<Vehicle>> SearchAsync(
         VehicleSearchParameters parameters,
         CancellationToken cancellationToken = default);

@@ -27,8 +27,8 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.Default().Build();
 
-        // Assert - Changes contains uncommitted events from Eventuous Aggregate
-        var events = customer.Changes;
+        // Assert - DomainEvents contains uncommitted events from AggregateRoot
+        var events = customer.DomainEvents;
         events.ShouldNotBeEmpty();
         var registeredEvent = events.ShouldHaveSingleItem();
         registeredEvent.ShouldBeOfType<CustomerRegistered>();
@@ -128,31 +128,30 @@ public class CustomerTests
         var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
-        // Act
-        customer.UpdateProfile(newName, newPhone, newAddress);
+        // Act - immutable pattern returns new instance
+        var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
 
-        // Assert - event-sourced aggregate mutates in place via events
-        customer.Name.ShouldBe(newName);
-        customer.PhoneNumber.ShouldBe(newPhone);
-        customer.Address.ShouldBe(newAddress);
-        customer.Email.ShouldBe(originalEmail); // Email unchanged
+        // Assert - verify the new instance has updated values
+        updatedCustomer.Name.ShouldBe(newName);
+        updatedCustomer.PhoneNumber.ShouldBe(newPhone);
+        updatedCustomer.Address.ShouldBe(newAddress);
+        updatedCustomer.Email.ShouldBe(originalEmail); // Email unchanged
     }
 
     [Fact]
-    public void UpdateProfile_WithSameValues_ShouldNotRaiseEvent()
+    public void UpdateProfile_WithSameValues_ShouldReturnSameInstance()
     {
         // Arrange
         var customer = CustomerBuilder.Default().Build();
-        var initialEventCount = customer.Changes.Count;
-        var name = customer.Name!.Value;
-        var phone = customer.PhoneNumber!.Value;
-        var address = customer.Address!.Value;
+        var name = customer.Name;
+        var phone = customer.PhoneNumber;
+        var address = customer.Address;
 
-        // Act
-        customer.UpdateProfile(name, phone, address);
+        // Act - immutable pattern returns same instance if no changes
+        var result = customer.UpdateProfile(name, phone, address);
 
-        // Assert - no new events if values unchanged
-        customer.Changes.Count.ShouldBe(initialEventCount);
+        // Assert - same instance returned when values unchanged
+        result.ShouldBeSameAs(customer);
     }
 
     [Fact]
@@ -160,18 +159,16 @@ public class CustomerTests
     {
         // Arrange
         var customer = CustomerBuilder.Default().Build();
-        var initialEventCount = customer.Changes.Count;
 
         var newName = CustomerName.Of("Anna", "Schmidt");
         var newPhone = PhoneNumber.From("0160 98765432");
         var newAddress = Address.Of("Neue Straße 456", "München", "80331", "Deutschland");
 
-        // Act
-        customer.UpdateProfile(newName, newPhone, newAddress);
+        // Act - immutable pattern returns new instance with the event
+        var updatedCustomer = customer.UpdateProfile(newName, newPhone, newAddress);
 
-        // Assert - should have one additional event
-        customer.Changes.Count.ShouldBe(initialEventCount + 1);
-        customer.Changes.Last().ShouldBeOfType<CustomerProfileUpdated>();
+        // Assert - the updated instance should have the event
+        updatedCustomer.DomainEvents.ShouldHaveSingleItem().ShouldBeOfType<CustomerProfileUpdated>();
     }
 
     [Fact]
@@ -210,11 +207,11 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.MaxMustermann().Build();
 
-        // Assert - using .Value to access nullable struct properties
-        customer.Name!.Value.FirstName.Value.ShouldBe("Max");
-        customer.Name!.Value.LastName.Value.ShouldBe("Mustermann");
-        customer.Email!.Value.Value.ShouldBe("max.mustermann@example.de");
-        customer.Address!.Value.City.Value.ShouldBe("Berlin");
+        // Assert - direct property access (non-nullable value objects)
+        customer.Name.FirstName.Value.ShouldBe("Max");
+        customer.Name.LastName.Value.ShouldBe("Mustermann");
+        customer.Email.Value.ShouldBe("max.mustermann@example.de");
+        customer.Address.City.Value.ShouldBe("Berlin");
     }
 
     [Fact]
@@ -223,11 +220,11 @@ public class CustomerTests
         // Arrange & Act
         var customer = CustomerBuilder.AnnaSchmidt().Build();
 
-        // Assert - using .Value to access nullable struct properties
-        customer.Name!.Value.FirstName.Value.ShouldBe("Anna");
-        customer.Name!.Value.LastName.Value.ShouldBe("Schmidt");
-        customer.Email!.Value.Value.ShouldBe("anna.schmidt@example.com");
-        customer.Address!.Value.City.Value.ShouldBe("München");
+        // Assert - direct property access (non-nullable value objects)
+        customer.Name.FirstName.Value.ShouldBe("Anna");
+        customer.Name.LastName.Value.ShouldBe("Schmidt");
+        customer.Email.Value.ShouldBe("anna.schmidt@example.com");
+        customer.Address.City.Value.ShouldBe("München");
     }
 
     [Fact]

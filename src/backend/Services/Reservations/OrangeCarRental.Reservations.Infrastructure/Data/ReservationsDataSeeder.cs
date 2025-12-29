@@ -56,52 +56,34 @@ public class ReservationsDataSeeder(
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         // Future reservations (Confirmed)
-        reservations.Add(CreateReservation(
+        var reservation1 = Reservation.Create(
             vehicle1,
             customer1,
             BookingPeriod.Of(today.AddDays(5), today.AddDays(8)),
-            Money.Euro(49.99m * 3) // 3 days at 49.99/day
-        ));
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            Money.Euro(49.99m * 3)); // 3 days at 49.99/day
+        reservations.Add(reservation1.Confirm());
 
-        reservations.Add(CreateReservation(
+        var reservation2 = Reservation.Create(
             vehicle2,
             customer2,
             BookingPeriod.Of(today.AddDays(10), today.AddDays(17)),
-            Money.Euro(89.99m * 7) // 7 days at 89.99/day
-        ));
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            Money.Euro(89.99m * 7)); // 7 days at 89.99/day
+        reservations.Add(reservation2.Confirm());
 
-        // Pending reservations
-        var pendingReservation = CreateReservation(
+        // Pending reservation
+        var pendingReservation = Reservation.Create(
             vehicle3,
             customer3,
             BookingPeriod.Of(today.AddDays(15), today.AddDays(20)),
-            Money.Euro(119.99m * 5) // 5 days at 119.99/day
-        );
+            LocationCode.From("BER-HBF"),
+            LocationCode.From("BER-HBF"),
+            Money.Euro(119.99m * 5)); // 5 days at 119.99/day
         reservations.Add(pendingReservation);
 
-        // Confirm first two reservations (event-sourced - mutates in place)
-        reservations[0].Confirm();
-        reservations[1].Confirm();
-
         return reservations;
-    }
-
-    private static Reservation CreateReservation(
-        VehicleIdentifier vehicleIdentifier,
-        CustomerIdentifier customerIdentifier,
-        BookingPeriod period,
-        Money totalPrice,
-        LocationCode? pickupLocationCode = null,
-        LocationCode? dropoffLocationCode = null)
-    {
-        var reservation = new Reservation();
-        reservation.Create(
-            vehicleIdentifier,
-            customerIdentifier,
-            period,
-            pickupLocationCode ?? LocationCode.From("BER-HBF"),
-            dropoffLocationCode ?? LocationCode.From("BER-HBF"),
-            totalPrice);
-        return reservation;
     }
 }

@@ -24,11 +24,7 @@ public sealed class LookupGuestReservationQueryHandler(
         var reservation = await reservations.GetByIdAsync(query.ReservationId, cancellationToken);
 
         // Get the customer email from Customers service
-        var customerId = reservation.CustomerIdentifier?.Value
-            ?? throw new EntityNotFoundException(
-                typeof(Reservation),
-                query.ReservationId.Value,
-                "Reservation not found or has no customer.");
+        var customerId = reservation.CustomerIdentifier.Value;
 
         var customerEmail = await customersService.GetCustomerEmailAsync(customerId, cancellationToken);
 

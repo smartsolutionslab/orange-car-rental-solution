@@ -13,8 +13,15 @@ on:
       - '.github/workflows/e2e-public-portal.yml'
   workflow_dispatch:
 
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   NODE_VERSION: '24'
+  # Run full browser matrix only on main/develop push, not on PRs
+  IS_FULL_TEST: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop') }}
 
 jobs:
   build:
@@ -23,7 +30,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -53,19 +60,21 @@ jobs:
     name: Run E2E Tests
     runs-on: ubuntu-latest
     needs: build
-    timeout-minutes: 45
+    timeout-minutes: 30
     # TODO: Tests require backend APIs - marking as non-blocking until backend integration is added
     continue-on-error: true
 
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
-        shard: [1/3, 2/3, 3/3]
+        # PRs: Only chromium with 1 shard (fast feedback)
+        # Push to main/develop: Full matrix (3 browsers × 3 shards)
+        browser: ${{ github.event_name == 'pull_request' && fromJson('["chromium"]') || fromJson('["chromium", "firefox", "webkit"]') }}
+        shard: ${{ github.event_name == 'pull_request' && fromJson('["1/1"]') || fromJson('["1/3", "2/3", "3/3"]') }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -145,7 +154,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download all artifacts
         uses: actions/download-artifact@v7
@@ -179,7 +188,7 @@ jobs:
 
       - name: Comment PR with test results
         if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.issues.createComment({

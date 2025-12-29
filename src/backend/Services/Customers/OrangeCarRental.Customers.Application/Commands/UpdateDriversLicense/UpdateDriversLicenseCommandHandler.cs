@@ -5,10 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 
 /// <summary>
 ///     Handler for UpdateDriversLicenseCommand.
-///     Loads the customer from event store, updates driver's license information, and persists via event sourcing.
+///     Loads the customer from database, updates driver's license information, and persists changes.
 /// </summary>
 public sealed class UpdateDriversLicenseCommandHandler(
-    IEventSourcedCustomerRepository repository)
+    ICustomerRepository repository)
     : ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>
 {
     /// <summary>
@@ -25,23 +25,19 @@ public sealed class UpdateDriversLicenseCommandHandler(
     {
         var (customerId, driversLicense) = command;
 
-        // Load customer from event store
-        var customer = await repository.LoadAsync(customerId, cancellationToken);
-        if (!customer.State.HasBeenCreated)
-        {
-            throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
-        }
+        // Load customer from database
+        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
 
-        // Execute domain logic
-        customer.UpdateDriversLicense(driversLicense);
+        // Execute domain logic (returns new instance - immutable pattern)
+        var updatedCustomer = customer.UpdateDriversLicense(driversLicense);
 
-        // Persist events to event store
-        await repository.SaveAsync(customer, cancellationToken);
+        // Persist changes to database
+        await repository.UpdateAsync(updatedCustomer, cancellationToken);
 
         return new UpdateDriversLicenseResult(
-            customer.Id.Value,
+            updatedCustomer.Id.Value,
             true,
             "Driver's license updated successfully",
-            customer.UpdatedAtUtc);
+            updatedCustomer.UpdatedAtUtc);
     }
 }

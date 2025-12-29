@@ -5,10 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Updat
 
 /// <summary>
 ///     Handler for UpdateCustomerProfileCommand.
-///     Loads the customer from event store, updates profile information, and persists via event sourcing.
+///     Loads the customer from database, updates profile information, and persists changes.
 /// </summary>
 public sealed class UpdateCustomerProfileCommandHandler(
-    IEventSourcedCustomerRepository repository)
+    ICustomerRepository repository)
     : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
@@ -25,23 +25,19 @@ public sealed class UpdateCustomerProfileCommandHandler(
     {
         var (customerId, name, phoneNumber, address) = command;
 
-        // Load customer from event store
-        var customer = await repository.LoadAsync(customerId, cancellationToken);
-        if (!customer.State.HasBeenCreated)
-        {
-            throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
-        }
+        // Load customer from database
+        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
 
-        // Execute domain logic
-        customer.UpdateProfile(name, phoneNumber, address);
+        // Execute domain logic (returns new instance - immutable pattern)
+        var updatedCustomer = customer.UpdateProfile(name, phoneNumber, address);
 
-        // Persist events to event store
-        await repository.SaveAsync(customer, cancellationToken);
+        // Persist changes to database
+        await repository.UpdateAsync(updatedCustomer, cancellationToken);
 
         return new UpdateCustomerProfileResult(
-            customer.Id.Value,
+            updatedCustomer.Id.Value,
             true,
             "Customer profile updated successfully",
-            customer.UpdatedAtUtc);
+            updatedCustomer.UpdatedAtUtc);
     }
 }

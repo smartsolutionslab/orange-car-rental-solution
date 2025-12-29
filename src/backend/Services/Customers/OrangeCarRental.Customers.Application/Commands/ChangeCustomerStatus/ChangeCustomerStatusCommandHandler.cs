@@ -5,10 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Chang
 
 /// <summary>
 ///     Handler for ChangeCustomerStatusCommand.
-///     Loads the customer from event store, changes account status, and persists via event sourcing.
+///     Loads the customer from database, changes account status, and persists changes.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(
-    IEventSourcedCustomerRepository repository)
+    ICustomerRepository repository)
     : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
@@ -26,28 +26,23 @@ public sealed class ChangeCustomerStatusCommandHandler(
         var (customerId, newStatusValue, reason) = command;
         var newStatus = newStatusValue.ParseCustomerStatus();
 
-        // Load customer from event store
-        var customer = await repository.LoadAsync(customerId, cancellationToken);
-        if (!customer.State.HasBeenCreated)
-        {
-            throw new InvalidOperationException($"Customer with ID '{customerId.Value}' not found.");
-        }
-
+        // Load customer from database
+        var customer = await repository.GetByIdAsync(customerId, cancellationToken);
         var oldStatus = customer.Status;
 
-        // Execute domain logic
-        customer.ChangeStatus(newStatus, reason);
+        // Execute domain logic (returns new instance - immutable pattern)
+        var updatedCustomer = customer.ChangeStatus(newStatus, reason);
 
-        // Persist events to event store
-        await repository.SaveAsync(customer, cancellationToken);
+        // Persist changes to database
+        await repository.UpdateAsync(updatedCustomer, cancellationToken);
 
         return new ChangeCustomerStatusResult(
-            customer.Id,
+            updatedCustomer.Id,
             oldStatus.ToString(),
-            customer.Status.ToString(),
+            updatedCustomer.Status.ToString(),
             true,
-            $"Customer status changed from {oldStatus} to {customer.Status}",
-            customer.UpdatedAtUtc
+            $"Customer status changed from {oldStatus} to {updatedCustomer.Status}",
+            updatedCustomer.UpdatedAtUtc
         );
     }
 }

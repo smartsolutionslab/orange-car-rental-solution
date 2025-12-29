@@ -38,20 +38,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run ESLint
         working-directory: src/frontend
@@ -68,24 +58,16 @@ jobs:
     strategy:
       matrix:
         app: [shell, public-portal, call-center-portal]
-        environment: [development, production]
+        # PRs: Only production builds (faster feedback)
+        # Push: Both development and production
+        environment: ${{ github.event_name == 'pull_request' && fromJson('["production"]') || fromJson('["development", "production"]') }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Build application
         working-directory: src/frontend
@@ -114,24 +96,11 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
+      - name: Setup Backend
+        uses: ./.github/actions/setup-backend
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic --exclude-diagnostics IDE1006
@@ -147,28 +116,17 @@ jobs:
     # Run in parallel with lint (no dependency)
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        # PRs: Only Release builds (faster feedback)
+        # Push: Both Debug and Release
+        configuration: ${{ github.event_name == 'pull_request' && fromJson('["Release"]') || fromJson('["Debug", "Release"]') }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
+      - name: Setup Backend
+        uses: ./.github/actions/setup-backend
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
       - name: Build
         working-directory: src/backend
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}
@@ -187,14 +145,35 @@ jobs:
           retention-days: 7
 
   docker-build:
-    name: Build and Push Docker Images
+    name: Docker Build (${{ matrix.image }})
     runs-on: ubuntu-latest
     needs: [build-frontend, build-backend]
     if: github.event_name == 'push'
 
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: api-gateway
+            context: ./src/backend
+            dockerfile: ./src/backend/ApiGateway/Dockerfile
+            artifact: ""
+          - image: shell
+            context: ./src/frontend/apps/shell
+            dockerfile: ./src/frontend/apps/shell/Dockerfile.runtime
+            artifact: shell-production
+          - image: public-portal
+            context: ./src/frontend/apps/public-portal
+            dockerfile: ./src/frontend/apps/public-portal/Dockerfile.runtime
+            artifact: public-portal-production
+          - image: call-center-portal
+            context: ./src/frontend/apps/call-center-portal
+            dockerfile: ./src/frontend/apps/call-center-portal/Dockerfile.runtime
+            artifact: call-center-portal-production
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -206,75 +185,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Shell production artifacts
+      - name: Download frontend artifacts
+        if: matrix.artifact != ''
         uses: actions/download-artifact@v7
         with:
-          name: shell-production
-          path: src/frontend/apps/shell/dist/
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.context }}/dist/
 
-      - name: Download Public Portal production artifacts
-        uses: actions/download-artifact@v7
-        with:
-          name: public-portal-production
-          path: src/frontend/apps/public-portal/dist/
-
-      - name: Download Call Center Portal production artifacts
-        uses: actions/download-artifact@v7
-        with:
-          name: call-center-portal-production
-          path: src/frontend/apps/call-center-portal/dist/
-
-      - name: Build and push API Gateway image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./src/backend
-          file: ./src/backend/ApiGateway/Dockerfile
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
           push: true
           tags: |
-            ${{ env.IMAGE_PREFIX }}/api-gateway:${{ github.sha }}
-            ${{ env.IMAGE_PREFIX }}/api-gateway:${{ github.ref_name }}
-            ${{ env.IMAGE_PREFIX }}/api-gateway:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Shell image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/frontend/apps/shell
-          file: ./src/frontend/apps/shell/Dockerfile.runtime
-          push: true
-          tags: |
-            ${{ env.IMAGE_PREFIX }}/shell:${{ github.sha }}
-            ${{ env.IMAGE_PREFIX }}/shell:${{ github.ref_name }}
-            ${{ env.IMAGE_PREFIX }}/shell:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Public Portal image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/frontend/apps/public-portal
-          file: ./src/frontend/apps/public-portal/Dockerfile.runtime
-          push: true
-          tags: |
-            ${{ env.IMAGE_PREFIX }}/public-portal:${{ github.sha }}
-            ${{ env.IMAGE_PREFIX }}/public-portal:${{ github.ref_name }}
-            ${{ env.IMAGE_PREFIX }}/public-portal:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build and push Call Center Portal image
-        uses: docker/build-push-action@v6
-        with:
-          context: ./src/frontend/apps/call-center-portal
-          file: ./src/frontend/apps/call-center-portal/Dockerfile.runtime
-          push: true
-          tags: |
-            ${{ env.IMAGE_PREFIX }}/call-center-portal:${{ github.sha }}
-            ${{ env.IMAGE_PREFIX }}/call-center-portal:${{ github.ref_name }}
-            ${{ env.IMAGE_PREFIX }}/call-center-portal:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:${{ github.ref_name }}
+            ${{ env.IMAGE_PREFIX }}/${{ matrix.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.image }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image }}
 
   build-summary:
     name: Build Summary

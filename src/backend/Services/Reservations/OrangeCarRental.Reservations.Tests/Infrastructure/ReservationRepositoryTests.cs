@@ -51,15 +51,13 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.EUR;
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = new Reservation();
-        reservation.Create(
+        return Reservation.Create(
             vehicleId,
             customerId,
             period,
             LocationCode.From("BER-HBF"),
             LocationCode.From("BER-HBF"),
             totalPrice);
-        return reservation;
     }
 
     #region GetByIdAsync Tests
@@ -177,17 +175,17 @@ public class ReservationRepositoryTests : IAsyncLifetime
         // Detach to simulate loading in new context
         context.Entry(reservation).State = EntityState.Detached;
 
-        // Load fresh copy
+        // Load fresh copy and confirm (immutable pattern returns new instance)
         var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(loaded!).State = EntityState.Detached;
-        loaded!.Confirm();
+        var confirmed = loaded!.Confirm();
 
         // Act
-        await repository.UpdateAsync(loaded, CancellationToken.None);
+        await repository.UpdateAsync(confirmed, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(confirmed.Id);
         updated.ShouldNotBeNull();
         updated!.Status.ShouldBe(ReservationStatus.Confirmed);
         updated.ConfirmedAt.ShouldNotBeNull();
@@ -203,8 +201,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.From("EUR");
         var totalPrice = Money.FromGross(200.00m, 0.19m, currency);
 
-        var reservation = new Reservation();
-        reservation.Create(
+        var reservation = Reservation.Create(
             VehicleIdentifier.New(),
             CustomerIdentifier.New(),
             period,
@@ -219,16 +216,15 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(loaded!).State = EntityState.Detached;
 
-        // Confirm and activate
-        loaded!.Confirm();
-        loaded.MarkAsActive();
+        // Confirm and activate (immutable pattern returns new instances)
+        var active = loaded!.Confirm().MarkAsActive();
 
         // Act
-        await repository.UpdateAsync(loaded, CancellationToken.None);
+        await repository.UpdateAsync(active, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(active.Id);
         updated.ShouldNotBeNull();
         updated!.Status.ShouldBe(ReservationStatus.Active);
     }
@@ -298,14 +294,14 @@ public class ReservationRepositoryTests : IAsyncLifetime
         context.Entry(reservation).State = EntityState.Detached;
         var loaded = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(loaded!).State = EntityState.Detached;
-        loaded!.Confirm();
-        await repository.UpdateAsync(loaded, CancellationToken.None);
+        var confirmed = loaded!.Confirm();
+        await repository.UpdateAsync(confirmed, CancellationToken.None);
 
         // Act
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert
-        var updated = await context.Reservations.FindAsync(loaded.Id);
+        var updated = await context.Reservations.FindAsync(confirmed.Id);
         updated!.Status.ShouldBe(ReservationStatus.Confirmed);
     }
 
@@ -323,8 +319,7 @@ public class ReservationRepositoryTests : IAsyncLifetime
         var currency = Currency.From("EUR");
         var totalPrice = Money.FromGross(300.00m, 0.19m, currency);
 
-        var reservation = new Reservation();
-        reservation.Create(
+        var reservation = Reservation.Create(
             VehicleIdentifier.New(),
             CustomerIdentifier.New(),
             period,
@@ -341,36 +336,36 @@ public class ReservationRepositoryTests : IAsyncLifetime
         pending.ShouldNotBeNull();
         pending!.Status.ShouldBe(ReservationStatus.Pending);
 
-        // Act - Confirm
+        // Act - Confirm (immutable pattern returns new instance)
         context.Entry(pending).State = EntityState.Detached;
         var toConfirm = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(toConfirm!).State = EntityState.Detached;
-        toConfirm!.Confirm();
-        await repository.UpdateAsync(toConfirm, CancellationToken.None);
+        var confirmedRes = toConfirm!.Confirm();
+        await repository.UpdateAsync(confirmedRes, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Confirmed state
         var confirmed = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         confirmed!.Status.ShouldBe(ReservationStatus.Confirmed);
 
-        // Act - Activate
+        // Act - Activate (immutable pattern returns new instance)
         context.Entry(confirmed).State = EntityState.Detached;
         var toActivate = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(toActivate!).State = EntityState.Detached;
-        toActivate!.MarkAsActive();
-        await repository.UpdateAsync(toActivate, CancellationToken.None);
+        var activeRes = toActivate!.MarkAsActive();
+        await repository.UpdateAsync(activeRes, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Active state
         var active = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         active!.Status.ShouldBe(ReservationStatus.Active);
 
-        // Act - Complete
+        // Act - Complete (immutable pattern returns new instance)
         context.Entry(active).State = EntityState.Detached;
         var toComplete = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(toComplete!).State = EntityState.Detached;
-        toComplete!.Complete();
-        await repository.UpdateAsync(toComplete, CancellationToken.None);
+        var completedRes = toComplete!.Complete();
+        await repository.UpdateAsync(completedRes, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert - Completed state
@@ -389,12 +384,12 @@ public class ReservationRepositoryTests : IAsyncLifetime
         await repository.AddAsync(reservation, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
-        // Act - Cancel
+        // Act - Cancel (immutable pattern returns new instance)
         context.Entry(reservation).State = EntityState.Detached;
         var toCancel = await repository.GetByIdAsync(reservation.Id, CancellationToken.None);
         context.Entry(toCancel!).State = EntityState.Detached;
-        toCancel!.Cancel("Customer changed plans");
-        await repository.UpdateAsync(toCancel, CancellationToken.None);
+        var cancelledRes = toCancel!.Cancel("Customer changed plans");
+        await repository.UpdateAsync(cancelledRes, CancellationToken.None);
         await context.SaveChangesAsync(CancellationToken.None);
 
         // Assert

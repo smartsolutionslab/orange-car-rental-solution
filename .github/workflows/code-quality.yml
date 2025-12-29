@@ -29,7 +29,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0  # Required for SonarQube
 
@@ -39,7 +39,7 @@ jobs:
         dotnet-version: '10.0.x'
 
     - name: Cache NuGet packages
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -121,7 +121,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Setup Node.js
       uses: actions/setup-node@v6
@@ -183,7 +183,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Dependency Review
       uses: actions/dependency-review-action@v4
@@ -206,10 +206,10 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       with:
         languages: ${{ matrix.language }}
         queries: security-and-quality
@@ -222,7 +222,7 @@ jobs:
 
     - name: Cache NuGet packages
       if: matrix.language == 'csharp'
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
@@ -237,6 +237,6 @@ jobs:
         dotnet build OrangeCarRental.sln --no-restore --configuration Release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4
       with:
         category: "/language:${{ matrix.language }}"
