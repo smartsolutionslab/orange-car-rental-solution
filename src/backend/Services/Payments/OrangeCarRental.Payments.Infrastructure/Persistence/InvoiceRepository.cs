@@ -29,6 +29,14 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
             .ToListAsync(cancellationToken);
     }
 
+    public IAsyncEnumerable<Invoice> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    {
+        return dbContext.Invoices
+            .Where(x => x.Customer.CustomerId == customerId)
+            .OrderByDescending(x => x.InvoiceDate)
+            .AsAsyncEnumerable();
+    }
+
     public async Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices

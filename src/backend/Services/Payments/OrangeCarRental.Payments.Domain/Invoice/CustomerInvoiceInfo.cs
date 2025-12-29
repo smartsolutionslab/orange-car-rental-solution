@@ -23,36 +23,36 @@ public sealed record CustomerInvoiceInfo : IValueObject
     /// <summary>
     ///     Street address.
     /// </summary>
-    public string Street { get; }
+    public Street Street { get; }
 
     /// <summary>
     ///     Postal code.
     /// </summary>
-    public string PostalCode { get; }
+    public PostalCode PostalCode { get; }
 
     /// <summary>
     ///     City.
     /// </summary>
-    public string City { get; }
+    public City City { get; }
 
     /// <summary>
     ///     Country.
     /// </summary>
-    public string Country { get; }
+    public Country Country { get; }
 
     /// <summary>
     ///     VAT ID for business customers (optional, e.g., "DE123456789").
     /// </summary>
-    public string? VatId { get; }
+    public VatId? VatId { get; }
 
     private CustomerInvoiceInfo(
         CustomerId customerId,
         string name,
-        string street,
-        string postalCode,
-        string city,
-        string country,
-        string? vatId)
+        Street street,
+        PostalCode postalCode,
+        City city,
+        Country country,
+        VatId? vatId)
     {
         CustomerId = customerId;
         Name = name;
@@ -78,25 +78,21 @@ public sealed record CustomerInvoiceInfo : IValueObject
         Ensure.That(customerId.Value, nameof(customerId))
             .ThrowIf(customerId.Value == Guid.Empty, "Customer ID cannot be empty");
         Ensure.That(name, nameof(name)).IsNotNullOrWhiteSpace();
-        Ensure.That(street, nameof(street)).IsNotNullOrWhiteSpace();
-        Ensure.That(postalCode, nameof(postalCode)).IsNotNullOrWhiteSpace();
-        Ensure.That(city, nameof(city)).IsNotNullOrWhiteSpace();
-        Ensure.That(country, nameof(country)).IsNotNullOrWhiteSpace();
 
         return new CustomerInvoiceInfo(
             customerId,
             name.Trim(),
-            street.Trim(),
-            postalCode.Trim(),
-            city.Trim(),
-            country.Trim(),
-            vatId?.Trim());
+            Street.From(street),
+            PostalCode.From(postalCode),
+            City.From(city),
+            Country.From(country),
+            Common.VatId.FromNullable(vatId));
     }
 
     /// <summary>
     ///     Gets whether this is a business customer (has VAT ID).
     /// </summary>
-    public bool IsBusinessCustomer => !string.IsNullOrWhiteSpace(VatId);
+    public bool IsBusinessCustomer => VatId.HasValue;
 
     /// <summary>
     ///     Gets the formatted address.

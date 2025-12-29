@@ -32,6 +32,13 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
             .ToListAsync(cancellationToken);
     }
 
+    public IAsyncEnumerable<Vehicle> StreamAllAsync(CancellationToken cancellationToken = default)
+    {
+        return Vehicles
+            .AsNoTracking()
+            .AsAsyncEnumerable();
+    }
+
     public async Task<PagedResult<Vehicle>> SearchAsync(
         VehicleSearchParameters parameters,
         CancellationToken cancellationToken = default)
@@ -91,20 +98,20 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
     /// </summary>
     private static readonly Dictionary<string, Expression<Func<Vehicle, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["name"] = v => v.Name,
-        ["category"] = v => v.Category,
-        ["categorycode"] = v => v.Category,
-        ["location"] = v => v.CurrentLocationCode,
-        ["locationcode"] = v => v.CurrentLocationCode,
-        ["seats"] = v => v.Seats,
-        ["fueltype"] = v => v.FuelType,
-        ["fuel"] = v => v.FuelType,
-        ["transmissiontype"] = v => v.TransmissionType,
-        ["transmission"] = v => v.TransmissionType,
-        ["dailyrate"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
-        ["price"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
-        ["rate"] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
-        ["status"] = v => v.Status
+        [VehicleSortFields.Name] = v => v.Name,
+        [VehicleSortFields.Category] = v => v.Category,
+        [VehicleSortFields.CategoryCode] = v => v.Category,
+        [VehicleSortFields.Location] = v => v.CurrentLocationCode,
+        [VehicleSortFields.LocationCode] = v => v.CurrentLocationCode,
+        [VehicleSortFields.Seats] = v => v.Seats,
+        [VehicleSortFields.FuelType] = v => v.FuelType,
+        [VehicleSortFields.Fuel] = v => v.FuelType,
+        [VehicleSortFields.TransmissionType] = v => v.TransmissionType,
+        [VehicleSortFields.Transmission] = v => v.TransmissionType,
+        [VehicleSortFields.DailyRate] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        [VehicleSortFields.Price] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        [VehicleSortFields.Rate] = v => v.DailyRate.NetAmount + v.DailyRate.VatAmount,
+        [VehicleSortFields.Status] = v => v.Status
     };
 }
 

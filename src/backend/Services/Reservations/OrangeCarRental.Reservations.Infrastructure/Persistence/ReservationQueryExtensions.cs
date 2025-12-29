@@ -10,7 +10,6 @@ internal static class ReservationQueryExtensions
 {
     /// <summary>
     ///     Applies all filters from ReservationSearchParameters to the query.
-    ///     Note: .Value used to access nullable struct properties in EF Core queries.
     /// </summary>
     public static IQueryable<Reservation> ApplyFilters(
         this IQueryable<Reservation> query,
@@ -25,14 +24,14 @@ internal static class ReservationQueryExtensions
         // Pickup date range filtering
         query = query.WhereInDateRange(
             parameters.PickupDateRange,
-            r => r.Period!.Value.PickupDate >= parameters.PickupDateRange!.From!.Value,
-            r => r.Period!.Value.PickupDate <= parameters.PickupDateRange!.To!.Value);
+            r => r.Period.PickupDate >= parameters.PickupDateRange!.From!.Value,
+            r => r.Period.PickupDate <= parameters.PickupDateRange!.To!.Value);
 
         // Price range filtering
         query = query.WhereInPriceRange(
             parameters.PriceRange,
-            r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount >= parameters.PriceRange!.Min!.Value,
-            r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount <= parameters.PriceRange!.Max!.Value);
+            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount >= parameters.PriceRange!.Min!.Value,
+            r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount <= parameters.PriceRange!.Max!.Value);
 
         return query;
     }

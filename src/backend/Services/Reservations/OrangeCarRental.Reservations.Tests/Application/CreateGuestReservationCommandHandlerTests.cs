@@ -11,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application;
 
 public class CreateGuestReservationCommandHandlerTests
 {
-    private readonly Mock<IEventSourcedReservationRepository> repositoryMock = new();
+    private readonly Mock<IReservationRepository> repositoryMock = new();
     private readonly Mock<ICustomersService> customersServiceMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
     private readonly CreateGuestReservationCommandHandler handler;
@@ -118,7 +118,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            s => s.SaveAsync(
+            s => s.AddAsync(
                 It.Is<Reservation>(r =>
                     r.VehicleIdentifier == command.VehicleIdentifier &&
                     r.PickupLocationCode == command.PickupLocationCode &&
@@ -158,8 +158,8 @@ public class CreateGuestReservationCommandHandlerTests
                 "EUR"));
 
         repositoryMock
-            .Setup(s => s.SaveAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
-            .Callback(() => callOrder.Add("SaveToEventStore"))
+            .Setup(s => s.AddAsync(It.IsAny<Reservation>(), It.IsAny<CancellationToken>()))
+            .Callback(() => callOrder.Add("AddToRepository"))
             .Returns(Task.CompletedTask);
 
         // Act
@@ -169,7 +169,7 @@ public class CreateGuestReservationCommandHandlerTests
         callOrder.Count.ShouldBe(3);
         callOrder[0].ShouldBe("RegisterCustomer");
         callOrder[1].ShouldBe("CalculatePrice");
-        callOrder[2].ShouldBe("SaveToEventStore");
+        callOrder[2].ShouldBe("AddToRepository");
     }
 
     [Fact]
@@ -206,7 +206,7 @@ public class CreateGuestReservationCommandHandlerTests
         // Assert
         result.CustomerId.ShouldBe(customerId);
         repositoryMock.Verify(
-            s => s.SaveAsync(
+            s => s.AddAsync(
                 It.Is<Reservation>(r => r.CustomerIdentifier == CustomerIdentifier.From(customerId)),
                 It.IsAny<CancellationToken>()),
             Times.Once);
@@ -314,7 +314,7 @@ public class CreateGuestReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            s => s.SaveAsync(
+            s => s.AddAsync(
                 It.IsAny<Reservation>(),
                 It.IsAny<CancellationToken>()),
             Times.Never);

@@ -58,14 +58,24 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         builder.OwnsOne(x => x.Seller, sellerBuilder =>
         {
             sellerBuilder.Property(s => s.CompanyName).HasColumnName("SellerName").HasMaxLength(200).IsRequired();
-            sellerBuilder.Property(s => s.Street).HasColumnName("SellerStreet").HasMaxLength(200).IsRequired();
-            sellerBuilder.Property(s => s.PostalCode).HasColumnName("SellerPostalCode").HasMaxLength(10).IsRequired();
-            sellerBuilder.Property(s => s.City).HasColumnName("SellerCity").HasMaxLength(100).IsRequired();
-            sellerBuilder.Property(s => s.Country).HasColumnName("SellerCountry").HasMaxLength(100).IsRequired();
+            sellerBuilder.Property(s => s.Street)
+                .HasColumnName("SellerStreet").HasMaxLength(200).IsRequired()
+                .HasConversion(v => v.Value, v => Street.From(v));
+            sellerBuilder.Property(s => s.PostalCode)
+                .HasColumnName("SellerPostalCode").HasMaxLength(10).IsRequired()
+                .HasConversion(v => v.Value, v => PostalCode.From(v));
+            sellerBuilder.Property(s => s.City)
+                .HasColumnName("SellerCity").HasMaxLength(100).IsRequired()
+                .HasConversion(v => v.Value, v => City.From(v));
+            sellerBuilder.Property(s => s.Country)
+                .HasColumnName("SellerCountry").HasMaxLength(100).IsRequired()
+                .HasConversion(v => v.Value, v => Country.From(v));
             sellerBuilder.Property(s => s.Email).HasColumnName("SellerEmail").HasMaxLength(200).IsRequired();
             sellerBuilder.Property(s => s.Phone).HasColumnName("SellerPhone").HasMaxLength(50).IsRequired();
             sellerBuilder.Property(s => s.TradeRegisterNumber).HasColumnName("TradeRegisterNumber").HasMaxLength(50).IsRequired();
-            sellerBuilder.Property(s => s.VatId).HasColumnName("VatId").HasMaxLength(20).IsRequired();
+            sellerBuilder.Property(s => s.VatId)
+                .HasColumnName("VatId").HasMaxLength(20).IsRequired()
+                .HasConversion(v => v.Value, v => VatId.From(v));
             sellerBuilder.Property(s => s.TaxNumber).HasColumnName("TaxNumber").HasMaxLength(30).IsRequired();
             sellerBuilder.Property(s => s.ManagingDirector)
                 .HasColumnName("ManagingDirector")
@@ -86,11 +96,23 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
                     id => id.Value,
                     value => CustomerId.From(value));
             customerBuilder.Property(c => c.Name).HasColumnName("CustomerName").HasMaxLength(200).IsRequired();
-            customerBuilder.Property(c => c.Street).HasColumnName("CustomerStreet").HasMaxLength(200).IsRequired();
-            customerBuilder.Property(c => c.PostalCode).HasColumnName("CustomerPostalCode").HasMaxLength(10).IsRequired();
-            customerBuilder.Property(c => c.City).HasColumnName("CustomerCity").HasMaxLength(100).IsRequired();
-            customerBuilder.Property(c => c.Country).HasColumnName("CustomerCountry").HasMaxLength(100).IsRequired();
-            customerBuilder.Property(c => c.VatId).HasColumnName("CustomerVatId").HasMaxLength(20);
+            customerBuilder.Property(c => c.Street)
+                .HasColumnName("CustomerStreet").HasMaxLength(200).IsRequired()
+                .HasConversion(v => v.Value, v => Street.From(v));
+            customerBuilder.Property(c => c.PostalCode)
+                .HasColumnName("CustomerPostalCode").HasMaxLength(10).IsRequired()
+                .HasConversion(v => v.Value, v => PostalCode.From(v));
+            customerBuilder.Property(c => c.City)
+                .HasColumnName("CustomerCity").HasMaxLength(100).IsRequired()
+                .HasConversion(v => v.Value, v => City.From(v));
+            customerBuilder.Property(c => c.Country)
+                .HasColumnName("CustomerCountry").HasMaxLength(100).IsRequired()
+                .HasConversion(v => v.Value, v => Country.From(v));
+            customerBuilder.Property(c => c.VatId)
+                .HasColumnName("CustomerVatId").HasMaxLength(20)
+                .HasConversion(
+                    v => v.HasValue ? v.Value.Value : null,
+                    v => v != null ? VatId.From(v) : null);
 
             // Index on CustomerId
             customerBuilder.HasIndex(c => c.CustomerId)

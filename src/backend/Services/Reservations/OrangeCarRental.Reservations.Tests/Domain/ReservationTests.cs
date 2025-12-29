@@ -57,13 +57,13 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Confirm();
+        // Act - immutable pattern returns new instance
+        var confirmedReservation = reservation.Confirm();
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Confirmed);
-        reservation.ConfirmedAt.ShouldNotBeNull();
-        reservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        confirmedReservation.Status.ShouldBe(ReservationStatus.Confirmed);
+        confirmedReservation.ConfirmedAt.ShouldNotBeNull();
+        confirmedReservation.ConfirmedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -104,14 +104,14 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Cancel("Changed plans");
+        // Act - immutable pattern returns new instance
+        var cancelledReservation = reservation.Cancel("Changed plans");
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
-        reservation.CancelledAt.ShouldNotBeNull();
-        reservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
-        reservation.CancellationReason.ShouldBe("Changed plans");
+        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelledReservation.CancelledAt.ShouldNotBeNull();
+        cancelledReservation.CancelledAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        cancelledReservation.CancellationReason.ShouldBe("Changed plans");
     }
 
     [Fact]
@@ -120,12 +120,12 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildConfirmed();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Cancel("Emergency");
+        // Act - immutable pattern returns new instance
+        var cancelledReservation = reservation.Cancel("Emergency");
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
-        reservation.CancellationReason.ShouldBe("Emergency");
+        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelledReservation.CancellationReason.ShouldBe("Emergency");
     }
 
     [Fact]
@@ -134,27 +134,27 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Cancel();
+        // Act - immutable pattern returns new instance
+        var cancelledReservation = reservation.Cancel();
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
-        reservation.CancellationReason.ShouldBeNull();
+        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelledReservation.CancellationReason.ShouldBeNull();
     }
 
     [Fact]
-    public void Cancel_WhenAlreadyCancelled_DoesNotThrow()
+    public void Cancel_WhenAlreadyCancelled_ReturnsIdempotently()
     {
         // Arrange
         var reservation = ReservationBuilder.Default().BuildCancelled("First cancellation");
 
-        // Act
-        var act = () => reservation.Cancel("Second cancellation");
+        // Act - idempotent, returns same instance
+        var result = reservation.Cancel("Second cancellation");
 
-        // Assert
-        Should.NotThrow(act);
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
-        reservation.CancellationReason.ShouldBe("First cancellation"); // Reason doesn't change
+        // Assert - same instance returned, reason unchanged
+        result.ShouldBeSameAs(reservation);
+        result.Status.ShouldBe(ReservationStatus.Cancelled);
+        result.CancellationReason.ShouldBe("First cancellation");
     }
 
     [Fact]
@@ -197,11 +197,11 @@ public class ReservationTests
             .StartingToday()
             .BuildConfirmed();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.MarkAsActive();
+        // Act - immutable pattern returns new instance
+        var activeReservation = reservation.MarkAsActive();
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Active);
+        activeReservation.Status.ShouldBe(ReservationStatus.Active);
     }
 
     [Fact]
@@ -262,13 +262,13 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildActive();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Complete();
+        // Act - immutable pattern returns new instance
+        var completedReservation = reservation.Complete();
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Completed);
-        reservation.CompletedAt.ShouldNotBeNull();
-        reservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
+        completedReservation.Status.ShouldBe(ReservationStatus.Completed);
+        completedReservation.CompletedAt.ShouldNotBeNull();
+        completedReservation.CompletedAt.Value.ShouldBeInRange(DateTime.UtcNow.AddSeconds(-1), DateTime.UtcNow.AddSeconds(1));
     }
 
     [Fact]
@@ -435,17 +435,17 @@ public class ReservationTests
         // Assert initial state
         reservation.Status.ShouldBe(ReservationStatus.Pending);
 
-        // Confirm - event-sourced aggregate mutates in place
-        reservation.Confirm();
-        reservation.Status.ShouldBe(ReservationStatus.Confirmed);
+        // Confirm - immutable pattern returns new instance
+        var confirmedReservation = reservation.Confirm();
+        confirmedReservation.Status.ShouldBe(ReservationStatus.Confirmed);
 
         // Activate
-        reservation.MarkAsActive();
-        reservation.Status.ShouldBe(ReservationStatus.Active);
+        var activeReservation = confirmedReservation.MarkAsActive();
+        activeReservation.Status.ShouldBe(ReservationStatus.Active);
 
         // Complete
-        reservation.Complete();
-        reservation.Status.ShouldBe(ReservationStatus.Completed);
+        var completedReservation = activeReservation.Complete();
+        completedReservation.Status.ShouldBe(ReservationStatus.Completed);
     }
 
     [Fact]
@@ -454,11 +454,11 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().Build();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Cancel("Customer request");
+        // Act - immutable pattern returns new instance
+        var cancelledReservation = reservation.Cancel("Customer request");
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
     }
 
     [Fact]
@@ -467,11 +467,11 @@ public class ReservationTests
         // Arrange
         var reservation = ReservationBuilder.Default().BuildConfirmed();
 
-        // Act - event-sourced aggregate mutates in place
-        reservation.Cancel("Emergency");
+        // Act - immutable pattern returns new instance
+        var cancelledReservation = reservation.Cancel("Emergency");
 
         // Assert
-        reservation.Status.ShouldBe(ReservationStatus.Cancelled);
+        cancelledReservation.Status.ShouldBe(ReservationStatus.Cancelled);
     }
 
     [Fact]
@@ -497,9 +497,9 @@ public class ReservationTests
         // Arrange & Act
         var reservation = ReservationBuilder.WeekendTrip().Build();
 
-        // Assert - using .Value to access nullable struct properties
-        reservation.Period!.Value.Days.ShouldBe(3);
-        reservation.TotalPrice!.Value.GrossAmount.ShouldBe(250.00m);
+        // Assert - direct property access (non-nullable value objects)
+        reservation.Period.Days.ShouldBe(3);
+        reservation.TotalPrice.GrossAmount.ShouldBe(250.00m);
     }
 
     [Fact]
@@ -508,9 +508,9 @@ public class ReservationTests
         // Arrange & Act
         var reservation = ReservationBuilder.WeekLongTrip().Build();
 
-        // Assert - using .Value to access nullable struct properties
-        reservation.Period!.Value.Days.ShouldBe(7);
-        reservation.TotalPrice!.Value.GrossAmount.ShouldBe(500.00m);
+        // Assert - direct property access (non-nullable value objects)
+        reservation.Period.Days.ShouldBe(7);
+        reservation.TotalPrice.GrossAmount.ShouldBe(500.00m);
     }
 
     #endregion

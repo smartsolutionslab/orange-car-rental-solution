@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
@@ -35,16 +36,14 @@ public readonly record struct CompanyName : IValueObject
     /// <exception cref="ArgumentException">If the company name is invalid.</exception>
     public static CompanyName Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Company name cannot be empty", nameof(value));
+        Ensure.That(value, nameof(value))
+            .IsNotNullOrWhiteSpace();
 
         var trimmed = value.Trim();
 
-        if (trimmed.Length < MinLength)
-            throw new ArgumentException($"Company name must be at least {MinLength} characters", nameof(value));
-
-        if (trimmed.Length > MaxLength)
-            throw new ArgumentException($"Company name cannot exceed {MaxLength} characters", nameof(value));
+        Ensure.That(trimmed, nameof(value))
+            .AndHasMinLength(MinLength)
+            .AndHasMaxLength(MaxLength);
 
         return new CompanyName(trimmed);
     }

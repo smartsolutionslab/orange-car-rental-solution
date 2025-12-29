@@ -11,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Application.Comma
 
 public class CreateReservationCommandHandlerTests
 {
-    private readonly Mock<IEventSourcedReservationRepository> repositoryMock = new();
+    private readonly Mock<IReservationRepository> repositoryMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
     private readonly CreateReservationCommandHandler handler;
 
@@ -55,7 +55,7 @@ public class CreateReservationCommandHandlerTests
         result.TotalPriceNet.ShouldBe(250.00m);
 
         repositoryMock.Verify(
-            x => x.SaveAsync(
+            x => x.AddAsync(
                 It.IsAny<Reservation>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
@@ -161,7 +161,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            x => x.SaveAsync(
+            x => x.AddAsync(
                 It.Is<Reservation>(r =>
                     r.VehicleIdentifier == command.VehicleIdentifier &&
                     r.CustomerIdentifier == command.CustomerIdentifier &&
@@ -227,7 +227,7 @@ public class CreateReservationCommandHandlerTests
 
         // Assert
         repositoryMock.Verify(
-            x => x.SaveAsync(
+            x => x.AddAsync(
                 It.Is<Reservation>(r =>
                     r.PickupLocationCode == pickupLocation &&
                     r.DropoffLocationCode == dropoffLocation),

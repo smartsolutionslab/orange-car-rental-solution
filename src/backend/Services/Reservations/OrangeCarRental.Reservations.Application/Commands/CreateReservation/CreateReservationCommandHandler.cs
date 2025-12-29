@@ -7,10 +7,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.Cr
 
 /// <summary>
 ///     Handler for CreateReservationCommand.
-///     Creates a new pending reservation via event sourcing and returns the reservation details.
+///     Creates a new pending reservation and persists it to the database.
 /// </summary>
 public sealed class CreateReservationCommandHandler(
-    IEventSourcedReservationRepository repository,
+    IReservationRepository repository,
     IPricingService pricingService)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
@@ -37,9 +37,8 @@ public sealed class CreateReservationCommandHandler(
             totalPrice = Money.Euro(priceCalculation.TotalPriceNet);
         }
 
-        // Create reservation aggregate and execute domain logic
-        var reservation = new Reservation();
-        reservation.Create(
+        // Create reservation using static factory method
+        var reservation = Reservation.Create(
             vehicleId,
             customerId,
             bookingPeriod,
@@ -47,15 +46,15 @@ public sealed class CreateReservationCommandHandler(
             dropoffLocationCode,
             totalPrice);
 
-        // Persist events to event store
-        await repository.SaveAsync(reservation, cancellationToken);
+        // Persist to database
+        await repository.AddAsync(reservation, cancellationToken);
 
         return new CreateReservationResult(
             reservation.Id.Value,
             reservation.Status.ToString(),
-            reservation.TotalPrice!.Value.NetAmount,
-            reservation.TotalPrice!.Value.VatAmount,
-            reservation.TotalPrice!.Value.GrossAmount
+            reservation.TotalPrice.NetAmount,
+            reservation.TotalPrice.VatAmount,
+            reservation.TotalPrice.GrossAmount
         );
     }
 }

@@ -5,11 +5,10 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.Regis
 
 /// <summary>
 ///     Handler for RegisterCustomerCommand.
-///     Validates email uniqueness, creates a new customer aggregate, and persists via event sourcing.
+///     Validates email uniqueness, creates a new customer aggregate, and persists to the database.
 /// </summary>
 public sealed class RegisterCustomerCommandHandler(
-    IEventSourcedCustomerRepository repository,
-    ICustomerRepository readModel)
+    ICustomerRepository repository)
     : ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>
 {
     /// <summary>
@@ -26,23 +25,22 @@ public sealed class RegisterCustomerCommandHandler(
     {
         var (customerName, email, phoneNumber, dateOfBirth, address, driversLicense) = command;
 
-        // Check email uniqueness using read model
-        var emailExists = await readModel.ExistsWithEmailAsync(email, cancellationToken);
+        // Check email uniqueness
+        var emailExists = await repository.ExistsWithEmailAsync(email, cancellationToken);
         if (emailExists)
         {
             throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
         }
 
-        // Create customer aggregate and execute domain logic
-        var customer = new Customer();
-        customer.Register(customerName, email, phoneNumber, dateOfBirth, address, driversLicense);
+        // Create customer using static factory method
+        var customer = Customer.Register(customerName, email, phoneNumber, dateOfBirth, address, driversLicense);
 
-        // Persist events to event store
-        await repository.SaveAsync(customer, cancellationToken);
+        // Persist to database
+        await repository.AddAsync(customer, cancellationToken);
 
         return new RegisterCustomerResult(
             customer.Id.Value,
-            customer.Email?.Value ?? email.Value,
+            customer.Email.Value,
             "Customer registered successfully",
             customer.RegisteredAtUtc);
     }

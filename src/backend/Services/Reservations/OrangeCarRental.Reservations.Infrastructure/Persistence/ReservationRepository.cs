@@ -29,6 +29,13 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
             .ToListAsync(cancellationToken);
     }
 
+    public IAsyncEnumerable<Reservation> StreamAllAsync(CancellationToken cancellationToken = default)
+    {
+        return Reservations
+            .AsNoTracking()
+            .AsAsyncEnumerable();
+    }
+
     public async Task<PagedResult<Reservation>> SearchAsync(
         ReservationSearchParameters parameters,
         CancellationToken cancellationToken = default)
@@ -43,20 +50,19 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
     /// <summary>
     ///     Sort field selectors for reservation queries.
-    ///     Note: .Value used to access nullable struct properties in EF Core queries.
     /// </summary>
     private static readonly Dictionary<string, Expression<Func<Reservation, object?>>> SortFieldSelectors = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["pickupdate"] = r => r.Period!.Value.PickupDate,
-        ["pickup_date"] = r => r.Period!.Value.PickupDate,
-        ["price"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
-        ["totalprice"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
-        ["total_price"] = r => r.TotalPrice!.Value.NetAmount + r.TotalPrice!.Value.VatAmount,
-        ["status"] = r => r.Status,
-        ["createddate"] = r => r.CreatedAt,
-        ["created_date"] = r => r.CreatedAt,
-        ["createdat"] = r => r.CreatedAt,
-        ["created_at"] = r => r.CreatedAt
+        [ReservationSortFields.PickupDate] = r => r.Period.PickupDate,
+        [ReservationSortFields.PickupDateAlt] = r => r.Period.PickupDate,
+        [ReservationSortFields.Price] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        [ReservationSortFields.TotalPrice] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        [ReservationSortFields.TotalPriceAlt] = r => r.TotalPrice.NetAmount + r.TotalPrice.VatAmount,
+        [ReservationSortFields.Status] = r => r.Status,
+        [ReservationSortFields.CreatedDate] = r => r.CreatedAt,
+        [ReservationSortFields.CreatedDateAlt] = r => r.CreatedAt,
+        [ReservationSortFields.CreatedAt] = r => r.CreatedAt,
+        [ReservationSortFields.CreatedAtAlt] = r => r.CreatedAt
     };
 
     public async Task AddAsync(
@@ -100,9 +106,9 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
                 (r.Status == ReservationStatus.Confirmed || r.Status == ReservationStatus.Active) &&
                 // Period overlap check: reservation period overlaps if:
                 // reservation pickup <= requested return AND reservation return >= requested pickup
-                r.Period!.Value.PickupDate <= period.ReturnDate &&
-                r.Period!.Value.ReturnDate >= period.PickupDate)
-            .Select(r => r.VehicleIdentifier!.Value.Value) // Extract Guid from nullable struct
+                r.Period.PickupDate <= period.ReturnDate &&
+                r.Period.ReturnDate >= period.PickupDate)
+            .Select(r => r.VehicleIdentifier.Value) // Extract Guid from value object
             .Distinct()
             .ToListAsync(cancellationToken);
 

@@ -201,10 +201,10 @@ public class InvoiceTests
 
         // Assert
         invoice.Seller.CompanyName.ShouldBe("Orange Car Rental GmbH");
-        invoice.Seller.Street.ShouldNotBeNullOrEmpty();
-        invoice.Seller.PostalCode.ShouldNotBeNullOrEmpty();
-        invoice.Seller.City.ShouldNotBeNullOrEmpty();
-        invoice.Seller.VatId.ShouldStartWith("DE");
+        invoice.Seller.Street.Value.ShouldNotBeNullOrEmpty();
+        invoice.Seller.PostalCode.Value.ShouldNotBeNullOrEmpty();
+        invoice.Seller.City.Value.ShouldNotBeNullOrEmpty();
+        invoice.Seller.VatId.Value.ShouldStartWith("DE");
         invoice.Seller.TaxNumber.ShouldNotBeNullOrEmpty();
         invoice.Seller.TradeRegisterNumber.ShouldNotBeNullOrEmpty();
         invoice.Seller.ManagingDirector.Value.ShouldNotBeNullOrEmpty();
