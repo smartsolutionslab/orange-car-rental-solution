@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '0 0 * * 0'  # Weekly on Sunday
 
+# Cancel in-progress runs for the same branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lighthouse:
     name: Run Lighthouse Performance Tests

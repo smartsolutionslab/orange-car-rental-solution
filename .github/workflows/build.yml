@@ -68,7 +68,9 @@ jobs:
     strategy:
       matrix:
         app: [shell, public-portal, call-center-portal]
-        environment: [development, production]
+        # PRs: Only production builds (faster feedback)
+        # Push: Both development and production
+        environment: ${{ github.event_name == 'pull_request' && fromJson('["production"]') || fromJson('["development", "production"]') }}
 
     steps:
       - name: Checkout code
@@ -147,7 +149,9 @@ jobs:
     # Run in parallel with lint (no dependency)
     strategy:
       matrix:
-        configuration: [Debug, Release]
+        # PRs: Only Release builds (faster feedback)
+        # Push: Both Debug and Release
+        configuration: ${{ github.event_name == 'pull_request' && fromJson('["Release"]') || fromJson('["Debug", "Release"]') }}
 
     steps:
       - name: Checkout code
