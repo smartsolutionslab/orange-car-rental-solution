@@ -40,18 +40,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run ESLint
         working-directory: src/frontend
@@ -76,18 +66,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Build application
         working-directory: src/frontend
@@ -118,22 +98,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
+      - name: Setup Backend
+        uses: ./.github/actions/setup-backend
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
       - name: Check code formatting
         working-directory: src/backend
         run: dotnet format --verify-no-changes --verbosity diagnostic --exclude-diagnostics IDE1006
@@ -157,22 +124,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
+      - name: Setup Backend
+        uses: ./.github/actions/setup-backend
 
-      - name: Cache NuGet packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        working-directory: src/backend
-        run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
       - name: Build
         working-directory: src/backend
         run: dotnet build --no-restore --configuration ${{ matrix.configuration }}

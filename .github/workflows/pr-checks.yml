@@ -23,18 +23,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run linter
         working-directory: src/frontend
@@ -57,18 +47,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run unit tests
         working-directory: src/frontend
@@ -93,18 +73,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Install Playwright
         working-directory: src/frontend/apps/public-portal
@@ -137,18 +107,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        working-directory: src/frontend
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Build production
         working-directory: src/frontend
@@ -159,7 +119,6 @@ jobs:
         run: |
           echo "Checking bundle size..."
           du -sh dist/
-          # Add bundle size checks here
 
   summary:
     name: PR Check Summary
