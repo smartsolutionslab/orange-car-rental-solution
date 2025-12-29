@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
@@ -27,6 +28,20 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
             .Where(x => x.Customer.CustomerId == customerId)
             .OrderByDescending(x => x.InvoiceDate)
             .ToListAsync(cancellationToken);
+    }
+
+    public async IAsyncEnumerable<Invoice> StreamByCustomerIdAsync(
+        CustomerId customerId,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var invoice in dbContext.Invoices
+            .Where(x => x.Customer.CustomerId == customerId)
+            .OrderByDescending(x => x.InvoiceDate)
+            .AsAsyncEnumerable()
+            .WithCancellation(cancellationToken))
+        {
+            yield return invoice;
+        }
     }
 
     public async Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default)

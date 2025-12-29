@@ -25,6 +25,14 @@ public interface IReservationRepository
     Task<IReadOnlyList<Reservation>> GetAllAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     Streams all reservations asynchronously without loading the entire collection into memory.
+    ///     Preferred over GetAllAsync for large datasets, batch processing, or streaming responses.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>An async enumerable stream of reservations.</returns>
+    IAsyncEnumerable<Reservation> StreamAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Searches reservations with filters, sorting, and pagination.
     /// </summary>
     /// <param name="parameters">Search parameters including filters, sorting, and pagination.</param>

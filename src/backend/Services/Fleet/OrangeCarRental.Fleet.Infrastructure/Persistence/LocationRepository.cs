@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
@@ -35,6 +36,31 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
             .AsNoTracking()
             .Where(l => l.Status == LocationStatus.Active)
             .ToListAsync(cancellationToken);
+    }
+
+    public async IAsyncEnumerable<Location> StreamAllAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var location in Locations
+            .AsNoTracking()
+            .AsAsyncEnumerable()
+            .WithCancellation(cancellationToken))
+        {
+            yield return location;
+        }
+    }
+
+    public async IAsyncEnumerable<Location> StreamAllActiveAsync(
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        await foreach (var location in Locations
+            .AsNoTracking()
+            .Where(l => l.Status == LocationStatus.Active)
+            .AsAsyncEnumerable()
+            .WithCancellation(cancellationToken))
+        {
+            yield return location;
+        }
     }
 
     public async Task<bool> ExistsAsync(LocationCode code, CancellationToken cancellationToken = default)
