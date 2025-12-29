@@ -1,5 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 
@@ -17,22 +18,22 @@ public sealed record SellerInfo : IValueObject
     /// <summary>
     ///     Street address (e.g., "Musterstraße 123").
     /// </summary>
-    public string Street { get; }
+    public Street Street { get; }
 
     /// <summary>
     ///     Postal code (e.g., "10115").
     /// </summary>
-    public string PostalCode { get; }
+    public PostalCode PostalCode { get; }
 
     /// <summary>
     ///     City (e.g., "Berlin").
     /// </summary>
-    public string City { get; }
+    public City City { get; }
 
     /// <summary>
     ///     Country (e.g., "Deutschland").
     /// </summary>
-    public string Country { get; }
+    public Country Country { get; }
 
     /// <summary>
     ///     Email address for invoices.
@@ -52,7 +53,7 @@ public sealed record SellerInfo : IValueObject
     /// <summary>
     ///     VAT ID (USt-IdNr., e.g., "DE123456789").
     /// </summary>
-    public string VatId { get; }
+    public VatId VatId { get; }
 
     /// <summary>
     ///     Tax number (Steuernummer, e.g., "27/123/45678").
@@ -66,14 +67,14 @@ public sealed record SellerInfo : IValueObject
 
     private SellerInfo(
         string companyName,
-        string street,
-        string postalCode,
-        string city,
-        string country,
+        Street street,
+        PostalCode postalCode,
+        City city,
+        Country country,
         string email,
         string phone,
         string tradeRegisterNumber,
-        string vatId,
+        VatId vatId,
         string taxNumber,
         PersonName managingDirector)
     {
@@ -107,26 +108,21 @@ public sealed record SellerInfo : IValueObject
         string managingDirector)
     {
         Ensure.That(companyName, nameof(companyName)).IsNotNullOrWhiteSpace();
-        Ensure.That(street, nameof(street)).IsNotNullOrWhiteSpace();
-        Ensure.That(postalCode, nameof(postalCode)).IsNotNullOrWhiteSpace();
-        Ensure.That(city, nameof(city)).IsNotNullOrWhiteSpace();
-        Ensure.That(country, nameof(country)).IsNotNullOrWhiteSpace();
         Ensure.That(email, nameof(email)).IsNotNullOrWhiteSpace();
         Ensure.That(phone, nameof(phone)).IsNotNullOrWhiteSpace();
         Ensure.That(tradeRegisterNumber, nameof(tradeRegisterNumber)).IsNotNullOrWhiteSpace();
-        Ensure.That(vatId, nameof(vatId)).IsNotNullOrWhiteSpace();
         Ensure.That(taxNumber, nameof(taxNumber)).IsNotNullOrWhiteSpace();
 
         return new SellerInfo(
             companyName.Trim(),
-            street.Trim(),
-            postalCode.Trim(),
-            city.Trim(),
-            country.Trim(),
+            Street.From(street),
+            PostalCode.From(postalCode),
+            City.From(city),
+            Country.From(country),
             email.Trim(),
             phone.Trim(),
             tradeRegisterNumber.Trim(),
-            vatId.Trim(),
+            VatId.From(vatId),
             taxNumber.Trim(),
             PersonName.Of(managingDirector));
     }
