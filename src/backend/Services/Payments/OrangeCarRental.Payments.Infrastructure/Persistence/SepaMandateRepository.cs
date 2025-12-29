@@ -1,4 +1,3 @@
-using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
@@ -62,35 +61,6 @@ public sealed class SepaMandateRepository(PaymentsDbContext context) : ISepaMand
             .Where(m => m.Status == MandateStatus.Active)
             .Where(m => (m.LastUsedAt ?? m.SignedAt) < cutoffDate)
             .ToListAsync(cancellationToken);
-    }
-
-    public async IAsyncEnumerable<SepaMandate> StreamExpiredMandatesAsync(
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        var cutoffDate = DateTime.UtcNow.AddMonths(-36);
-
-        await foreach (var mandate in context.SepaMandates
-            .Where(m => m.Status == MandateStatus.Active)
-            .Where(m => (m.LastUsedAt ?? m.SignedAt) < cutoffDate)
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
-        {
-            yield return mandate;
-        }
-    }
-
-    public async IAsyncEnumerable<SepaMandate> StreamByCustomerIdAsync(
-        CustomerId customerId,
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        await foreach (var mandate in context.SepaMandates
-            .Where(m => m.CustomerId == customerId)
-            .OrderByDescending(m => m.CreatedAt)
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
-        {
-            yield return mandate;
-        }
     }
 
     public async Task AddAsync(SepaMandate mandate, CancellationToken cancellationToken = default) =>

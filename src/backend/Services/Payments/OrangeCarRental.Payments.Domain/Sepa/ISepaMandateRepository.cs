@@ -29,21 +29,4 @@ public interface ISepaMandateRepository : IRepository<SepaMandate, SepaMandateId
     ///     Gets all expired mandates that need to be marked as expired.
     /// </summary>
     Task<IReadOnlyList<SepaMandate>> GetExpiredMandatesAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Streams all expired mandates asynchronously for batch processing.
-    ///     Preferred over GetExpiredMandatesAsync for processing large numbers of expired mandates.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>An async enumerable stream of expired mandates.</returns>
-    IAsyncEnumerable<SepaMandate> StreamExpiredMandatesAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Streams all mandates for a customer asynchronously.
-    ///     Preferred over GetByCustomerIdAsync for customers with large mandate histories.
-    /// </summary>
-    /// <param name="customerId">The customer ID.</param>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>An async enumerable stream of mandates.</returns>
-    IAsyncEnumerable<SepaMandate> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
 }

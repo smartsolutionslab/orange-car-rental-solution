@@ -39,20 +39,6 @@ public interface ILocationRepository
     Task<IReadOnlyList<Location>> GetAllActiveAsync(CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Streams all locations asynchronously without loading the entire collection into memory.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>An async enumerable stream of locations.</returns>
-    IAsyncEnumerable<Location> StreamAllAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
-    ///     Streams all active locations asynchronously.
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>An async enumerable stream of active locations.</returns>
-    IAsyncEnumerable<Location> StreamAllActiveAsync(CancellationToken cancellationToken = default);
-
-    /// <summary>
     ///     Checks if a location with the given code exists.
     /// </summary>
     /// <param name="code">The location code to check.</param>

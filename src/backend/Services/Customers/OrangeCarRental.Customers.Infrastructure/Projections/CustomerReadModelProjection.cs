@@ -12,8 +12,15 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Projections
 /// Projection that subscribes to Customer domain events and updates the EF Core read model.
 /// This keeps the existing database tables in sync with the event store.
 /// </summary>
-public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactory) : IEventHandler
+public sealed class CustomerReadModelProjection : IEventHandler
 {
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public CustomerReadModelProjection(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
     public string DiagnosticName => "CustomerReadModelProjection";
 
     public async ValueTask<EventHandlingStatus> HandleEvent(IMessageConsumeContext context)
@@ -33,7 +40,7 @@ public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactor
 
     private async Task<EventHandlingStatus> HandleAsync(CustomerRegistered @event, CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CustomersDbContext>();
 
         // Create a new customer aggregate and apply the event
@@ -49,7 +56,7 @@ public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactor
 
     private async Task<EventHandlingStatus> HandleAsync(CustomerProfileUpdated @event, CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CustomersDbContext>();
 
         var customer = await dbContext.Customers
@@ -67,7 +74,7 @@ public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactor
 
     private async Task<EventHandlingStatus> HandleAsync(CustomerStatusChanged @event, CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CustomersDbContext>();
 
         var customer = await dbContext.Customers
@@ -84,7 +91,7 @@ public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactor
 
     private async Task<EventHandlingStatus> HandleAsync(DriversLicenseUpdated @event, CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CustomersDbContext>();
 
         var customer = await dbContext.Customers
@@ -101,7 +108,7 @@ public sealed class CustomerReadModelProjection(IServiceScopeFactory scopeFactor
 
     private async Task<EventHandlingStatus> HandleAsync(CustomerEmailChanged @event, CancellationToken cancellationToken)
     {
-        await using var scope = scopeFactory.CreateAsyncScope();
+        await using var scope = _scopeFactory.CreateAsyncScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<CustomersDbContext>();
 
         var customer = await dbContext.Customers

@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
@@ -31,18 +30,6 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
         return await Vehicles
             .AsNoTracking()
             .ToListAsync(cancellationToken);
-    }
-
-    public async IAsyncEnumerable<Vehicle> StreamAllAsync(
-        [EnumeratorCancellation] CancellationToken cancellationToken = default)
-    {
-        await foreach (var vehicle in Vehicles
-            .AsNoTracking()
-            .AsAsyncEnumerable()
-            .WithCancellation(cancellationToken))
-        {
-            yield return vehicle;
-        }
     }
 
     public async Task<PagedResult<Vehicle>> SearchAsync(
