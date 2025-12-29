@@ -6,21 +6,18 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/unit-tests.yml'
+      - '.github/actions/**'
   pull_request:
     branches: [develop, main]
     paths:
       - 'src/**'
       - '.github/workflows/unit-tests.yml'
+      - '.github/actions/**'
 
 # Cancel in-progress runs for the same branch
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
-env:
-  DOTNET_NOLOGO: true
-  DOTNET_CLI_TELEMETRY_OPTOUT: true
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
 
 jobs:
   test-public-portal:
@@ -34,25 +31,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run unit tests
         run: yarn test:public
         env:
           CHROME_BIN: /usr/bin/google-chrome
-
-      - name: Generate coverage report
-        run: echo "Coverage skipped"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -79,25 +64,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '24'
-          cache: 'yarn'
-          cache-dependency-path: src/frontend/yarn.lock
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        env:
-          PUPPETEER_SKIP_DOWNLOAD: 'true'
+      - name: Setup Frontend
+        uses: ./.github/actions/setup-frontend
 
       - name: Run unit tests
         run: yarn test:call-center
         env:
           CHROME_BIN: /usr/bin/google-chrome
-
-      - name: Generate coverage report
-        run: echo "Coverage skipped"
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
@@ -124,21 +97,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore dependencies
-        run: dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
+      - name: Setup Backend
+        uses: ./.github/actions/setup-backend
 
       - name: Build
         run: dotnet build --no-restore --configuration Release
