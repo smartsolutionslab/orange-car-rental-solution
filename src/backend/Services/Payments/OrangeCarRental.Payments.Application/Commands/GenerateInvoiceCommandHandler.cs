@@ -1,9 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
-using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
-using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
@@ -22,12 +20,9 @@ public sealed class GenerateInvoiceCommandHandler(
     {
         try
         {
-            var reservationId = ReservationId.From(command.ReservationId);
-            var customerId = CustomerId.From(command.CustomerId);
-
             // Check if invoice already exists for this reservation
             var existingInvoice = await unitOfWork.Invoices
-                .GetByReservationIdAsync(reservationId, cancellationToken);
+                .GetByReservationIdAsync(command.ReservationId, cancellationToken);
 
             if (existingInvoice != null)
             {
@@ -50,29 +45,29 @@ public sealed class GenerateInvoiceCommandHandler(
                 position: 1,
                 vehicleDescription: command.VehicleDescription,
                 rentalDays: command.RentalDays,
-                dailyRateNet: command.DailyRateNet,
+                dailyRateNet: command.DailyRate.NetAmount,
                 pickupDate: command.PickupDate,
                 returnDate: command.ReturnDate);
 
             // Create customer invoice info
             var customerInfo = CustomerInvoiceInfo.Create(
-                customerId: customerId,
+                customerId: command.CustomerId,
                 name: command.CustomerName,
-                street: command.CustomerStreet,
-                postalCode: command.CustomerPostalCode,
-                city: command.CustomerCity,
-                country: command.CustomerCountry,
-                vatId: command.CustomerVatId);
+                street: command.CustomerStreet.Value,
+                postalCode: command.CustomerPostalCode.Value,
+                city: command.CustomerCity.Value,
+                country: command.CustomerCountry.Value,
+                vatId: command.CustomerVatId?.Value);
 
             // Create invoice
             var invoice = Invoice.Create(
                 invoiceNumber: invoiceNumber,
-                reservationId: reservationId,
+                reservationId: command.ReservationId,
                 customer: customerInfo,
                 lineItems: [lineItem],
                 serviceDate: command.ReturnDate,
                 paymentTermDays: 14,
-                paymentId: command.PaymentId.HasValue ? PaymentIdentifier.From(command.PaymentId.Value) : null);
+                paymentId: command.PaymentId);
 
             // Generate PDF
             var pdfBytes = invoiceGenerator.GeneratePdf(invoice);

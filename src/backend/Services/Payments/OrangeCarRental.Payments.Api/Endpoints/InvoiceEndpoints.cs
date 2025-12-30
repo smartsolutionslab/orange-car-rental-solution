@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Shared;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
@@ -8,6 +9,7 @@ using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
 
@@ -20,23 +22,51 @@ public static class InvoiceEndpoints
 
         // Generate invoice for a reservation
         invoices.MapPost("/generate", async Task<Results<Ok<GenerateInvoiceResult>, BadRequest<ProblemDetails>>> (
-                GenerateInvoiceCommand command,
+                GenerateInvoiceRequest request,
                 ICommandHandler<GenerateInvoiceCommand, GenerateInvoiceResult> handler,
                 CancellationToken cancellationToken) =>
             {
-                var result = await handler.HandleAsync(command, cancellationToken);
+                try
+                {
+                    var command = new GenerateInvoiceCommand(
+                        ReservationId.From(request.ReservationId),
+                        CustomerId.From(request.CustomerId),
+                        request.CustomerName,
+                        Street.From(request.CustomerStreet),
+                        PostalCode.From(request.CustomerPostalCode),
+                        City.From(request.CustomerCity),
+                        Country.From(request.CustomerCountry),
+                        VatId.FromNullable(request.CustomerVatId),
+                        request.VehicleDescription,
+                        request.RentalDays,
+                        Money.Euro(request.DailyRateNet),
+                        request.PickupDate,
+                        request.ReturnDate,
+                        request.PaymentId.HasValue ? PaymentIdentifier.From(request.PaymentId.Value) : null);
 
-                if (!result.Success)
+                    var result = await handler.HandleAsync(command, cancellationToken);
+
+                    if (!result.Success)
+                    {
+                        return TypedResults.BadRequest(new ProblemDetails
+                        {
+                            Title = "Invoice generation failed",
+                            Detail = result.ErrorMessage,
+                            Status = StatusCodes.Status400BadRequest
+                        });
+                    }
+
+                    return TypedResults.Ok(result);
+                }
+                catch (ArgumentException ex)
                 {
                     return TypedResults.BadRequest(new ProblemDetails
                     {
-                        Title = "Invoice generation failed",
-                        Detail = result.ErrorMessage,
+                        Title = "Invalid request",
+                        Detail = ex.Message,
                         Status = StatusCodes.Status400BadRequest
                     });
                 }
-
-                return TypedResults.Ok(result);
             })
             .WithName("GenerateInvoice")
             .WithSummary("Generate an invoice for a reservation")

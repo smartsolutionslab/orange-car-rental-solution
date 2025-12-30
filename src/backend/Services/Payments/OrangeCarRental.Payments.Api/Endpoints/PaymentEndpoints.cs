@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
 
@@ -13,12 +17,33 @@ public static class PaymentEndpoints
             .WithTags("Payments");
 
         payments.MapPost("/process", async Task<Results<Ok<ProcessPaymentResult>, BadRequest<ProblemDetails>>> (
-                ProcessPaymentCommand command,
+                ProcessPaymentRequest request,
                 ICommandHandler<ProcessPaymentCommand, ProcessPaymentResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Parse payment method
+                    if (!Enum.TryParse<PaymentMethod>(request.PaymentMethod, ignoreCase: true, out var paymentMethod))
+                    {
+                        return TypedResults.BadRequest(new ProblemDetails
+                        {
+                            Title = "Invalid payment method",
+                            Detail = $"'{request.PaymentMethod}' is not a valid payment method",
+                            Status = StatusCodes.Status400BadRequest
+                        });
+                    }
+
+                    // Create command with value objects
+                    var currency = Currency.From(request.Currency);
+                    var amount = Money.FromGross(request.Amount, 0.19m, currency);
+
+                    var command = new ProcessPaymentCommand(
+                        ReservationId.From(request.ReservationId),
+                        CustomerId.From(request.CustomerId),
+                        amount,
+                        paymentMethod);
+
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return TypedResults.Ok(result);
                 }
