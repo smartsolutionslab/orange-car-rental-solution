@@ -1,7 +1,7 @@
 using Moq;
 using Shouldly;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Tests.Builders;
 

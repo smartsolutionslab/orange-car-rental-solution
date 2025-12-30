@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;

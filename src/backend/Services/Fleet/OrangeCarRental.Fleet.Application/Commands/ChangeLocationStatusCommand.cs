@@ -1,0 +1,13 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
+
+namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands;
+
+/// <summary>
+///     Command to change location status.
+/// </summary>
+public sealed record ChangeLocationStatusCommand(
+    LocationCode Code,
+    LocationStatus NewStatus,
+    StatusChangeReason? Reason = null
+) : ICommand<ChangeLocationStatusResult>;

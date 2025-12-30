@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Http;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Services;

@@ -2,16 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLocationStatus;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
@@ -89,9 +82,6 @@ builder.Services.AddScoped<UpdateLocationCommandHandler>();
 builder.Services.AddScoped<ChangeLocationStatusCommandHandler>();
 
 var app = builder.Build();
-
-// Seed database with sample data (development only)
-await app.SeedFleetDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
