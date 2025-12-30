@@ -96,6 +96,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapPricingEndpoints();
+app.MapHealthEndpoints<PricingDbContext>("Pricing API");
 app.MapDefaultEndpoints();
 
 app.Run();

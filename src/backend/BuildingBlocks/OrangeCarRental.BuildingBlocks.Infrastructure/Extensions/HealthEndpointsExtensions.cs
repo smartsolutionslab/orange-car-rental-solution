@@ -1,10 +1,25 @@
-using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 
-namespace SmartSolutionsLab.OrangeCarRental.Customers.Api.Endpoints;
+namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 
-public static class HealthEndpoints
+/// <summary>
+/// Extension methods for mapping reusable health check endpoints.
+/// </summary>
+public static class HealthEndpointsExtensions
 {
-    public static IEndpointRouteBuilder MapHealthEndpoints(this IEndpointRouteBuilder app)
+    /// <summary>
+    /// Maps health check endpoints for an API with database connectivity checks.
+    /// </summary>
+    /// <typeparam name="TDbContext">The DbContext type for database connectivity checks</typeparam>
+    /// <param name="app">The endpoint route builder</param>
+    /// <param name="serviceName">The name of the service (e.g., "Customers API")</param>
+    /// <returns>The endpoint route builder for chaining</returns>
+    public static IEndpointRouteBuilder MapHealthEndpoints<TDbContext>(
+        this IEndpointRouteBuilder app,
+        string serviceName) where TDbContext : DbContext
     {
         var health = app.MapGroup("/health")
             .WithTags("Health");
@@ -14,15 +29,15 @@ public static class HealthEndpoints
                 () => Results.Ok(new
                 {
                     status = "healthy",
-                    service = "Customers API",
+                    service = serviceName,
                     timestamp = DateTime.UtcNow
                 }))
             .WithName("HealthCheck")
             .WithSummary("Health check")
-            .WithDescription("Returns the health status of the Customers API.");
+            .WithDescription($"Returns the health status of the {serviceName}.");
 
         // GET /health/ready - Readiness check (includes database connectivity)
-        health.MapGet("/ready", async (CustomersDbContext dbContext, CancellationToken cancellationToken) =>
+        health.MapGet("/ready", async (TDbContext dbContext, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -30,7 +45,7 @@ public static class HealthEndpoints
                     return Results.Ok(new
                     {
                         status = "ready",
-                        service = "Customers API",
+                        service = serviceName,
                         database = "connected",
                         timestamp = DateTime.UtcNow
                     });
@@ -41,7 +56,7 @@ public static class HealthEndpoints
                         new
                         {
                             status = "not ready",
-                            service = "Customers API",
+                            service = serviceName,
                             database = "disconnected",
                             error = ex.Message,
                             timestamp = DateTime.UtcNow

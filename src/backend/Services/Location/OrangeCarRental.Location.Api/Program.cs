@@ -93,6 +93,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapLocationEndpoints();
+app.MapHealthEndpoints<LocationsDbContext>("Location API");
 app.MapDefaultEndpoints();
 
 app.Run();

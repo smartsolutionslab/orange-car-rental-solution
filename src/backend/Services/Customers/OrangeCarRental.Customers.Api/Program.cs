@@ -108,6 +108,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapCustomerEndpoints();
+app.MapHealthEndpoints<CustomersDbContext>("Customers API");
 app.MapDefaultEndpoints();
 
 app.Run();

@@ -119,6 +119,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapFleetEndpoints();
+app.MapHealthEndpoints<FleetDbContext>("Fleet API");
 app.MapDefaultEndpoints();
 
 app.Run();

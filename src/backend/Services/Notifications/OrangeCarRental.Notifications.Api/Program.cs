@@ -96,6 +96,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapNotificationsEndpoints();
+app.MapHealthEndpoints<NotificationsDbContext>("Notifications API");
 app.MapDefaultEndpoints();
 
 app.Run();

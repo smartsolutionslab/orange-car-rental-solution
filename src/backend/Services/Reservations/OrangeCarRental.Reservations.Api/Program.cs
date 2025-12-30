@@ -122,6 +122,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapReservationEndpoints();
+app.MapHealthEndpoints<ReservationsDbContext>("Reservations API");
 app.MapDefaultEndpoints();
 
 app.Run();

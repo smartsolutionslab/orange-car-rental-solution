@@ -108,6 +108,7 @@ app.UseAuthorization();
 // Map API endpoints
 app.MapPaymentEndpoints();
 app.MapInvoiceEndpoints();
+app.MapHealthEndpoints<PaymentsDbContext>("Payments API");
 app.MapDefaultEndpoints();
 
 app.Run();
