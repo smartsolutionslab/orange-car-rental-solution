@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
@@ -68,9 +69,9 @@ builder.Services.AddScoped<IInvoiceGenerator, InvoiceGenerator>();
 builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
 
 // Register command handlers
-builder.Services.AddScoped<ProcessPaymentCommandHandler>();
-builder.Services.AddScoped<RefundPaymentCommandHandler>();
-builder.Services.AddScoped<GenerateInvoiceCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ProcessPaymentCommand, ProcessPaymentResult>, ProcessPaymentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<RefundPaymentCommand, RefundPaymentResult>, RefundPaymentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<GenerateInvoiceCommand, GenerateInvoiceResult>, GenerateInvoiceCommandHandler>();
 
 var app = builder.Build();
 

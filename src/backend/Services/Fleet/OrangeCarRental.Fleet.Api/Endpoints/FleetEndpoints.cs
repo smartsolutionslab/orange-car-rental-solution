@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Requests;
@@ -19,7 +20,7 @@ public static class FleetEndpoints
             .WithTags("Fleet - Vehicles");
 
         // GET /api/vehicles - Search vehicles
-        fleet.MapGet("/", async ([AsParameters] SearchVehiclesQuery query, SearchVehiclesQueryHandler handler, CancellationToken cancellationToken) =>
+        fleet.MapGet("/", async ([AsParameters] SearchVehiclesQuery query, IQueryHandler<SearchVehiclesQuery, PagedResult<VehicleDto>> handler, CancellationToken cancellationToken) =>
             {
                 var result = await handler.HandleAsync(query, cancellationToken);
                 return Results.Ok(result);
@@ -32,7 +33,7 @@ public static class FleetEndpoints
             .AllowAnonymous();
 
         // POST /api/vehicles - Add new vehicle to fleet
-        fleet.MapPost("/", async (AddVehicleToFleetRequest request, AddVehicleToFleetCommandHandler handler, CancellationToken cancellationToken) =>
+        fleet.MapPost("/", async (AddVehicleToFleetRequest request, ICommandHandler<AddVehicleToFleetCommand, AddVehicleToFleetResult> handler, CancellationToken cancellationToken) =>
             {
                 var (basicInfo, specifications, locationAndPricing, registration) = request;
 
@@ -77,7 +78,7 @@ public static class FleetEndpoints
             .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/status - Update vehicle status
-        fleet.MapPut("/{id:guid}/status", async (Guid id, string status, UpdateVehicleStatusCommandHandler handler, CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/status", async (Guid id, string status, ICommandHandler<UpdateVehicleStatusCommand, UpdateVehicleStatusResult> handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -109,7 +110,7 @@ public static class FleetEndpoints
             .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/location - Update vehicle location
-        fleet.MapPut("/{id:guid}/location", async (Guid id, string locationCode, UpdateVehicleLocationCommandHandler handler, CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/location", async (Guid id, string locationCode, ICommandHandler<UpdateVehicleLocationCommand, UpdateVehicleLocationResult> handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -145,7 +146,7 @@ public static class FleetEndpoints
             .RequireAuthorization("FleetManagerOrAdminPolicy");
 
         // PUT /api/vehicles/{id}/daily-rate - Update vehicle daily rate
-        fleet.MapPut("/{id:guid}/daily-rate", async (Guid id, decimal dailyRateNet, UpdateVehicleDailyRateCommandHandler handler, CancellationToken cancellationToken) =>
+        fleet.MapPut("/{id:guid}/daily-rate", async (Guid id, decimal dailyRateNet, ICommandHandler<UpdateVehicleDailyRateCommand, UpdateVehicleDailyRateResult> handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -188,7 +189,7 @@ public static class FleetEndpoints
 
         // GET /api/locations - Get all locations
         locations.MapGet("/", async (
-                GetLocationsQueryHandler handler,
+                IQueryHandler<GetLocationsQuery, IReadOnlyList<LocationDto>> handler,
                 CancellationToken cancellationToken) =>
             {
                 var result = await handler.HandleAsync(new GetLocationsQuery(), cancellationToken);
@@ -201,7 +202,7 @@ public static class FleetEndpoints
             .AllowAnonymous();
 
         // GET /api/locations/{code} - Get location by code
-        locations.MapGet("/{code}", async (string code, GetLocationByCodeQueryHandler handler, CancellationToken cancellationToken) =>
+        locations.MapGet("/{code}", async (string code, IQueryHandler<GetLocationByCodeQuery, LocationDto> handler, CancellationToken cancellationToken) =>
             {
                 try
                 {
@@ -236,7 +237,7 @@ public static class FleetEndpoints
                 string street,
                 string city,
                 string postalCode,
-                AddLocationCommandHandler handler,
+                ICommandHandler<AddLocationCommand, AddLocationResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -277,7 +278,7 @@ public static class FleetEndpoints
                 string street,
                 string city,
                 string postalCode,
-                UpdateLocationCommandHandler handler,
+                ICommandHandler<UpdateLocationCommand, UpdateLocationResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -316,7 +317,7 @@ public static class FleetEndpoints
                 string code,
                 string status,
                 string? reason,
-                ChangeLocationStatusCommandHandler handler,
+                ICommandHandler<ChangeLocationStatusCommand, ChangeLocationStatusResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try

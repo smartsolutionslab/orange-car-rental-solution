@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
@@ -14,7 +15,7 @@ public static class PricingEndpoints
         // POST /api/pricing/calculate - Calculate rental price
         pricing.MapPost("/calculate", async (
                 CalculatePriceRequest request,
-                CalculatePriceQueryHandler handler,
+                IQueryHandler<CalculatePriceQuery, PriceCalculationResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try

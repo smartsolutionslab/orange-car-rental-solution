@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
@@ -58,8 +59,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<ISmsService, SmsService>();
 
 // Register command handlers
-builder.Services.AddScoped<SendEmailCommandHandler>();
-builder.Services.AddScoped<SendSmsCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SendEmailCommand, SendEmailResult>, SendEmailCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<SendSmsCommand, SendSmsResult>, SendSmsCommandHandler>();
 
 var app = builder.Build();
 

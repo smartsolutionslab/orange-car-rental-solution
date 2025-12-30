@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
 /// <summary>
@@ -17,4 +19,4 @@ public sealed record GenerateInvoiceCommand(
     decimal DailyRateNet,
     DateOnly PickupDate,
     DateOnly ReturnDate,
-    Guid? PaymentId = null);
+    Guid? PaymentId = null) : ICommand<GenerateInvoiceResult>;

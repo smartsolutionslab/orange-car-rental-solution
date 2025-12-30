@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
@@ -13,7 +14,7 @@ public static class PaymentEndpoints
 
         payments.MapPost("/process", async Task<Results<Ok<ProcessPaymentResult>, BadRequest<ProblemDetails>>> (
                 ProcessPaymentCommand command,
-                ProcessPaymentCommandHandler handler,
+                ICommandHandler<ProcessPaymentCommand, ProcessPaymentResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -46,7 +47,7 @@ public static class PaymentEndpoints
 
         payments.MapPost("/{paymentId:guid}/refund", async Task<Results<Ok<RefundPaymentResult>, BadRequest<ProblemDetails>, NotFound>> (
                 Guid paymentId,
-                RefundPaymentCommandHandler handler,
+                ICommandHandler<RefundPaymentCommand, RefundPaymentResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try

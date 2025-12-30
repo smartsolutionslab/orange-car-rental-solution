@@ -1,9 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
@@ -72,15 +75,17 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 // Register data seeder
 builder.Services.AddScoped<ReservationsDataSeeder>();
 
-// Register application handlers
-builder.Services.AddScoped<CreateReservationCommandHandler>();
-builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
-builder.Services.AddScoped<GetReservationQueryHandler>();
-builder.Services.AddScoped<LookupGuestReservationQueryHandler>();
-builder.Services.AddScoped<SearchReservationsQueryHandler>();
-builder.Services.AddScoped<GetVehicleAvailabilityQueryHandler>();
-builder.Services.AddScoped<ConfirmReservationCommandHandler>();
-builder.Services.AddScoped<CancelReservationCommandHandler>();
+// Register command handlers
+builder.Services.AddScoped<ICommandHandler<CreateReservationCommand, CreateReservationResult>, CreateReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>, CreateGuestReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult>, ConfirmReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CancelReservationCommand, CancelReservationResult>, CancelReservationCommandHandler>();
+
+// Register query handlers
+builder.Services.AddScoped<IQueryHandler<GetReservationQuery, ReservationDto>, GetReservationQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<LookupGuestReservationQuery, ReservationDto>, LookupGuestReservationQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<SearchReservationsQuery, PagedResult<ReservationDto>>, SearchReservationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetVehicleAvailabilityQuery, GetVehicleAvailabilityResult>, GetVehicleAvailabilityQueryHandler>();
 
 var app = builder.Build();
 

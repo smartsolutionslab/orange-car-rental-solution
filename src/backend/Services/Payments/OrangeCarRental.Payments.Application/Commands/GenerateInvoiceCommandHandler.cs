@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
@@ -13,6 +14,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 public sealed class GenerateInvoiceCommandHandler(
     IPaymentsUnitOfWork unitOfWork,
     IInvoiceGenerator invoiceGenerator)
+    : ICommandHandler<GenerateInvoiceCommand, GenerateInvoiceResult>
 {
     public async Task<GenerateInvoiceResult> HandleAsync(
         GenerateInvoiceCommand command,

@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Api.Endpoints;
@@ -12,7 +13,7 @@ public static class NotificationsEndpoints
         // POST /api/notifications/email - Send email notification
         notifications.MapPost("/email", async (
             SendEmailCommand command,
-            SendEmailCommandHandler handler,
+            ICommandHandler<SendEmailCommand, SendEmailResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try
@@ -43,7 +44,7 @@ public static class NotificationsEndpoints
         // POST /api/notifications/sms - Send SMS notification
         notifications.MapPost("/sms", async (
             SendSmsCommand command,
-            SendSmsCommandHandler handler,
+            ICommandHandler<SendSmsCommand, SendSmsResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try

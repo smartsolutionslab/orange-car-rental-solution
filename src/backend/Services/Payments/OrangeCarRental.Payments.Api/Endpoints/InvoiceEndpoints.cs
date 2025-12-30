@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Payments.Api.Shared;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
@@ -20,7 +21,7 @@ public static class InvoiceEndpoints
         // Generate invoice for a reservation
         invoices.MapPost("/generate", async Task<Results<Ok<GenerateInvoiceResult>, BadRequest<ProblemDetails>>> (
                 GenerateInvoiceCommand command,
-                GenerateInvoiceCommandHandler handler,
+                ICommandHandler<GenerateInvoiceCommand, GenerateInvoiceResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 var result = await handler.HandleAsync(command, cancellationToken);

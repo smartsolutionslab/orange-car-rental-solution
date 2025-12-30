@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries;
 
@@ -12,7 +13,7 @@ public static class LocationEndpoints
 
         // GET /api/locations - Get all active locations
         locations.MapGet("/", async (
-            GetAllLocationsQueryHandler handler,
+            IQueryHandler<GetAllLocationsQuery, GetAllLocationsResult> handler,
             CancellationToken cancellationToken) =>
             {
                 var query = new GetAllLocationsQuery();
@@ -27,7 +28,7 @@ public static class LocationEndpoints
         // POST /api/locations - Create new location
         locations.MapPost("/", async (
             CreateLocationCommand command,
-            CreateLocationCommandHandler handler,
+            ICommandHandler<CreateLocationCommand, CreateLocationResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try

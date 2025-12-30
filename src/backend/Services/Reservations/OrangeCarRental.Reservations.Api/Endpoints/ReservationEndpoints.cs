@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -19,7 +22,7 @@ public static class ReservationEndpoints
             .WithTags("Reservations");
 
         // POST /api/reservations - Create a new reservation
-        reservations.MapPost("/", async (CreateReservationRequest request, CreateReservationCommandHandler handler) =>
+        reservations.MapPost("/", async (CreateReservationRequest request, ICommandHandler<CreateReservationCommand, CreateReservationResult> handler) =>
             {
                 var (vehicleId, customerId, category, pickupDate, returnDate, pickupLocation, dropoffLocation, totalPriceNet) = request;
 
@@ -63,7 +66,7 @@ public static class ReservationEndpoints
             .RequireAuthorization("CustomerOrCallCenterOrAdminPolicy");
 
         // POST /api/reservations/guest - Create a guest reservation (with inline customer registration)
-        reservations.MapPost("/guest", async (CreateGuestReservationRequest request, CreateGuestReservationCommandHandler handler) =>
+        reservations.MapPost("/guest", async (CreateGuestReservationRequest request, ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult> handler) =>
             {
                 var (reservation, customer, address, driversLicense) = request;
                 var (vehicleId, category, pickupDate, returnDate, pickupLocation, dropoffLocation) = reservation;
@@ -126,7 +129,7 @@ public static class ReservationEndpoints
             .AllowAnonymous();
 
         // GET /api/reservations/{id} - Get reservation by ID
-        reservations.MapGet("/{id:guid}", async (Guid id, GetReservationQueryHandler handler) =>
+        reservations.MapGet("/{id:guid}", async (Guid id, IQueryHandler<GetReservationQuery, ReservationDto> handler) =>
             {
                 try
                 {
@@ -155,7 +158,7 @@ public static class ReservationEndpoints
         reservations.MapGet("/lookup", async (
                 string reservationId,
                 string email,
-                LookupGuestReservationQueryHandler handler) =>
+                IQueryHandler<LookupGuestReservationQuery, ReservationDto> handler) =>
             {
                 try
                 {
@@ -192,7 +195,7 @@ public static class ReservationEndpoints
 
         // GET /api/reservations/search - Search reservations with filters
         reservations.MapGet("/search", async (
-                SearchReservationsQueryHandler handler,
+                IQueryHandler<SearchReservationsQuery, PagedResult<ReservationDto>> handler,
                 string? status = null,
                 Guid? customerId = null,
                 string? customerName = null,
@@ -262,7 +265,7 @@ public static class ReservationEndpoints
             .RequireAuthorization("CallCenterOrAdminPolicy");
 
         // PUT /api/reservations/{id}/confirm - Confirm a pending reservation
-        reservations.MapPut("/{id:guid}/confirm", async (Guid id, ConfirmReservationCommandHandler handler) =>
+        reservations.MapPut("/{id:guid}/confirm", async (Guid id, ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult> handler) =>
             {
                 try
                 {
@@ -298,7 +301,7 @@ public static class ReservationEndpoints
         reservations.MapPut("/{id:guid}/cancel", async (
                 Guid id,
                 CancelReservationCommand command,
-                CancelReservationCommandHandler handler) =>
+                ICommandHandler<CancelReservationCommand, CancelReservationResult> handler) =>
             {
                 try
                 {
@@ -348,7 +351,7 @@ public static class ReservationEndpoints
         reservations.MapGet("/availability", async (
                 DateOnly pickupDate,
                 DateOnly returnDate,
-                [FromServices] GetVehicleAvailabilityQueryHandler handler,
+                [FromServices] IQueryHandler<GetVehicleAvailabilityQuery, GetVehicleAvailabilityResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 var query = new GetVehicleAvailabilityQuery(pickupDate, returnDate);

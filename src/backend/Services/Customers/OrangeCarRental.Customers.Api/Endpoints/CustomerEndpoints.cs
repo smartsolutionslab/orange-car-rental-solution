@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
@@ -18,7 +19,7 @@ public static class CustomerEndpoints
         // POST /api/customers - Register new customer
         customers.MapPost("/", async (
                 RegisterCustomerRequest request,
-                RegisterCustomerCommandHandler handler,
+                ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 var (customer, address, driversLicense) = request;
@@ -74,7 +75,7 @@ public static class CustomerEndpoints
         // GET /api/customers/{id} - Get customer by ID
         customers.MapGet("/{id:guid}", async (
                 Guid id,
-                GetCustomerQueryHandler handler,
+                IQueryHandler<GetCustomerQuery, CustomerDto> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -112,7 +113,7 @@ public static class CustomerEndpoints
         // GET /api/customers/by-email/{email} - Get customer by email
         customers.MapGet("/by-email/{email}", async (
                 string email,
-                GetCustomerByEmailQueryHandler handler,
+                IQueryHandler<GetCustomerByEmailQuery, CustomerDto> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -150,7 +151,7 @@ public static class CustomerEndpoints
         // GET /api/customers/search - Search customers with filtering and pagination
         customers.MapGet("/search", async (
                 [AsParameters] SearchCustomersQuery query,
-                SearchCustomersQueryHandler handler,
+                IQueryHandler<SearchCustomersQuery, PagedResult<CustomerDto>> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
@@ -183,7 +184,7 @@ public static class CustomerEndpoints
         customers.MapPut("/{id:guid}/profile", async (
                 Guid id,
                 UpdateCustomerProfileRequest request,
-                UpdateCustomerProfileCommandHandler handler,
+                ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 var (profile, address) = request;
@@ -235,7 +236,7 @@ public static class CustomerEndpoints
         customers.MapPut("/{id:guid}/license", async (
                 Guid id,
                 UpdateDriversLicenseRequest request,
-                UpdateDriversLicenseCommandHandler handler,
+                ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 var (licenseNumber, issueCountry, issueDate, expiryDate) = request;
@@ -280,7 +281,7 @@ public static class CustomerEndpoints
         customers.MapPut("/{id:guid}/status", async (
                 Guid id,
                 ChangeCustomerStatusCommand command,
-                ChangeCustomerStatusCommandHandler handler,
+                ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try

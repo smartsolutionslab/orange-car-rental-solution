@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries;
@@ -52,8 +53,8 @@ builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOpt
 // Register repositories
 builder.Services.AddScoped<IPricingPolicyRepository, PricingPolicyRepository>();
 
-// Register application services
-builder.Services.AddScoped<CalculatePriceQueryHandler>();
+// Register query handlers
+builder.Services.AddScoped<IQueryHandler<CalculatePriceQuery, PriceCalculationResult>, CalculatePriceQueryHandler>();
 
 // Register data seeder
 builder.Services.AddScoped<PricingDataSeeder>();
