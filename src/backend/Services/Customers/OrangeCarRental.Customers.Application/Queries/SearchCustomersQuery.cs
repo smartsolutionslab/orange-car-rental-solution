@@ -1,27 +1,25 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries;
 
 /// <summary>
 ///     Query to search customers with filtering, sorting, and pagination.
-///     Wraps CustomerSearchParameters from the domain layer.
+///     Uses value objects for type-safe filtering.
 /// </summary>
 public sealed record SearchCustomersQuery(
-    string? SearchTerm,
-    string? Email,
-    string? PhoneNumber,
-    string? Status,
-    string? City,
-    string? PostalCode,
-    int? MinAge,
-    int? MaxAge,
-    int? LicenseExpiringWithinDays,
-    DateOnly? RegisteredFrom,
-    DateOnly? RegisteredTo,
-    string? SortBy,
-    bool SortDescending,
-    int? PageNumber,
-    int? PageSize
+    SearchTerm? SearchTerm,
+    Email? Email,
+    PhoneNumber? PhoneNumber,
+    CustomerStatus? Status,
+    City? City,
+    PostalCode? PostalCode,
+    IntRange? AgeRange,
+    IntRange? LicenseExpiringDays,
+    DateRange? RegisteredDateRange,
+    PagingInfo Paging,
+    SortingInfo Sorting
 ) : IQuery<PagedResult<CustomerDto>>;

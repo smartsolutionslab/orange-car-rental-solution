@@ -79,25 +79,22 @@ public static class MappingExtensions
     {
         /// <summary>
         ///     Maps a SearchCustomersQuery to CustomerSearchParameters.
-        ///     Handles parsing of primitive types to value objects.
+        ///     Direct mapping since query already uses value objects.
         /// </summary>
         public CustomerSearchParameters ToSearchParameters()
         {
             return new CustomerSearchParameters(
-                SearchTerm.FromNullable(query.SearchTerm),
-                Email.FromNullable(query.Email),
-                PhoneNumber.FromNullable(query.PhoneNumber),
-                query.Status.TryParseCustomerStatus(),
-                City.FromNullable(query.City),
-                PostalCode.FromNullable(query.PostalCode),
-                IntRange.FromNullable(query.MinAge, query.MaxAge),
-                query.LicenseExpiringWithinDays.HasValue
-                    ? IntRange.UpTo(query.LicenseExpiringWithinDays.Value)
-                    : null,
-                DateRange.Create(query.RegisteredFrom, query.RegisteredTo),
-                PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
-                SortingInfo.Create(query.SortBy, query.SortDescending)
-            );
+                query.SearchTerm,
+                query.Email,
+                query.PhoneNumber,
+                query.Status,
+                query.City,
+                query.PostalCode,
+                query.AgeRange,
+                query.LicenseExpiringDays,
+                query.RegisteredDateRange,
+                query.Paging,
+                query.Sorting);
         }
     }
 }

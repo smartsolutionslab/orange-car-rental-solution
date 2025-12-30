@@ -1,6 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
@@ -150,12 +151,28 @@ public static class CustomerEndpoints
 
         // GET /api/customers/search - Search customers with filtering and pagination
         customers.MapGet("/search", async (
-                [AsParameters] SearchCustomersQuery query,
+                [AsParameters] SearchCustomersRequest request,
                 IQueryHandler<SearchCustomersQuery, PagedResult<CustomerDto>> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Map request DTO to query with value objects
+                    var query = new SearchCustomersQuery(
+                        SearchTerm.FromNullable(request.SearchTerm),
+                        Email.FromNullable(request.Email),
+                        PhoneNumber.FromNullable(request.PhoneNumber),
+                        request.Status.TryParseCustomerStatus(),
+                        City.FromNullable(request.City),
+                        PostalCode.FromNullable(request.PostalCode),
+                        IntRange.FromNullable(request.MinAge, request.MaxAge),
+                        request.LicenseExpiringWithinDays.HasValue
+                            ? IntRange.UpTo(request.LicenseExpiringWithinDays.Value)
+                            : null,
+                        DateRange.Create(request.RegisteredFrom, request.RegisteredTo),
+                        PagingInfo.Create(request.PageNumber ?? 1, request.PageSize ?? PagingInfo.DefaultPageSize),
+                        SortingInfo.Create(request.SortBy, request.SortDescending));
+
                     var result = await handler.HandleAsync(query, cancellationToken);
                     return Results.Ok(result);
                 }
