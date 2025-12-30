@@ -1,5 +1,7 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Api.Endpoints;
 
@@ -12,12 +14,18 @@ public static class NotificationsEndpoints
 
         // POST /api/notifications/email - Send email notification
         notifications.MapPost("/email", async (
-            SendEmailCommand command,
+            SendEmailRequest request,
             ICommandHandler<SendEmailCommand, SendEmailResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Map request to command with value objects
+                    var command = new SendEmailCommand(
+                        RecipientEmail.From(request.RecipientEmail),
+                        NotificationSubject.From(request.Subject),
+                        NotificationContent.From(request.Body));
+
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
@@ -43,12 +51,17 @@ public static class NotificationsEndpoints
 
         // POST /api/notifications/sms - Send SMS notification
         notifications.MapPost("/sms", async (
-            SendSmsCommand command,
+            SendSmsRequest request,
             ICommandHandler<SendSmsCommand, SendSmsResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Map request to command with value objects
+                    var command = new SendSmsCommand(
+                        RecipientPhone.From(request.RecipientPhone),
+                        NotificationContent.From(request.Message));
+
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }

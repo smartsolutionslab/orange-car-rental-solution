@@ -27,9 +27,9 @@ public sealed class LookupGuestReservationQueryHandler(
 
         var customerEmail = await customersService.GetCustomerEmailAsync(customerId, cancellationToken);
 
-        // Verify the email matches (case-insensitive)
+        // Verify the email matches (Email value object normalizes to lowercase)
         if (customerEmail is null ||
-            !string.Equals(customerEmail, query.Email, StringComparison.OrdinalIgnoreCase))
+            !string.Equals(customerEmail, query.Email.Value, StringComparison.OrdinalIgnoreCase))
         {
             throw new EntityNotFoundException(
                 typeof(Reservation),

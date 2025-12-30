@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -10,5 +11,5 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries;
 /// </summary>
 public sealed record LookupGuestReservationQuery(
     ReservationIdentifier ReservationId,
-    string Email
+    Email Email
 ) : IQuery<ReservationDto>;

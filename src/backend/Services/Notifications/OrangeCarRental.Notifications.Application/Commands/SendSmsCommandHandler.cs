@@ -24,12 +24,10 @@ public sealed class SendSmsCommandHandler(
         SendSmsCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Create value objects
-        var recipientPhone = RecipientPhone.From(command.RecipientPhone);
-        var content = NotificationContent.From(command.Message);
-
-        // Create notification aggregate
-        var notification = Notification.CreateSms(recipientPhone, content);
+        // Create notification aggregate using value objects from command
+        var notification = Notification.CreateSms(
+            command.RecipientPhone,
+            command.Message);
 
         // Persist to repository
         var notifications = unitOfWork.Notifications;
@@ -39,8 +37,8 @@ public sealed class SendSmsCommandHandler(
         {
             // Send SMS via SMS service
             var providerMessageId = await smsService.SendSmsAsync(
-                command.RecipientPhone,
-                command.Message,
+                command.RecipientPhone.Value,
+                command.Message.Value,
                 cancellationToken);
 
             // Mark as sent

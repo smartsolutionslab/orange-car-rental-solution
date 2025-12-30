@@ -169,13 +169,17 @@ public static class ReservationEndpoints
 
                     var query = new LookupGuestReservationQuery(
                         ReservationIdentifier.From(id),
-                        email);
+                        Email.From(email));
                     var result = await handler.HandleAsync(query);
                     return Results.Ok(result);
                 }
                 catch (EntityNotFoundException)
                 {
                     return Results.NotFound(new { message = "Reservation not found or email does not match." });
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
                 }
             })
             .WithName("LookupGuestReservation")

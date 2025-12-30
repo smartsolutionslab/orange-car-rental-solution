@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
 
@@ -9,6 +10,6 @@ namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
 /// <param name="Subject">Email subject.</param>
 /// <param name="Body">Email body content (can be HTML).</param>
 public sealed record SendEmailCommand(
-    string RecipientEmail,
-    string Subject,
-    string Body) : ICommand<SendEmailResult>;
+    RecipientEmail RecipientEmail,
+    NotificationSubject Subject,
+    NotificationContent Body) : ICommand<SendEmailResult>;

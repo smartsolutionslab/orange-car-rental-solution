@@ -49,22 +49,21 @@ public static class MappingExtensions
     {
         /// <summary>
         ///     Maps a SearchVehiclesQuery to VehicleSearchParameters.
+        ///     Direct mapping since query already uses value objects.
         /// </summary>
         public VehicleSearchParameters ToVehicleSearchParameters()
         {
             return new VehicleSearchParameters(
-                LocationCode.FromNullable(query.LocationCode),
-                VehicleCategory.FromNullable(query.CategoryCode),
-                query.MinSeats.HasValue ? SeatingCapacity.From(query.MinSeats.Value) : null,
-                query.FuelType.TryParseFuelType(),
-                query.TransmissionType.TryParseTransmissionType(),
-                query.MaxDailyRateGross.HasValue
-                    ? Money.EuroGross(query.MaxDailyRateGross.Value)
-                    : null,
+                query.LocationCode,
+                query.Category,
+                query.MinSeats,
+                query.FuelType,
+                query.TransmissionType,
+                query.MaxDailyRate,
                 VehicleStatus.Available, // Always filter to available vehicles
-                SearchPeriod.Of(query.PickupDate, query.ReturnDate),
-                PagingInfo.Create(query.PageNumber ?? 1, query.PageSize ?? PagingInfo.DefaultPageSize),
-                SortingInfo.Create());
+                query.Period,
+                query.Paging,
+                query.Sorting);
         }
     }
 }

@@ -24,13 +24,11 @@ public sealed class SendEmailCommandHandler(
         SendEmailCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Create value objects
-        var recipientEmail = RecipientEmail.From(command.RecipientEmail);
-        var subject = NotificationSubject.From(command.Subject);
-        var content = NotificationContent.From(command.Body);
-
-        // Create notification aggregate
-        var notification = Notification.CreateEmail(recipientEmail, subject, content);
+        // Create notification aggregate using value objects from command
+        var notification = Notification.CreateEmail(
+            command.RecipientEmail,
+            command.Subject,
+            command.Body);
 
         // Persist to repository
         var notifications = unitOfWork.Notifications;
@@ -40,9 +38,9 @@ public sealed class SendEmailCommandHandler(
         {
             // Send email via email service
             var providerMessageId = await emailService.SendEmailAsync(
-                command.RecipientEmail,
-                command.Subject,
-                command.Body,
+                command.RecipientEmail.Value,
+                command.Subject.Value,
+                command.Body.Value,
                 cancellationToken);
 
             // Mark as sent

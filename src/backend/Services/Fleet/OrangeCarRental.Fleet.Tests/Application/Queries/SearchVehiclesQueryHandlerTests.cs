@@ -25,18 +25,16 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithValidQuery_ShouldReturnSearchResults()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
-            ReturnDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
-            LocationCode: "BER-HBF",
-            CategoryCode: "SUV",
-            MinSeats: 5,
-            FuelType: "Diesel",
-            TransmissionType: "Automatic",
-            MaxDailyRateGross: 100.00m,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery(
+            period: SearchPeriod.Of(
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3))),
+            locationCode: LocationCode.From("BER-HBF"),
+            category: VehicleCategory.SUV,
+            minSeats: SeatingCapacity.From(5),
+            fuelType: FuelType.Diesel,
+            transmissionType: TransmissionType.Automatic,
+            maxDailyRate: Money.EuroGross(100.00m));
 
         var vehicles = new List<Vehicle>
         {
@@ -76,18 +74,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithEmptyResults_ShouldReturnEmptyList()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: null,
-            ReturnDate: null,
-            LocationCode: null,
-            CategoryCode: null,
-            MinSeats: null,
-            FuelType: null,
-            TransmissionType: null,
-            MaxDailyRateGross: null,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery();
 
         var pagedResult = new PagedResult<Vehicle>
         {
@@ -115,18 +102,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithPagination_ShouldPassCorrectParameters()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: null,
-            ReturnDate: null,
-            LocationCode: null,
-            CategoryCode: null,
-            MinSeats: null,
-            FuelType: null,
-            TransmissionType: null,
-            MaxDailyRateGross: null,
-            PageNumber: 2,
-            PageSize: 20
-        );
+        var query = CreateQuery(pageNumber: 2, pageSize: 20);
 
         VehicleSearchParameters? capturedParameters = null;
         vehicleRepositoryMock
@@ -153,18 +129,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_ShouldRespectCancellationToken()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: null,
-            ReturnDate: null,
-            LocationCode: null,
-            CategoryCode: null,
-            MinSeats: null,
-            FuelType: null,
-            TransmissionType: null,
-            MaxDailyRateGross: null,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery();
 
         var cts = new CancellationTokenSource();
         cts.Cancel(); // Cancel immediately
@@ -182,18 +147,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithLocationFilter_ShouldFilterByLocation()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: null,
-            ReturnDate: null,
-            LocationCode: "BER-HBF",
-            CategoryCode: null,
-            MinSeats: null,
-            FuelType: null,
-            TransmissionType: null,
-            MaxDailyRateGross: null,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery(locationCode: LocationCode.From("BER-HBF"));
 
         var vehicles = new List<Vehicle>
         {
@@ -224,18 +178,7 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithCategoryFilter_ShouldFilterByCategory()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: null,
-            ReturnDate: null,
-            LocationCode: null,
-            CategoryCode: "SUV",
-            MinSeats: null,
-            FuelType: null,
-            TransmissionType: null,
-            MaxDailyRateGross: null,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery(category: VehicleCategory.SUV);
 
         var vehicles = new List<Vehicle>
         {
@@ -266,18 +209,16 @@ public class SearchVehiclesQueryHandlerTests
     public async Task HandleAsync_WithMultipleFilters_ShouldCombineFilters()
     {
         // Arrange
-        var query = new SearchVehiclesQuery(
-            PickupDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
-            ReturnDate: DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3)),
-            LocationCode: Locations.BerlinHauptbahnhof.Value,
-            CategoryCode: VehicleCategory.SUV.Code,
-            MinSeats: 5,
-            FuelType: "Diesel",
-            TransmissionType: "Automatic",
-            MaxDailyRateGross: 100.00m,
-            PageNumber: 1,
-            PageSize: 10
-        );
+        var query = CreateQuery(
+            period: SearchPeriod.Of(
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(1)),
+                DateOnly.FromDateTime(DateTime.UtcNow.AddDays(3))),
+            locationCode: Locations.BerlinHauptbahnhof,
+            category: VehicleCategory.SUV,
+            minSeats: SeatingCapacity.From(5),
+            fuelType: FuelType.Diesel,
+            transmissionType: TransmissionType.Automatic,
+            maxDailyRate: Money.EuroGross(100.00m));
 
         VehicleSearchParameters? capturedParameters = null;
         vehicleRepositoryMock
@@ -298,6 +239,29 @@ public class SearchVehiclesQueryHandlerTests
         capturedParameters.ShouldNotBeNull();
         capturedParameters.MinSeats!.Value.Value.ShouldBe(5);
         capturedParameters.MaxDailyRate!.Value.GrossAmount.ShouldBe(100.00m);
+    }
+
+    private static SearchVehiclesQuery CreateQuery(
+        SearchPeriod? period = null,
+        LocationCode? locationCode = null,
+        VehicleCategory? category = null,
+        SeatingCapacity? minSeats = null,
+        FuelType? fuelType = null,
+        TransmissionType? transmissionType = null,
+        Money? maxDailyRate = null,
+        int pageNumber = 1,
+        int pageSize = 10)
+    {
+        return new SearchVehiclesQuery(
+            period,
+            locationCode,
+            category,
+            minSeats,
+            fuelType,
+            transmissionType,
+            maxDailyRate,
+            PagingInfo.Create(pageNumber, pageSize),
+            SortingInfo.Create());
     }
 
     private static Vehicle CreateTestVehicle(string name, VehicleCategory category, LocationCode location)

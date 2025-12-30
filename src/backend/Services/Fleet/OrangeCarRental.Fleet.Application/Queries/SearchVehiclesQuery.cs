@@ -1,22 +1,25 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Vehicle;
 
 namespace SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries;
 
 /// <summary>
 ///     Query to search available vehicles based on filters.
-///     Supports filtering by date range, location, category, and other criteria.
+///     Uses value objects for type-safe filtering.
 /// </summary>
 public sealed record SearchVehiclesQuery(
-    DateOnly? PickupDate,
-    DateOnly? ReturnDate,
-    string? LocationCode,
-    string? CategoryCode,
-    int? MinSeats,
-    string? FuelType,
-    string? TransmissionType,
-    decimal? MaxDailyRateGross,
-    int? PageNumber,
-    int? PageSize
+    SearchPeriod? Period,
+    LocationCode? LocationCode,
+    VehicleCategory? Category,
+    SeatingCapacity? MinSeats,
+    FuelType? FuelType,
+    TransmissionType? TransmissionType,
+    Money? MaxDailyRate,
+    PagingInfo Paging,
+    SortingInfo Sorting
 ) : IQuery<PagedResult<VehicleDto>>;

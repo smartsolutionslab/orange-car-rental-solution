@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
 
@@ -8,5 +9,5 @@ namespace SmartSolutionsLab.OrangeCarRental.Notifications.Application.Commands;
 /// <param name="RecipientPhone">Recipient phone number.</param>
 /// <param name="Message">SMS message content.</param>
 public sealed record SendSmsCommand(
-    string RecipientPhone,
-    string Message) : ICommand<SendSmsResult>;
+    RecipientPhone RecipientPhone,
+    NotificationContent Message) : ICommand<SendSmsResult>;

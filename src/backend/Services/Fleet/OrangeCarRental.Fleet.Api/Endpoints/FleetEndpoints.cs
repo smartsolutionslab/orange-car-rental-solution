@@ -20,10 +20,34 @@ public static class FleetEndpoints
             .WithTags("Fleet - Vehicles");
 
         // GET /api/vehicles - Search vehicles
-        fleet.MapGet("/", async ([AsParameters] SearchVehiclesQuery query, IQueryHandler<SearchVehiclesQuery, PagedResult<VehicleDto>> handler, CancellationToken cancellationToken) =>
+        fleet.MapGet("/", async (
+                [AsParameters] SearchVehiclesRequest request,
+                IQueryHandler<SearchVehiclesQuery, PagedResult<VehicleDto>> handler,
+                CancellationToken cancellationToken) =>
             {
-                var result = await handler.HandleAsync(query, cancellationToken);
-                return Results.Ok(result);
+                try
+                {
+                    // Map request DTO to query with value objects
+                    var query = new SearchVehiclesQuery(
+                        SearchPeriod.Of(request.PickupDate, request.ReturnDate),
+                        LocationCode.FromNullable(request.LocationCode),
+                        VehicleCategory.FromNullable(request.CategoryCode),
+                        request.MinSeats.HasValue ? SeatingCapacity.From(request.MinSeats.Value) : null,
+                        request.FuelType.TryParseFuelType(),
+                        request.TransmissionType.TryParseTransmissionType(),
+                        request.MaxDailyRateGross.HasValue
+                            ? Money.EuroGross(request.MaxDailyRateGross.Value)
+                            : null,
+                        PagingInfo.Create(request.PageNumber ?? 1, request.PageSize ?? PagingInfo.DefaultPageSize),
+                        SortingInfo.Create());
+
+                    var result = await handler.HandleAsync(query, cancellationToken);
+                    return Results.Ok(result);
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
             })
             .WithName("SearchVehicles")
             .WithSummary("Search available vehicles")
