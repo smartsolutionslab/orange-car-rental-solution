@@ -217,17 +217,15 @@ public static class ReservationEndpoints
             {
                 var query = new SearchReservationsQuery(
                     status.TryParseReservationStatus(),
-                     CustomerIdentifier.From(customerId),
+                    CustomerIdentifier.From(customerId),
                     SearchTerm.FromNullable(customerName),
                     VehicleIdentifier.From(vehicleId),
                     VehicleCategory.FromNullable(categoryCode),
                     LocationCode.FromNullable(pickupLocationCode),
                     DateRange.Create(pickupDateFrom, pickupDateTo),
                     PriceRange.Create(priceMin, priceMax),
-                    sortBy,
-                    sortDescending,
-                    pageNumber,
-                    pageSize);
+                    PagingInfo.Create(pageNumber, pageSize),
+                    SortingInfo.Create(sortBy, sortDescending));
 
                 var result = await handler.HandleAsync(query);
                 return Results.Ok(result);

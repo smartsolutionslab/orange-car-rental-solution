@@ -47,25 +47,18 @@ public static class MappingExtensions
     {
         /// <summary>
         ///     Maps a SearchReservationsQuery to ReservationSearchParameters.
-        ///     Handles parsing of primitive types to value objects.
+        ///     Query already uses value objects, so this is a direct pass-through.
         /// </summary>
-        public ReservationSearchParameters ToSearchParameters()
-        {
-            var (status, customerId, customerName, vehicleId,
-                category, pickupLocation, dateRange, priceRange,
-                sortBy, sortDescending, pageNumber, pageSize) = query;
-
-            return new ReservationSearchParameters(
-                status,
-                customerId,
-                customerName,
-                vehicleId,
-                category,
-                pickupLocation,
-                dateRange,
-                priceRange,
-                PagingInfo.Create(pageNumber, pageSize),
-                SortingInfo.Create(sortBy, sortDescending));
-        }
+        public ReservationSearchParameters ToSearchParameters() => new(
+            query.Status,
+            query.CustomerId,
+            query.CustomerName,
+            query.VehicleId,
+            query.Category,
+            query.PickupLocationCode,
+            query.DateRange,
+            query.PriceRange,
+            query.Paging,
+            query.Sorting);
     }
 }

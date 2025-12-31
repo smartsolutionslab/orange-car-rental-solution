@@ -9,33 +9,30 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries;
 
 /// <summary>
 ///     Query to search reservations with filters, sorting, and pagination.
+///     Uses value objects for type-safe filtering.
 /// </summary>
 public sealed record SearchReservationsQuery(
     // Status filter
-    ReservationStatus? Status = null,
+    ReservationStatus? Status,
 
     // Customer filters
-    CustomerIdentifier? CustomerId = null,
-    SearchTerm? CustomerName = null,
+    CustomerIdentifier? CustomerId,
+    SearchTerm? CustomerName,
 
     // Vehicle filters
-    VehicleIdentifier? VehicleId = null,
-    VehicleCategory? Category = null,
+    VehicleIdentifier? VehicleId,
+    VehicleCategory? Category,
 
     // Location filter
-    LocationCode? PickupLocationCode = null,
+    LocationCode? PickupLocationCode,
 
     // Date range filters
-    DateRange? DateRange = null,
+    DateRange? DateRange,
 
     // Price range filters (gross amount in EUR)
-    PriceRange? PriceRange = null,
+    PriceRange? PriceRange,
 
-    // Sorting
-    string? SortBy = null, // Options: "PickupDate", "Price", "Status", "CreatedDate"
-    bool SortDescending = false,
-
-    // Pagination - uses standardized defaults from PagedResult
-    int PageNumber = 1,
-    int PageSize = PagedResult<object>.DefaultPageSize
+    // Pagination and sorting
+    PagingInfo Paging,
+    SortingInfo Sorting
 ) : IQuery<PagedResult<ReservationDto>>;
