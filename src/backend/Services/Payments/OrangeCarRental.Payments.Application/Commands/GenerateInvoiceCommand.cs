@@ -1,20 +1,25 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
+
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 
 /// <summary>
 ///     Command to generate an invoice for a reservation.
 /// </summary>
 public sealed record GenerateInvoiceCommand(
-    Guid ReservationId,
-    Guid CustomerId,
+    ReservationId ReservationId,
+    CustomerId CustomerId,
     string CustomerName,
-    string CustomerStreet,
-    string CustomerPostalCode,
-    string CustomerCity,
-    string CustomerCountry,
-    string? CustomerVatId,
+    Street CustomerStreet,
+    PostalCode CustomerPostalCode,
+    City CustomerCity,
+    Country CustomerCountry,
+    VatId? CustomerVatId,
     string VehicleDescription,
     int RentalDays,
-    decimal DailyRateNet,
+    Money DailyRate,
     DateOnly PickupDate,
     DateOnly ReturnDate,
-    Guid? PaymentId = null);
+    PaymentIdentifier? PaymentId = null) : ICommand<GenerateInvoiceResult>;

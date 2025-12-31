@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Extensions;
@@ -52,8 +53,8 @@ builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOpt
 // Register repositories
 builder.Services.AddScoped<IPricingPolicyRepository, PricingPolicyRepository>();
 
-// Register application services
-builder.Services.AddScoped<CalculatePriceQueryHandler>();
+// Register query handlers
+builder.Services.AddScoped<IQueryHandler<CalculatePriceQuery, PriceCalculationResult>, CalculatePriceQueryHandler>();
 
 // Register data seeder
 builder.Services.AddScoped<PricingDataSeeder>();
@@ -95,6 +96,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapPricingEndpoints();
+app.MapHealthEndpoints<PricingDbContext>("Pricing API");
 app.MapDefaultEndpoints();
 
 app.Run();

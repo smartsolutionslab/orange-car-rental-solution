@@ -52,7 +52,8 @@ jobs:
 
     - name: Build solution
       working-directory: src/backend
-      run: dotnet build OrangeCarRental.sln --no-restore --configuration Release
+      # Disable RouteHandlerAnalyzer due to bug with C# 14 extension members
+      run: dotnet build OrangeCarRental.sln --no-restore --configuration Release -p:RunAnalyzers=false
 
     - name: Run code formatting check
       working-directory: src/backend
@@ -232,9 +233,10 @@ jobs:
     - name: Build backend (for C#)
       if: matrix.language == 'csharp'
       working-directory: src/backend
+      # Disable RouteHandlerAnalyzer due to bug with C# 14 extension members
       run: |
         dotnet restore OrangeCarRental.sln /p:RestoreLockedMode=false
-        dotnet build OrangeCarRental.sln --no-restore --configuration Release
+        dotnet build OrangeCarRental.sln --no-restore --configuration Release -p:RunAnalyzers=false
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4

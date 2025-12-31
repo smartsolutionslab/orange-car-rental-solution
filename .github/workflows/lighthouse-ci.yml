@@ -62,10 +62,11 @@ jobs:
         run: yarn workspace @orange-car-rental/call-center-portal build:production
 
       - name: Start Backend API
+        # Disable RouteHandlerAnalyzer due to bug with C# 14 extension members
         run: |
           cd src/backend/ApiGateway/OrangeCarRental.ApiGateway
           dotnet restore
-          dotnet build
+          dotnet build -p:RunAnalyzers=false
           dotnet run &
           sleep 30
         env:

@@ -38,7 +38,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"S{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"S{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2010, 1, 1),
                 licenseExpiryDate = new DateOnly(2030, 1, 1)
@@ -145,7 +145,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"P{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"P{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2012, 1, 1),
                 licenseExpiryDate = new DateOnly(2032, 1, 1)

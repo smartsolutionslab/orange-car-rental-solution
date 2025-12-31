@@ -12,7 +12,7 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 [Collection(IntegrationTestCollection.Name)]
 public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     #region AC: Registration with required fields
 
@@ -42,7 +42,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"B{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"B{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2010, 3, 20),
                 licenseExpiryDate = new DateOnly(2030, 3, 19)
@@ -55,7 +55,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
 
-        var result = await response.Content.ReadFromJsonAsync<RegisterCustomerResult>(JsonOptions);
+        var result = await response.Content.ReadFromJsonAsync<RegisterCustomerResult>(jsonOptions);
         Assert.NotNull(result);
         Assert.NotEqual(Guid.Empty, result.CustomerIdentifier);
         Assert.Equal(uniqueEmail, result.Email);
@@ -95,7 +95,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"F{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"F{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2015, 5, 10),
                 licenseExpiryDate = new DateOnly(2035, 5, 9)
@@ -126,7 +126,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"S{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"S{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2012, 8, 15),
                 licenseExpiryDate = new DateOnly(2032, 8, 14)
@@ -168,7 +168,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"J{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"J{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-30)),
                 licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddYears(10))
@@ -210,7 +210,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"E{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"E{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2005, 1, 1),
                 licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)) // Expired

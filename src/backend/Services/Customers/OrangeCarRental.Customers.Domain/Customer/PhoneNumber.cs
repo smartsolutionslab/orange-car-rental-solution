@@ -24,13 +24,13 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
 
             // Format as +49 XXX XXXXXXX
             var countryCode = "+49";
-            var rest = Value.Substring(3);
+            var rest = Value[3..];
 
             if (rest.Length <= 3)
                 return $"{countryCode} {rest}";
 
-            var areaCode = rest.Substring(0, Math.Min(3, rest.Length));
-            var number = rest.Substring(Math.Min(3, rest.Length));
+            var areaCode = rest[..Math.Min(3, rest.Length)];
+            var number = rest[Math.Min(3, rest.Length)..];
 
             return $"{countryCode} {areaCode} {number}";
         }
@@ -56,9 +56,9 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
 
         // Convert German domestic format to international
         if (normalized.StartsWith("0") && !normalized.StartsWith("00"))
-            normalized = "+49" + normalized.Substring(1);
+            normalized = "+49" + normalized[1..];
         else if (normalized.StartsWith("0049"))
-            normalized = "+49" + normalized.Substring(4);
+            normalized = "+49" + normalized[4..];
 
         Ensure.That(normalized, nameof(value))
             .AndStartsWith("+49")
@@ -87,7 +87,7 @@ public readonly record struct PhoneNumber(string Value) : IValueObject
             return false;
 
         // Rest must be digits only
-        var digitsOnly = phone.Substring(3);
+        var digitsOnly = phone[3..];
         if (string.IsNullOrEmpty(digitsOnly) || !digitsOnly.All(char.IsDigit))
             return false;
 

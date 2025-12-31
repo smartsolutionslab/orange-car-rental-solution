@@ -1,15 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CancelReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.ConfirmReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateGuestReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands.CreateReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.GetReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.LookupGuestReservation;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries.SearchReservations;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Data;
@@ -77,19 +75,19 @@ builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 // Register data seeder
 builder.Services.AddScoped<ReservationsDataSeeder>();
 
-// Register application handlers
-builder.Services.AddScoped<CreateReservationCommandHandler>();
-builder.Services.AddScoped<CreateGuestReservationCommandHandler>();
-builder.Services.AddScoped<GetReservationQueryHandler>();
-builder.Services.AddScoped<LookupGuestReservationQueryHandler>();
-builder.Services.AddScoped<SearchReservationsQueryHandler>();
-builder.Services.AddScoped<ConfirmReservationCommandHandler>();
-builder.Services.AddScoped<CancelReservationCommandHandler>();
+// Register command handlers
+builder.Services.AddScoped<ICommandHandler<CreateReservationCommand, CreateReservationResult>, CreateReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateGuestReservationCommand, CreateGuestReservationResult>, CreateGuestReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ConfirmReservationCommand, ConfirmReservationResult>, ConfirmReservationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CancelReservationCommand, CancelReservationResult>, CancelReservationCommandHandler>();
+
+// Register query handlers
+builder.Services.AddScoped<IQueryHandler<GetReservationQuery, ReservationDto>, GetReservationQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<LookupGuestReservationQuery, ReservationDto>, LookupGuestReservationQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<SearchReservationsQuery, PagedResult<ReservationDto>>, SearchReservationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetVehicleAvailabilityQuery, GetVehicleAvailabilityResult>, GetVehicleAvailabilityQueryHandler>();
 
 var app = builder.Build();
-
-// Seed database with sample data (development only)
-await app.SeedReservationsDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -124,6 +122,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapReservationEndpoints();
+app.MapHealthEndpoints<ReservationsDbContext>("Reservations API");
 app.MapDefaultEndpoints();
 
 app.Run();

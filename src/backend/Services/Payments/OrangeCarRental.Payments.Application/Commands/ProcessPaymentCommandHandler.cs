@@ -1,9 +1,6 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
-using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
@@ -17,19 +14,14 @@ public sealed class ProcessPaymentCommandHandler(
         ProcessPaymentCommand command,
         CancellationToken cancellationToken = default)
     {
-        // Validate payment method
-        Ensure.That(command.PaymentMethod, nameof(command.PaymentMethod))
-            .ThrowIf(!Enum.TryParse<PaymentMethod>(command.PaymentMethod, ignoreCase: true, out var method),
-                $"Invalid payment method: {command.PaymentMethod}");
+        var (reservationId, customerId, amount, paymentMethod) = command;
 
         // Create payment aggregate
-        var currency = Currency.From(command.Currency);
-        var amount = Money.FromGross(command.Amount, 0.19m, currency);
         var payment = Payment.Create(
-            ReservationId.From(command.ReservationId),
-            CustomerId.From(command.CustomerId),
+            reservationId,
+            customerId,
             amount,
-            method);
+            paymentMethod);
 
         var payments = unitOfWork.Payments;
         await payments.AddAsync(payment, cancellationToken);
@@ -39,8 +31,8 @@ public sealed class ProcessPaymentCommandHandler(
             // Authorize payment with external provider
             var (success, transactionId, errorMessage) = await paymentService.AuthorizePaymentAsync(
                 amount.GrossAmount,
-                currency.Code,
-                method,
+                amount.Currency.Code,
+                paymentMethod,
                 cancellationToken);
 
             if (success && !string.IsNullOrEmpty(transactionId))

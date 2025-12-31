@@ -11,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.Infrastructure;
 [Collection(IntegrationTestCollection.Name)]
 public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
 {
-    private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+    private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     #region Gateway Health
 
@@ -116,7 +116,7 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
             },
             driversLicense = new
             {
-                licenseNumber = $"G{Guid.NewGuid():N}".Substring(0, 10),
+                licenseNumber = $"G{Guid.NewGuid():N}"[..10],
                 licenseIssueCountry = "Germany",
                 licenseIssueDate = new DateOnly(2015, 1, 1),
                 licenseExpiryDate = new DateOnly(2035, 1, 1)

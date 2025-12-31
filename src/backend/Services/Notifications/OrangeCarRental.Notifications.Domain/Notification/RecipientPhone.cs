@@ -29,9 +29,9 @@ public readonly record struct RecipientPhone(string Value) : IValueObject
 
         // Convert German domestic format to international
         if (normalized.StartsWith("0") && !normalized.StartsWith("00"))
-            normalized = "+49" + normalized.Substring(1);
+            normalized = "+49" + normalized[1..];
         else if (normalized.StartsWith("0049"))
-            normalized = "+49" + normalized.Substring(4);
+            normalized = "+49" + normalized[4..];
 
         Ensure.That(normalized, nameof(value))
             .AndStartsWith("+49")
