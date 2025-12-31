@@ -45,20 +45,18 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
 
     public async Task<int> GetNextSequenceNumberAsync(int year, CancellationToken cancellationToken = default)
     {
-        var maxSequence = await dbContext.Invoices
+        // Use SQL ORDER BY DESC + TOP 1 instead of loading all records
+        // Since sequence is zero-padded (000001), string ordering works correctly
+        var maxInvoice = await dbContext.Invoices
             .Where(x => x.InvoiceNumber.Value.Contains($"-{year}-"))
+            .OrderByDescending(x => x.InvoiceNumber.Value)
             .Select(x => x.InvoiceNumber)
-            .ToListAsync(cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
 
-        if (maxSequence.Count == 0)
+        if (maxInvoice is null)
             return 1;
 
-        // Parse sequence numbers and find max
-        var maxNumber = maxSequence
-            .Select(n => n.SequenceNumber)
-            .Max();
-
-        return maxNumber + 1;
+        return maxInvoice.SequenceNumber + 1;
     }
 
     public async Task AddAsync(Invoice invoice, CancellationToken cancellationToken = default)

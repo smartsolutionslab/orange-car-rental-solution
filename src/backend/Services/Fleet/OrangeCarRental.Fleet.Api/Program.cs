@@ -1,17 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.AddVehicleToFleet;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.ChangeLocationStatus;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleDailyRate;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleLocation;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands.UpdateVehicleStatus;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.GetLocations;
-using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries.SearchVehicles;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
@@ -73,25 +69,22 @@ builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
 // Register application services - Query Handlers
-builder.Services.AddScoped<SearchVehiclesQueryHandler>();
-builder.Services.AddScoped<GetLocationsQueryHandler>();
-builder.Services.AddScoped<GetLocationByCodeQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<SearchVehiclesQuery, PagedResult<VehicleDto>>, SearchVehiclesQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetLocationsQuery, IReadOnlyList<LocationDto>>, GetLocationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetLocationByCodeQuery, LocationDto>, GetLocationByCodeQueryHandler>();
 
 // Register application services - Command Handlers (Vehicle)
-builder.Services.AddScoped<AddVehicleToFleetCommandHandler>();
-builder.Services.AddScoped<UpdateVehicleStatusCommandHandler>();
-builder.Services.AddScoped<UpdateVehicleLocationCommandHandler>();
-builder.Services.AddScoped<UpdateVehicleDailyRateCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AddVehicleToFleetCommand, AddVehicleToFleetResult>, AddVehicleToFleetCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateVehicleStatusCommand, UpdateVehicleStatusResult>, UpdateVehicleStatusCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateVehicleLocationCommand, UpdateVehicleLocationResult>, UpdateVehicleLocationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateVehicleDailyRateCommand, UpdateVehicleDailyRateResult>, UpdateVehicleDailyRateCommandHandler>();
 
 // Register application services - Command Handlers (Location)
-builder.Services.AddScoped<AddLocationCommandHandler>();
-builder.Services.AddScoped<UpdateLocationCommandHandler>();
-builder.Services.AddScoped<ChangeLocationStatusCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<AddLocationCommand, AddLocationResult>, AddLocationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateLocationCommand, UpdateLocationResult>, UpdateLocationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ChangeLocationStatusCommand, ChangeLocationStatusResult>, ChangeLocationStatusCommandHandler>();
 
 var app = builder.Build();
-
-// Seed database with sample data (development only)
-await app.SeedFleetDataAsync();
 
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
@@ -126,6 +119,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapFleetEndpoints();
+app.MapHealthEndpoints<FleetDbContext>("Fleet API");
 app.MapDefaultEndpoints();
 
 app.Run();

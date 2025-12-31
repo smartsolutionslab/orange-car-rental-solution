@@ -8,24 +8,17 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 ///     Unit of Work implementation for the Payments bounded context.
 ///     Provides access to repositories and manages transactional boundaries.
 /// </summary>
-public sealed class PaymentsUnitOfWork : IPaymentsUnitOfWork
+public sealed class PaymentsUnitOfWork(PaymentsDbContext context) : IPaymentsUnitOfWork
 {
-    private readonly PaymentsDbContext _context;
-
-    public PaymentsUnitOfWork(PaymentsDbContext context)
-    {
-        _context = context;
-    }
-
     /// <inheritdoc />
     public IPaymentRepository Payments =>
-        field ??= new PaymentRepository(_context);
+        field ??= new PaymentRepository(context);
 
     /// <inheritdoc />
     public IInvoiceRepository Invoices =>
-        field ??= new InvoiceRepository(_context);
+        field ??= new InvoiceRepository(context);
 
     /// <inheritdoc />
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
-        _context.SaveChangesAsync(cancellationToken);
+        context.SaveChangesAsync(cancellationToken);
 }

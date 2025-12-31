@@ -1,15 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Customers.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.ChangeCustomerStatus;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateCustomerProfile;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.UpdateDriversLicense;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomer;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.GetCustomerByEmail;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries.SearchCustomers;
+using SmartSolutionsLab.OrangeCarRental.Customers.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.DTOs;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Extensions;
@@ -59,15 +57,15 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // Register command handlers
-builder.Services.AddScoped<RegisterCustomerCommandHandler>();
-builder.Services.AddScoped<UpdateCustomerProfileCommandHandler>();
-builder.Services.AddScoped<UpdateDriversLicenseCommandHandler>();
-builder.Services.AddScoped<ChangeCustomerStatusCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>, RegisterCustomerCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>, UpdateCustomerProfileCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>, UpdateDriversLicenseCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>, ChangeCustomerStatusCommandHandler>();
 
 // Register query handlers
-builder.Services.AddScoped<GetCustomerQueryHandler>();
-builder.Services.AddScoped<GetCustomerByEmailQueryHandler>();
-builder.Services.AddScoped<SearchCustomersQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetCustomerQuery, CustomerDto>, GetCustomerQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetCustomerByEmailQuery, CustomerDto>, GetCustomerByEmailQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<SearchCustomersQuery, PagedResult<CustomerDto>>, SearchCustomersQueryHandler>();
 
 // Register data seeder
 builder.Services.AddScoped<CustomerDataSeeder>();
@@ -110,6 +108,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapCustomerEndpoints();
+app.MapHealthEndpoints<CustomersDbContext>("Customers API");
 app.MapDefaultEndpoints();
 
 app.Run();

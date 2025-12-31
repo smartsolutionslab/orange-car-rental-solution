@@ -243,7 +243,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
             city = "Hamburg",
             postalCode = "20095",
             country = "Germany",
-            licenseNumber = $"G{Guid.NewGuid():N}".Substring(0, 10),
+            licenseNumber = $"G{Guid.NewGuid():N}"[..10],
             licenseIssueCountry = "Germany",
             licenseIssueDate = new DateOnly(2015, 1, 1),
             licenseExpiryDate = new DateOnly(2030, 1, 1)
@@ -338,7 +338,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
             city = "München",
             postalCode = "80331",
             country = "Germany",
-            licenseNumber = $"P{Guid.NewGuid():N}".Substring(0, 10),
+            licenseNumber = $"P{Guid.NewGuid():N}"[..10],
             licenseIssueCountry = "Germany",
             licenseIssueDate = new DateOnly(2010, 1, 1),
             licenseExpiryDate = new DateOnly(2030, 1, 1)

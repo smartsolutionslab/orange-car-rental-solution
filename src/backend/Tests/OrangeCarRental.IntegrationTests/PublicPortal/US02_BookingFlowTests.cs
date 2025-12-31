@@ -166,7 +166,7 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
             country = "Germany",
 
             // Step 4: Driver's License
-            licenseNumber = $"M{Guid.NewGuid():N}".Substring(0, 10),
+            licenseNumber = $"M{Guid.NewGuid():N}"[..10],
             licenseIssueCountry = "Germany",
             licenseIssueDate = new DateOnly(2010, 3, 20),
             licenseExpiryDate = new DateOnly(2030, 3, 19)

@@ -1,6 +1,6 @@
 using Moq;
 using Shouldly;
-using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands.RegisterCustomer;
+using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
 namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Commands;

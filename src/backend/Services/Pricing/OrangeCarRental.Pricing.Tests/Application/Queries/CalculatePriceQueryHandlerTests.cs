@@ -1,6 +1,6 @@
 using Moq;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
-using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries.CalculatePrice;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Tests.Builders;
 

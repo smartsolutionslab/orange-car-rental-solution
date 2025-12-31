@@ -101,7 +101,8 @@ jobs:
         uses: ./.github/actions/setup-backend
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        # Disable analyzers due to RouteHandlerAnalyzer bug with C# 14 extension members
+        run: dotnet build --no-restore --configuration Release -p:RunAnalyzers=false
 
       - name: Run unit tests
         run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --filter "FullyQualifiedName!~IntegrationTests&FullyQualifiedName!~Infrastructure"

@@ -73,10 +73,11 @@ jobs:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
       - name: Start Backend API
+        # Disable RouteHandlerAnalyzer due to bug with C# 14 extension members
         run: |
           cd src/backend/ApiGateway/OrangeCarRental.ApiGateway
           dotnet restore
-          dotnet build --configuration Release
+          dotnet build --configuration Release -p:RunAnalyzers=false
           dotnet run --configuration Release &
           echo "Waiting for API to start..."
           sleep 30

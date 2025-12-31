@@ -1,10 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Location.Api.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands.CreateLocation;
-using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries.GetAllLocations;
+using SmartSolutionsLab.OrangeCarRental.Location.Api.Endpoints;
+using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands;
+using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries;
 using SmartSolutionsLab.OrangeCarRental.Location.Domain;
 using SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
@@ -53,10 +54,10 @@ builder.Services.AddScoped<ILocationsUnitOfWork, LocationsUnitOfWork>();
 builder.Services.AddScoped<ILocationRepository, LocationRepository>();
 
 // Register command handlers
-builder.Services.AddScoped<CreateLocationCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<CreateLocationCommand, CreateLocationResult>, CreateLocationCommandHandler>();
 
 // Register query handlers
-builder.Services.AddScoped<GetAllLocationsQueryHandler>();
+builder.Services.AddScoped<IQueryHandler<GetAllLocationsQuery, GetAllLocationsResult>, GetAllLocationsQueryHandler>();
 
 var app = builder.Build();
 
@@ -92,6 +93,7 @@ app.UseAuthorization();
 
 // Map API endpoints
 app.MapLocationEndpoints();
+app.MapHealthEndpoints<LocationsDbContext>("Location API");
 app.MapDefaultEndpoints();
 
 app.Run();

@@ -1,13 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
-using SmartSolutionsLab.OrangeCarRental.Payments.Api.Extensions;
+using SmartSolutionsLab.OrangeCarRental.Payments.Api.Endpoints;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
+using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Configuration;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Services;
 
@@ -50,10 +53,15 @@ builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextO
         sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure"));
 });
 
+// Register configuration
+builder.Services.Configure<SepaConfiguration>(
+    builder.Configuration.GetSection(SepaConfiguration.SectionName));
+
 // Register Unit of Work and repositories
 builder.Services.AddScoped<IPaymentsUnitOfWork, PaymentsUnitOfWork>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
+builder.Services.AddScoped<ISepaMandateRepository, SepaMandateRepository>();
 
 // Register infrastructure services
 builder.Services.AddScoped<IPaymentService, PaymentService>();
@@ -61,9 +69,9 @@ builder.Services.AddScoped<IInvoiceGenerator, InvoiceGenerator>();
 builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
 
 // Register command handlers
-builder.Services.AddScoped<ProcessPaymentCommandHandler>();
-builder.Services.AddScoped<RefundPaymentCommandHandler>();
-builder.Services.AddScoped<GenerateInvoiceCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<ProcessPaymentCommand, ProcessPaymentResult>, ProcessPaymentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<RefundPaymentCommand, RefundPaymentResult>, RefundPaymentCommandHandler>();
+builder.Services.AddScoped<ICommandHandler<GenerateInvoiceCommand, GenerateInvoiceResult>, GenerateInvoiceCommandHandler>();
 
 var app = builder.Build();
 
@@ -100,6 +108,7 @@ app.UseAuthorization();
 // Map API endpoints
 app.MapPaymentEndpoints();
 app.MapInvoiceEndpoints();
+app.MapHealthEndpoints<PaymentsDbContext>("Payments API");
 app.MapDefaultEndpoints();
 
 app.Run();

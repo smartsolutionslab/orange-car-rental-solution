@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.Reservations.Application.DTOs;
+
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
 
 /// <summary>
