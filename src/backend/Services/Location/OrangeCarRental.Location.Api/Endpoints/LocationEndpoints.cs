@@ -1,6 +1,8 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.Location.Api.Requests;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Location.Application.Queries;
+using SmartSolutionsLab.OrangeCarRental.Location.Domain.Location;
 
 namespace SmartSolutionsLab.OrangeCarRental.Location.Api.Endpoints;
 
@@ -27,12 +29,27 @@ public static class LocationEndpoints
 
         // POST /api/locations - Create new location
         locations.MapPost("/", async (
-            CreateLocationCommand command,
+            CreateLocationRequest request,
             ICommandHandler<CreateLocationCommand, CreateLocationResult> handler,
             CancellationToken cancellationToken) =>
             {
                 try
                 {
+                    // Create value objects at API boundary
+                    GeoCoordinates? coordinates = null;
+                    if (request.Latitude.HasValue && request.Longitude.HasValue)
+                    {
+                        coordinates = GeoCoordinates.Of(request.Latitude.Value, request.Longitude.Value);
+                    }
+
+                    var command = new CreateLocationCommand(
+                        LocationCode.From(request.Code),
+                        LocationName.From(request.Name),
+                        LocationAddress.Of(request.Street, request.City, request.PostalCode),
+                        ContactInfo.Of(request.Phone, request.Email),
+                        OpeningHours.From(request.OpeningHours),
+                        coordinates);
+
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Created($"/api/locations/{result.Code}", result);
                 }
