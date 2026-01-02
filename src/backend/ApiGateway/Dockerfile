@@ -15,13 +15,13 @@ RUN dotnet restore "ApiGateway/OrangeCarRental.ApiGateway/OrangeCarRental.ApiGat
 # Copy source code
 COPY . .
 
-# Build
+# Build (disable analyzers due to RouteHandlerAnalyzer bug with C# 14 extension members)
 WORKDIR "/src/ApiGateway/OrangeCarRental.ApiGateway"
-RUN dotnet build "OrangeCarRental.ApiGateway.csproj" -c Release -o /app/build
+RUN dotnet build "OrangeCarRental.ApiGateway.csproj" -c Release -o /app/build -p:RunAnalyzers=false
 
 # Publish
 FROM build AS publish
-RUN dotnet publish "OrangeCarRental.ApiGateway.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "OrangeCarRental.ApiGateway.csproj" -c Release -o /app/publish /p:UseAppHost=false -p:RunAnalyzers=false
 
 # Runtime stage - Alpine for smaller image size (~100MB vs ~220MB)
 FROM mcr.microsoft.com/dotnet/aspnet:10.0-alpine AS final
