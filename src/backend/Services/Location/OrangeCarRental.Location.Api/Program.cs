@@ -78,6 +78,7 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseAllFrontendsCors();
+app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();

@@ -67,6 +67,7 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseAllFrontendsCors();
+app.UseHttpsRedirection();
 
 // Add Authentication middleware (validates JWT tokens)
 app.UseAuthentication();

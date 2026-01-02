@@ -81,6 +81,7 @@ app.UseSerilogRequestLogging(options =>
 });
 
 app.UseCallCenterPortalCors();
+app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();
