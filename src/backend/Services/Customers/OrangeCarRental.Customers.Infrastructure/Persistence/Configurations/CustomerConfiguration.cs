@@ -136,6 +136,36 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
             .HasMaxLength(20)
             .IsRequired();
 
+        // CustomerType enum - stored as string
+        builder.Property(c => c.CustomerType)
+            .HasColumnName("CustomerType")
+            .HasConversion<string>()
+            .HasMaxLength(20)
+            .IsRequired();
+
+        // CompanyName value object - nullable for individual customers
+        builder.Property(c => c.CompanyName)
+            .HasColumnName("CompanyName")
+            .HasConversion(
+                cn => cn != null ? cn.Value.Value : null,
+                value => value != null ? CompanyName.Create(value) : null)
+            .HasMaxLength(CompanyName.MaxLength);
+
+        // VATId value object - nullable for individual customers
+        builder.Property(c => c.VATId)
+            .HasColumnName("VATId")
+            .HasConversion(
+                vat => vat != null ? vat.Value.Value : null,
+                value => value != null ? VATId.Create(value) : null)
+            .HasMaxLength(14);
+
+        // PaymentTerms value object - nullable for individual customers
+        builder.Property(c => c.PaymentTerms)
+            .HasColumnName("PaymentTermsDays")
+            .HasConversion(
+                pt => pt != null ? (int?)pt.Value.DaysUntilDue : null,
+                value => value != null ? PaymentTerms.Create(value.Value) : null);
+
         // Timestamps
         builder.Property(c => c.RegisteredAtUtc)
             .HasColumnName("RegisteredAtUtc")
@@ -171,5 +201,6 @@ internal sealed class CustomerConfiguration : IEntityTypeConfiguration<Customer>
         builder.Ignore(c => c.FullName);
         builder.Ignore(c => c.FormalName);
         builder.Ignore(c => c.Age);
+        builder.Ignore(c => c.IsBusinessCustomer);
     }
 }

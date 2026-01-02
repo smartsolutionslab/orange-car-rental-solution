@@ -10,11 +10,18 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.CallCenterPortal;
 ///     so that I can help customers maintain accurate information and manage their accounts.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "CallCenter")]
 public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     #region Setup: Create test customer
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCallCenterHttpClientAsync();
+    }
 
     private async Task<(Guid customerId, string email)> CreateTestCustomerAsync(HttpClient httpClient)
     {
@@ -60,7 +67,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateProfile_ValidData_ReturnsSuccess()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         var updateRequest = new
@@ -91,7 +98,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateProfile_VerifyChangesApplied()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         var updateRequest = new
@@ -131,7 +138,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateProfile_InvalidCustomerId_ReturnsNotFound()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var invalidId = Guid.NewGuid();
 
         var updateRequest = new
@@ -166,7 +173,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateLicense_ValidData_ReturnsSuccess()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         var licenseUpdate = new
@@ -188,7 +195,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateLicense_ExpiringSoon_ReturnsBadRequest()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         // License expiring in less than 30 days should fail
@@ -211,7 +218,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task UpdateLicense_InvalidCustomerId_ReturnsNotFound()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var invalidId = Guid.NewGuid();
 
         var licenseUpdate = new
@@ -237,7 +244,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task ChangeStatus_ToSuspended_ReturnsSuccess()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         var statusChange = new
@@ -257,7 +264,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task ChangeStatus_ToBlocked_ReturnsSuccess()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         var statusChange = new
@@ -277,7 +284,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task ChangeStatus_ReactivateFromSuspended_ReturnsSuccess()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         // First suspend the customer
@@ -306,7 +313,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task ChangeStatus_InvalidCustomerId_ReturnsNotFound()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var invalidId = Guid.NewGuid();
 
         var statusChange = new
@@ -330,7 +337,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task GetProfile_ReturnsAllRequiredFields()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, email) = await CreateTestCustomerAsync(httpClient);
 
         // Act
@@ -359,7 +366,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     public async Task GetProfile_ByEmail_ReturnsMatchingCustomer()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (_, email) = await CreateTestCustomerAsync(httpClient);
 
         // Act

@@ -1,0 +1,51 @@
+name: 'Setup Aspire'
+description: 'Setup .NET with Aspire workload for integration tests'
+
+inputs:
+  dotnet-version:
+    description: '.NET version to use'
+    required: false
+    default: '10.0.x'
+  working-directory:
+    description: 'Working directory for dotnet commands'
+    required: false
+    default: 'src/backend'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{ inputs.dotnet-version }}
+
+    - name: Install Aspire workload
+      shell: bash
+      run: dotnet workload install aspire
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v5
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-aspire-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-aspire-
+          ${{ runner.os }}-nuget-
+
+    - name: Restore dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: dotnet restore OrangeCarRental.sln
+      env:
+        DOTNET_NOLOGO: true
+        DOTNET_CLI_TELEMETRY_OPTOUT: true
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+    - name: Build solution
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: dotnet build OrangeCarRental.sln --no-restore --configuration Release -p:RunAnalyzers=false
+      env:
+        DOTNET_NOLOGO: true
+        DOTNET_CLI_TELEMETRY_OPTOUT: true
+        DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true

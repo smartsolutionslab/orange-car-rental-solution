@@ -1,0 +1,73 @@
+name: Integration Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      portal:
+        description: 'Portal category to test (Infrastructure, Public, CallCenter)'
+        required: true
+        type: string
+      timeout-minutes:
+        description: 'Timeout in minutes for the test job'
+        required: false
+        type: number
+        default: 15
+      dotnet-version:
+        description: '.NET version to use'
+        required: false
+        type: string
+        default: '10.0.x'
+    secrets:
+      CODECOV_TOKEN:
+        required: false
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  integration-test:
+    name: ${{ inputs.portal }} Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ inputs.timeout-minutes }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Aspire
+        uses: ./.github/actions/setup-aspire
+        with:
+          dotnet-version: ${{ inputs.dotnet-version }}
+
+      - name: Run ${{ inputs.portal }} integration tests
+        working-directory: src/backend
+        run: |
+          dotnet test Tests/OrangeCarRental.IntegrationTests \
+            --no-build \
+            --configuration Release \
+            --filter "Portal=${{ inputs.portal }}" \
+            --logger "trx;LogFileName=${{ inputs.portal }}-tests.trx" \
+            --logger "console;verbosity=normal" \
+            --collect:"XPlat Code Coverage" \
+            -- RunConfiguration.TestSessionTimeout=600000
+        env:
+          DOTNET_ENVIRONMENT: Development
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: integration-test-results-${{ inputs.portal }}
+          path: '**/TestResults/**/*.trx'
+          retention-days: 7
+
+      - name: Upload coverage to Codecov
+        if: success() && secrets.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: '**/coverage.cobertura.xml'
+          flags: integration-${{ inputs.portal }}
+          name: integration-${{ inputs.portal }}-coverage

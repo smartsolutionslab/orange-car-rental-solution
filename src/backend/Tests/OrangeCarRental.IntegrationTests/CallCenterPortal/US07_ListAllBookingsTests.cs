@@ -9,9 +9,16 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.CallCenterPortal;
 ///     so that I can manage bookings and assist customers.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "CallCenter")]
 public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCallCenterHttpClientAsync();
+    }
 
     #region AC: Dashboard statistics
 
@@ -19,7 +26,7 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
     public async Task SearchReservations_ReturnsReservationList()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=10");
@@ -41,7 +48,7 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
     public async Task SearchReservations_ReturnsRequiredFields()
     {
         // First create a reservation to ensure we have data
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Search for vehicles first
         var vehicleResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
@@ -111,7 +118,7 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
     public async Task SearchReservations_WithPagination_ReturnsCorrectPage()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageNumber=1&pageSize=5");
@@ -133,7 +140,7 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
     public async Task SearchReservations_DifferentPageSizes_Work(int pageSize)
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync($"/api/reservations/search?pageSize={pageSize}");
@@ -158,7 +165,7 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
     public async Task SearchReservations_ByStatus_ReturnsMatchingReservations(string status)
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync($"/api/reservations/search?status={status}&pageSize=10");

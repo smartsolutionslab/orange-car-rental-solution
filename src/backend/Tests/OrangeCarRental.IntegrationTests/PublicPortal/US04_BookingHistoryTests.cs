@@ -10,9 +10,16 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 ///     so that I can manage my rentals and review my history.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "Public")]
 public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCustomerHttpClientAsync();
+    }
 
     #region AC: My Bookings page accessible from navigation
 
@@ -20,7 +27,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerReservations_WithValidCustomerId_ReturnsReservations()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // First create a customer with a reservation
         var (customerId, _) = await CreateTestReservation(httpClient);
@@ -41,7 +48,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerReservations_WithNonExistentCustomer_ReturnsEmptyList()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var nonExistentCustomerId = Guid.NewGuid();
 
         // Act
@@ -63,7 +70,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerReservations_ReturnsReservationsWithStatus()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
@@ -90,7 +97,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerReservations_ReturnsReservationsWithDates()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
@@ -117,7 +124,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerReservations_ReturnsRequiredFields()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
@@ -151,7 +158,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GuestLookup_WithValidIdAndEmail_ReturnsReservation()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (_, reservationId) = await CreateTestReservation(httpClient);
 
         var lookupRequest = new
@@ -183,7 +190,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task GuestLookup_WithInvalidEmail_ReturnsBadRequest()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var lookupRequest = new
         {
             reservationId = Guid.NewGuid(),
@@ -207,7 +214,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task CancelReservation_WithValidReason_Succeeds()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (_, reservationId) = await CreateTestReservation(httpClient, daysFromNow: 14); // Far future booking
 
         var cancelRequest = new
@@ -236,7 +243,7 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
     public async Task CancelReservation_WithoutReason_Fails()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (_, reservationId) = await CreateTestReservation(httpClient, daysFromNow: 14);
 
         var cancelRequest = new { reason = "" }; // Empty reason
