@@ -9,6 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.CallCenterPortal;
 ///     so that I can help customers find available vehicles and manage fleet.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "CallCenter")]
 public class US10_VehicleDashboardTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };

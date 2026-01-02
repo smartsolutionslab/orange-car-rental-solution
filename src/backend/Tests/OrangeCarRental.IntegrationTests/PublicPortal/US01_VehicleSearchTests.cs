@@ -10,6 +10,8 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 ///     so that I can find a car that meets my specific needs.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "Public")]
 public class US01_VehicleSearchTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };

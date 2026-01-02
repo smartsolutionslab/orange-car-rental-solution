@@ -4,13 +4,16 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 // Keycloak - Identity and Access Management
 // Persistent lifetime ensures realm configuration survives container restarts
+// Realm is imported automatically from the mounted configuration file
+var keycloakRealmPath = Path.Combine(AppContext.BaseDirectory, "keycloak");
 var keycloak = builder.AddContainer("keycloak", "quay.io/keycloak/keycloak", "26.0.7")
     .WithHttpEndpoint(port: 8080, targetPort: 8080, name: "http")
     .WithEnvironment("KEYCLOAK_ADMIN", "admin")
     .WithEnvironment("KEYCLOAK_ADMIN_PASSWORD", "admin")
     .WithEnvironment("KC_HEALTH_ENABLED", "true")
     .WithEnvironment("KC_METRICS_ENABLED", "true")
-    .WithArgs("start-dev")
+    .WithBindMount(keycloakRealmPath, "/opt/keycloak/data/import", isReadOnly: true)
+    .WithArgs("start-dev", "--import-realm")
     .WithLifetime(ContainerLifetime.Persistent);
 
 // SQL Server container for both databases
@@ -63,7 +66,7 @@ var fleetApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(sqlServer);
+    .WaitFor(dbMigrator);
 
 // Pricing API - Pricing policy and rental rate calculation
 // Must be defined before Reservations API since Reservations depends on it
@@ -76,7 +79,7 @@ var pricingApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(sqlServer);
+    .WaitFor(dbMigrator);
 
 // Customers API - Customer profile and driver's license management
 // Must be defined before Reservations API since Reservations depends on it
@@ -89,7 +92,7 @@ var customersApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(sqlServer);
+    .WaitFor(dbMigrator);
 
 // Reservations API - Customer booking and rental management
 // Uses Service Discovery to communicate with Pricing and Customers APIs
@@ -104,7 +107,7 @@ var reservationsApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(sqlServer)
+    .WaitFor(dbMigrator)
     .WaitFor(pricingApi)
     .WaitFor(customersApi);
 

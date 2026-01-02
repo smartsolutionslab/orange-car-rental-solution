@@ -1,9 +1,11 @@
+using System.Net.Http.Headers;
 using Aspire.Hosting;
 using Aspire.Hosting.ApplicationModel;
 using Aspire.Hosting.Testing;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.DependencyInjection;
 using Projects;
+using SmartSolutionsLab.OrangeCarRental.IntegrationTests.Infrastructure;
 
 namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests;
 
@@ -25,6 +27,7 @@ public class IntegrationTestCollection : ICollectionFixture<DistributedApplicati
 public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
+    private KeycloakTokenProvider? tokenProvider;
     private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(5);
     private string? sqlConnectionString;
 
@@ -44,6 +47,11 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
     public DistributedApplication App => app ?? throw new InvalidOperationException("App not initialized. Call InitializeAsync first.");
 
+    /// <summary>
+    ///     Gets the Keycloak token provider for acquiring test user tokens.
+    /// </summary>
+    public KeycloakTokenProvider TokenProvider => tokenProvider ?? throw new InvalidOperationException("TokenProvider not initialized. Call InitializeAsync first.");
+
     public async Task InitializeAsync()
     {
         var appHost = await DistributedApplicationTestingBuilder
@@ -59,8 +67,63 @@ public class DistributedApplicationFixture : IAsyncLifetime
         // Wait for critical resources to be ready using Aspire's ResourceNotificationService
         await WaitForResourcesAsync(cts.Token);
 
+        // Initialize Keycloak token provider
+        await InitializeKeycloakAsync(cts.Token);
+
         // Store SQL connection string for cleanup
         await CaptureSqlConnectionStringAsync(cts.Token);
+    }
+
+    private async Task InitializeKeycloakAsync(CancellationToken cancellationToken)
+    {
+        if (app == null) return;
+
+        // Get Keycloak endpoint
+        var keycloakEndpoint = app.GetEndpoint("keycloak", "http");
+        var keycloakUrl = keycloakEndpoint.ToString().TrimEnd('/');
+
+        Console.WriteLine($"Keycloak URL: {keycloakUrl}");
+
+        // Wait for Keycloak to be ready and realm to be imported
+        await WaitForKeycloakRealmAsync(keycloakUrl, cancellationToken);
+
+        // Initialize token provider
+        tokenProvider = new KeycloakTokenProvider(keycloakUrl);
+    }
+
+    private async Task WaitForKeycloakRealmAsync(string keycloakUrl, CancellationToken cancellationToken)
+    {
+        var maxRetries = 60;
+        var delayBetweenRetries = TimeSpan.FromSeconds(2);
+        var realmUrl = $"{keycloakUrl}/realms/orange-car-rental/.well-known/openid-configuration";
+
+        using var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromSeconds(10);
+
+        for (var i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                var response = await httpClient.GetAsync(realmUrl, cancellationToken);
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Keycloak realm 'orange-car-rental' is ready after {i + 1} attempts");
+                    return;
+                }
+
+                Console.WriteLine($"Waiting for Keycloak realm (attempt {i + 1}/{maxRetries}): {response.StatusCode}");
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                Console.WriteLine($"Waiting for Keycloak realm (attempt {i + 1}/{maxRetries}): {ex.Message}");
+            }
+
+            await Task.Delay(delayBetweenRetries, cancellationToken);
+        }
+
+        throw new TimeoutException("Keycloak realm 'orange-car-rental' did not become available within the timeout period");
     }
 
     private async Task WaitForResourcesAsync(CancellationToken cancellationToken)
@@ -69,6 +132,13 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
         // Use the Aspire-recommended way to wait for resources
         var resourceNotificationService = app.Services.GetRequiredService<ResourceNotificationService>();
+
+        // First, wait for db-migrator to complete (it's a one-shot executable)
+        Console.WriteLine("Waiting for 'db-migrator' to complete...");
+        await resourceNotificationService
+            .WaitForResourceAsync("db-migrator", KnownResourceStates.Finished)
+            .WaitAsync(resourceStartTimeout, cancellationToken);
+        Console.WriteLine("'db-migrator' completed successfully");
 
         // Wait for the API resources to be in Running state
         var resourcesToWait = new[] { "api-gateway", "fleet-api", "reservations-api", "pricing-api", "customers-api" };
@@ -148,6 +218,49 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
         var client = app.CreateHttpClient(resourceName);
         client.Timeout = TimeSpan.FromMinutes(2);
+        return client;
+    }
+
+    /// <summary>
+    ///     Creates an HTTP client authenticated as a customer.
+    /// </summary>
+    public async Task<HttpClient> CreateCustomerHttpClientAsync(string resourceName = "api-gateway")
+    {
+        var token = await TokenProvider.GetCustomerTokenAsync();
+        return CreateAuthenticatedClient(resourceName, token);
+    }
+
+    /// <summary>
+    ///     Creates an HTTP client authenticated as a call center agent.
+    /// </summary>
+    public async Task<HttpClient> CreateCallCenterHttpClientAsync(string resourceName = "api-gateway")
+    {
+        var token = await TokenProvider.GetCallCenterTokenAsync();
+        return CreateAuthenticatedClient(resourceName, token);
+    }
+
+    /// <summary>
+    ///     Creates an HTTP client authenticated as a fleet manager.
+    /// </summary>
+    public async Task<HttpClient> CreateFleetManagerHttpClientAsync(string resourceName = "api-gateway")
+    {
+        var token = await TokenProvider.GetFleetManagerTokenAsync();
+        return CreateAuthenticatedClient(resourceName, token);
+    }
+
+    /// <summary>
+    ///     Creates an HTTP client authenticated as an admin.
+    /// </summary>
+    public async Task<HttpClient> CreateAdminHttpClientAsync(string resourceName = "api-gateway")
+    {
+        var token = await TokenProvider.GetAdminTokenAsync();
+        return CreateAuthenticatedClient(resourceName, token);
+    }
+
+    private HttpClient CreateAuthenticatedClient(string resourceName, string token)
+    {
+        var client = CreateHttpClient(resourceName);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
     }
 

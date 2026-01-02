@@ -28,7 +28,7 @@ public sealed class SendInvoiceEmailCommandHandler(IEmailService emailService)
             };
 
             var providerMessageId = await emailService.SendEmailWithAttachmentsAsync(
-                command.RecipientEmail,
+                command.RecipientEmail.Value,
                 subject,
                 body,
                 attachments,
@@ -51,6 +51,7 @@ public sealed class SendInvoiceEmailCommandHandler(IEmailService emailService)
     private static string GenerateEmailBody(SendInvoiceEmailCommand command)
     {
         var invoiceDateFormatted = command.InvoiceDate.ToString("dd.MM.yyyy", GermanCulture);
+        var totalAmountFormatted = command.TotalAmount.ToGermanString();
 
         return $$"""
             <!DOCTYPE html>
@@ -70,7 +71,7 @@ public sealed class SendInvoiceEmailCommandHandler(IEmailService emailService)
                     <h1>Orange Car Rental</h1>
                 </div>
                 <div class="content">
-                    <p>Sehr geehrte(r) {{command.RecipientName}},</p>
+                    <p>Sehr geehrte(r) {{command.RecipientName.Value}},</p>
 
                     <p>vielen Dank für Ihre Buchung bei Orange Car Rental.</p>
 
@@ -79,7 +80,7 @@ public sealed class SendInvoiceEmailCommandHandler(IEmailService emailService)
                     <div class="highlight">
                         <strong>Rechnungsnummer:</strong> {{command.InvoiceNumber}}<br>
                         <strong>Rechnungsdatum:</strong> {{invoiceDateFormatted}}<br>
-                        <strong>Gesamtbetrag:</strong> {{command.TotalAmount}}
+                        <strong>Gesamtbetrag:</strong> {{totalAmountFormatted}}
                     </div>
 
                     <p>Bitte beachten Sie die auf der Rechnung angegebenen Zahlungsbedingungen.</p>

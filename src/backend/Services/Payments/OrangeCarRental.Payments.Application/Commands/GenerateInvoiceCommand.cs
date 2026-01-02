@@ -11,7 +11,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 public sealed record GenerateInvoiceCommand(
     ReservationId ReservationId,
     CustomerId CustomerId,
-    string CustomerName,
+    PersonName CustomerName,
     Street CustomerStreet,
     PostalCode CustomerPostalCode,
     City CustomerCity,

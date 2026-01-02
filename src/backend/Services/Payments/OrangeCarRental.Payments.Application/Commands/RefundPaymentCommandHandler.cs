@@ -15,8 +15,8 @@ public sealed class RefundPaymentCommandHandler(
         CancellationToken cancellationToken = default)
     {
         var payments = unitOfWork.Payments;
-        var paymentId = PaymentIdentifier.From(command.PaymentId);
-        var payment = await payments.GetByIdAsync(paymentId, cancellationToken) ?? throw new InvalidOperationException($"Payment with ID {command.PaymentId} not found");
+        var payment = await payments.GetByIdAsync(command.PaymentId, cancellationToken)
+            ?? throw new InvalidOperationException($"Payment with ID {command.PaymentId.Value} not found");
 
         // Validate payment can be refunded
         if (payment.Status != PaymentStatus.Captured)

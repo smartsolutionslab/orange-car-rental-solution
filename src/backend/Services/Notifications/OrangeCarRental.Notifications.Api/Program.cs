@@ -28,16 +28,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Add services to the container
 builder.Services.AddOpenApi();
 
-// Add CORS for frontend development
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
+// CORS for Call Center Portal only (internal staff operations)
+builder.Services.AddCallCenterPortalCors();
 
 // Add JWT Authentication and Authorization
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -88,7 +80,8 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
-app.UseCors("AllowFrontend");
+app.UseCallCenterPortalCors();
+app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();

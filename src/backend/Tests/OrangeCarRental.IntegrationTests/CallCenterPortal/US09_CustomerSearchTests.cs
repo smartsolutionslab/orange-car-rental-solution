@@ -10,11 +10,18 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.CallCenterPortal;
 ///     so that I can assist customers with inquiries about their reservations.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "CallCenter")]
 public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     #region Setup: Create test customer
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCallCenterHttpClientAsync();
+    }
 
     private async Task<(Guid customerId, string email)> CreateTestCustomerAsync(HttpClient httpClient)
     {
@@ -60,7 +67,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task SearchByEmail_ReturnsMatchingCustomer()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, email) = await CreateTestCustomerAsync(httpClient);
 
         // Act
@@ -79,7 +86,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task SearchByEmail_PartialMatch_ReturnsResults()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (_, email) = await CreateTestCustomerAsync(httpClient);
         var partialEmail = email.Split('@')[0]; // Get part before @
 
@@ -98,7 +105,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task SearchByLastName_ReturnsMatchingCustomers()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         await CreateTestCustomerAsync(httpClient); // Creates customer with lastName "TestKunde"
 
         // Act
@@ -122,7 +129,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task SearchByPhone_ReturnsMatchingCustomer()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var uniquePhone = $"+49 30 {Random.Shared.Next(10000000, 99999999)}";
 
         // Create customer with unique phone
@@ -169,7 +176,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerById_ReturnsFullCustomerDetails()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, email) = await CreateTestCustomerAsync(httpClient);
 
         // Act
@@ -201,7 +208,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerById_InvalidId_ReturnsNotFound()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var invalidId = Guid.NewGuid();
 
         // Act
@@ -219,7 +226,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task GetReservationsForCustomer_ReturnsCustomerBookings()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var (customerId, _) = await CreateTestCustomerAsync(httpClient);
 
         // Act
@@ -243,7 +250,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
     public async Task Search_NoParameters_ReturnsAllOrError()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync("/api/customers/search");

@@ -77,7 +77,7 @@ public static class PaymentEndpoints
             {
                 try
                 {
-                    var command = new RefundPaymentCommand(paymentId);
+                    var command = new RefundPaymentCommand(PaymentIdentifier.From(paymentId));
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return TypedResults.Ok(result);
                 }

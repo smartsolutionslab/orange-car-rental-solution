@@ -28,16 +28,8 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // Add services to the container
 builder.Services.AddOpenApi();
 
-// Add CORS for frontend development
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins("http://localhost:4300", "http://localhost:4301", "http://localhost:4302")
-            .AllowAnyHeader()
-            .AllowAnyMethod();
-    });
-});
+// CORS for frontend applications (separated by portal)
+builder.Services.AddOrangeCarRentalCors();
 
 // Add JWT Authentication and Authorization
 builder.Services.AddJwtAuthentication(builder.Configuration);
@@ -88,7 +80,11 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
-app.UseCors("AllowFrontend");
+// Centralized exception handling
+app.UseExceptionHandling();
+
+app.UseAllFrontendsCors();
+app.UseHttpsRedirection();
 
 // Add Authentication and Authorization middleware
 app.UseAuthentication();

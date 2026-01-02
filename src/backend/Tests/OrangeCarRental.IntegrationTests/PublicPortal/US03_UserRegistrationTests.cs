@@ -10,6 +10,8 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 ///     so that I can save my details and view my booking history.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "Public")]
 public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };

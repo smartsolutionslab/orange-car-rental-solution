@@ -52,7 +52,7 @@ public sealed class GenerateInvoiceCommandHandler(
             // Create customer invoice info
             var customerInfo = CustomerInvoiceInfo.Create(
                 customerId: command.CustomerId,
-                name: command.CustomerName,
+                name: command.CustomerName.Value,
                 street: command.CustomerStreet.Value,
                 postalCode: command.CustomerPostalCode.Value,
                 city: command.CustomerCity.Value,

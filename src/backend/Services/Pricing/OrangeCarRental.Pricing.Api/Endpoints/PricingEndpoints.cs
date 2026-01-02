@@ -18,28 +18,17 @@ public static class PricingEndpoints
                 IQueryHandler<CalculatePriceQuery, PriceCalculationResult> handler,
                 CancellationToken cancellationToken) =>
             {
-                try
-                {
-                    // Map request DTO to query with value objects
-                    var query = new CalculatePriceQuery(
-                        CategoryCode.From(request.CategoryCode),
-                        request.PickupDate,
-                        request.ReturnDate,
-                        !string.IsNullOrWhiteSpace(request.LocationCode)
-                            ? LocationCode.From(request.LocationCode)
-                            : null);
+                // Map request DTO to query with value objects
+                var query = new CalculatePriceQuery(
+                    CategoryCode.From(request.CategoryCode),
+                    request.PickupDate,
+                    request.ReturnDate,
+                    !string.IsNullOrWhiteSpace(request.LocationCode)
+                        ? LocationCode.From(request.LocationCode)
+                        : null);
 
-                    var result = await handler.HandleAsync(query, cancellationToken);
-                    return Results.Ok(result);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    return Results.BadRequest(new { message = ex.Message });
-                }
-                catch (ArgumentException ex)
-                {
-                    return Results.BadRequest(new { message = ex.Message });
-                }
+                var result = await handler.HandleAsync(query, cancellationToken);
+                return Results.Ok(result);
             })
             .WithName("CalculatePrice")
             .WithSummary("Calculate rental price")

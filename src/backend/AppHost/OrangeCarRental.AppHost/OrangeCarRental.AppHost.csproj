@@ -20,4 +20,9 @@
     <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Api\OrangeCarRental.Pricing.Api.csproj"/>
     <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Api\OrangeCarRental.Customers.Api.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="keycloak\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 </Project>

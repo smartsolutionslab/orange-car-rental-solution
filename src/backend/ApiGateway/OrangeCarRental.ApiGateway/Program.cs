@@ -49,19 +49,8 @@ builder.Services.AddReverseProxy()
 // Add JWT Authentication (validates tokens at the gateway)
 builder.Services.AddJwtAuthentication(builder.Configuration);
 
-// Add CORS for frontend applications
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins(
-                  "http://localhost:4300", "http://localhost:4301", "http://localhost:4302",
-                  "https://localhost:4300", "https://localhost:4301", "https://localhost:4302")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
-    });
-});
+// Add CORS for frontend applications (separated by portal)
+builder.Services.AddOrangeCarRentalCors();
 
 var app = builder.Build();
 
@@ -77,7 +66,8 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
-app.UseCors();
+app.UseAllFrontendsCors();
+app.UseHttpsRedirection();
 
 // Add Authentication middleware (validates JWT tokens)
 app.UseAuthentication();

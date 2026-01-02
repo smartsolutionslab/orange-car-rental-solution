@@ -31,7 +31,7 @@ public static class InvoiceEndpoints
                     var command = new GenerateInvoiceCommand(
                         ReservationId.From(request.ReservationId),
                         CustomerId.From(request.CustomerId),
-                        request.CustomerName,
+                        PersonName.Of(request.CustomerName),
                         Street.From(request.CustomerStreet),
                         PostalCode.From(request.CustomerPostalCode),
                         City.From(request.CustomerCity),

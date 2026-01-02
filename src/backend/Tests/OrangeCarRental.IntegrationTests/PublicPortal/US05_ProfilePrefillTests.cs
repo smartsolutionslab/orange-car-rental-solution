@@ -10,9 +10,16 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.PublicPortal;
 ///     in the booking form so that I don't have to re-enter my information every time I book.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "Public")]
 public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCustomerHttpClientAsync();
+    }
 
     #region AC: Customer profile retrieval for pre-fill
 
@@ -20,7 +27,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerProfile_WithValidCustomerId_ReturnsCompleteProfile()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         // Act
@@ -41,7 +48,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerProfile_ReturnsAllRequiredFieldsForPrefill()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         // Act
@@ -71,7 +78,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task GetCustomerProfile_WithNonExistentCustomer_ReturnsNotFound()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var nonExistentCustomerId = Guid.NewGuid();
 
         // Act
@@ -89,7 +96,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task UpdateCustomerProfile_WithValidData_Succeeds()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         var updateRequest = new
@@ -130,7 +137,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task UpdateCustomerProfile_WithInvalidData_ReturnsBadRequest()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         var updateRequest = new
@@ -159,7 +166,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task CreateReservation_WithExistingCustomer_UsesProfileData()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         // Get the customer profile
@@ -213,7 +220,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task GuestReservation_DoesNotRequireExistingProfile()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Find an available vehicle
         var vehicleResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
@@ -267,7 +274,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task CustomerProfile_MustHaveValidEmail()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         // Act
@@ -287,7 +294,7 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
     public async Task CustomerProfile_MustHaveValidAge()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var customerId = await CreateTestCustomer(httpClient);
 
         // Act

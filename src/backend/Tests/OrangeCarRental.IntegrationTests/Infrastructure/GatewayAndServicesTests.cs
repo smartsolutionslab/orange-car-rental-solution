@@ -9,6 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.Infrastructure;
 ///     These tests verify the cross-cutting infrastructure that supports all user stories.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "Infrastructure")]
 public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions jsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -82,8 +84,8 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
     [Fact]
     public async Task Gateway_RoutesToReservationsApi_Successfully()
     {
-        // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        // Arrange - Reservation search requires call center or admin authentication
+        var httpClient = await fixture.CreateCallCenterHttpClientAsync();
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=1");
@@ -206,8 +208,8 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
     [Fact]
     public async Task AllServices_AccessibleSimultaneously()
     {
-        // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        // Arrange - Use authenticated client for reservation search
+        var httpClient = await fixture.CreateCallCenterHttpClientAsync();
 
         // Act - Call multiple services in parallel
         var vehiclesTask = httpClient.GetAsync("/api/vehicles?pageSize=1");

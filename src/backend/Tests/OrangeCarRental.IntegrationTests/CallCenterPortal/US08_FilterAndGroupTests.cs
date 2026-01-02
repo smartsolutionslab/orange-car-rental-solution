@@ -9,9 +9,16 @@ namespace SmartSolutionsLab.OrangeCarRental.IntegrationTests.CallCenterPortal;
 ///     so that I can quickly find specific bookings or analyze patterns.
 /// </summary>
 [Collection(IntegrationTestCollection.Name)]
+[Trait("Category", "Integration")]
+[Trait("Portal", "CallCenter")]
 public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { PropertyNameCaseInsensitive = true };
+
+    private async Task<HttpClient> GetAuthenticatedClientAsync()
+    {
+        return await fixture.CreateCallCenterHttpClientAsync();
+    }
 
     #region AC: Status filter
 
@@ -22,7 +29,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task FilterByStatus_ReturnsMatchingReservations(string status)
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync($"/api/reservations/search?status={status}&pageSize=20");
@@ -43,7 +50,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task FilterByDateRange_ReturnsReservationsInRange()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var fromDate = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
         var toDate = DateTime.UtcNow.Date.AddDays(30).ToString("yyyy-MM-dd");
 
@@ -67,7 +74,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task FilterByPickupDateFrom_ReturnsOnlyFutureReservations()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var futureDate = DateTime.UtcNow.Date.AddDays(7).ToString("yyyy-MM-dd");
 
         // Act
@@ -91,7 +98,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task FilterByLocation_ReturnsReservationsAtLocation()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var locationCode = "MUC-FLG";
 
         // Act
@@ -115,7 +122,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task FilterByPriceRange_ReturnsReservationsInPriceRange()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var minPrice = 100m;
         var maxPrice = 500m;
 
@@ -143,7 +150,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task SortByPickupDateAscending_ReturnsOrderedResults()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync(
@@ -167,7 +174,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task SortByPickupDateDescending_ReturnsOrderedResults()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync(
@@ -191,7 +198,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task SortByPrice_ReturnsOrderedResults()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync(
@@ -219,7 +226,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task CombineFilters_ReturnsMatchingResults()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
         var fromDate = DateTime.UtcNow.Date.ToString("yyyy-MM-dd");
         var toDate = DateTime.UtcNow.Date.AddDays(60).ToString("yyyy-MM-dd");
 
@@ -248,7 +255,7 @@ public class US08_FilterAndGroupTests(DistributedApplicationFixture fixture)
     public async Task Search_ReturnsTotalCount()
     {
         // Arrange
-        var httpClient = fixture.CreateHttpClient("api-gateway");
+        var httpClient = await GetAuthenticatedClientAsync();
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=5");
