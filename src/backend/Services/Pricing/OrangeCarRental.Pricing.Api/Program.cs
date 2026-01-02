@@ -80,6 +80,9 @@ app.UseSerilogRequestLogging(options =>
     };
 });
 
+// Centralized exception handling
+app.UseExceptionHandling();
+
 app.UseAllFrontendsCors();
 app.UseHttpsRedirection();
 
