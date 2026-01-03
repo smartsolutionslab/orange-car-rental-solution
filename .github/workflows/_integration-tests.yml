@@ -59,7 +59,6 @@ jobs:
         working-directory: src/backend
         run: |
           dotnet test Tests/OrangeCarRental.IntegrationTests \
-            --no-build \
             --configuration Release \
             --filter "Portal=${{ inputs.portal }}" \
             --logger "trx;LogFileName=${{ inputs.portal }}-tests.trx" \
