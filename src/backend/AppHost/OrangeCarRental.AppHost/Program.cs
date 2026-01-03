@@ -128,11 +128,12 @@ var reservationsApi = builder
 // Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, etc.
 // YARP requires explicit URLs for cluster configuration, so we use GetEndpoint() here
 // Note: This is different from service-to-service communication which uses WithReference()
+// Using lambdas for deferred evaluation to prevent premature endpoint resolution
 var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
-    .WithEnvironment("FLEET_API_URL", fleetApi.GetEndpoint("http"))
-    .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
-    .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
-    .WithEnvironment("CUSTOMERS_API_URL", customersApi.GetEndpoint("http"))
+    .WithEnvironment("FLEET_API_URL", () => $"{fleetApi.GetEndpoint("http")}")
+    .WithEnvironment("RESERVATIONS_API_URL", () => $"{reservationsApi.GetEndpoint("http")}")
+    .WithEnvironment("PRICING_API_URL", () => $"{pricingApi.GetEndpoint("http")}")
+    .WithEnvironment("CUSTOMERS_API_URL", () => $"{customersApi.GetEndpoint("http")}")
     .WithEnvironment("SEQ_URL", () => $"{seq.GetEndpoint("ui")}")
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
     .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
@@ -155,7 +156,7 @@ var publicPortal = builder.AddJavaScriptApp("public-portal", "../../../frontend/
     .WithYarn()
     .WithHttpEndpoint(4301, isProxied: false)
     .WithReference(apiGateway)
-    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
+    .WithEnvironment("API_URL", () => $"{apiGateway.GetEndpoint("http")}")
     .WithExternalHttpEndpoints()
     .WaitFor(keycloak)
     .WaitFor(apiGateway);
@@ -169,7 +170,7 @@ var callCenterPortal = builder.AddJavaScriptApp("call-center-portal", "../../../
     .WithYarn()
     .WithHttpEndpoint(4302, isProxied: false)
     .WithReference(apiGateway)
-    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
+    .WithEnvironment("API_URL", () => $"{apiGateway.GetEndpoint("http")}")
     .WithExternalHttpEndpoints()
     .WaitFor(keycloak)
     .WaitFor(apiGateway);
@@ -183,9 +184,9 @@ var shell = builder.AddJavaScriptApp("shell", "../../../frontend/apps/shell", "s
     .WithYarn()
     .WithHttpEndpoint(4300, isProxied: false)
     .WithReference(apiGateway)
-    .WithEnvironment("API_URL", apiGateway.GetEndpoint("http"))
-    .WithEnvironment("PUBLIC_PORTAL_URL", publicPortal.GetEndpoint("http"))
-    .WithEnvironment("CALLCENTER_PORTAL_URL", callCenterPortal.GetEndpoint("http"))
+    .WithEnvironment("API_URL", () => $"{apiGateway.GetEndpoint("http")}")
+    .WithEnvironment("PUBLIC_PORTAL_URL", () => $"{publicPortal.GetEndpoint("http")}")
+    .WithEnvironment("CALLCENTER_PORTAL_URL", () => $"{callCenterPortal.GetEndpoint("http")}")
     .WithExternalHttpEndpoints()
     .WaitFor(keycloak)
     .WaitFor(apiGateway)
