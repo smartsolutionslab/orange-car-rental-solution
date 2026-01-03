@@ -8,6 +8,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var seq = builder.AddContainer("seq", "datalust/seq", "latest")
     .WithHttpEndpoint(port: 5341, targetPort: 80, name: "ui")
     .WithEnvironment("ACCEPT_EULA", "Y")
+    .WithEnvironment("SEQ_FIRSTRUN_ADMINPASSWORD", "admin")  // Simple password for development
     .WithLifetime(ContainerLifetime.Persistent);
 
 // Keycloak - Identity and Access Management
