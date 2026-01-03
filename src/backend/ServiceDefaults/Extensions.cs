@@ -49,13 +49,25 @@ public static class Extensions
             {
                 metrics.AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
-                    .AddRuntimeInstrumentation();
+                    .AddRuntimeInstrumentation()
+                    .AddMeter("OrangeCarRental"); // Custom business metrics
             })
             .WithTracing(tracing =>
             {
                 tracing.AddSource(builder.Environment.ApplicationName)
+                    .AddSource("OrangeCarRental") // Custom activity source
                     .AddAspNetCoreInstrumentation()
-                    .AddHttpClientInstrumentation();
+                    .AddHttpClientInstrumentation()
+                    .AddEntityFrameworkCoreInstrumentation(options =>
+                    {
+                        options.SetDbStatementForText = true;
+                        options.SetDbStatementForStoredProcedure = true;
+                    })
+                    .AddSqlClientInstrumentation(options =>
+                    {
+                        options.SetDbStatementForText = true;
+                        options.RecordException = true;
+                    });
             });
 
         builder.AddOpenTelemetryExporters();

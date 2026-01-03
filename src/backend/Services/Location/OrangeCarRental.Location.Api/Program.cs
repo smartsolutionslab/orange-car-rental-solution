@@ -13,16 +13,26 @@ using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
-// Configure Serilog
-builder.Host.UseSerilog((context, services, configuration) => configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext()
-    .Enrich.WithMachineName()
-    .Enrich.WithEnvironmentName()
-    .Enrich.WithProperty("Application", "LocationAPI")
-    .WriteTo.Console(
-        outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}"));
+// Configure Serilog with Seq for structured logging
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .Enrich.WithMachineName()
+        .Enrich.WithEnvironmentName()
+        .Enrich.WithProperty("Application", "LocationAPI")
+        .WriteTo.Console(
+            outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}");
+
+    // Add Seq sink if SEQ_URL is configured
+    var seqUrl = context.Configuration["SEQ_URL"];
+    if (!string.IsNullOrEmpty(seqUrl))
+    {
+        configuration.WriteTo.Seq(seqUrl);
+    }
+});
 
 // Add services to the container
 builder.Services.AddOpenApi();
@@ -76,6 +86,9 @@ app.UseSerilogRequestLogging(options =>
         diagnosticContext.Set("UserAgent", httpContext.Request.Headers.UserAgent);
     };
 });
+
+// Centralized exception handling
+app.UseExceptionHandling();
 
 app.UseAllFrontendsCors();
 app.UseHttpsRedirection();
