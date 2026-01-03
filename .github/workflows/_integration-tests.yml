@@ -41,6 +41,20 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      - name: Setup Node.js for frontend portals
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install frontend dependencies
+        working-directory: src/frontend
+        run: |
+          # Clear potentially corrupted yarn cache
+          yarn cache clean
+          yarn install --frozen-lockfile --network-timeout 300000
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
       - name: Run ${{ inputs.portal }} integration tests
         working-directory: src/backend
         run: |
