@@ -109,6 +109,48 @@ var customersApi = builder
     .WaitFor(keycloak)
     .WaitForCompletion(dbMigrator);
 
+// Payments API - Payment processing and invoice management
+var paymentsApi = builder
+    .AddProject<OrangeCarRental_Payments_Api>("payments-api")
+    .WithHttpEndpoint(name: "http")
+    .WithReference(paymentsDb)
+    .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
+    .WaitFor(keycloak)
+    .WaitForCompletion(dbMigrator);
+
+// Notifications API - Email and SMS notification management
+var notificationsApi = builder
+    .AddProject<OrangeCarRental_Notifications_Api>("notifications-api")
+    .WithHttpEndpoint(name: "http")
+    .WithReference(notificationsDb)
+    .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
+    .WaitFor(keycloak)
+    .WaitForCompletion(dbMigrator);
+
+// Location API - Rental location management
+var locationsApi = builder
+    .AddProject<OrangeCarRental_Location_Api>("locations-api")
+    .WithHttpEndpoint(name: "http")
+    .WithReference(locationsDb)
+    .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
+    .WaitFor(keycloak)
+    .WaitForCompletion(dbMigrator);
+
 // Reservations API - Customer booking and rental management
 // Uses Service Discovery to communicate with Pricing and Customers APIs
 var reservationsApi = builder
@@ -139,6 +181,9 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
     .WithEnvironment("CUSTOMERS_API_URL", customersApi.GetEndpoint("http"))
+    .WithEnvironment("PAYMENTS_API_URL", paymentsApi.GetEndpoint("http"))
+    .WithEnvironment("NOTIFICATIONS_API_URL", notificationsApi.GetEndpoint("http"))
+    .WithEnvironment("LOCATIONS_API_URL", locationsApi.GetEndpoint("http"))
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
     .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
@@ -150,7 +195,10 @@ var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
     .WaitFor(fleetApi)
     .WaitFor(reservationsApi)
     .WaitFor(pricingApi)
-    .WaitFor(customersApi);
+    .WaitFor(customersApi)
+    .WaitFor(paymentsApi)
+    .WaitFor(notificationsApi)
+    .WaitFor(locationsApi);
 
 // Public Portal - Remote microfrontend for vehicle search and booking
 // Accessible at http://localhost:4301
