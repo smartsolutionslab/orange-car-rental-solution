@@ -130,6 +130,7 @@ var reservationsApi = builder
 // Note: This is different from service-to-service communication which uses WithReference()
 // Using lambdas for deferred evaluation to prevent premature endpoint resolution
 var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
+    .WithHttpEndpoint(name: "http")
     .WithEnvironment("FLEET_API_URL", () => $"{fleetApi.GetEndpoint("http")}")
     .WithEnvironment("RESERVATIONS_API_URL", () => $"{reservationsApi.GetEndpoint("http")}")
     .WithEnvironment("PRICING_API_URL", () => $"{pricingApi.GetEndpoint("http")}")
