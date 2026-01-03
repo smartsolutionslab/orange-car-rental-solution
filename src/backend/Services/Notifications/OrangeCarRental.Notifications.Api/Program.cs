@@ -27,9 +27,9 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .WriteTo.Console(
             outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}");
 
-    // Add Seq sink if SEQ_URL is configured
+    // Add Seq sink if SEQ_URL is configured and valid
     var seqUrl = context.Configuration["SEQ_URL"];
-    if (!string.IsNullOrEmpty(seqUrl))
+    if (!string.IsNullOrEmpty(seqUrl) && Uri.TryCreate(seqUrl, UriKind.Absolute, out _))
     {
         configuration.WriteTo.Seq(seqUrl);
     }
