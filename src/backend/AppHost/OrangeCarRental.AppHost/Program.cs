@@ -76,7 +76,7 @@ var fleetApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(dbMigrator);
+    .WaitForCompletion(dbMigrator);
 
 // Pricing API - Pricing policy and rental rate calculation
 // Must be defined before Reservations API since Reservations depends on it
@@ -90,7 +90,7 @@ var pricingApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(dbMigrator);
+    .WaitForCompletion(dbMigrator);
 
 // Customers API - Customer profile and driver's license management
 // Must be defined before Reservations API since Reservations depends on it
@@ -104,7 +104,7 @@ var customersApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(dbMigrator);
+    .WaitForCompletion(dbMigrator);
 
 // Reservations API - Customer booking and rental management
 // Uses Service Discovery to communicate with Pricing and Customers APIs
@@ -120,7 +120,7 @@ var reservationsApi = builder
     .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
     .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
     .WaitFor(keycloak)
-    .WaitFor(dbMigrator)
+    .WaitForCompletion(dbMigrator)
     .WaitFor(pricingApi)
     .WaitFor(customersApi);
 
