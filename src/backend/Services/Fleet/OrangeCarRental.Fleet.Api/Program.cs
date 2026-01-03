@@ -55,7 +55,11 @@ builder.Services.AddOrangeCarRentalAuthorization();
 builder.AddSqlServerDbContext<FleetDbContext>("fleet", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure"));
+    {
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Fleet.Infrastructure");
+        // Retry on transient failures (e.g., database not yet created by migrator)
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+    });
 });
 
 // Register HTTP client for Reservations API with service discovery

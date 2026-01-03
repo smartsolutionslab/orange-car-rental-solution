@@ -49,7 +49,11 @@ builder.Services.AddOrangeCarRentalAuthorization();
 builder.AddSqlServerDbContext<NotificationsDbContext>("notifications", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Notifications.Infrastructure"));
+    {
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Notifications.Infrastructure");
+        // Retry on transient failures (e.g., database not yet created by migrator)
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+    });
 });
 
 // Register Unit of Work and repositories

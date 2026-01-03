@@ -52,7 +52,11 @@ builder.Services.AddOrangeCarRentalAuthorization();
 builder.AddSqlServerDbContext<PaymentsDbContext>("payments", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure"));
+    {
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Payments.Infrastructure");
+        // Retry on transient failures (e.g., database not yet created by migrator)
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+    });
 });
 
 // Register configuration

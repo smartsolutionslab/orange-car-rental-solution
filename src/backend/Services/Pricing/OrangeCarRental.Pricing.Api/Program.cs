@@ -49,7 +49,11 @@ builder.Services.AddOrangeCarRentalAuthorization();
 builder.AddSqlServerDbContext<PricingDbContext>("pricing", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Pricing.Infrastructure"));
+    {
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Pricing.Infrastructure");
+        // Retry on transient failures (e.g., database not yet created by migrator)
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+    });
 });
 
 // Register repositories
