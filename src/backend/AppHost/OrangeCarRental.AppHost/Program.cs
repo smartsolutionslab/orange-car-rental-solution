@@ -67,6 +67,7 @@ var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>(
 // Also needs read-only access to Reservations database for date filtering
 var fleetApi = builder
     .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
+    .WithHttpEndpoint(name: "http")
     .WithReference(fleetDb)
     .WithReference(reservationsDb)
     .WithEnvironment("SEQ_URL", () => $"{seq.GetEndpoint("ui")}")
@@ -82,6 +83,7 @@ var fleetApi = builder
 // Must be defined before Reservations API since Reservations depends on it
 var pricingApi = builder
     .AddProject<OrangeCarRental_Pricing_Api>("pricing-api")
+    .WithHttpEndpoint(name: "http")
     .WithReference(pricingDb)
     .WithEnvironment("SEQ_URL", () => $"{seq.GetEndpoint("ui")}")
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
@@ -96,6 +98,7 @@ var pricingApi = builder
 // Must be defined before Reservations API since Reservations depends on it
 var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
+    .WithHttpEndpoint(name: "http")
     .WithReference(customersDb)
     .WithEnvironment("SEQ_URL", () => $"{seq.GetEndpoint("ui")}")
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http")}/realms/orange-car-rental")
@@ -110,6 +113,7 @@ var customersApi = builder
 // Uses Service Discovery to communicate with Pricing and Customers APIs
 var reservationsApi = builder
     .AddProject<OrangeCarRental_Reservations_Api>("reservations-api")
+    .WithHttpEndpoint(name: "http")
     .WithReference(reservationsDb)
     .WithReference(pricingApi)
     .WithReference(customersApi)
