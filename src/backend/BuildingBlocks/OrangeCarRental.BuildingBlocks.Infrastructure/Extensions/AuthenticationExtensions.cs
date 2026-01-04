@@ -31,6 +31,10 @@ public static class AuthenticationExtensions
         var validateAudience = keycloakConfig.GetValue<bool>("ValidateAudience", true);
         var validateLifetime = keycloakConfig.GetValue<bool>("ValidateLifetime", true);
 
+        // Disable default claim type mapping to preserve JWT claim names as-is
+        // Without this, ASP.NET Core maps claim types like "roles" to different names
+        System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -41,6 +45,9 @@ public static class AuthenticationExtensions
             options.Authority = authority;
             options.Audience = audience;
             options.RequireHttpsMetadata = requireHttpsMetadata;
+
+            // Also disable mapping via MapInboundClaims
+            options.MapInboundClaims = false;
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -58,10 +65,44 @@ public static class AuthenticationExtensions
             {
                 OnAuthenticationFailed = context =>
                 {
+                    Console.WriteLine($"[JWT] Authentication failed: {context.Exception.GetType().Name} - {context.Exception.Message}");
                     if (context.Exception is SecurityTokenExpiredException)
                     {
                         context.Response.Headers["Token-Expired"] = "true";
                     }
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    var claims = context.Principal?.Claims.Select(c => $"{c.Type}={c.Value}").ToList();
+                    Console.WriteLine($"[JWT] Token validated. Claims: {string.Join(", ", claims ?? [])}");
+
+                    // Log roles specifically
+                    var roles = context.Principal?.FindAll("roles").Select(c => c.Value).ToList();
+                    Console.WriteLine($"[JWT] Roles from 'roles' claim: {string.Join(", ", roles ?? [])}");
+
+                    // Also check for role claim type
+                    var roleClaimRoles = context.Principal?.FindAll(context.Principal.Identities.First().RoleClaimType).Select(c => c.Value).ToList();
+                    Console.WriteLine($"[JWT] Roles from RoleClaimType '{context.Principal?.Identities.First().RoleClaimType}': {string.Join(", ", roleClaimRoles ?? [])}");
+
+                    return Task.CompletedTask;
+                },
+                OnMessageReceived = context =>
+                {
+                    var hasAuth = context.Request.Headers.ContainsKey("Authorization");
+                    Console.WriteLine($"[JWT] Message received. Has Authorization header: {hasAuth}");
+                    return Task.CompletedTask;
+                },
+                OnChallenge = context =>
+                {
+                    Console.WriteLine($"[JWT] Challenge issued. Error: {context.Error}, Description: {context.ErrorDescription}");
+                    return Task.CompletedTask;
+                },
+                OnForbidden = context =>
+                {
+                    Console.WriteLine($"[JWT] Forbidden. User: {context.Principal?.Identity?.Name}, IsAuthenticated: {context.Principal?.Identity?.IsAuthenticated}");
+                    var roles = context.Principal?.FindAll("roles").Select(c => c.Value).ToList();
+                    Console.WriteLine($"[JWT] User roles: {string.Join(", ", roles ?? [])}");
                     return Task.CompletedTask;
                 }
             };

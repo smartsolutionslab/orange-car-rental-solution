@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -86,6 +87,21 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
     {
         // Arrange - Reservation search requires call center or admin authentication
         var httpClient = await fixture.CreateCallCenterHttpClientAsync();
+
+        // Log the token contents for debugging
+        var authHeader = httpClient.DefaultRequestHeaders.Authorization;
+        if (authHeader?.Parameter != null)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(authHeader.Parameter);
+            Console.WriteLine($"[TEST] Token issuer: {token.Issuer}");
+            Console.WriteLine($"[TEST] Token audience: {string.Join(", ", token.Audiences)}");
+            Console.WriteLine($"[TEST] Token claims: {string.Join(", ", token.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+
+            // Specifically log roles
+            var roles = token.Claims.Where(c => c.Type == "roles").Select(c => c.Value).ToList();
+            Console.WriteLine($"[TEST] Roles in token: {string.Join(", ", roles)}");
+        }
 
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=1");
@@ -214,6 +230,20 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
     {
         // Arrange - Use authenticated client for reservation search
         var httpClient = await fixture.CreateCallCenterHttpClientAsync();
+
+        // Log the token contents for debugging
+        var authHeader = httpClient.DefaultRequestHeaders.Authorization;
+        if (authHeader?.Parameter != null)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(authHeader.Parameter);
+            Console.WriteLine($"[TEST-AllServices] Token issuer: {token.Issuer}");
+            Console.WriteLine($"[TEST-AllServices] Token audience: {string.Join(", ", token.Audiences)}");
+
+            // Specifically log roles
+            var roles = token.Claims.Where(c => c.Type == "roles").Select(c => c.Value).ToList();
+            Console.WriteLine($"[TEST-AllServices] Roles in token: {string.Join(", ", roles)}");
+        }
 
         // Act - Call multiple services in parallel
         var vehiclesTask = httpClient.GetAsync("/api/vehicles?pageSize=1");
