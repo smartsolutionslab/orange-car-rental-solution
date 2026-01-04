@@ -27,8 +27,8 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10) // 3 days
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10) // 3 days
         };
 
         // Act
@@ -53,8 +53,8 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode = "SUV",
-            pickupDate = DateTime.UtcNow.Date.AddDays(14),
-            returnDate = DateTime.UtcNow.Date.AddDays(17)
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(14),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(17)
         };
 
         // Act
@@ -79,14 +79,14 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var shortRental = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(8) // 1 day
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(8) // 1 day
         };
         var longRental = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(14) // 7 days
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(14) // 7 days
         };
 
         // Act
@@ -113,8 +113,8 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(10),
-            returnDate = DateTime.UtcNow.Date.AddDays(7) // Return before pickup
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7) // Return before pickup
         };
 
         // Act
@@ -354,8 +354,8 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10)
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10)
         };
 
         // Act

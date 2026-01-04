@@ -191,8 +191,8 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
         {
             vehicleId = Guid.Parse(vehicle.Id),
             categoryCode = vehicle.CategoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(14),
-            returnDate = DateTime.UtcNow.Date.AddDays(17),
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(14),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(17),
             pickupLocationCode = vehicle.LocationCode,
             dropoffLocationCode = vehicle.LocationCode,
             customerId // Using existing customer ID
