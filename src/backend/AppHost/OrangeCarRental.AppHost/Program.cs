@@ -63,22 +63,6 @@ var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>(
     .WithReference(locationsDb)
     .WaitFor(sqlServer);
 
-// Fleet API - Vehicle inventory and availability management
-// Also needs read-only access to Reservations database for date filtering
-var fleetApi = builder
-    .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
-    .WithHttpEndpoint(name: "http")
-    .WithReference(fleetDb)
-    .WithReference(reservationsDb)
-    .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
-    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
-    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
-    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
-    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
-    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
-    .WaitFor(keycloak)
-    .WaitForCompletion(dbMigrator);
-
 // Pricing API - Pricing policy and rental rate calculation
 // Must be defined before Reservations API since Reservations depends on it
 var pricingApi = builder
@@ -169,6 +153,23 @@ var reservationsApi = builder
     .WaitForCompletion(dbMigrator)
     .WaitFor(pricingApi)
     .WaitFor(customersApi);
+
+// Fleet API - Vehicle inventory and availability management
+// Uses Service Discovery to communicate with Reservations API for availability checks
+var fleetApi = builder
+    .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
+    .WithHttpEndpoint(name: "http")
+    .WithReference(fleetDb)
+    .WithReference(reservationsApi)
+    .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
+    .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
+    .WithEnvironment("Authentication__Keycloak__Audience", "orange-car-rental-api")
+    .WithEnvironment("Authentication__Keycloak__RequireHttpsMetadata", "false")
+    .WithEnvironment("Authentication__Keycloak__ValidateIssuer", "true")
+    .WithEnvironment("Authentication__Keycloak__ValidateAudience", "false")
+    .WaitFor(keycloak)
+    .WaitForCompletion(dbMigrator)
+    .WaitFor(reservationsApi);
 
 // API Gateway - YARP reverse proxy
 // Routes /api/vehicles/* to Fleet API, /api/reservations/* to Reservations API, etc.
