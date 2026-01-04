@@ -30,10 +30,11 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        var locations = JsonSerializer.Deserialize<List<LocationDto>>(content, JsonOptions);
+        var result = JsonSerializer.Deserialize<LocationListResult>(content, JsonOptions);
 
-        Assert.NotNull(locations);
-        Assert.True(locations.Count > 0, "Expected at least one location");
+        Assert.NotNull(result);
+        Assert.NotNull(result.Locations);
+        Assert.True(result.Locations.Count > 0, "Expected at least one location");
     }
 
     #endregion
@@ -52,11 +53,11 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
-        var locations = JsonSerializer.Deserialize<List<LocationDto>>(content, JsonOptions);
+        var result = JsonSerializer.Deserialize<LocationListResult>(content, JsonOptions);
 
         // Assert
-        Assert.NotNull(locations);
-        var locationCodes = locations.Select(l => l.Code).ToList();
+        Assert.NotNull(result);
+        var locationCodes = result.Locations.Select(l => l.Code).ToList();
 
         foreach (var expectedCode in expectedLocations)
         {
@@ -99,11 +100,11 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
         response.EnsureSuccessStatusCode();
 
         var content = await response.Content.ReadAsStringAsync();
-        var locations = JsonSerializer.Deserialize<List<LocationDto>>(content, JsonOptions);
+        var result = JsonSerializer.Deserialize<LocationListResult>(content, JsonOptions);
 
         // Assert - Verify German address format
-        Assert.NotNull(locations);
-        foreach (var location in locations)
+        Assert.NotNull(result);
+        foreach (var location in result.Locations)
         {
             Assert.NotEmpty(location.Street);
             Assert.NotEmpty(location.City);
@@ -147,7 +148,7 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
         var locationsResponse = await httpClient.GetAsync("/api/locations");
         locationsResponse.EnsureSuccessStatusCode();
         var locationsContent = await locationsResponse.Content.ReadAsStringAsync();
-        var locationsList = JsonSerializer.Deserialize<List<LocationDto>>(locationsContent, JsonOptions);
+        var locationsResult = JsonSerializer.Deserialize<LocationListResult>(locationsContent, JsonOptions);
 
         // Get all vehicles
         var vehiclesResponse = await httpClient.GetAsync("/api/vehicles?pageSize=100");
@@ -155,10 +156,10 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
         var vehicles = await vehiclesResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
 
         // Assert
-        Assert.NotNull(locationsList);
+        Assert.NotNull(locationsResult);
         Assert.NotNull(vehicles);
 
-        var validLocationCodes = locationsList.Select(l => l.Code).ToHashSet();
+        var validLocationCodes = locationsResult.Locations.Select(l => l.Code).ToHashSet();
 
         // All vehicles should reference valid locations
         foreach (var vehicle in vehicles.Items)
@@ -207,6 +208,11 @@ public class US11_StationOverviewTests(DistributedApplicationFixture fixture)
     #endregion
 
     // Helper classes
+    private class LocationListResult
+    {
+        public List<LocationDto> Locations { get; set; } = new();
+    }
+
     private class LocationDto
     {
         public string Code { get; set; } = string.Empty;
