@@ -276,25 +276,37 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
 
         var request = new
         {
-            vehicleId = Guid.Parse(vehicle.Id),
-            categoryCode = vehicle.CategoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(daysFromNow),
-            returnDate = DateTime.UtcNow.Date.AddDays(daysFromNow + 3),
-            pickupLocationCode = vehicle.LocationCode,
-            dropoffLocationCode = vehicle.LocationCode,
-            firstName = "Hans",
-            lastName = "Test",
-            email = uniqueEmail,
-            phoneNumber = "+49 89 12345678",
-            dateOfBirth = new DateOnly(1985, 6, 15),
-            street = "Teststraße 1",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-            licenseNumber = $"T{Guid.NewGuid():N}"[..10],
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2010, 1, 1),
-            licenseExpiryDate = new DateOnly(2030, 1, 1)
+            reservation = new
+            {
+                vehicleId = Guid.Parse(vehicle.Id),
+                categoryCode = vehicle.CategoryCode,
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(daysFromNow),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(daysFromNow + 3),
+                pickupLocationCode = vehicle.LocationCode,
+                dropoffLocationCode = vehicle.LocationCode
+            },
+            customer = new
+            {
+                firstName = "Hans",
+                lastName = "Test",
+                email = uniqueEmail,
+                phoneNumber = "+49 89 12345678",
+                dateOfBirth = new DateOnly(1985, 6, 15)
+            },
+            address = new
+            {
+                street = "Teststraße 1",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = $"T{Guid.NewGuid():N}"[..10],
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2010, 1, 1),
+                licenseExpiryDate = new DateOnly(2030, 1, 1)
+            }
         };
 
         var response = await httpClient.PostAsJsonAsync("/api/reservations/guest", request);

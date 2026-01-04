@@ -143,35 +143,40 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
 
         var vehicle = searchResult.Items[0];
 
-        // Create guest reservation with all 5 steps of data
+        // Create guest reservation with all 5 steps of data (nested structure)
         var request = new
         {
-            // Step 1: Vehicle Details
-            vehicleId = Guid.Parse(vehicle.Id),
-            categoryCode = vehicle.CategoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(14),
-            returnDate = DateTime.UtcNow.Date.AddDays(17),
-            pickupLocationCode = "MUC-FLG",
-            dropoffLocationCode = "MUC-FLG",
-
-            // Step 2: Customer Information
-            firstName = "Hans",
-            lastName = "Müller",
-            email = $"hans.{Guid.NewGuid():N}@example.de",
-            phoneNumber = "+49 89 12345678",
-            dateOfBirth = new DateOnly(1985, 6, 15),
-
-            // Step 3: Address
-            street = "Marienplatz 1",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-
-            // Step 4: Driver's License
-            licenseNumber = $"M{Guid.NewGuid():N}"[..10],
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2010, 3, 20),
-            licenseExpiryDate = new DateOnly(2030, 3, 19)
+            reservation = new
+            {
+                vehicleId = Guid.Parse(vehicle.Id),
+                categoryCode = vehicle.CategoryCode,
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(14),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(17),
+                pickupLocationCode = "MUC-FLG",
+                dropoffLocationCode = "MUC-FLG"
+            },
+            customer = new
+            {
+                firstName = "Hans",
+                lastName = "Müller",
+                email = $"hans.{Guid.NewGuid():N}@example.de",
+                phoneNumber = "+49 89 12345678",
+                dateOfBirth = new DateOnly(1985, 6, 15)
+            },
+            address = new
+            {
+                street = "Marienplatz 1",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = $"M{Guid.NewGuid():N}"[..10],
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2010, 3, 20),
+                licenseExpiryDate = new DateOnly(2030, 3, 19)
+            }
         };
 
         // Act
@@ -199,25 +204,37 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var httpClient = fixture.CreateHttpClient("api-gateway");
         var request = new
         {
-            vehicleId = Guid.NewGuid(),
-            categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10),
-            pickupLocationCode = "MUC-FLG",
-            dropoffLocationCode = "MUC-FLG",
-            firstName = "Jung",
-            lastName = "Person",
-            email = $"jung.{Guid.NewGuid():N}@example.de",
-            phoneNumber = "+49 30 1111111",
-            dateOfBirth = DateOnly.FromDateTime(DateTime.Today.AddYears(-17)), // 17 years old
-            street = "Teststraße 1",
-            city = "Berlin",
-            postalCode = "10115",
-            country = "Germany",
-            licenseNumber = "J123456789",
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-30)),
-            licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddYears(10))
+            reservation = new
+            {
+                vehicleId = Guid.NewGuid(),
+                categoryCode = "KOMPAKT",
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+                pickupLocationCode = "MUC-FLG",
+                dropoffLocationCode = "MUC-FLG"
+            },
+            customer = new
+            {
+                firstName = "Jung",
+                lastName = "Person",
+                email = $"jung.{Guid.NewGuid():N}@example.de",
+                phoneNumber = "+49 30 1111111",
+                dateOfBirth = DateOnly.FromDateTime(DateTime.Today.AddYears(-17)) // 17 years old
+            },
+            address = new
+            {
+                street = "Teststraße 1",
+                city = "Berlin",
+                postalCode = "10115",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = "J123456789",
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-30)),
+                licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddYears(10))
+            }
         };
 
         // Act
@@ -234,25 +251,37 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var httpClient = fixture.CreateHttpClient("api-gateway");
         var request = new
         {
-            vehicleId = Guid.NewGuid(),
-            categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10),
-            pickupLocationCode = "MUC-FLG",
-            dropoffLocationCode = "MUC-FLG",
-            firstName = "Expired",
-            lastName = "License",
-            email = $"expired.{Guid.NewGuid():N}@example.de",
-            phoneNumber = "+49 30 2222222",
-            dateOfBirth = new DateOnly(1980, 5, 15),
-            street = "Abgelaufenweg 1",
-            city = "Berlin",
-            postalCode = "10117",
-            country = "Germany",
-            licenseNumber = "E123456789",
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2005, 1, 1),
-            licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)) // Expired
+            reservation = new
+            {
+                vehicleId = Guid.NewGuid(),
+                categoryCode = "KOMPAKT",
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+                pickupLocationCode = "MUC-FLG",
+                dropoffLocationCode = "MUC-FLG"
+            },
+            customer = new
+            {
+                firstName = "Expired",
+                lastName = "License",
+                email = $"expired.{Guid.NewGuid():N}@example.de",
+                phoneNumber = "+49 30 2222222",
+                dateOfBirth = new DateOnly(1980, 5, 15)
+            },
+            address = new
+            {
+                street = "Abgelaufenweg 1",
+                city = "Berlin",
+                postalCode = "10117",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = "E123456789",
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2005, 1, 1),
+                licenseExpiryDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)) // Expired
+            }
         };
 
         // Act
@@ -269,25 +298,37 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         var httpClient = fixture.CreateHttpClient("api-gateway");
         var request = new
         {
-            vehicleId = Guid.NewGuid(),
-            categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(-1), // Past date
-            returnDate = DateTime.UtcNow.Date.AddDays(3),
-            pickupLocationCode = "MUC-FLG",
-            dropoffLocationCode = "MUC-FLG",
-            firstName = "Past",
-            lastName = "Booking",
-            email = $"past.{Guid.NewGuid():N}@example.de",
-            phoneNumber = "+49 89 3333333",
-            dateOfBirth = new DateOnly(1990, 1, 1),
-            street = "Vergangenheit 1",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-            licenseNumber = "P123456789",
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2015, 6, 1),
-            licenseExpiryDate = new DateOnly(2035, 6, 1)
+            reservation = new
+            {
+                vehicleId = Guid.NewGuid(),
+                categoryCode = "KOMPAKT",
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), // Past date
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3),
+                pickupLocationCode = "MUC-FLG",
+                dropoffLocationCode = "MUC-FLG"
+            },
+            customer = new
+            {
+                firstName = "Past",
+                lastName = "Booking",
+                email = $"past.{Guid.NewGuid():N}@example.de",
+                phoneNumber = "+49 89 3333333",
+                dateOfBirth = new DateOnly(1990, 1, 1)
+            },
+            address = new
+            {
+                street = "Vergangenheit 1",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = "P123456789",
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2015, 6, 1),
+                licenseExpiryDate = new DateOnly(2035, 6, 1)
+            }
         };
 
         // Act
