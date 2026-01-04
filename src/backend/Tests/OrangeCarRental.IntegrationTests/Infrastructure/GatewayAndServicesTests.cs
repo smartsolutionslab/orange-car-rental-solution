@@ -90,8 +90,12 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=1");
 
-        // Assert
-        response.EnsureSuccessStatusCode();
+        // Assert - Provide detailed failure info
+        if (!response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected success status code but got {response.StatusCode}. Response: {content}");
+        }
     }
 
     [Fact]
@@ -218,10 +222,16 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
 
         var results = await Task.WhenAll(vehiclesTask, locationsTask, reservationsTask);
 
-        // Assert
-        Assert.True(results[0].IsSuccessStatusCode);
-        Assert.True(results[1].IsSuccessStatusCode);
-        Assert.True(results[2].IsSuccessStatusCode);
+        // Assert - Provide detailed failure info
+        var endpoints = new[] { "/api/vehicles", "/api/locations", "/api/reservations/search" };
+        for (var i = 0; i < results.Length; i++)
+        {
+            if (!results[i].IsSuccessStatusCode)
+            {
+                var content = await results[i].Content.ReadAsStringAsync();
+                Assert.Fail($"Request to {endpoints[i]} failed with {results[i].StatusCode}. Response: {content}");
+            }
+        }
     }
 
     #endregion
