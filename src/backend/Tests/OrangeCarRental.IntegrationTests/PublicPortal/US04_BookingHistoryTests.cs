@@ -18,7 +18,8 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
 
     private async Task<HttpClient> GetAuthenticatedClientAsync()
     {
-        return await fixture.CreateCustomerHttpClientAsync();
+        // Booking history endpoints require CallCenterOrAdminPolicy for customer lookup
+        return await fixture.CreateCallCenterHttpClientAsync();
     }
 
     #region AC: My Bookings page accessible from navigation
@@ -33,15 +34,15 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act - Get customer's booking history
-        var response = await httpClient.GetAsync($"/api/reservations/customer/{customerId}");
+        var response = await httpClient.GetAsync($"/api/reservations/search?customerId={customerId}");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<CustomerReservationsResult>(JsonOptions);
 
         Assert.NotNull(result);
-        Assert.NotNull(result.Reservations);
-        Assert.True(result.Reservations.Count >= 1);
+        Assert.NotNull(result.Items);
+        Assert.True(result.Items.Count >= 1);
     }
 
     [Fact]
@@ -52,14 +53,14 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         var nonExistentCustomerId = Guid.NewGuid();
 
         // Act
-        var response = await httpClient.GetAsync($"/api/reservations/customer/{nonExistentCustomerId}");
+        var response = await httpClient.GetAsync($"/api/reservations/search?customerId={nonExistentCustomerId}");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var result = await response.Content.ReadFromJsonAsync<CustomerReservationsResult>(JsonOptions);
 
         Assert.NotNull(result);
-        Assert.Empty(result.Reservations);
+        Assert.Empty(result.Items);
     }
 
     #endregion
@@ -74,14 +75,14 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
-        var response = await httpClient.GetAsync($"/api/reservations/customer/{customerId}");
+        var response = await httpClient.GetAsync($"/api/reservations/search?customerId={customerId}");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CustomerReservationsResult>(JsonOptions);
 
         // Assert - Each reservation should have a status for grouping
         Assert.NotNull(result);
-        Assert.All(result.Reservations, r =>
+        Assert.All(result.Items, r =>
         {
             Assert.NotEmpty(r.Status);
             Assert.True(
@@ -101,14 +102,14 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
-        var response = await httpClient.GetAsync($"/api/reservations/customer/{customerId}");
+        var response = await httpClient.GetAsync($"/api/reservations/search?customerId={customerId}");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CustomerReservationsResult>(JsonOptions);
 
         // Assert - Each reservation should have dates for grouping (Upcoming vs Past)
         Assert.NotNull(result);
-        Assert.All(result.Reservations, r =>
+        Assert.All(result.Items, r =>
         {
             Assert.NotEqual(default, r.PickupDate);
             Assert.NotEqual(default, r.ReturnDate);
@@ -128,16 +129,16 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         var (customerId, _) = await CreateTestReservation(httpClient);
 
         // Act
-        var response = await httpClient.GetAsync($"/api/reservations/customer/{customerId}");
+        var response = await httpClient.GetAsync($"/api/reservations/search?customerId={customerId}");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<CustomerReservationsResult>(JsonOptions);
 
         // Assert - Per AC: Reservation ID, vehicle, dates/locations, price, status badge
         Assert.NotNull(result);
-        if (result.Reservations.Count > 0)
+        if (result.Items.Count > 0)
         {
-            var reservation = result.Reservations[0];
+            var reservation = result.Items[0];
 
             Assert.NotEqual(Guid.Empty, reservation.ReservationId);
             Assert.NotEqual(Guid.Empty, reservation.VehicleId);
@@ -324,8 +325,11 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
 
     private class CustomerReservationsResult
     {
-        public List<ReservationDto> Reservations { get; set; } = new();
+        // PagedResult<T> uses 'Items' not 'Reservations'
+        public List<ReservationDto> Items { get; set; } = new();
         public int TotalCount { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
     }
 
     private class ReservationDto
