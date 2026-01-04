@@ -407,9 +407,9 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
         public string PostalCode => Address?.PostalCode ?? string.Empty;
         public string Country => Address?.Country ?? string.Empty;
         public string LicenseNumber => DriversLicense?.LicenseNumber ?? string.Empty;
-        public string LicenseIssueCountry => DriversLicense?.LicenseIssueCountry ?? string.Empty;
-        public DateOnly LicenseIssueDate => DriversLicense?.LicenseIssueDate ?? default;
-        public DateOnly LicenseExpiryDate => DriversLicense?.LicenseExpiryDate ?? default;
+        public string LicenseIssueCountry => DriversLicense?.IssueCountry ?? string.Empty;
+        public DateOnly LicenseIssueDate => DriversLicense?.IssueDate ?? default;
+        public DateOnly LicenseExpiryDate => DriversLicense?.ExpiryDate ?? default;
     }
 
     private class AddressDto
@@ -423,8 +423,8 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
     private class DriversLicenseDto
     {
         public string LicenseNumber { get; set; } = string.Empty;
-        public string LicenseIssueCountry { get; set; } = string.Empty;
-        public DateOnly LicenseIssueDate { get; set; }
-        public DateOnly LicenseExpiryDate { get; set; }
+        public string IssueCountry { get; set; } = string.Empty;
+        public DateOnly IssueDate { get; set; }
+        public DateOnly ExpiryDate { get; set; }
     }
 }
