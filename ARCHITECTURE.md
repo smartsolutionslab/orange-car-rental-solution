@@ -8,17 +8,17 @@
 
 ## Executive Summary
 
-This document defines the architecture for a modern, cloud-ready Car Rental Software System built with Domain-Driven Design principles, CQRS, Event Sourcing, and a clean separation between public and call center interfaces.
+This document defines the architecture for a modern, cloud-ready Car Rental Software System built with Domain-Driven Design principles, Clean Architecture, and a clear separation between public and call center interfaces.
 
 **Target Market:** German market with full GDPR/DSGVO compliance and German language support
 
 **Key Characteristics:**
 - Domain-Driven Design with strict value object usage
-- CQRS with Event Sourcing (SQL Server-based event store)
+- Clean Architecture with layered separation (Domain, Application, Infrastructure, API)
 - Multi-location/branch support from the start
 - Two separate Angular frontends (Public Portal + Call Center)
-- Deployable to Azure or on-premise
-- Full CI/CD automation with local pipeline execution
+- Deployable to Azure, Kubernetes, or on-premise
+- Full CI/CD automation with GitHub Actions
 - German market compliance (GDPR, VAT, German language, legal requirements)
 
 **See also:** [German Market Requirements](./GERMAN_MARKET_REQUIREMENTS.md) for detailed compliance and localization requirements
@@ -383,19 +383,19 @@ public sealed record CancellationReason(string Value);
 
 ---
 
-## CQRS Architecture
+## Application Architecture
 
-### Command Side (Write Model)
+### Command Handlers (Write Operations)
 
-**Purpose:** Handle commands, enforce business rules, emit domain events
+**Purpose:** Handle commands, enforce business rules, persist changes
 
 **Flow:**
 1. Command received via Minimal API endpoint
 2. Command validated
-3. Aggregate loaded from Event Store
-4. Business logic executed
-5. Domain events appended to Event Store
-6. Events published to event bus
+3. Entity loaded from database via Entity Framework Core
+4. Business logic executed in domain layer
+5. Changes persisted to SQL Server
+6. Response returned to client
 
 **Command Examples:**
 ```csharp
@@ -411,9 +411,9 @@ public sealed record ConfirmReservationCommand(ReservationId ReservationId);
 public sealed record CancelReservationCommand(ReservationId ReservationId, CancellationReason Reason);
 ```
 
-### Query Side (Read Model)
+### Query Handlers (Read Operations)
 
-**Purpose:** Optimized projections for queries, built from domain events
+**Purpose:** Optimized queries for read operations
 
 **Read Models (SQL Server Tables):**
 
@@ -537,61 +537,6 @@ public sealed class ReservationProjectionHandler :
 
 ---
 
-## Event Store Design
-
-### SQL Server Event Store Implementation
-
-```sql
--- Event Store Table
-CREATE TABLE EventStore (
-    EventId UNIQUEIDENTIFIER PRIMARY KEY,
-    AggregateId UNIQUEIDENTIFIER NOT NULL,
-    AggregateType NVARCHAR(200) NOT NULL,
-    EventType NVARCHAR(200) NOT NULL,
-    EventData NVARCHAR(MAX) NOT NULL, -- JSON serialized
-    EventMetadata NVARCHAR(MAX), -- JSON serialized (user, timestamp, correlation id)
-    Version INT NOT NULL,
-    Timestamp DATETIME2 NOT NULL,
-    INDEX IX_AggregateId_Version (AggregateId, Version)
-);
-
--- Snapshot Table (for performance optimization)
-CREATE TABLE EventStoreSnapshots (
-    AggregateId UNIQUEIDENTIFIER PRIMARY KEY,
-    AggregateType NVARCHAR(200) NOT NULL,
-    SnapshotData NVARCHAR(MAX) NOT NULL, -- JSON serialized aggregate state
-    Version INT NOT NULL,
-    Timestamp DATETIME2 NOT NULL
-);
-
--- Event Processing Checkpoint (for projections)
-CREATE TABLE EventProcessingCheckpoint (
-    ProjectionName NVARCHAR(200) PRIMARY KEY,
-    LastProcessedEventId UNIQUEIDENTIFIER,
-    LastProcessedTimestamp DATETIME2
-);
-```
-
-### Event Store Operations
-
-```csharp
-public interface IEventStore
-{
-    Task AppendEventsAsync<TAggregate>(
-        Guid aggregateId,
-        IEnumerable<IDomainEvent> events,
-        int expectedVersion);
-
-    Task<IEnumerable<IDomainEvent>> GetEventsAsync(
-        Guid aggregateId);
-
-    Task<IEnumerable<IDomainEvent>> GetAllEventsAsync(
-        DateTime? fromTimestamp = null);
-}
-```
-
----
-
 ## Technical Stack
 
 ### Backend (.NET)
@@ -601,10 +546,9 @@ public interface IEventStore
 | Framework | .NET | 9.0 | Backend platform |
 | API Style | Minimal API | .NET 9 | RESTful endpoints |
 | Orchestration | .NET Aspire | 9.0 | Local dev & orchestration |
-| Event Store | SQL Server | 2022 | Event sourcing storage |
-| Read DB | SQL Server | 2022 | Query model storage |
-| Authentication | Keycloak | Latest | Identity & SSO |
-| ORM | Entity Framework Core | 9.0 | Read model access only |
+| Database | SQL Server | 2022 | Data persistence |
+| Authentication | Keycloak | Latest | Identity & SSO (OpenID Connect) |
+| ORM | Entity Framework Core | 9.0 | Data access |
 | Testing | xUnit + FluentAssertions | Latest | Unit & integration tests |
 | API Docs | Scalar (OpenAPI) | Latest | API documentation |
 
@@ -665,11 +609,6 @@ orange-car-rental/
 │   │   │   │   ├── IDomainEvent.cs
 │   │   │   │   ├── ValueObject.cs
 │   │   │   │   └── IRepository.cs
-│   │   │   │
-│   │   │   ├── OrangeCarRental.BuildingBlocks.EventStore/
-│   │   │   │   ├── IEventStore.cs
-│   │   │   │   ├── SqlServerEventStore.cs
-│   │   │   │   └── EventStoreDbContext.cs
 │   │   │   │
 │   │   │   ├── OrangeCarRental.BuildingBlocks.Infrastructure/
 │   │   │   │   ├── Messaging/
@@ -1906,12 +1845,11 @@ Once approved, I'll begin creating the project structure, setting up the solutio
 
 - **Aggregate:** A cluster of domain objects treated as a single unit (e.g., Reservation)
 - **Bounded Context:** A logical boundary within which a domain model applies
-- **CQRS:** Command Query Responsibility Segregation - separate models for reads and writes
+- **Clean Architecture:** Layered architecture separating concerns (Domain, Application, Infrastructure, API)
 - **Domain Event:** Something that happened in the domain (past tense)
-- **Event Sourcing:** Storing state changes as a sequence of events
 - **Value Object:** Immutable object defined by its attributes, not identity
-- **Projection:** Process of building read models from domain events
 - **Aggregate Root:** The entry point to an aggregate, responsible for enforcing invariants
+- **Repository:** Abstraction for data access, encapsulating persistence logic
 
 ---
 

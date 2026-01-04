@@ -45,9 +45,8 @@ dotnet run
 ```
 src/backend/
 ├── BuildingBlocks/              # Shared kernel (domain primitives)
-│   ├── BuildingBlocks.Domain    # CQRS interfaces, base classes, value objects
+│   ├── BuildingBlocks.Domain    # Base classes, value objects, interfaces
 │   ├── BuildingBlocks.Infrastructure
-│   ├── BuildingBlocks.EventStore
 │   └── BuildingBlocks.Testing
 │
 ├── Services/                    # Microservices (bounded contexts)

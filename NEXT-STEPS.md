@@ -397,7 +397,7 @@ jobs:
 - [ ] WebSocket notifications
 - [ ] Offline-first mobile app
 - [ ] GraphQL API option
-- [ ] Event sourcing for audit trail
+- [ ] Audit trail logging
 - [ ] Multi-tenancy support
 
 ---

@@ -1,6 +1,6 @@
 # Orange Car Rental System
 
-A modern, cloud-ready car rental software system built with Domain-Driven Design, CQRS, Event Sourcing, and microservices architecture.
+A modern, cloud-ready car rental software system built with Domain-Driven Design, Clean Architecture, and microservices.
 
 **Target Market:** 🇩🇪 German market with full GDPR/DSGVO compliance, German language support, and VAT handling
 
@@ -30,11 +30,10 @@ A modern, cloud-ready car rental software system built with Domain-Driven Design
 
 ### Backend (.NET)
 - **Framework:** .NET 9 with Minimal API
-- **Pattern:** Domain-Driven Design with CQRS and Event Sourcing
-- **Event Store:** Custom SQL Server implementation
-- **Read Models:** SQL Server with optimized projections
-- **Authentication:** Keycloak integration
-- **Orchestration:** .NET Aspire for local development
+- **Pattern:** Domain-Driven Design with Clean Architecture
+- **Database:** SQL Server with Entity Framework Core
+- **Authentication:** Keycloak integration (OpenID Connect)
+- **Orchestration:** .NET Aspire 9.0 for local development
 - **Testing:** xUnit, FluentAssertions, integration tests
 
 ### Frontend (Angular)
@@ -591,4 +590,4 @@ For issues and questions:
 
 - Built with Domain-Driven Design principles
 - Inspired by modern microservices patterns
-- Following CQRS and Event Sourcing best practices
+- Following Clean Architecture best practices
