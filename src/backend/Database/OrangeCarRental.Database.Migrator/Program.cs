@@ -4,10 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SmartSolutionsLab.OrangeCarRental.Customers.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Location.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Notifications.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
+using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Data;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Infrastructure.Persistence;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -119,6 +121,33 @@ try
 
     logger.LogInformation("===========================================");
     logger.LogInformation("All database migrations completed successfully!");
+    logger.LogInformation("===========================================");
+
+    // Seed sample data for development and testing
+    logger.LogInformation("Seeding sample data...");
+
+    // Seed Fleet data (locations and vehicles)
+    using (var scope = host.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<FleetDbContext>();
+        var seederLogger = scope.ServiceProvider.GetRequiredService<ILogger<FleetDataSeeder>>();
+        var seeder = new FleetDataSeeder(dbContext, seederLogger);
+        await seeder.SeedAsync();
+        logger.LogInformation("✓ Fleet data seeded successfully");
+    }
+
+    // Seed Pricing data (pricing policies)
+    using (var scope = host.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<PricingDbContext>();
+        var seederLogger = scope.ServiceProvider.GetRequiredService<ILogger<PricingDataSeeder>>();
+        var seeder = new PricingDataSeeder(dbContext, seederLogger);
+        await seeder.SeedAsync();
+        logger.LogInformation("✓ Pricing data seeded successfully");
+    }
+
+    logger.LogInformation("===========================================");
+    logger.LogInformation("All seeding completed successfully!");
     logger.LogInformation("===========================================");
 
     Environment.ExitCode = 0;

@@ -19,6 +19,9 @@
     <ProjectReference Include="..\..\Services\Reservations\OrangeCarRental.Reservations.Api\OrangeCarRental.Reservations.Api.csproj"/>
     <ProjectReference Include="..\..\Services\Pricing\OrangeCarRental.Pricing.Api\OrangeCarRental.Pricing.Api.csproj"/>
     <ProjectReference Include="..\..\Services\Customers\OrangeCarRental.Customers.Api\OrangeCarRental.Customers.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Payments\OrangeCarRental.Payments.Api\OrangeCarRental.Payments.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Notifications\OrangeCarRental.Notifications.Api\OrangeCarRental.Notifications.Api.csproj"/>
+    <ProjectReference Include="..\..\Services\Location\OrangeCarRental.Location.Api\OrangeCarRental.Location.Api.csproj"/>
   </ItemGroup>
   <ItemGroup>
     <Content Include="keycloak\**\*">

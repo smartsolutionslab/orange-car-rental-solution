@@ -12,6 +12,13 @@ public sealed record SearchVehiclesRequest(
     int? MinSeats,
     string? FuelType,
     string? TransmissionType,
+    string? Transmission, // Alias for TransmissionType for user-friendliness
     decimal? MaxDailyRateGross,
     int? PageNumber = null,
-    int? PageSize = null);
+    int? PageSize = null)
+{
+    /// <summary>
+    ///     Gets the effective transmission type, preferring TransmissionType over the Transmission alias.
+    /// </summary>
+    public string? EffectiveTransmissionType => TransmissionType ?? Transmission;
+}

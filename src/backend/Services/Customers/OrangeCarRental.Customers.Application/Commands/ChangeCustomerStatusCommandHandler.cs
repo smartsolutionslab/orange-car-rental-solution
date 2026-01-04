@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -8,7 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 ///     Loads the customer from database, changes account status, and persists changes.
 /// </summary>
 public sealed class ChangeCustomerStatusCommandHandler(
-    ICustomerRepository repository)
+    ICustomerRepository repository,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult>
 {
     /// <summary>
@@ -35,6 +37,7 @@ public sealed class ChangeCustomerStatusCommandHandler(
 
         // Persist changes to database
         await repository.UpdateAsync(updatedCustomer, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new ChangeCustomerStatusResult(
             updatedCustomer.Id,

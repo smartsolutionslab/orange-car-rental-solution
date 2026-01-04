@@ -59,28 +59,40 @@ public class US07_ListAllBookingsTests(DistributedApplicationFixture fixture)
         {
             var vehicle = vehicles.Items[0];
 
-            // Create a guest reservation
+            // Create a guest reservation (nested structure)
             var reservationRequest = new
             {
-                vehicleId = Guid.Parse(vehicle.Id),
-                categoryCode = vehicle.CategoryCode,
-                pickupDate = DateTime.UtcNow.Date.AddDays(30),
-                returnDate = DateTime.UtcNow.Date.AddDays(33),
-                pickupLocationCode = vehicle.LocationCode,
-                dropoffLocationCode = vehicle.LocationCode,
-                firstName = "Test",
-                lastName = "Agent",
-                email = $"agent.{Guid.NewGuid():N}@test.de",
-                phoneNumber = "+49 89 99999999",
-                dateOfBirth = new DateOnly(1985, 1, 1),
-                street = "Teststraße 1",
-                city = "München",
-                postalCode = "80331",
-                country = "Germany",
-                licenseNumber = $"T{Guid.NewGuid():N}"[..10],
-                licenseIssueCountry = "Germany",
-                licenseIssueDate = new DateOnly(2010, 1, 1),
-                licenseExpiryDate = new DateOnly(2030, 1, 1)
+                reservation = new
+                {
+                    vehicleId = Guid.Parse(vehicle.Id),
+                    categoryCode = vehicle.CategoryCode,
+                    pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(30),
+                    returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(33),
+                    pickupLocationCode = vehicle.LocationCode,
+                    dropoffLocationCode = vehicle.LocationCode
+                },
+                customer = new
+                {
+                    firstName = "Test",
+                    lastName = "Agent",
+                    email = $"agent.{Guid.NewGuid():N}@test.de",
+                    phoneNumber = "+49 89 99999999",
+                    dateOfBirth = new DateOnly(1985, 1, 1)
+                },
+                address = new
+                {
+                    street = "Teststraße 1",
+                    city = "München",
+                    postalCode = "80331",
+                    country = "Germany"
+                },
+                driversLicense = new
+                {
+                    licenseNumber = $"T{Guid.NewGuid():N}"[..10],
+                    licenseIssueCountry = "Germany",
+                    licenseIssueDate = new DateOnly(2010, 1, 1),
+                    licenseExpiryDate = new DateOnly(2030, 1, 1)
+                }
             };
 
             await httpClient.PostAsJsonAsync("/api/reservations/guest", reservationRequest);

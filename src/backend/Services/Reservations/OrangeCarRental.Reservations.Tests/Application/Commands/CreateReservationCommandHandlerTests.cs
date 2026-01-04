@@ -1,5 +1,6 @@
 using Moq;
 using Shouldly;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Testing;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
@@ -14,13 +15,15 @@ public class CreateReservationCommandHandlerTests
 {
     private readonly Mock<IReservationRepository> repositoryMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
+    private readonly Mock<IUnitOfWork> unitOfWorkMock = new();
     private readonly CreateReservationCommandHandler handler;
 
     public CreateReservationCommandHandlerTests()
     {
         handler = new CreateReservationCommandHandler(
             repositoryMock.Object,
-            pricingServiceMock.Object);
+            pricingServiceMock.Object,
+            unitOfWorkMock.Object);
     }
 
     [Fact]

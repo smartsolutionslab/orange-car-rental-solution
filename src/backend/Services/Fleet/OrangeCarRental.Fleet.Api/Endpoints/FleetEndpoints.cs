@@ -34,7 +34,7 @@ public static class FleetEndpoints
                         VehicleCategory.FromNullable(request.CategoryCode),
                         request.MinSeats.HasValue ? SeatingCapacity.From(request.MinSeats.Value) : null,
                         request.FuelType.TryParseFuelType(),
-                        request.TransmissionType.TryParseTransmissionType(),
+                        request.EffectiveTransmissionType.TryParseTransmissionType(),
                         request.MaxDailyRateGross.HasValue
                             ? Money.EuroGross(request.MaxDailyRateGross.Value)
                             : null,

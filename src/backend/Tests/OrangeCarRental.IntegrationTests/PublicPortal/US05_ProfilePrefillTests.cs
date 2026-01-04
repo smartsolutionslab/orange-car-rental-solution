@@ -232,28 +232,40 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
         var vehicle = vehicles.Items[0];
         var uniqueEmail = $"guest.{Guid.NewGuid():N}@example.de";
 
-        // Act - Guest reservation with all data provided (no pre-fill)
+        // Act - Guest reservation with all data provided (no pre-fill, nested structure)
         var request = new
         {
-            vehicleId = Guid.Parse(vehicle.Id),
-            categoryCode = vehicle.CategoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10),
-            pickupLocationCode = vehicle.LocationCode,
-            dropoffLocationCode = vehicle.LocationCode,
-            firstName = "Guest",
-            lastName = "User",
-            email = uniqueEmail,
-            phoneNumber = "+49 30 12345678",
-            dateOfBirth = new DateOnly(1990, 3, 15),
-            street = "Gueststraße 1",
-            city = "Hamburg",
-            postalCode = "20095",
-            country = "Germany",
-            licenseNumber = $"G{Guid.NewGuid():N}"[..10],
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2015, 1, 1),
-            licenseExpiryDate = new DateOnly(2030, 1, 1)
+            reservation = new
+            {
+                vehicleId = Guid.Parse(vehicle.Id),
+                categoryCode = vehicle.CategoryCode,
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+                pickupLocationCode = vehicle.LocationCode,
+                dropoffLocationCode = vehicle.LocationCode
+            },
+            customer = new
+            {
+                firstName = "Guest",
+                lastName = "User",
+                email = uniqueEmail,
+                phoneNumber = "+49 30 12345678",
+                dateOfBirth = new DateOnly(1990, 3, 15)
+            },
+            address = new
+            {
+                street = "Gueststraße 1",
+                city = "Hamburg",
+                postalCode = "20095",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = $"G{Guid.NewGuid():N}"[..10],
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2015, 1, 1),
+                licenseExpiryDate = new DateOnly(2030, 1, 1)
+            }
         };
 
         var response = await httpClient.PostAsJsonAsync("/api/reservations/guest", request);
@@ -330,25 +342,37 @@ public class US05_ProfilePrefillTests(DistributedApplicationFixture fixture)
 
         var request = new
         {
-            vehicleId = Guid.Parse(vehicle.Id),
-            categoryCode = vehicle.CategoryCode,
-            pickupDate = DateTime.UtcNow.Date.AddDays(30),
-            returnDate = DateTime.UtcNow.Date.AddDays(33),
-            pickupLocationCode = vehicle.LocationCode,
-            dropoffLocationCode = vehicle.LocationCode,
-            firstName = "Profile",
-            lastName = "TestUser",
-            email = uniqueEmail,
-            phoneNumber = "+49 89 12345678",
-            dateOfBirth = new DateOnly(1985, 6, 15),
-            street = "Profilstraße 1",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-            licenseNumber = $"P{Guid.NewGuid():N}"[..10],
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2010, 1, 1),
-            licenseExpiryDate = new DateOnly(2030, 1, 1)
+            reservation = new
+            {
+                vehicleId = Guid.Parse(vehicle.Id),
+                categoryCode = vehicle.CategoryCode,
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(30),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(33),
+                pickupLocationCode = vehicle.LocationCode,
+                dropoffLocationCode = vehicle.LocationCode
+            },
+            customer = new
+            {
+                firstName = "Profile",
+                lastName = "TestUser",
+                email = uniqueEmail,
+                phoneNumber = "+49 89 12345678",
+                dateOfBirth = new DateOnly(1985, 6, 15)
+            },
+            address = new
+            {
+                street = "Profilstraße 1",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = $"P{Guid.NewGuid():N}"[..10],
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2010, 1, 1),
+                licenseExpiryDate = new DateOnly(2030, 1, 1)
+            }
         };
 
         var response = await httpClient.PostAsJsonAsync("/api/reservations/guest", request);

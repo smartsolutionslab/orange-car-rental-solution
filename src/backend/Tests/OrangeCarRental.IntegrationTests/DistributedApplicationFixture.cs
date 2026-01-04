@@ -93,7 +93,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
     private async Task WaitForKeycloakRealmAsync(string keycloakUrl, CancellationToken cancellationToken)
     {
-        var maxRetries = 60;
+        var maxRetries = 90; // Increased for CI environments
         var delayBetweenRetries = TimeSpan.FromSeconds(2);
         var realmUrl = $"{keycloakUrl}/realms/orange-car-rental/.well-known/openid-configuration";
 

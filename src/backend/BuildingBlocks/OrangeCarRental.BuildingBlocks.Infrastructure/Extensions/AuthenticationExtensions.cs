@@ -50,7 +50,8 @@ public static class AuthenticationExtensions
                 ValidateIssuerSigningKey = true,
                 ValidAudience = audience,
                 ValidIssuer = authority,
-                ClockSkew = TimeSpan.FromMinutes(5) // Allow 5 minutes clock skew
+                ClockSkew = TimeSpan.FromMinutes(5), // Allow 5 minutes clock skew
+                RoleClaimType = "roles" // Match Keycloak's role claim name
             };
 
             options.Events = new JwtBearerEvents

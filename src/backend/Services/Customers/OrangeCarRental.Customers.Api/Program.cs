@@ -30,9 +30,9 @@ builder.Host.UseSerilog((context, services, configuration) =>
         .WriteTo.Console(
             outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] [{Application}] {Message:lj}{NewLine}{Exception}");
 
-    // Add Seq sink if SEQ_URL is configured
+    // Add Seq sink if SEQ_URL is configured and valid
     var seqUrl = context.Configuration["SEQ_URL"];
-    if (!string.IsNullOrEmpty(seqUrl))
+    if (!string.IsNullOrEmpty(seqUrl) && Uri.TryCreate(seqUrl, UriKind.Absolute, out _))
     {
         configuration.WriteTo.Seq(seqUrl);
     }
@@ -40,6 +40,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 
 // Add services to the container
 builder.Services.AddOpenApi();
+builder.Services.AddOrangeCarRentalJsonOptions();
 
 // CORS for frontend applications (separated by portal)
 builder.Services.AddOrangeCarRentalCors();
@@ -52,11 +53,16 @@ builder.Services.AddOrangeCarRentalAuthorization();
 builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContextOptions: options =>
 {
     options.UseSqlServer(sqlOptions =>
-        sqlOptions.MigrationsAssembly("OrangeCarRental.Customers.Infrastructure"));
+    {
+        sqlOptions.MigrationsAssembly("OrangeCarRental.Customers.Infrastructure");
+        // Retry on transient failures (e.g., database not yet created by migrator)
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(30), errorNumbersToAdd: null);
+    });
 });
 
-// Register repository
+// Register repository and unit of work
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CustomersDbContext>());
 
 // Register command handlers
 builder.Services.AddScoped<ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>, RegisterCustomerCommandHandler>();

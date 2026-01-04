@@ -183,28 +183,40 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task Gateway_CreateGuestReservation_ThroughGateway_Succeeds()
     {
-        // Arrange - Create a realistic guest booking request with German market data
+        // Arrange - Create a realistic guest booking request with German market data (nested structure)
         var createGuestRequest = new
         {
-            vehicleId = Guid.NewGuid(),
-            categoryCode = "ECAR",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10),
-            pickupLocationCode = "MUC",
-            dropoffLocationCode = "MUC",
-            firstName = "Max",
-            lastName = "Mustermann",
-            email = $"max.mustermann.{Guid.NewGuid():N}@example.de",
-            phoneNumber = "+49 89 12345678",
-            dateOfBirth = new DateOnly(1990, 1, 15),
-            street = "Musterstraße 123",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-            licenseNumber = "B12345678",
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2015, 6, 1),
-            licenseExpiryDate = new DateOnly(2035, 6, 1)
+            reservation = new
+            {
+                vehicleId = Guid.NewGuid(),
+                categoryCode = "ECAR",
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+                pickupLocationCode = "MUC",
+                dropoffLocationCode = "MUC"
+            },
+            customer = new
+            {
+                firstName = "Max",
+                lastName = "Mustermann",
+                email = $"max.mustermann.{Guid.NewGuid():N}@example.de",
+                phoneNumber = "+49 89 12345678",
+                dateOfBirth = new DateOnly(1990, 1, 15)
+            },
+            address = new
+            {
+                street = "Musterstraße 123",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = "B12345678",
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2015, 6, 1),
+                licenseExpiryDate = new DateOnly(2035, 6, 1)
+            }
         };
 
         // Act - Send request through API Gateway to /api/reservations/guest endpoint
@@ -235,28 +247,40 @@ public class ApiGatewayIntegrationTests : IAsyncLifetime
     [Fact]
     public async Task Gateway_CreateGuestReservation_WithInvalidData_ReturnsBadRequest()
     {
-        // Arrange - Create a guest booking request with invalid pickup date (in the past)
+        // Arrange - Create a guest booking request with invalid pickup date (in the past, nested structure)
         var invalidGuestRequest = new
         {
-            vehicleId = Guid.NewGuid(),
-            categoryCode = "ECAR",
-            pickupDate = DateTime.UtcNow.Date.AddDays(-1), // Invalid: past date
-            returnDate = DateTime.UtcNow.Date.AddDays(3),
-            pickupLocationCode = "MUC",
-            dropoffLocationCode = "MUC",
-            firstName = "Max",
-            lastName = "Mustermann",
-            email = "max.mustermann@example.de",
-            phoneNumber = "+49 89 12345678",
-            dateOfBirth = new DateOnly(1990, 1, 15),
-            street = "Musterstraße 123",
-            city = "München",
-            postalCode = "80331",
-            country = "Germany",
-            licenseNumber = "B12345678",
-            licenseIssueCountry = "Germany",
-            licenseIssueDate = new DateOnly(2015, 6, 1),
-            licenseExpiryDate = new DateOnly(2035, 6, 1)
+            reservation = new
+            {
+                vehicleId = Guid.NewGuid(),
+                categoryCode = "ECAR",
+                pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(-1), // Invalid: past date
+                returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(3),
+                pickupLocationCode = "MUC",
+                dropoffLocationCode = "MUC"
+            },
+            customer = new
+            {
+                firstName = "Max",
+                lastName = "Mustermann",
+                email = "max.mustermann@example.de",
+                phoneNumber = "+49 89 12345678",
+                dateOfBirth = new DateOnly(1990, 1, 15)
+            },
+            address = new
+            {
+                street = "Musterstraße 123",
+                city = "München",
+                postalCode = "80331",
+                country = "Germany"
+            },
+            driversLicense = new
+            {
+                licenseNumber = "B12345678",
+                licenseIssueCountry = "Germany",
+                licenseIssueDate = new DateOnly(2015, 6, 1),
+                licenseExpiryDate = new DateOnly(2035, 6, 1)
+            }
         };
 
         // Act

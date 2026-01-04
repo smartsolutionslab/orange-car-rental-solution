@@ -54,6 +54,15 @@
           "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.14.0, 2.0.0)"
         }
       },
+      "OpenTelemetry.Instrumentation.EntityFrameworkCore": {
+        "type": "Direct",
+        "requested": "[1.10.0-beta.1, )",
+        "resolved": "1.10.0-beta.1",
+        "contentHash": "md3p4+8M11SosYt+EKx/rNs7yUgS5bPdGpZ0gS4MIlXWxBLS9xH2Ce1Y01UUJZG+lHKdeO1mufM0iLm+ZR+HQg==",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.10.0, 2.0.0)"
+        }
+      },
       "OpenTelemetry.Instrumentation.Http": {
         "type": "Direct",
         "requested": "[1.14.0, )",
@@ -70,6 +79,15 @@
         "contentHash": "Z6o4JDOQaKv6bInAYZxuyxxfMKr6hFpwLnKEgQ+q+oBNA9Fm1sysjFCOzRzk7U0WD86LsRPXX+chv1vJIg7cfg==",
         "dependencies": {
           "OpenTelemetry.Api": "[1.14.0, 2.0.0)"
+        }
+      },
+      "OpenTelemetry.Instrumentation.SqlClient": {
+        "type": "Direct",
+        "requested": "[1.10.0-beta.1, )",
+        "resolved": "1.10.0-beta.1",
+        "contentHash": "0ZPMZWrXzWJNdI5vAcghyj9jsxTyrAC/Lc4lV7zkVn0cGHxOglllv2rjLB0xJ1UmB1Ie8OgcdLrtlRVeBf0TjQ==",
+        "dependencies": {
+          "OpenTelemetry.Api.ProviderBuilderExtensions": "[1.10.0, 2.0.0)"
         }
       },
       "Microsoft.Extensions.AmbientMetadata.Application": {
