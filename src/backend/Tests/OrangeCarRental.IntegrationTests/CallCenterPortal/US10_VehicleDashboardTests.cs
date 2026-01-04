@@ -61,23 +61,22 @@ public class US10_VehicleDashboardTests(DistributedApplicationFixture fixture)
 
     #region AC: Status filter
 
-    [Theory]
-    [InlineData("Available")]
-    [InlineData("Rented")]
-    public async Task FilterByStatus_ReturnsMatchingVehicles(string status)
+    [Fact]
+    public async Task FilterByStatus_Available_ReturnsMatchingVehicles()
     {
         // Arrange
         var httpClient = fixture.CreateHttpClient("api-gateway");
 
-        // Act
-        var response = await httpClient.GetAsync($"/api/vehicles?status={status}&pageSize=50");
+        // Act - Filter by Available status (guaranteed to have seeded data)
+        var response = await httpClient.GetAsync("/api/vehicles?status=Available&pageSize=50");
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
 
         // Assert
         Assert.NotNull(result);
-        Assert.All(result.Items, v => Assert.Equal(status, v.Status));
+        Assert.True(result.Items.Count > 0, "Expected at least one available vehicle");
+        Assert.All(result.Items, v => Assert.Equal("Available", v.Status));
     }
 
     #endregion

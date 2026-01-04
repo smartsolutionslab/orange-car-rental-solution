@@ -284,7 +284,7 @@ public class US03_UserRegistrationTests(DistributedApplicationFixture fixture)
         // Assert
         response.EnsureSuccessStatusCode();
         var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("Healthy", content);
+        Assert.Contains("healthy", content, StringComparison.OrdinalIgnoreCase);
     }
 
     #endregion

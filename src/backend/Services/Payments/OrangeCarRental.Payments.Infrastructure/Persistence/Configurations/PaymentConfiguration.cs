@@ -71,9 +71,12 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .HasMaxLength(20)
             .IsRequired();
 
-        // Nullable strings
+        // TransactionId value object (nullable)
         builder.Property(p => p.TransactionId)
             .HasColumnName("TransactionId")
+            .HasConversion(
+                id => id.HasValue ? id.Value.Value : null,
+                value => value != null ? BuildingBlocks.Domain.ValueObjects.TransactionId.Of(value) : null)
             .HasMaxLength(200);
 
         builder.Property(p => p.ErrorMessage)

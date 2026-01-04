@@ -41,11 +41,24 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
 
+      - name: Setup Node.js for frontend portals
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install frontend dependencies
+        working-directory: src/frontend
+        run: |
+          # Clear potentially corrupted yarn cache
+          yarn cache clean
+          yarn install --frozen-lockfile --network-timeout 300000
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: 'true'
+
       - name: Run ${{ inputs.portal }} integration tests
         working-directory: src/backend
         run: |
           dotnet test Tests/OrangeCarRental.IntegrationTests \
-            --no-build \
             --configuration Release \
             --filter "Portal=${{ inputs.portal }}" \
             --logger "trx;LogFileName=${{ inputs.portal }}-tests.trx" \
@@ -64,8 +77,9 @@ jobs:
           retention-days: 7
 
       - name: Upload coverage to Codecov
-        if: success() && secrets.CODECOV_TOKEN != ''
+        if: success()
         uses: codecov/codecov-action@v5
+        continue-on-error: true
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: '**/coverage.cobertura.xml'

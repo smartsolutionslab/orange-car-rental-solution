@@ -13,7 +13,6 @@ COPY Directory.Packages.props ./
 # Copy project files for restore
 COPY BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/OrangeCarRental.BuildingBlocks.Domain.csproj BuildingBlocks/OrangeCarRental.BuildingBlocks.Domain/
 COPY BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/OrangeCarRental.BuildingBlocks.Infrastructure.csproj BuildingBlocks/OrangeCarRental.BuildingBlocks.Infrastructure/
-COPY BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/OrangeCarRental.BuildingBlocks.EventStore.csproj BuildingBlocks/OrangeCarRental.BuildingBlocks.EventStore/
 COPY ServiceDefaults/OrangeCarRental.ServiceDefaults.csproj ServiceDefaults/
 COPY Services/Reservations/OrangeCarRental.Reservations.Domain/OrangeCarRental.Reservations.Domain.csproj Services/Reservations/OrangeCarRental.Reservations.Domain/
 COPY Services/Reservations/OrangeCarRental.Reservations.Application/OrangeCarRental.Reservations.Application.csproj Services/Reservations/OrangeCarRental.Reservations.Application/

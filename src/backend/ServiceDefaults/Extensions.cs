@@ -104,15 +104,12 @@ public static class Extensions
     public static WebApplication MapDefaultEndpoints(this WebApplication app)
     {
         // Health check endpoints for Kubernetes/container orchestration
-        // /health - overall health status
+        // /health - overall health status (always available for integration tests and monitoring)
         // /alive - liveness probe (is the service running?)
         // /ready - readiness probe (is the service ready to accept traffic?)
 
-        if (app.Environment.IsDevelopment())
-        {
-            // In development, expose all health checks at /health
-            app.MapHealthChecks("/health");
-        }
+        // General health check endpoint - always available
+        app.MapHealthChecks("/health");
 
         // Liveness probe - only checks if the service is alive
         app.MapHealthChecks("/alive", new HealthCheckOptions

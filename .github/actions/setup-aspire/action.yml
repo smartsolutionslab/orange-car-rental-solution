@@ -35,7 +35,8 @@ runs:
     - name: Restore dependencies
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: dotnet restore OrangeCarRental.sln
+      # Use --force-evaluate to handle cross-platform runtime packages (e.g., Aspire.Dashboard.Sdk.linux-x64)
+      run: dotnet restore OrangeCarRental.sln --force-evaluate
       env:
         DOTNET_NOLOGO: true
         DOTNET_CLI_TELEMETRY_OPTOUT: true

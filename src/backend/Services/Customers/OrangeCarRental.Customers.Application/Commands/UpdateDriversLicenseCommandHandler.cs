@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -8,7 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 ///     Loads the customer from database, updates driver's license information, and persists changes.
 /// </summary>
 public sealed class UpdateDriversLicenseCommandHandler(
-    ICustomerRepository repository)
+    ICustomerRepository repository,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateDriversLicenseCommand, UpdateDriversLicenseResult>
 {
     /// <summary>
@@ -33,6 +35,7 @@ public sealed class UpdateDriversLicenseCommandHandler(
 
         // Persist changes to database
         await repository.UpdateAsync(updatedCustomer, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new UpdateDriversLicenseResult(
             updatedCustomer.Id.Value,

@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -70,8 +71,8 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10)
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10)
         };
 
         // Act
@@ -87,11 +88,30 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
         // Arrange - Reservation search requires call center or admin authentication
         var httpClient = await fixture.CreateCallCenterHttpClientAsync();
 
+        // Log the token contents for debugging
+        var authHeader = httpClient.DefaultRequestHeaders.Authorization;
+        if (authHeader?.Parameter != null)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(authHeader.Parameter);
+            Console.WriteLine($"[TEST] Token issuer: {token.Issuer}");
+            Console.WriteLine($"[TEST] Token audience: {string.Join(", ", token.Audiences)}");
+            Console.WriteLine($"[TEST] Token claims: {string.Join(", ", token.Claims.Select(c => $"{c.Type}={c.Value}"))}");
+
+            // Specifically log roles
+            var roles = token.Claims.Where(c => c.Type == "roles").Select(c => c.Value).ToList();
+            Console.WriteLine($"[TEST] Roles in token: {string.Join(", ", roles)}");
+        }
+
         // Act
         var response = await httpClient.GetAsync("/api/reservations/search?pageSize=1");
 
-        // Assert
-        response.EnsureSuccessStatusCode();
+        // Assert - Provide detailed failure info
+        if (!response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Expected success status code but got {response.StatusCode}. Response: {content}");
+        }
     }
 
     [Fact]
@@ -211,6 +231,20 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
         // Arrange - Use authenticated client for reservation search
         var httpClient = await fixture.CreateCallCenterHttpClientAsync();
 
+        // Log the token contents for debugging
+        var authHeader = httpClient.DefaultRequestHeaders.Authorization;
+        if (authHeader?.Parameter != null)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var token = handler.ReadJwtToken(authHeader.Parameter);
+            Console.WriteLine($"[TEST-AllServices] Token issuer: {token.Issuer}");
+            Console.WriteLine($"[TEST-AllServices] Token audience: {string.Join(", ", token.Audiences)}");
+
+            // Specifically log roles
+            var roles = token.Claims.Where(c => c.Type == "roles").Select(c => c.Value).ToList();
+            Console.WriteLine($"[TEST-AllServices] Roles in token: {string.Join(", ", roles)}");
+        }
+
         // Act - Call multiple services in parallel
         var vehiclesTask = httpClient.GetAsync("/api/vehicles?pageSize=1");
         var locationsTask = httpClient.GetAsync("/api/locations");
@@ -218,10 +252,16 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
 
         var results = await Task.WhenAll(vehiclesTask, locationsTask, reservationsTask);
 
-        // Assert
-        Assert.True(results[0].IsSuccessStatusCode);
-        Assert.True(results[1].IsSuccessStatusCode);
-        Assert.True(results[2].IsSuccessStatusCode);
+        // Assert - Provide detailed failure info
+        var endpoints = new[] { "/api/vehicles", "/api/locations", "/api/reservations/search" };
+        for (var i = 0; i < results.Length; i++)
+        {
+            if (!results[i].IsSuccessStatusCode)
+            {
+                var content = await results[i].Content.ReadAsStringAsync();
+                Assert.Fail($"Request to {endpoints[i]} failed with {results[i].StatusCode}. Response: {content}");
+            }
+        }
     }
 
     #endregion

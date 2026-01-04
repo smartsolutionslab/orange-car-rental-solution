@@ -26,18 +26,36 @@ public static class ReservationEndpoints
             {
                 var (vehicleId, customerId, category, pickupDate, returnDate, pickupLocation, dropoffLocation, totalPriceNet) = request;
 
-                var command = new CreateReservationCommand(
-                    VehicleIdentifier.From(vehicleId),
-                    CustomerIdentifier.From(customerId),
-                    VehicleCategory.From(category),
-                    BookingPeriod.Of(pickupDate, returnDate),
-                    LocationCode.From(pickupLocation),
-                    LocationCode.From(dropoffLocation),
-                    Money.Euro(totalPriceNet)
-                );
+                try
+                {
+                    var command = new CreateReservationCommand(
+                        VehicleIdentifier.From(vehicleId),
+                        CustomerIdentifier.From(customerId),
+                        VehicleCategory.From(category),
+                        BookingPeriod.Of(pickupDate, returnDate),
+                        LocationCode.From(pickupLocation),
+                        LocationCode.From(dropoffLocation),
+                        Money.Euro(totalPriceNet)
+                    );
 
-                var result = await handler.HandleAsync(command);
-                return Results.Created($"/api/reservations/{result.ReservationId}", result);
+                    var result = await handler.HandleAsync(command);
+                    return Results.Created($"/api/reservations/{result.ReservationId}", result);
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Conflict(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "An error occurred while creating the reservation");
+                }
             })
             .WithName("CreateReservation")
             .WithSummary("Create a new vehicle reservation")
@@ -74,30 +92,48 @@ public static class ReservationEndpoints
                 var (street, city, postalCode, country) = address;
                 var (driversLicenseNumber, driversLicenseIssueCountry, driversLicenseIssueDate, driversLicenseExpiryDate) = driversLicense;
 
-                var command = new CreateGuestReservationCommand(
-                    VehicleIdentifier.From(vehicleId),
-                    VehicleCategory.From(category),
-                    BookingPeriod.Of(pickupDate, returnDate),
-                    LocationCode.From(pickupLocation),
-                    LocationCode.From(dropoffLocation),
-                    CustomerName.Of(firstName, lastName, null),
-                    Email.From(email),
-                    PhoneNumber.From(phoneNumber),
-                    BirthDate.Of(dateOfBirth),
-                    Address.Of(
-                        street,
-                        city,
-                        postalCode,
-                        country),
-                    DriversLicense.Of(
-                        driversLicenseNumber,
-                        driversLicenseIssueCountry,
-                        driversLicenseIssueDate,
-                        driversLicenseExpiryDate)
-                );
+                try
+                {
+                    var command = new CreateGuestReservationCommand(
+                        VehicleIdentifier.From(vehicleId),
+                        VehicleCategory.From(category),
+                        BookingPeriod.Of(pickupDate, returnDate),
+                        LocationCode.From(pickupLocation),
+                        LocationCode.From(dropoffLocation),
+                        CustomerName.Of(firstName, lastName, null),
+                        Email.From(email),
+                        PhoneNumber.From(phoneNumber),
+                        BirthDate.Of(dateOfBirth),
+                        Address.Of(
+                            street,
+                            city,
+                            postalCode,
+                            country),
+                        DriversLicense.Of(
+                            driversLicenseNumber,
+                            driversLicenseIssueCountry,
+                            driversLicenseIssueDate,
+                            driversLicenseExpiryDate)
+                    );
 
-                var result = await handler.HandleAsync(command);
-                return Results.Created($"/api/reservations/{result.ReservationId}", result);
+                    var result = await handler.HandleAsync(command);
+                    return Results.Created($"/api/reservations/{result.ReservationId}", result);
+                }
+                catch (ArgumentException ex)
+                {
+                    return Results.BadRequest(new { message = ex.Message });
+                }
+                catch (InvalidOperationException ex)
+                {
+                    return Results.Conflict(new { message = ex.Message });
+                }
+                catch (Exception ex)
+                {
+                    return Results.Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError,
+                        title: "An error occurred while creating the guest reservation");
+                }
             })
             .WithName("CreateGuestReservation")
             .WithSummary("Create a reservation for a guest user (without pre-registration)")
@@ -302,14 +338,16 @@ public static class ReservationEndpoints
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
         reservations.MapPut("/{id:guid}/cancel", async (
                 Guid id,
-                CancelReservationCommand command,
+                CancelReservationRequest request,
                 ICommandHandler<CancelReservationCommand, CancelReservationResult> handler) =>
             {
                 try
                 {
-                    // Override the ID from the URL
-                    var commandWithId = command with { ReservationId = ReservationIdentifier.From(id) };
-                    var result = await handler.HandleAsync(commandWithId);
+                    // Map request DTO to command with value objects
+                    var command = new CancelReservationCommand(
+                        ReservationIdentifier.From(id),
+                        request.CancellationReason);
+                    var result = await handler.HandleAsync(command);
                     return Results.Ok(result);
                 }
                 catch (InvalidOperationException ex)

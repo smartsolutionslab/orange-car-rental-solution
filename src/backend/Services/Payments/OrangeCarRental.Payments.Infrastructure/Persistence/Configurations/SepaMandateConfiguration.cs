@@ -47,9 +47,12 @@ internal sealed class SepaMandateConfiguration : IEntityTypeConfiguration<SepaMa
             .HasMaxLength(11)
             .IsRequired();
 
-        // Account holder
+        // Account holder (PersonName value object)
         builder.Property(m => m.AccountHolder)
             .HasColumnName("AccountHolder")
+            .HasConversion(
+                name => name.Value,
+                value => BuildingBlocks.Domain.ValueObjects.PersonName.Of(value))
             .HasMaxLength(140) // SEPA max name length
             .IsRequired();
 

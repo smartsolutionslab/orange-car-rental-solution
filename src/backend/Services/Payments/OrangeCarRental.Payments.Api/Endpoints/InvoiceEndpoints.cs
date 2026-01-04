@@ -48,7 +48,7 @@ public static class InvoiceEndpoints
 
                     if (!result.Success)
                     {
-                        return TypedResults.BadRequest(new ProblemDetails
+                            return TypedResults.BadRequest(new ProblemDetails
                         {
                             Title = "Invoice generation failed",
                             Detail = result.ErrorMessage,
