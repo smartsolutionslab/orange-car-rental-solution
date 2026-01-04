@@ -36,6 +36,7 @@ builder.Host.UseSerilog((context, services, configuration) =>
 
 // Add services to the container
 builder.Services.AddOpenApi();
+builder.Services.AddOrangeCarRentalJsonOptions();
 
 // CORS for frontend applications (separated by portal)
 builder.Services.AddOrangeCarRentalCors();
