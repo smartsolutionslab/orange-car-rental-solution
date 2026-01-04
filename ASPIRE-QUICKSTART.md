@@ -13,7 +13,7 @@ This application uses .NET Aspire for local development orchestration, providing
 
 ## Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - Docker Desktop
 - Node.js 18+ (for frontend)
 - .NET Aspire Workload:
@@ -310,7 +310,7 @@ For issues or questions:
 ## Summary
 
 The Orange Car Rental application demonstrates:
-- Microservices architecture with .NET 9
+- Microservices architecture with .NET 10
 - Database-per-service pattern
 - API Gateway pattern with YARP
 - JWT authentication with Keycloak

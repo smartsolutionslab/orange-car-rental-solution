@@ -234,7 +234,7 @@ This ensures all code follows .editorconfig standards before merge.
 #### Pipeline Files
 
 1. **backend-ci.yml** (87 lines)
-   - ✅ .NET 9.0 setup
+   - ✅ .NET 10.0 setup
    - ✅ Build on main/develop branches
    - ✅ Unit tests (Category=Unit)
    - ✅ Integration tests (Category=Integration)

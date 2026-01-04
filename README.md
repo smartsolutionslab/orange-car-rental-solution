@@ -29,15 +29,16 @@ A modern, cloud-ready car rental software system built with Domain-Driven Design
 ## Architecture
 
 ### Backend (.NET)
-- **Framework:** .NET 9 with Minimal API
+- **Framework:** .NET 10 with Minimal API
 - **Pattern:** Domain-Driven Design with Clean Architecture
 - **Database:** SQL Server with Entity Framework Core
 - **Authentication:** Keycloak integration (OpenID Connect)
-- **Orchestration:** .NET Aspire 9.0 for local development
+- **Orchestration:** .NET Aspire 9.1 for local development
+- **Future:** Event Sourcing planned for Customer and Reservation contexts
 - **Testing:** xUnit, FluentAssertions, integration tests
 
 ### Frontend (Angular)
-- **Framework:** Angular 18+ with standalone components
+- **Framework:** Angular 21 with standalone components
 - **Monorepo:** Nx workspace with two applications
 - **Styling:** Tailwind CSS with minimalist design
 - **State:** NgRx Signal Store
@@ -56,7 +57,7 @@ A modern, cloud-ready car rental software system built with Domain-Driven Design
 ### Prerequisites
 
 **Backend:**
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - [SQL Server 2022](https://www.microsoft.com/sql-server) or [Docker](https://www.docker.com/)
 - [Keycloak](https://www.keycloak.org/) or Docker
 
@@ -450,8 +451,8 @@ Once running, API documentation is available at:
 ## Technology Stack
 
 ### Backend
-- .NET 9
-- Entity Framework Core 9
+- .NET 10
+- Entity Framework Core 10
 - SQL Server 2022
 - Keycloak
 - RabbitMQ / Azure Service Bus
@@ -460,7 +461,7 @@ Once running, API documentation is available at:
 - Polly
 
 ### Frontend
-- Angular 18+
+- Angular 21
 - Nx
 - Tailwind CSS
 - NgRx Signal Store

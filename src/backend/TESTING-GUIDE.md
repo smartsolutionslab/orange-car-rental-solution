@@ -20,7 +20,7 @@ This document provides a comprehensive guide to the test suite for the Orange Ca
 
 ### Prerequisites
 
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Docker (for integration tests with Testcontainers - if implemented)
 
 ### Run All Tests

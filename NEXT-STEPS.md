@@ -361,8 +361,9 @@ jobs:
 **Recommended Reading:**
 - Database per service (implemented ✓)
 - API Gateway pattern (YARP ✓)
+- CQRS pattern (implemented ✓)
 - Event-driven architecture (future)
-- CQRS pattern (advanced)
+- Event Sourcing (planned for Customer and Reservation contexts)
 - Saga pattern for distributed transactions
 
 ### 3. Domain-Driven Design

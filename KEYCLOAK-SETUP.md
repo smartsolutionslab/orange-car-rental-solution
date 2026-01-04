@@ -4,7 +4,7 @@ This guide explains how to set up Keycloak for authentication and authorization 
 
 ## Prerequisites
 
-- .NET 9.0 SDK installed
+- .NET 10.0 SDK installed
 - .NET Aspire workload installed
 - Port 8080 available for Keycloak
 

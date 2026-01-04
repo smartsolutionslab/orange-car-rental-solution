@@ -9,7 +9,7 @@ Welcome to the Orange Car Rental backend development team! This guide will help 
 
 ### Prerequisites
 
-- **.NET 9.0 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/9.0)
+- **.NET 10.0 SDK** - [Download](https://dotnet.microsoft.com/download/dotnet/10.0)
 - **IDE:** Visual Studio 2022, Rider, or VS Code
 - **Git** for version control
 - **Docker Desktop** (for integration tests and local development)

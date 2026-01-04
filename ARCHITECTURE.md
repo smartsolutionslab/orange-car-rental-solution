@@ -83,6 +83,8 @@ Based on DDD principles and the user stories, the system is divided into the fol
 - `VehiclePickedUp`
 - `VehicleReturned`
 
+**Future Enhancement:** Event Sourcing planned for full audit trail and temporal queries.
+
 ### 3. Customer Context
 
 **Responsibility:** Customer profiles, registration, and identity
@@ -94,6 +96,8 @@ Based on DDD principles and the user stories, the system is divided into the fol
 - `CustomerRegistered`
 - `CustomerProfileUpdated`
 - `CustomerVerified`
+
+**Future Enhancement:** Event Sourcing planned for complete customer history and compliance.
 
 ### 4. Pricing Context
 
@@ -543,12 +547,12 @@ public sealed class ReservationProjectionHandler :
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
-| Framework | .NET | 9.0 | Backend platform |
-| API Style | Minimal API | .NET 9 | RESTful endpoints |
-| Orchestration | .NET Aspire | 9.0 | Local dev & orchestration |
+| Framework | .NET | 10.0 | Backend platform |
+| API Style | Minimal API | .NET 10 | RESTful endpoints |
+| Orchestration | .NET Aspire | 9.1 | Local dev & orchestration |
 | Database | SQL Server | 2022 | Data persistence |
 | Authentication | Keycloak | Latest | Identity & SSO (OpenID Connect) |
-| ORM | Entity Framework Core | 9.0 | Data access |
+| ORM | Entity Framework Core | 10.0 | Data access |
 | Testing | xUnit + FluentAssertions | Latest | Unit & integration tests |
 | API Docs | Scalar (OpenAPI) | Latest | API documentation |
 
@@ -562,7 +566,7 @@ public sealed class ReservationProjectionHandler :
 
 | Component | Technology | Version | Purpose |
 |-----------|-----------|---------|---------|
-| Framework | Angular | 18+ | Frontend framework |
+| Framework | Angular | 21 | Frontend framework |
 | Monorepo | Nx | Latest | Workspace management |
 | Styling | Tailwind CSS | 3.x | Utility-first CSS |
 | UI Components | Custom + Headless UI | - | Shared component library |

@@ -33,7 +33,7 @@ These tests verify the complete distributed application stack, including:
 ## Running the Tests
 
 ### Prerequisites
-- .NET 9.0 SDK
+- .NET 10.0 SDK
 - Docker Desktop (for SQL Server container)
 - All backend services buildable
 

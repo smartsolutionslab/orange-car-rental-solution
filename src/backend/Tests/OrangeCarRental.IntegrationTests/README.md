@@ -10,7 +10,7 @@ This project contains integration tests that spin up the entire Aspire applicati
 
 ## Prerequisites
 
-- .NET 9 SDK
+- .NET 10 SDK
 - Docker Desktop (for SQL Server container)
 - **IMPORTANT:** Stop any running instances of the Aspire AppHost before running tests or building
 
