@@ -107,7 +107,8 @@ jobs:
         name: backend-unit-coverage
 
   # ============================================================================
-  # Integration Tests - run in parallel by portal category using reusable workflow
+  # Integration Tests - run sequentially to avoid database race conditions
+  # Each test suite runs on its own runner with isolated containers
   # ============================================================================
   integration-infrastructure:
     name: Integration (Infrastructure)
@@ -121,7 +122,7 @@ jobs:
 
   integration-public:
     name: Integration (Public Portal)
-    needs: build
+    needs: [build, integration-infrastructure]  # Run after infrastructure tests
     uses: ./.github/workflows/_integration-tests.yml
     with:
       portal: Public
@@ -131,7 +132,7 @@ jobs:
 
   integration-callcenter:
     name: Integration (CallCenter Portal)
-    needs: build
+    needs: [build, integration-public]  # Run after public tests
     uses: ./.github/workflows/_integration-tests.yml
     with:
       portal: CallCenter
