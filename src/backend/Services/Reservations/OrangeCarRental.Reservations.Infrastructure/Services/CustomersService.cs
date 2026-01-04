@@ -15,21 +15,31 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
         RegisterCustomerDto request,
         CancellationToken cancellationToken = default)
     {
+        // The Customers API expects a nested structure with customer, address, and driversLicense objects
         var requestBody = new
         {
-            request.FirstName,
-            request.LastName,
-            request.Email,
-            request.PhoneNumber,
-            request.DateOfBirth,
-            request.Street,
-            request.City,
-            request.PostalCode,
-            request.Country,
-            request.LicenseNumber,
-            request.LicenseIssueCountry,
-            request.LicenseIssueDate,
-            request.LicenseExpiryDate
+            customer = new
+            {
+                firstName = request.FirstName,
+                lastName = request.LastName,
+                email = request.Email,
+                phoneNumber = request.PhoneNumber,
+                dateOfBirth = request.DateOfBirth
+            },
+            address = new
+            {
+                street = request.Street,
+                city = request.City,
+                postalCode = request.PostalCode,
+                country = request.Country
+            },
+            driversLicense = new
+            {
+                licenseNumber = request.LicenseNumber,
+                licenseIssueCountry = request.LicenseIssueCountry,
+                licenseIssueDate = request.LicenseIssueDate,
+                licenseExpiryDate = request.LicenseExpiryDate
+            }
         };
 
         var result = await httpClient.PostJsonAsync<object, RegisterCustomerResponse>(
