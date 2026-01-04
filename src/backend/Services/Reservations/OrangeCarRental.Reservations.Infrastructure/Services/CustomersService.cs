@@ -48,7 +48,7 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
             ServiceName,
             cancellationToken);
 
-        return result.CustomerId;
+        return result.CustomerIdentifier;
     }
 
     public async Task<string?> GetCustomerEmailAsync(
@@ -63,7 +63,8 @@ public sealed class CustomersService(HttpClient httpClient) : ICustomersService
         return customer?.Email;
     }
 
-    private sealed record RegisterCustomerResponse(Guid CustomerId);
+    // Property name must match the API response (CustomerIdentifier, not CustomerId)
+    private sealed record RegisterCustomerResponse(Guid CustomerIdentifier);
 
     private sealed record CustomerResponse(Guid Id, string Email);
 }
