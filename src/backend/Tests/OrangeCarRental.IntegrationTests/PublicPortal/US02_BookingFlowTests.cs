@@ -41,7 +41,7 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
         Assert.NotNull(result);
         Assert.True(result.TotalPriceNet > 0);
         Assert.True(result.TotalPriceGross > result.TotalPriceNet);
-        Assert.Equal(3, result.RentalDays);
+        Assert.Equal(3, result.TotalDays);
         Assert.Equal("EUR", result.Currency);
     }
 
@@ -67,8 +67,8 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
 
         // Verify 19% German VAT calculation
         var expectedVat = Math.Round(result.TotalPriceNet * GermanVatRate, 2);
-        Assert.Equal(expectedVat, result.TotalPriceVat, 2);
-        Assert.Equal(result.TotalPriceNet + result.TotalPriceVat, result.TotalPriceGross, 2);
+        Assert.Equal(expectedVat, result.VatAmount, 2);
+        Assert.Equal(result.TotalPriceNet + result.VatAmount, result.TotalPriceGross, 2);
     }
 
     [Fact]
@@ -388,10 +388,10 @@ public class US02_BookingFlowTests(DistributedApplicationFixture fixture)
     private class PriceCalculationResult
     {
         public decimal TotalPriceNet { get; set; }
-        public decimal TotalPriceVat { get; set; }
+        public decimal VatAmount { get; set; }
         public decimal TotalPriceGross { get; set; }
         public string Currency { get; set; } = string.Empty;
-        public int RentalDays { get; set; }
+        public int TotalDays { get; set; }
         public decimal DailyRateNet { get; set; }
     }
 
