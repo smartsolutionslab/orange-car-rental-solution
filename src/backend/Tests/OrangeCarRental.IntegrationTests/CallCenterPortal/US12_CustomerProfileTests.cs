@@ -348,7 +348,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
 
         // Assert - All required profile fields present
         Assert.NotNull(customer);
-        Assert.Equal(customerId, customer.CustomerId);
+        Assert.Equal(customerId, customer.Id);
         Assert.Equal(email, customer.Email);
         Assert.NotEmpty(customer.FirstName);
         Assert.NotEmpty(customer.LastName);
@@ -391,7 +391,7 @@ public class US12_CustomerProfileTests(DistributedApplicationFixture fixture)
 
     private class CustomerDetailDto
     {
-        public Guid CustomerId { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

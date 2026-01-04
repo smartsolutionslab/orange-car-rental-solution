@@ -187,7 +187,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
 
         // Assert
         Assert.NotNull(customer);
-        Assert.Equal(customerId, customer.CustomerId);
+        Assert.Equal(customerId, customer.Id);
         Assert.Equal(email, customer.Email);
         Assert.NotEmpty(customer.FirstName);
         Assert.NotEmpty(customer.LastName);
@@ -278,7 +278,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
 
     private class CustomerDto
     {
-        public Guid CustomerId { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
@@ -287,7 +287,7 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
 
     private class CustomerDetailDto
     {
-        public Guid CustomerId { get; set; }
+        public Guid Id { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
