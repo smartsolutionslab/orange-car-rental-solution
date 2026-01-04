@@ -293,10 +293,30 @@ public class US09_CustomerSearchTests(DistributedApplicationFixture fixture)
         public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
         public DateOnly DateOfBirth { get; set; }
+        public AddressDto? Address { get; set; }
+        public DriversLicenseDto? DriversLicense { get; set; }
+
+        // Helper properties to access nested data
+        public string Street => Address?.Street ?? string.Empty;
+        public string City => Address?.City ?? string.Empty;
+        public string PostalCode => Address?.PostalCode ?? string.Empty;
+        public string Country => Address?.Country ?? string.Empty;
+        public string LicenseNumber => DriversLicense?.LicenseNumber ?? string.Empty;
+        public string LicenseIssueCountry => DriversLicense?.LicenseIssueCountry ?? string.Empty;
+        public DateOnly LicenseIssueDate => DriversLicense?.LicenseIssueDate ?? default;
+        public DateOnly LicenseExpiryDate => DriversLicense?.LicenseExpiryDate ?? default;
+    }
+
+    private class AddressDto
+    {
         public string Street { get; set; } = string.Empty;
         public string City { get; set; } = string.Empty;
         public string PostalCode { get; set; } = string.Empty;
         public string Country { get; set; } = string.Empty;
+    }
+
+    private class DriversLicenseDto
+    {
         public string LicenseNumber { get; set; } = string.Empty;
         public string LicenseIssueCountry { get; set; } = string.Empty;
         public DateOnly LicenseIssueDate { get; set; }
