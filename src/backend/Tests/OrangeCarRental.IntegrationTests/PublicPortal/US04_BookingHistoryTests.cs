@@ -267,19 +267,33 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         // Find an available vehicle
         var vehicleResponse = await httpClient.GetAsync("/api/vehicles?pageSize=1");
         vehicleResponse.EnsureSuccessStatusCode();
-        var vehicles = await vehicleResponse.Content.ReadFromJsonAsync<VehicleSearchResult>(JsonOptions);
+
+        // Log raw JSON response for debugging
+        var vehiclesJson = await vehicleResponse.Content.ReadAsStringAsync();
+        Console.WriteLine($"[DEBUG] Vehicles API response: {vehiclesJson}");
+
+        // Deserialize from string since we already read the response
+        var vehicles = JsonSerializer.Deserialize<VehicleSearchResult>(vehiclesJson, JsonOptions);
 
         Assert.NotNull(vehicles);
-        Assert.True(vehicles.Items.Count > 0, "No vehicles available for testing");
+        Assert.True(vehicles.Items.Count > 0, $"No vehicles available for testing. Response was: {vehiclesJson}");
 
         var vehicle = vehicles.Items[0];
+        Console.WriteLine($"[DEBUG] Parsed vehicle - Id: '{vehicle.Id}', CategoryCode: '{vehicle.CategoryCode}', LocationCode: '{vehicle.LocationCode}'");
+
+        // Validate vehicle ID before parsing
+        Assert.False(string.IsNullOrEmpty(vehicle.Id), $"Vehicle Id is null or empty. Full vehicle JSON: {vehiclesJson}");
+
+        var parsedVehicleId = Guid.Parse(vehicle.Id);
+        Console.WriteLine($"[DEBUG] Parsed vehicleId as Guid: {parsedVehicleId}");
+
         var uniqueEmail = $"hans.{Guid.NewGuid():N}@example.de";
 
         var request = new
         {
             reservation = new
             {
-                vehicleId = Guid.Parse(vehicle.Id),
+                vehicleId = parsedVehicleId,
                 categoryCode = vehicle.CategoryCode,
                 pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(daysFromNow),
                 returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(daysFromNow + 3),
@@ -310,13 +324,17 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
             }
         };
 
+        // Log the request JSON for debugging
+        var requestJson = JsonSerializer.Serialize(request, new JsonSerializerOptions { WriteIndented = true });
+        Console.WriteLine($"[DEBUG] Guest reservation request: {requestJson}");
+
         var response = await httpClient.PostAsJsonAsync("/api/reservations/guest", request);
 
         // Provide detailed error info if the request fails
         if (!response.IsSuccessStatusCode)
         {
             var errorContent = await response.Content.ReadAsStringAsync();
-            Assert.Fail($"Guest reservation failed with {response.StatusCode}. Response: {errorContent}");
+            Assert.Fail($"Guest reservation failed with {response.StatusCode}. Response: {errorContent}. Request was: {requestJson}");
         }
 
         var result = await response.Content.ReadFromJsonAsync<GuestReservationResult>(JsonOptions);

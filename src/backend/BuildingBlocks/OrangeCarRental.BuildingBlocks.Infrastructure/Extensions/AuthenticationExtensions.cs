@@ -74,6 +74,27 @@ public static class AuthenticationExtensions
                 },
                 OnTokenValidated = context =>
                 {
+                    // CRITICAL: Ensure the ClaimsIdentity uses "roles" as the RoleClaimType
+                    // The new JsonWebTokenHandler in .NET 9 may not respect TokenValidationParameters.RoleClaimType
+                    // when creating the ClaimsIdentity, so we need to manually fix it here.
+                    if (context.Principal != null)
+                    {
+                        var existingIdentity = context.Principal.Identity as System.Security.Claims.ClaimsIdentity;
+                        if (existingIdentity != null && existingIdentity.RoleClaimType != "roles")
+                        {
+                            Console.WriteLine($"[JWT] Identity RoleClaimType was '{existingIdentity.RoleClaimType}', recreating with 'roles'");
+
+                            // Create new identity with the correct RoleClaimType
+                            var newIdentity = new System.Security.Claims.ClaimsIdentity(
+                                existingIdentity.Claims,
+                                existingIdentity.AuthenticationType,
+                                existingIdentity.NameClaimType,
+                                "roles"); // Set RoleClaimType to "roles"
+
+                            context.Principal = new System.Security.Claims.ClaimsPrincipal(newIdentity);
+                        }
+                    }
+
                     var claims = context.Principal?.Claims.Select(c => $"{c.Type}={c.Value}").ToList();
                     Console.WriteLine($"[JWT] Token validated. Claims: {string.Join(", ", claims ?? [])}");
 
@@ -82,7 +103,7 @@ public static class AuthenticationExtensions
                     Console.WriteLine($"[JWT] Roles from 'roles' claim: {string.Join(", ", roles ?? [])}");
 
                     // Also check for role claim type
-                    var roleClaimRoles = context.Principal?.FindAll(context.Principal.Identities.First().RoleClaimType).Select(c => c.Value).ToList();
+                    var roleClaimRoles = context.Principal?.FindAll(context.Principal?.Identities.First().RoleClaimType ?? "roles").Select(c => c.Value).ToList();
                     Console.WriteLine($"[JWT] Roles from RoleClaimType '{context.Principal?.Identities.First().RoleClaimType}': {string.Join(", ", roleClaimRoles ?? [])}");
 
                     return Task.CompletedTask;
