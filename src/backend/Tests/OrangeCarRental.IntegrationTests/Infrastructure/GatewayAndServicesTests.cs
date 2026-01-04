@@ -70,8 +70,8 @@ public class GatewayAndServicesTests(DistributedApplicationFixture fixture)
         var request = new
         {
             categoryCode = "KOMPAKT",
-            pickupDate = DateTime.UtcNow.Date.AddDays(7),
-            returnDate = DateTime.UtcNow.Date.AddDays(10)
+            pickupDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(7),
+            returnDate = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10)
         };
 
         // Act
