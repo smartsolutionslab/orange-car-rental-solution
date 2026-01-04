@@ -297,17 +297,19 @@ public static class CustomerEndpoints
         // PUT /api/customers/{id}/status - Change customer status
         customers.MapPut("/{id:guid}/status", async (
                 Guid id,
-                ChangeCustomerStatusCommand command,
+                ChangeCustomerStatusRequest request,
                 ICommandHandler<ChangeCustomerStatusCommand, ChangeCustomerStatusResult> handler,
                 CancellationToken cancellationToken) =>
             {
                 try
                 {
-                    // Ensure the ID in the route matches the command
-                    // Override the command's customer ID with the route ID to ensure consistency
-                    var commandWithId = command with { CustomerId = CustomerIdentifier.From(id) };
+                    // Map request DTO to command with value objects
+                    var command = new ChangeCustomerStatusCommand(
+                        CustomerIdentifier.From(id),
+                        request.NewStatus,
+                        request.Reason);
 
-                    var result = await handler.HandleAsync(commandWithId, cancellationToken);
+                    var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);
                 }
                 catch (ArgumentException ex)

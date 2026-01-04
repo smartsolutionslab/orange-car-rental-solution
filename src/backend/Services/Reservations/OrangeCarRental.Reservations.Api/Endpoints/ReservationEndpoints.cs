@@ -302,14 +302,16 @@ public static class ReservationEndpoints
         // PUT /api/reservations/{id}/cancel - Cancel a reservation
         reservations.MapPut("/{id:guid}/cancel", async (
                 Guid id,
-                CancelReservationCommand command,
+                CancelReservationRequest request,
                 ICommandHandler<CancelReservationCommand, CancelReservationResult> handler) =>
             {
                 try
                 {
-                    // Override the ID from the URL
-                    var commandWithId = command with { ReservationId = ReservationIdentifier.From(id) };
-                    var result = await handler.HandleAsync(commandWithId);
+                    // Map request DTO to command with value objects
+                    var command = new CancelReservationCommand(
+                        ReservationIdentifier.From(id),
+                        request.CancellationReason);
+                    var result = await handler.HandleAsync(command);
                     return Results.Ok(result);
                 }
                 catch (InvalidOperationException ex)
