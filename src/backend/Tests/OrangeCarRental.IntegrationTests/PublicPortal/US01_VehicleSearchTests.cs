@@ -64,7 +64,7 @@ public class US01_VehicleSearchTests(DistributedApplicationFixture fixture)
     [InlineData("KOMPAKT")]
     [InlineData("MITTEL")]
     [InlineData("SUV")]
-    [InlineData("ECAR")]
+    [InlineData("LUXUS")]
     public async Task Search_ByCategory_ReturnsMatchingVehicles(string categoryCode)
     {
         // Arrange
