@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Services;
@@ -11,7 +12,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
 /// </summary>
 public sealed class CreateReservationCommandHandler(
     IReservationRepository repository,
-    IPricingService pricingService)
+    IPricingService pricingService,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<CreateReservationCommand, CreateReservationResult>
 {
     public async Task<CreateReservationResult> HandleAsync(
@@ -48,6 +50,7 @@ public sealed class CreateReservationCommandHandler(
 
         // Persist to database
         await repository.AddAsync(reservation, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CreateReservationResult(
             reservation.Id.Value,

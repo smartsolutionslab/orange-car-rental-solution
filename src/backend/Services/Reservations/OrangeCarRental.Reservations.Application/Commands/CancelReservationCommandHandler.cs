@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -8,7 +9,8 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
 ///     Cancels a reservation with an optional reason.
 /// </summary>
 public sealed class CancelReservationCommandHandler(
-    IReservationRepository repository)
+    IReservationRepository repository,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<CancelReservationCommand, CancelReservationResult>
 {
     public async Task<CancelReservationResult> HandleAsync(
@@ -23,6 +25,7 @@ public sealed class CancelReservationCommandHandler(
 
         // Persist changes to database
         await repository.UpdateAsync(cancelledReservation, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new CancelReservationResult(
             cancelledReservation.Id.Value,
