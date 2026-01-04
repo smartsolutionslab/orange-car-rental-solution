@@ -311,7 +311,13 @@ public class US04_BookingHistoryTests(DistributedApplicationFixture fixture)
         };
 
         var response = await httpClient.PostAsJsonAsync("/api/reservations/guest", request);
-        response.EnsureSuccessStatusCode();
+
+        // Provide detailed error info if the request fails
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Assert.Fail($"Guest reservation failed with {response.StatusCode}. Response: {errorContent}");
+        }
 
         var result = await response.Content.ReadFromJsonAsync<GuestReservationResult>(JsonOptions);
         Assert.NotNull(result);
