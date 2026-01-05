@@ -9,3 +9,6 @@ export * from './lib/types';
 
 // Providers
 export * from './lib/providers';
+
+// Components
+export * from './lib/components';
