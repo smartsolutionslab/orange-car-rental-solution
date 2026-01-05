@@ -121,14 +121,14 @@ public sealed class InvoiceGenerator : IInvoiceGenerator
                         {
                             r.RelativeItem().Text("Kunden-Nr.:").Bold();
                             r.ConstantItem(80).AlignRight()
-                                .Text(invoice.Customer.CustomerId.ToString()[..8].ToUpperInvariant());
+                                .Text(invoice.Customer.CustomerIdentifier.ToString()[..8].ToUpperInvariant());
                         });
 
                         c.Item().Row(r =>
                         {
                             r.RelativeItem().Text("Reservierung:").Bold();
                             r.ConstantItem(80).AlignRight()
-                                .Text(invoice.ReservationId.ToString()[..8].ToUpperInvariant());
+                                .Text(invoice.ReservationIdentifier.ToString()[..8].ToUpperInvariant());
                         });
                     });
             });

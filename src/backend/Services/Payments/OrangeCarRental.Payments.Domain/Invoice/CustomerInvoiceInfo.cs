@@ -13,7 +13,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     /// <summary>
     ///     Customer identifier (reference to Customers bounded context).
     /// </summary>
-    public CustomerId CustomerId { get; }
+    public CustomerIdentifier CustomerIdentifier { get; }
 
     /// <summary>
     ///     Customer name (person or company name).
@@ -46,7 +46,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     public VatId? VatId { get; }
 
     private CustomerInvoiceInfo(
-        CustomerId customerId,
+        CustomerIdentifier customerId,
         string name,
         Street street,
         PostalCode postalCode,
@@ -54,7 +54,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
         Country country,
         VatId? vatId)
     {
-        CustomerId = customerId;
+        CustomerIdentifier = customerId;
         Name = name;
         Street = street;
         PostalCode = postalCode;
@@ -67,7 +67,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     ///     Creates customer invoice information.
     /// </summary>
     public static CustomerInvoiceInfo Create(
-        CustomerId customerId,
+        CustomerIdentifier customerId,
         string name,
         string street,
         string postalCode,

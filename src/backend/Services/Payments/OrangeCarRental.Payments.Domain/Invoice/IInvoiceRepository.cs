@@ -20,18 +20,18 @@ public interface IInvoiceRepository
     /// <summary>
     ///     Gets all invoices for a customer.
     /// </summary>
-    Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<Invoice>> GetByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Streams all invoices for a customer.
-    ///     Memory-efficient alternative to GetByCustomerIdAsync.
+    ///     Memory-efficient alternative to GetByCustomerIdentifierAsync.
     /// </summary>
-    IAsyncEnumerable<Invoice> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<Invoice> StreamByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets the invoice for a reservation.
     /// </summary>
-    Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default);
+    Task<Invoice?> GetByReservationIdentifierAsync(ReservationIdentifier reservationId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets the next sequence number for invoice numbering in the given year.

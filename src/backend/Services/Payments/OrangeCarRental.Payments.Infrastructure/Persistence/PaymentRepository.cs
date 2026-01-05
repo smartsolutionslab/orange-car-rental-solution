@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
+using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Persistence;
@@ -14,10 +15,10 @@ public sealed class PaymentRepository(PaymentsDbContext context) : IPaymentRepos
         return payment ?? throw new EntityNotFoundException(typeof(Payment), id);
     }
 
-    public async Task<Payment?> GetByReservationIdAsync(Guid reservationId, CancellationToken cancellationToken = default)
+    public async Task<Payment?> GetByReservationIdentifierAsync(ReservationIdentifier reservationId, CancellationToken cancellationToken = default)
     {
         return await context.Payments
-            .FirstOrDefaultAsync(p => p.ReservationId == reservationId, cancellationToken);
+            .FirstOrDefaultAsync(p => p.ReservationIdentifier == reservationId, cancellationToken);
     }
 
     public async Task AddAsync(Payment payment, CancellationToken cancellationToken = default) =>

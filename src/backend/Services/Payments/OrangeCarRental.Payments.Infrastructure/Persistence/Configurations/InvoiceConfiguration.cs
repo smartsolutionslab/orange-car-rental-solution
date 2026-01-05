@@ -89,12 +89,12 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
         // Customer information (owned entity)
         builder.OwnsOne(x => x.Customer, customerBuilder =>
         {
-            customerBuilder.Property(c => c.CustomerId)
+            customerBuilder.Property(c => c.CustomerIdentifier)
                 .HasColumnName("CustomerId")
                 .IsRequired()
                 .HasConversion(
                     id => id.Value,
-                    value => CustomerId.From(value));
+                    value => CustomerIdentifier.From(value));
             customerBuilder.Property(c => c.Name).HasColumnName("CustomerName").HasMaxLength(200).IsRequired();
             customerBuilder.Property(c => c.Street)
                 .HasColumnName("CustomerStreet").HasMaxLength(200).IsRequired()
@@ -114,16 +114,16 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
                     v => v.HasValue ? v.Value.Value : null,
                     v => v != null ? VatId.From(v) : null);
 
-            // Index on CustomerId
-            customerBuilder.HasIndex(c => c.CustomerId)
+            // Index on CustomerIdentifier
+            customerBuilder.HasIndex(c => c.CustomerIdentifier)
                 .HasDatabaseName("IX_Invoices_CustomerId");
         });
 
         // References
-        builder.Property(x => x.ReservationId)
+        builder.Property(x => x.ReservationIdentifier)
             .HasConversion(
                 id => id.Value,
-                value => ReservationId.From(value))
+                value => ReservationIdentifier.From(value))
             .IsRequired();
 
         builder.Property(x => x.PaymentId)
@@ -163,7 +163,7 @@ public sealed class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
                 c => c.ToList()));
 
         // Indexes for common queries
-        builder.HasIndex(x => x.ReservationId)
+        builder.HasIndex(x => x.ReservationIdentifier)
             .HasDatabaseName("IX_Invoices_ReservationId");
 
         builder.HasIndex(x => x.Status)

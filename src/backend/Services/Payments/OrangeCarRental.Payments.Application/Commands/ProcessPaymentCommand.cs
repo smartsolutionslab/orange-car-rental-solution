@@ -9,7 +9,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Application.Commands;
 ///     Command to process a payment for a reservation.
 /// </summary>
 public sealed record ProcessPaymentCommand(
-    ReservationId ReservationId,
-    CustomerId CustomerId,
+    ReservationIdentifier ReservationIdentifier,
+    CustomerIdentifier CustomerIdentifier,
     Money Amount,
     PaymentMethod PaymentMethod) : ICommand<ProcessPaymentResult>;

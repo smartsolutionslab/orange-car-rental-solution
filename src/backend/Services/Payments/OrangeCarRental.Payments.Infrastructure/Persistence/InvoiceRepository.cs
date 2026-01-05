@@ -21,26 +21,26 @@ public sealed class InvoiceRepository(PaymentsDbContext dbContext) : IInvoiceRep
             .FirstOrDefaultAsync(x => x.InvoiceNumber == invoiceNumber, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<Invoice>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<Invoice>> GetByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices
-            .Where(x => x.Customer.CustomerId == customerId)
+            .Where(x => x.Customer.CustomerIdentifier == customerId)
             .OrderByDescending(x => x.InvoiceDate)
             .ToListAsync(cancellationToken);
     }
 
-    public IAsyncEnumerable<Invoice> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<Invoice> StreamByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default)
     {
         return dbContext.Invoices
-            .Where(x => x.Customer.CustomerId == customerId)
+            .Where(x => x.Customer.CustomerIdentifier == customerId)
             .OrderByDescending(x => x.InvoiceDate)
             .AsAsyncEnumerable();
     }
 
-    public async Task<Invoice?> GetByReservationIdAsync(ReservationId reservationId, CancellationToken cancellationToken = default)
+    public async Task<Invoice?> GetByReservationIdentifierAsync(ReservationIdentifier reservationId, CancellationToken cancellationToken = default)
     {
         return await dbContext.Invoices
-            .FirstOrDefaultAsync(x => x.ReservationId == reservationId, cancellationToken);
+            .FirstOrDefaultAsync(x => x.ReservationIdentifier == reservationId, cancellationToken);
     }
 
     public async Task<int> GetNextSequenceNumberAsync(int year, CancellationToken cancellationToken = default)

@@ -58,7 +58,7 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// <summary>
     ///     Referenced reservation ID.
     /// </summary>
-    public ReservationId ReservationId { get; init; }
+    public ReservationIdentifier ReservationIdentifier { get; init; }
 
     /// <summary>
     ///     Referenced payment ID (optional).
@@ -120,7 +120,7 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// </summary>
     public static Invoice Create(
         InvoiceNumber invoiceNumber,
-        ReservationId reservationId,
+        ReservationIdentifier reservationId,
         CustomerInvoiceInfo customer,
         IEnumerable<InvoiceLineItem> lineItems,
         DateOnly serviceDate,
@@ -138,7 +138,7 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             Status = InvoiceStatus.Created,
             Seller = seller ?? SellerInfo.OrangeCarRentalDefault,
             Customer = customer,
-            ReservationId = reservationId,
+            ReservationIdentifier = reservationId,
             PaymentId = paymentId,
             LineItems = lineItems.ToList(),
             Currency = Currency.EUR,
@@ -163,7 +163,7 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
             Status = status ?? Status,
             Seller = Seller,
             Customer = Customer,
-            ReservationId = ReservationId,
+            ReservationIdentifier = ReservationIdentifier,
             PaymentId = PaymentId,
             LineItems = LineItems,
             Currency = Currency,

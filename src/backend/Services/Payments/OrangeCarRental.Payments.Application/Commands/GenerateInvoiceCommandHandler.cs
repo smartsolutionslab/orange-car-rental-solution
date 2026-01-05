@@ -22,7 +22,7 @@ public sealed class GenerateInvoiceCommandHandler(
         {
             // Check if invoice already exists for this reservation
             var existingInvoice = await unitOfWork.Invoices
-                .GetByReservationIdAsync(command.ReservationId, cancellationToken);
+                .GetByReservationIdentifierAsync(command.ReservationIdentifier, cancellationToken);
 
             if (existingInvoice != null)
             {
@@ -51,7 +51,7 @@ public sealed class GenerateInvoiceCommandHandler(
 
             // Create customer invoice info
             var customerInfo = CustomerInvoiceInfo.Create(
-                customerId: command.CustomerId,
+                customerId: command.CustomerIdentifier,
                 name: command.CustomerName.Value,
                 street: command.CustomerStreet.Value,
                 postalCode: command.CustomerPostalCode.Value,
@@ -62,7 +62,7 @@ public sealed class GenerateInvoiceCommandHandler(
             // Create invoice
             var invoice = Invoice.Create(
                 invoiceNumber: invoiceNumber,
-                reservationId: command.ReservationId,
+                reservationId: command.ReservationIdentifier,
                 customer: customerInfo,
                 lineItems: [lineItem],
                 serviceDate: command.ReturnDate,

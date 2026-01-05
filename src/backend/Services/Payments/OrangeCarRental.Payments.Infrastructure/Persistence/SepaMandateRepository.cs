@@ -21,16 +21,16 @@ public sealed class SepaMandateRepository(
         return mandate ?? throw new EntityNotFoundException(typeof(SepaMandate), id);
     }
 
-    public async Task<SepaMandate?> GetActiveByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    public async Task<SepaMandate?> GetActiveByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default)
     {
         return await context.SepaMandates
-            .FirstOrDefaultAsync(m => m.CustomerId == customerId && m.Status == MandateStatus.Active, cancellationToken);
+            .FirstOrDefaultAsync(m => m.CustomerIdentifier == customerId && m.Status == MandateStatus.Active, cancellationToken);
     }
 
-    public async Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<SepaMandate>> GetByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default)
     {
         return await context.SepaMandates
-            .Where(m => m.CustomerId == customerId)
+            .Where(m => m.CustomerIdentifier == customerId)
             .OrderByDescending(m => m.CreatedAt)
             .ToListAsync(cancellationToken);
     }
@@ -79,10 +79,10 @@ public sealed class SepaMandateRepository(
             .AsAsyncEnumerable();
     }
 
-    public IAsyncEnumerable<SepaMandate> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default)
+    public IAsyncEnumerable<SepaMandate> StreamByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default)
     {
         return context.SepaMandates
-            .Where(m => m.CustomerId == customerId)
+            .Where(m => m.CustomerIdentifier == customerId)
             .OrderByDescending(m => m.CreatedAt)
             .AsAsyncEnumerable();
     }
