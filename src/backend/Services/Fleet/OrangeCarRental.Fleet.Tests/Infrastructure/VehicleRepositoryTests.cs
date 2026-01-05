@@ -14,8 +14,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Fleet.Tests.Infrastructure;
 
 public class VehicleRepositoryTests : IAsyncLifetime
 {
-    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder()
-        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
     private FleetDbContext context = null!;
