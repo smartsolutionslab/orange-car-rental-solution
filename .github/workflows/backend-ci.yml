@@ -9,6 +9,7 @@ on:
       - '.github/workflows/_integration-tests.yml'
       - '.github/actions/setup-backend/**'
       - '.github/actions/setup-aspire/**'
+      - 'GitVersion.yml'
   pull_request:
     branches: [main, develop]
     paths:
@@ -17,6 +18,7 @@ on:
       - '.github/workflows/_integration-tests.yml'
       - '.github/actions/setup-backend/**'
       - '.github/actions/setup-aspire/**'
+      - 'GitVersion.yml'
 
 # Cancel in-progress runs for the same branch
 concurrency:
