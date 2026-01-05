@@ -76,9 +76,8 @@ builder.Services.AddHttpClient<ICustomersService, CustomersService>(client =>
     client.Timeout = TimeSpan.FromSeconds(30);
 });
 
-// Register repository and unit of work
+// Register repository
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
-builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ReservationsDbContext>());
 
 // Register data seeder
 builder.Services.AddScoped<ReservationsDataSeeder>();

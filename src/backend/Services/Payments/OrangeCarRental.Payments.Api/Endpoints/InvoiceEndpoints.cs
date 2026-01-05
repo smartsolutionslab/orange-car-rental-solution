@@ -76,8 +76,11 @@ public static class InvoiceEndpoints
         invoices.MapGet("/{invoiceId:guid}", async Task<Results<Ok<InvoiceDto>, NotFound>> (
                 Guid invoiceId,
                 IPaymentsUnitOfWork unitOfWork,
+
                 CancellationToken cancellationToken) =>
             {
+
+
                 var invoice = await unitOfWork.Invoices
                     .GetByIdAsync(InvoiceIdentifier.From(invoiceId), cancellationToken);
 

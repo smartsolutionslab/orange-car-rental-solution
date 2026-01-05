@@ -1,5 +1,4 @@
 using Moq;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Application.Commands;
@@ -16,7 +15,6 @@ public class CreateGuestReservationCommandHandlerTests
     private readonly Mock<IReservationRepository> repositoryMock = new();
     private readonly Mock<ICustomersService> customersServiceMock = new();
     private readonly Mock<IPricingService> pricingServiceMock = new();
-    private readonly Mock<IUnitOfWork> unitOfWorkMock = new();
     private readonly CreateGuestReservationCommandHandler handler;
 
     public CreateGuestReservationCommandHandlerTests()
@@ -24,8 +22,7 @@ public class CreateGuestReservationCommandHandlerTests
         handler = new CreateGuestReservationCommandHandler(
             repositoryMock.Object,
             customersServiceMock.Object,
-            pricingServiceMock.Object,
-            unitOfWorkMock.Object);
+            pricingServiceMock.Object);
     }
 
     #region Happy Path Tests
