@@ -75,6 +75,6 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "puppeteer": "^24.34.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "8.50.1"
+    "typescript-eslint": "8.51.0"
   }
 }
