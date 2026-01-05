@@ -111,3 +111,19 @@ export { TabsComponent, TabComponent, type TabChangeEvent } from './lib/tabs';
 
 // Accordion Component
 export { AccordionComponent, AccordionItemComponent, type AccordionChangeEvent } from './lib/accordion';
+
+// Data Table Component
+export {
+  DataTableComponent,
+  DataTableColumnDirective,
+  type DataTableColumn,
+  type DataTableSort,
+  type DataTableSortEvent,
+  type DataTableSelection,
+  type DataTableSelectionEvent,
+  type DataTableRowClickEvent,
+  type DataTablePagination,
+  type DataTableCellContext,
+  type DataTableHeaderContext,
+  type SortDirection,
+} from './lib/data-table';
