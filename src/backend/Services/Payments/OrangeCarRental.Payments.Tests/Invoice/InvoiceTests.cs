@@ -210,10 +210,10 @@ public class InvoiceTests
         invoice.Seller.ManagingDirector.Value.ShouldNotBeNullOrEmpty();
     }
 
-    private static CustomerInvoiceInfo CreateTestCustomer(CustomerIdentifier? customerId = null)
+    private static CustomerInvoiceInfo CreateTestCustomer(CustomerIdentifier? customerIdentifier = null)
     {
         return CustomerInvoiceInfo.Create(
-            customerId: customerId ?? CustomerIdentifier.From(TestIds.Customer1),
+            customerIdentifier: customerIdentifier ?? CustomerIdentifier.From(TestIds.Customer1),
             name: TestCustomer.MaxMustermann.FullName,
             street: TestCustomer.MaxMustermann.Street,
             postalCode: TestCustomer.MaxMustermann.PostalCode,

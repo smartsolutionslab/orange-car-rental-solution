@@ -46,7 +46,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     public VatId? VatId { get; }
 
     private CustomerInvoiceInfo(
-        CustomerIdentifier customerId,
+        CustomerIdentifier customerIdentifier,
         string name,
         Street street,
         PostalCode postalCode,
@@ -54,7 +54,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
         Country country,
         VatId? vatId)
     {
-        CustomerIdentifier = customerId;
+        CustomerIdentifier = customerIdentifier;
         Name = name;
         Street = street;
         PostalCode = postalCode;
@@ -67,7 +67,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
     ///     Creates customer invoice information.
     /// </summary>
     public static CustomerInvoiceInfo Create(
-        CustomerIdentifier customerId,
+        CustomerIdentifier customerIdentifier,
         string name,
         string street,
         string postalCode,
@@ -75,12 +75,12 @@ public sealed record CustomerInvoiceInfo : IValueObject
         string country,
         string? vatId = null)
     {
-        Ensure.That(customerId.Value, nameof(customerId))
-            .ThrowIf(customerId.Value == Guid.Empty, "Customer ID cannot be empty");
+        Ensure.That(customerIdentifier.Value, nameof(customerIdentifier))
+            .ThrowIf(customerIdentifier.Value == Guid.Empty, "Customer identifier cannot be empty");
         Ensure.That(name, nameof(name)).IsNotNullOrWhiteSpace();
 
         return new CustomerInvoiceInfo(
-            customerId,
+            customerIdentifier,
             name.Trim(),
             Street.From(street),
             PostalCode.From(postalCode),
