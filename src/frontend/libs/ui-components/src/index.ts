@@ -105,3 +105,9 @@ export {
   type WizardCompleteEvent,
   type WizardStepChangeEvent,
 } from './lib/wizard';
+
+// Tabs Component
+export { TabsComponent, TabComponent, type TabChangeEvent } from './lib/tabs';
+
+// Accordion Component
+export { AccordionComponent, AccordionItemComponent, type AccordionChangeEvent } from './lib/accordion';
