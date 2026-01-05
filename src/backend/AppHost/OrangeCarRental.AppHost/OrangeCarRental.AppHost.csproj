@@ -24,6 +24,7 @@
     <ProjectReference Include="..\..\Services\Location\OrangeCarRental.Location.Api\OrangeCarRental.Location.Api.csproj"/>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" VersionOverride="8.15.0" />
     <Content Include="keycloak\**\*">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

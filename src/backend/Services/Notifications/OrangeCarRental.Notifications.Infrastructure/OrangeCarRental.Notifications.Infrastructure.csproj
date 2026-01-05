@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" VersionOverride="8.15.0" />
     <ProjectReference Include="..\OrangeCarRental.Notifications.Domain\OrangeCarRental.Notifications.Domain.csproj"/>
     <ProjectReference Include="..\OrangeCarRental.Notifications.Application\OrangeCarRental.Notifications.Application.csproj"/>
   </ItemGroup>
