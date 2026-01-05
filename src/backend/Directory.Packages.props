@@ -31,7 +31,7 @@
     <PackageVersion Include="Aspire.Hosting.RabbitMQ" Version="13.1.0" />
     <PackageVersion Include="Aspire.Hosting.Testing" Version="13.1.0" />
     <PackageVersion Include="Aspire.Microsoft.EntityFrameworkCore.SqlServer" Version="13.1.0" />
-    <PackageVersion Include="Testcontainers.MsSql" Version="4.9.0" />
+    <PackageVersion Include="Testcontainers.MsSql" Version="4.10.0" />
     <!-- API Gateway -->
     <PackageVersion Include="Yarp.ReverseProxy" Version="2.3.0" />
     <!-- Authentication & Authorization -->
