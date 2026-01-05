@@ -94,3 +94,14 @@ export {
   getMaxDateOfBirthForAge,
   formatDateRange,
 } from './lib/utils/date.utils';
+
+// Wizard Component
+export {
+  WizardComponent,
+  WizardStepComponent,
+  type WizardStepConfig,
+  type WizardStepStatus,
+  type WizardStepState,
+  type WizardCompleteEvent,
+  type WizardStepChangeEvent,
+} from './lib/wizard';
