@@ -13,8 +13,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Reservations.Tests.Infrastructure;
 public class ReservationRepositoryTests : IAsyncLifetime
 {
     // Configure SQL Server container
-    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder()
-        .WithImage("mcr.microsoft.com/mssql/server:2022-latest")
+    private readonly MsSqlContainer msSqlContainer = new MsSqlBuilder("mcr.microsoft.com/mssql/server:2022-latest")
         .Build();
 
     private ReservationsDbContext context = null!;
