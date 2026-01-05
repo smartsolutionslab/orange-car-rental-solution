@@ -28,7 +28,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
     private KeycloakTokenProvider? tokenProvider;
-    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(8);
     private string? sqlConnectionString;
 
     /// <summary>
@@ -160,7 +160,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
     {
         if (app == null) return;
 
-        var maxRetries = 30;
+        var maxRetries = 45;
         var delayBetweenRetries = TimeSpan.FromSeconds(2);
 
         foreach (var resourceName in resourceNames)
