@@ -30,6 +30,11 @@ import {
   getTodayDateString,
   addDays,
   IconComponent,
+  InputComponent,
+  CheckboxComponent,
+  FormSectionComponent,
+  FormGroupDirective,
+  FormRowDirective,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -60,6 +65,11 @@ import type { BookingFormValue } from '../../types';
     SelectLocationComponent,
     ErrorAlertComponent,
     IconComponent,
+    InputComponent,
+    CheckboxComponent,
+    FormSectionComponent,
+    FormGroupDirective,
+    FormRowDirective,
   ],
   templateUrl: './booking.component.html',
   styleUrl: './booking.component.css',

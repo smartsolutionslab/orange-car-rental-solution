@@ -14,7 +14,7 @@ import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
 import { IconComponent } from '../icon';
 
 export type InputSize = 'sm' | 'md' | 'lg';
-export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search';
+export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
 
 /**
  * Styled Input Component
@@ -78,6 +78,8 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           [attr.aria-invalid]="error() ? 'true' : null"
           [attr.aria-describedby]="error() ? inputId() + '-error' : null"
           [autocomplete]="autocomplete()"
+          [attr.min]="min()"
+          [attr.max]="max()"
           class="input-field"
           [value]="value()"
           (input)="onInput($event)"
@@ -289,6 +291,12 @@ export class InputComponent implements ControlValueAccessor {
 
   /** Show password toggle for password inputs */
   readonly showPasswordToggle = input(true);
+
+  /** Minimum value (for date/number inputs) */
+  readonly min = input<string | number>();
+
+  /** Maximum value (for date/number inputs) */
+  readonly max = input<string | number>();
 
   /** Blur event */
   readonly inputBlur = output<void>();
