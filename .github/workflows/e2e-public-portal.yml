@@ -45,9 +45,9 @@ jobs:
         env:
           PUPPETEER_SKIP_DOWNLOAD: 'true'
 
-      - name: Build application
+      - name: Build application for E2E tests
         working-directory: src/frontend
-        run: yarn workspace @orange-car-rental/public-portal build
+        run: yarn workspace @orange-car-rental/public-portal build:e2e
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v6
