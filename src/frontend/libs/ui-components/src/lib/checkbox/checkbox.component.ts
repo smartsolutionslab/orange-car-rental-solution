@@ -6,10 +6,8 @@ import {
   forwardRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  ControlValueAccessor,
-  NG_VALUE_ACCESSOR,
-} from '@angular/forms';
+import type { ControlValueAccessor } from '@angular/forms';
+import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconComponent } from '../icon';
 
 export type CheckboxSize = 'sm' | 'md' | 'lg';
@@ -250,7 +248,7 @@ export class CheckboxComponent implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState(isDisabled: boolean): void {
+  setDisabledState(_isDisabled: boolean): void {
     // Disabled state is handled via input signal
   }
 

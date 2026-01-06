@@ -6,8 +6,8 @@ import {
   computed,
   contentChildren,
   TemplateRef,
-  TrackByFunction,
 } from '@angular/core';
+import type { TrackByFunction } from '@angular/core';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DataTableColumnDirective } from './data-table-column.directive';
@@ -583,7 +583,7 @@ export class DataTableComponent<T = unknown> {
   /**
    * Track by function for ngFor
    */
-  readonly trackByFn = input<TrackByFunction<T>>((index: number, item: T) => index);
+  readonly trackByFn = input<TrackByFunction<T>>((index: number, _item: T) => index);
 
   /**
    * Emitted when sort changes

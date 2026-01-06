@@ -1,5 +1,5 @@
 import { Directive, input, contentChild, TemplateRef } from '@angular/core';
-import type { SortDirection, DataTableCellContext, DataTableHeaderContext } from './data-table.types';
+import type { DataTableCellContext, DataTableHeaderContext } from './data-table.types';
 
 /**
  * Directive for defining a data table column

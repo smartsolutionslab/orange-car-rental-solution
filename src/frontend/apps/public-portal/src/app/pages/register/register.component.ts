@@ -10,6 +10,8 @@ import {
   SuccessAlertComponent,
   ErrorAlertComponent,
   IconComponent,
+  InputComponent,
+  CheckboxComponent,
 } from '@orange-car-rental/ui-components';
 import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
 
@@ -29,6 +31,8 @@ import { UI_TIMING, BUSINESS_RULES } from '../../constants/app.constants';
     SuccessAlertComponent,
     ErrorAlertComponent,
     IconComponent,
+    InputComponent,
+    CheckboxComponent,
     TranslateModule,
   ],
   templateUrl: './register.component.html',

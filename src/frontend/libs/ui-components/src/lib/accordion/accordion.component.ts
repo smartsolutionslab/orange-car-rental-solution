@@ -5,8 +5,8 @@ import {
   signal,
   contentChildren,
   effect,
-  AfterContentInit,
 } from '@angular/core';
+import type { AfterContentInit } from '@angular/core';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { AccordionItemComponent } from './accordion-item.component';
 

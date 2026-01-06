@@ -6,7 +6,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import {
-  FormFieldComponent,
   SuccessAlertComponent,
   ErrorAlertComponent,
   IconComponent,
@@ -26,7 +25,6 @@ import {
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    FormFieldComponent,
     SuccessAlertComponent,
     ErrorAlertComponent,
     IconComponent,

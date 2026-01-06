@@ -6,14 +6,13 @@ import {
   computed,
   contentChildren,
   effect,
-  AfterContentInit,
   HostListener,
 } from '@angular/core';
+import type { AfterContentInit } from '@angular/core';
 import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { WizardStepComponent } from './wizard-step.component';
 import type {
   WizardStepConfig,
-  WizardStepStatus,
   WizardStepState,
   WizardCompleteEvent,
   WizardStepChangeEvent,

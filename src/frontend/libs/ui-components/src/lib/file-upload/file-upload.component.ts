@@ -85,7 +85,7 @@ export interface UploadedFile {
                 {{ acceptedTypesText() }}
               }
               @if (maxSize()) {
-                (max {{ formatSize(maxSize()) }})
+                (max {{ formatSize(maxSize()!) }})
               }
             </span>
           </div>
