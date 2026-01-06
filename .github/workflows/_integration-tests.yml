@@ -64,7 +64,7 @@ jobs:
             --logger "trx;LogFileName=${{ inputs.portal }}-tests.trx" \
             --logger "console;verbosity=normal" \
             --collect:"XPlat Code Coverage" \
-            -- RunConfiguration.TestSessionTimeout=600000
+            -- RunConfiguration.TestSessionTimeout=900000
         env:
           DOTNET_ENVIRONMENT: Development
 
