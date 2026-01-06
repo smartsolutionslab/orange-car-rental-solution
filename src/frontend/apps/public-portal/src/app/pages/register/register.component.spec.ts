@@ -1,5 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RegisterComponent } from './register.component';
@@ -8,8 +7,8 @@ import {
   TEST_EMAILS,
   TEST_PASSWORDS,
   TEST_PERSONAL_INFO,
-  createValidRegistrationData,
 } from '@orange-car-rental/shared/testing';
+import { UI_TIMING } from '../../constants/app.constants';
 
 describe('RegisterComponent', () => {
   let component: RegisterComponent;
@@ -18,10 +17,10 @@ describe('RegisterComponent', () => {
   let router: Router;
 
   beforeEach(async () => {
-    const authServiceSpy = jasmine.createSpyObj('AuthService', ['register']);
+    const authServiceSpy = jasmine.createSpyObj('AuthService', ['register', 'loginWithPassword']);
 
     await TestBed.configureTestingModule({
-      imports: [RegisterComponent, ReactiveFormsModule, TranslateModule.forRoot()],
+      imports: [RegisterComponent, TranslateModule.forRoot()],
       providers: [{ provide: AuthService, useValue: authServiceSpy }, provideRouter([])],
     }).compileComponents();
 
@@ -40,280 +39,114 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  describe('Form Initialization', () => {
-    it('should initialize at step 1', () => {
-      expect(component.currentStep()).toBe(1);
+  describe('Initial State', () => {
+    it('should start with loading as false', () => {
+      expect(component.isLoading()).toBeFalsy();
     });
 
-    it('should have 3 total steps', () => {
-      expect(component.totalSteps).toBe(3);
+    it('should start with no error message', () => {
+      expect(component.errorMessage()).toBeNull();
     });
 
-    it('should initialize with all form controls', () => {
-      expect(component.registerForm.get('email')).toBeDefined();
-      expect(component.registerForm.get('password')).toBeDefined();
-      expect(component.registerForm.get('confirmPassword')).toBeDefined();
-      expect(component.registerForm.get('firstName')).toBeDefined();
-      expect(component.registerForm.get('lastName')).toBeDefined();
-      expect(component.registerForm.get('phoneNumber')).toBeDefined();
-      expect(component.registerForm.get('dateOfBirth')).toBeDefined();
-      expect(component.registerForm.get('acceptTerms')).toBeDefined();
-      expect(component.registerForm.get('acceptPrivacy')).toBeDefined();
-      expect(component.registerForm.get('acceptMarketing')).toBeDefined();
+    it('should start with no success message', () => {
+      expect(component.successMessage()).toBeNull();
     });
   });
 
-  describe('Step 1 - Account Information Validation', () => {
-    it('should require email', () => {
-      const emailControl = component.registerForm.get('email');
-      emailControl?.setValue('');
-      emailControl?.markAsTouched();
-      expect(emailControl?.hasError('required')).toBeTruthy();
+  describe('Labels Configuration', () => {
+    it('should provide labels to the form', () => {
+      const labels = component.labels();
+      expect(labels.title).toBe('auth.register.title');
+      expect(labels.subtitle).toBe('auth.register.subtitle');
+      expect(labels.step1Title).toBe('auth.register.steps.account');
+      expect(labels.step2Title).toBe('auth.register.steps.personal');
+      expect(labels.step3Title).toBe('auth.register.steps.confirmation');
     });
 
-    it('should validate email format', () => {
-      const emailControl = component.registerForm.get('email');
-      emailControl?.setValue(TEST_EMAILS.INVALID);
-      emailControl?.markAsTouched();
-      expect(emailControl?.hasError('email')).toBeTruthy();
+    it('should provide validation labels', () => {
+      const labels = component.labels();
+      expect(labels.emailRequired).toBe('auth.validation.emailRequired');
+      expect(labels.emailInvalid).toBe('auth.validation.emailInvalid');
+      expect(labels.passwordRequired).toBe('auth.validation.passwordRequired');
+      expect(labels.passwordMismatch).toBe('auth.register.validation.passwordMismatch');
     });
 
-    it('should require password with minimum length', () => {
-      const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue(TEST_PASSWORDS.SHORT);
-      expect(passwordControl?.hasError('minlength')).toBeTruthy();
-    });
-
-    it('should validate password strength', () => {
-      const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue(TEST_PASSWORDS.WEAK);
-      expect(passwordControl?.hasError('weakPassword')).toBeTruthy();
-    });
-
-    it('should accept strong password', () => {
-      const passwordControl = component.registerForm.get('password');
-      passwordControl?.setValue(TEST_PASSWORDS.STRONG);
-      expect(passwordControl?.valid).toBeTruthy();
-    });
-
-    it('should validate password match', () => {
-      component.registerForm.patchValue({
-        password: TEST_PASSWORDS.STRONG,
-        confirmPassword: TEST_PASSWORDS.MISMATCH,
-      });
-      expect(component.registerForm.hasError('passwordMismatch')).toBeTruthy();
-    });
-
-    it('should pass validation when passwords match', () => {
-      component.registerForm.patchValue({
-        password: TEST_PASSWORDS.STRONG,
-        confirmPassword: TEST_PASSWORDS.STRONG,
-      });
-      expect(component.registerForm.hasError('passwordMismatch')).toBeFalsy();
-    });
-
-    it('should show password mismatch error', () => {
-      component.registerForm.patchValue({
-        password: TEST_PASSWORDS.STRONG,
-        confirmPassword: 'Different',
-      });
-      component.confirmPassword?.markAsTouched();
-      expect(component.confirmPasswordError).toBe('auth.register.validation.passwordMismatch');
+    it('should provide form field labels', () => {
+      const labels = component.labels();
+      expect(labels.emailLabel).toBe('common.labels.email');
+      expect(labels.passwordLabel).toBe('common.labels.password');
+      expect(labels.firstNameLabel).toBe('common.labels.firstName');
+      expect(labels.lastNameLabel).toBe('common.labels.lastName');
+      expect(labels.phoneLabel).toBe('common.labels.phone');
+      expect(labels.dateOfBirthLabel).toBe('common.labels.dateOfBirth');
     });
   });
 
-  describe('Step 2 - Personal Information Validation', () => {
-    it('should require first name', () => {
-      const firstNameControl = component.registerForm.get('firstName');
-      firstNameControl?.setValue('');
-      firstNameControl?.markAsTouched();
-      expect(firstNameControl?.hasError('required')).toBeTruthy();
+  describe('Auth Config', () => {
+    it('should configure terms URL', () => {
+      expect(component.authConfig.termsUrl).toBe('/terms');
     });
 
-    it('should require last name', () => {
-      const lastNameControl = component.registerForm.get('lastName');
-      lastNameControl?.setValue('');
-      lastNameControl?.markAsTouched();
-      expect(lastNameControl?.hasError('required')).toBeTruthy();
+    it('should configure privacy URL', () => {
+      expect(component.authConfig.privacyUrl).toBe('/privacy');
     });
 
-    it('should validate phone number format', () => {
-      const phoneControl = component.registerForm.get('phoneNumber');
-      phoneControl?.setValue(TEST_PERSONAL_INFO.PHONE_INVALID);
-      expect(phoneControl?.hasError('invalidPhone')).toBeTruthy();
+    it('should configure minimum age', () => {
+      expect(component.authConfig.minAge).toBeDefined();
     });
 
-    it('should accept valid German phone number', () => {
-      const phoneControl = component.registerForm.get('phoneNumber');
-      phoneControl?.setValue(TEST_PERSONAL_INFO.PHONE);
-      expect(phoneControl?.valid).toBeTruthy();
-    });
-
-    it('should require date of birth', () => {
-      const dobControl = component.registerForm.get('dateOfBirth');
-      dobControl?.setValue('');
-      dobControl?.markAsTouched();
-      expect(dobControl?.hasError('required')).toBeTruthy();
-    });
-
-    it('should validate minimum age of 18', () => {
-      const dobControl = component.registerForm.get('dateOfBirth');
-      dobControl?.setValue(TEST_PERSONAL_INFO.DATE_OF_BIRTH_UNDERAGE);
-      expect(dobControl?.hasError('underage')).toBeTruthy();
-    });
-
-    it('should accept valid age (18+)', () => {
-      const dobControl = component.registerForm.get('dateOfBirth');
-      dobControl?.setValue(TEST_PERSONAL_INFO.DATE_OF_BIRTH_VALID);
-      expect(dobControl?.valid).toBeTruthy();
-    });
-  });
-
-  describe('Step 3 - Terms and Conditions', () => {
-    it('should require terms acceptance', () => {
-      const termsControl = component.registerForm.get('acceptTerms');
-      termsControl?.setValue(false);
-      // Validators.requiredTrue produces 'required' error when value is false
-      expect(termsControl?.hasError('required')).toBeTruthy();
-    });
-
-    it('should require privacy acceptance', () => {
-      const privacyControl = component.registerForm.get('acceptPrivacy');
-      privacyControl?.setValue(false);
-      // Validators.requiredTrue produces 'required' error when value is false
-      expect(privacyControl?.hasError('required')).toBeTruthy();
-    });
-
-    it('should not require marketing acceptance', () => {
-      const marketingControl = component.registerForm.get('acceptMarketing');
-      marketingControl?.setValue(false);
-      expect(marketingControl?.valid).toBeTruthy();
-    });
-  });
-
-  describe('Step Navigation', () => {
-    it('should not advance to step 2 with invalid step 1', () => {
-      component.nextStep();
-      expect(component.currentStep()).toBe(1);
-    });
-
-    it('should advance to step 2 with valid step 1', () => {
-      component.registerForm.patchValue({
-        email: TEST_EMAILS.VALID,
-        password: TEST_PASSWORDS.STRONG,
-        confirmPassword: TEST_PASSWORDS.STRONG,
-      });
-      component.nextStep();
-      expect(component.currentStep()).toBe(2);
-    });
-
-    it('should go back from step 2 to step 1', () => {
-      component.currentStep.set(2);
-      component.previousStep();
-      expect(component.currentStep()).toBe(1);
-    });
-
-    it('should not go back below step 1', () => {
-      component.currentStep.set(1);
-      component.previousStep();
-      expect(component.currentStep()).toBe(1);
-    });
-
-    it('should validate current step correctly', () => {
-      component.registerForm.patchValue({
-        email: TEST_EMAILS.VALID,
-        password: TEST_PASSWORDS.STRONG,
-        confirmPassword: TEST_PASSWORDS.STRONG,
-      });
-      expect(component.isCurrentStepValid()).toBeTruthy();
-    });
-
-    it('should not advance past total steps', () => {
-      component.currentStep.set(3);
-      component.nextStep();
-      expect(component.currentStep()).toBe(3);
-    });
-  });
-
-  describe('Password Visibility Toggle', () => {
-    it('should start with passwords hidden', () => {
-      expect(component.showPassword()).toBeFalsy();
-      expect(component.showConfirmPassword()).toBeFalsy();
-    });
-
-    it('should toggle password visibility', () => {
-      component.togglePasswordVisibility('password');
-      expect(component.showPassword()).toBeTruthy();
-      component.togglePasswordVisibility('password');
-      expect(component.showPassword()).toBeFalsy();
-    });
-
-    it('should toggle confirm password visibility', () => {
-      component.togglePasswordVisibility('confirmPassword');
-      expect(component.showConfirmPassword()).toBeTruthy();
-      component.togglePasswordVisibility('confirmPassword');
-      expect(component.showConfirmPassword()).toBeFalsy();
+    it('should configure login route', () => {
+      expect(component.authConfig.loginRoute).toBe('/login');
     });
   });
 
   describe('Form Submission', () => {
-    beforeEach(() => {
-      // Use shared test fixtures for valid registration data
-      component.registerForm.patchValue(createValidRegistrationData());
-    });
-
-    it('should not submit if form is invalid regardless of step', async () => {
-      // The component checks form.invalid, not step number
-      component.currentStep.set(2);
-      component.registerForm.patchValue({ acceptTerms: false }); // Make form invalid
-      await component.onSubmit();
-      expect(authService.register).not.toHaveBeenCalled();
-    });
-
-    it('should not submit if form is invalid', async () => {
-      component.registerForm.patchValue({ acceptTerms: false });
-      component.currentStep.set(3);
-      await component.onSubmit();
-      expect(authService.register).not.toHaveBeenCalled();
-    });
+    const validFormData = {
+      email: TEST_EMAILS.VALID,
+      password: TEST_PASSWORDS.STRONG,
+      firstName: TEST_PERSONAL_INFO.FIRST_NAME,
+      lastName: TEST_PERSONAL_INFO.LAST_NAME,
+      phoneNumber: TEST_PERSONAL_INFO.PHONE,
+      dateOfBirth: TEST_PERSONAL_INFO.DATE_OF_BIRTH_VALID,
+      acceptTerms: true,
+      acceptPrivacy: true,
+      acceptMarketing: false,
+    };
 
     it('should call authService.register with correct data', async () => {
-      component.currentStep.set(3);
       authService.register.and.returnValue(Promise.resolve());
-      // navigateSpy already returns Promise.resolve(true) from beforeEach
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
 
-      await component.onSubmit();
+      await component.onRegister(validFormData);
 
-      expect(authService.register).toHaveBeenCalledWith(
-        jasmine.objectContaining({
-          email: TEST_EMAILS.VALID,
-          firstName: TEST_PERSONAL_INFO.FIRST_NAME,
-          lastName: TEST_PERSONAL_INFO.LAST_NAME,
-          phoneNumber: TEST_PERSONAL_INFO.PHONE,
-          acceptMarketing: false,
-        }),
-      );
+      expect(authService.register).toHaveBeenCalledWith({
+        email: TEST_EMAILS.VALID,
+        password: TEST_PASSWORDS.STRONG,
+        firstName: TEST_PERSONAL_INFO.FIRST_NAME,
+        lastName: TEST_PERSONAL_INFO.LAST_NAME,
+        phoneNumber: TEST_PERSONAL_INFO.PHONE,
+        dateOfBirth: TEST_PERSONAL_INFO.DATE_OF_BIRTH_VALID,
+        acceptMarketing: false,
+      });
     });
 
     it('should show success message on successful registration', async () => {
-      component.currentStep.set(3);
       authService.register.and.returnValue(Promise.resolve());
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
 
-      await component.onSubmit();
+      await component.onRegister(validFormData);
 
       expect(component.successMessage()).toBe('auth.register.success');
     });
 
     it('should set loading state during submission', async () => {
-      component.currentStep.set(3);
-      // Create a deferred promise to control resolution timing
       let resolveRegister!: () => void;
       const deferredPromise = new Promise<void>((resolve) => {
         resolveRegister = resolve;
       });
       authService.register.and.returnValue(deferredPromise);
 
-      const submitPromise = component.onSubmit();
+      const submitPromise = component.onRegister(validFormData);
       expect(component.isLoading()).toBeTruthy();
 
       resolveRegister();
@@ -321,58 +154,101 @@ describe('RegisterComponent', () => {
       expect(component.isLoading()).toBeFalsy();
     });
 
-    it('should show error message on email already exists', async () => {
-      component.currentStep.set(3);
+    it('should clear error message on new submission', async () => {
+      component.errorMessage.set('Previous error');
+      authService.register.and.returnValue(Promise.resolve());
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
+
+      await component.onRegister(validFormData);
+
+      expect(component.errorMessage()).toBeNull();
+    });
+
+    it('should auto-login after successful registration', fakeAsync(() => {
+      authService.register.and.returnValue(Promise.resolve());
+      authService.loginWithPassword.and.returnValue(Promise.resolve());
+
+      component.onRegister(validFormData);
+      tick(); // Wait for registration
+
+      tick(UI_TIMING.REDIRECT_DELAY); // Wait for auto-login timeout
+
+      expect(authService.loginWithPassword).toHaveBeenCalledWith(
+        TEST_EMAILS.VALID,
+        TEST_PASSWORDS.STRONG,
+      );
+      expect(router.navigate).toHaveBeenCalledWith(['/']);
+    }));
+  });
+
+  describe('Error Handling', () => {
+    const validFormData = {
+      email: TEST_EMAILS.VALID,
+      password: TEST_PASSWORDS.STRONG,
+      firstName: TEST_PERSONAL_INFO.FIRST_NAME,
+      lastName: TEST_PERSONAL_INFO.LAST_NAME,
+      phoneNumber: TEST_PERSONAL_INFO.PHONE,
+      dateOfBirth: TEST_PERSONAL_INFO.DATE_OF_BIRTH_VALID,
+      acceptTerms: true,
+      acceptPrivacy: true,
+      acceptMarketing: false,
+    };
+
+    it('should show error message on email already exists (409)', async () => {
       const error = { status: 409, message: 'Email already exists' };
       authService.register.and.returnValue(Promise.reject(error));
 
-      await component.onSubmit();
+      await component.onRegister(validFormData);
 
       expect(component.errorMessage()).toBe('auth.register.errors.emailExists');
+      expect(component.isLoading()).toBeFalsy();
     });
 
     it('should show error message on password error', async () => {
-      component.currentStep.set(3);
       const error = { status: 400, message: 'password requirements not met' };
       authService.register.and.returnValue(Promise.reject(error));
 
-      await component.onSubmit();
+      await component.onRegister(validFormData);
 
       expect(component.errorMessage()).toBe('auth.register.errors.passwordWeak');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should show error message on email error', async () => {
+      const error = { status: 400, message: 'email is invalid' };
+      authService.register.and.returnValue(Promise.reject(error));
+
+      await component.onRegister(validFormData);
+
+      expect(component.errorMessage()).toBe('auth.register.errors.invalidEmail');
+      expect(component.isLoading()).toBeFalsy();
     });
 
     it('should show generic error message on unknown error', async () => {
-      component.currentStep.set(3);
       const error = { status: 500, message: 'Server error' };
       authService.register.and.returnValue(Promise.reject(error));
 
-      await component.onSubmit();
+      await component.onRegister(validFormData);
 
       expect(component.errorMessage()).toBe('auth.register.errors.generic');
+      expect(component.isLoading()).toBeFalsy();
+    });
+
+    it('should log errors to console', async () => {
+      spyOn(console, 'error');
+      const error = { status: 500, message: 'Server error' };
+      authService.register.and.returnValue(Promise.reject(error));
+
+      await component.onRegister(validFormData);
+
+      expect(console.error).toHaveBeenCalledWith('[RegisterComponent] Registration error', error);
     });
   });
 
-  describe('UI State', () => {
-    it('should show step 1 form fields initially', () => {
-      expect(component.currentStep()).toBe(1);
-      fixture.detectChanges();
-      // Email input is now inside ocr-input component
-      const emailInput = fixture.nativeElement.querySelector('ocr-input input');
-      expect(emailInput).toBeTruthy();
-    });
-
-    it('should display progress steps', () => {
-      fixture.detectChanges();
-      const progressSteps = fixture.nativeElement.querySelectorAll('.progress-step');
-      expect(progressSteps.length).toBe(3);
-    });
-
-    it('should disable submit button when loading', () => {
-      component.currentStep.set(3);
-      component.isLoading.set(true);
-      fixture.detectChanges();
-      const submitButton = fixture.nativeElement.querySelector('button[type="submit"]');
-      expect(submitButton?.disabled).toBeTruthy();
+  describe('Component Template', () => {
+    it('should render the register form component', () => {
+      const formComponent = fixture.nativeElement.querySelector('lib-register-form');
+      expect(formComponent).toBeTruthy();
     });
   });
 });

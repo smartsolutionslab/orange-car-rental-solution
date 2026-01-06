@@ -1,5 +1,6 @@
 // Auth Form Components
 export { LoginFormComponent } from './login-form';
+export { RegisterFormComponent } from './register-form';
 export { ForgotPasswordFormComponent } from './forgot-password-form';
 
 // Types and Configurations

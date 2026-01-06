@@ -1,73 +1,88 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
-import { FormHelpers } from '@orange-car-rental/shared';
-import { ErrorAlertComponent, InputComponent, CheckboxComponent } from '@orange-car-rental/ui-components';
+import {
+  LoginFormComponent,
+  type LoginFormSubmitEvent,
+  type LoginFormLabels,
+  type AuthFormConfig,
+} from '@orange-car-rental/auth';
 
 /**
- * Login Component
+ * Login Page Component
  *
- * Provides custom login UI that integrates with Keycloak.
- * Users can login with email and password.
+ * Uses the shared LoginFormComponent and handles authentication.
  */
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    TranslateModule,
-    ErrorAlertComponent,
-    InputComponent,
-    CheckboxComponent,
-  ],
-  templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  imports: [LoginFormComponent],
+  template: `
+    <lib-login-form
+      [config]="authConfig"
+      [labels]="labels()"
+      [loading]="isLoading()"
+      [error]="errorMessage()"
+      (formSubmit)="onLogin($event)"
+    />
+  `,
 })
 export class LoginComponent {
-  private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   private readonly translate = inject(TranslateService);
 
-  loginForm: FormGroup;
-  isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
-  showPassword = signal(false);
+  readonly isLoading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
 
-  /** Signal to track if email field has been touched */
-  private readonly emailTouched = signal(false);
-  /** Signal to track if password field has been touched */
-  private readonly passwordTouched = signal(false);
+  /**
+   * Auth form configuration
+   */
+  readonly authConfig: AuthFormConfig = {
+    showRememberMe: true,
+    showSocialLogin: false,
+    loginRoute: '/login',
+    registerRoute: '/register',
+    forgotPasswordRoute: '/forgot-password',
+    minPasswordLength: 8,
+  };
 
-  constructor() {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]],
-      rememberMe: [false],
-    });
-  }
+  /**
+   * Computed labels from translation service
+   */
+  readonly labels = computed<LoginFormLabels>(() => ({
+    title: this.translate.instant('auth.login.title'),
+    subtitle: this.translate.instant('auth.login.subtitle'),
+    emailLabel: this.translate.instant('auth.login.email'),
+    emailPlaceholder: this.translate.instant('common.placeholders.email'),
+    passwordLabel: this.translate.instant('auth.login.password'),
+    forgotPasswordLink: this.translate.instant('auth.login.forgotPassword'),
+    rememberMeLabel: this.translate.instant('auth.login.rememberMe'),
+    submitButton: this.translate.instant('auth.login.submit'),
+    submittingButton: this.translate.instant('auth.login.submitting'),
+    noAccountText: this.translate.instant('auth.login.noAccount'),
+    registerLink: this.translate.instant('auth.login.registerNow'),
+    orDivider: this.translate.instant('auth.login.or'),
+    googleLoginButton: this.translate.instant('auth.login.loginWithGoogle'),
+    showPassword: this.translate.instant('common.actions.showPassword'),
+    hidePassword: this.translate.instant('common.actions.hidePassword'),
+    emailRequired: this.translate.instant('auth.validation.emailRequired'),
+    emailInvalid: this.translate.instant('auth.validation.emailInvalid'),
+    passwordRequired: this.translate.instant('auth.validation.passwordRequired'),
+    passwordMinLength: this.translate.instant('auth.validation.passwordMinLength'),
+  }));
 
-  async onSubmit(): Promise<void> {
-    if (this.loginForm.invalid) {
-      FormHelpers.markAllTouched(this.loginForm);
-      this.emailTouched.set(true);
-      this.passwordTouched.set(true);
-      return;
-    }
-
+  /**
+   * Handle login form submission
+   */
+  async onLogin(event: LoginFormSubmitEvent): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     try {
-      const { email, password, rememberMe } = this.loginForm.value;
-
-      await this.authService.loginWithPassword(email, password, rememberMe);
+      await this.authService.loginWithPassword(event.email, event.password, event.rememberMe);
 
       // Get role-based redirect URL
       const returnUrl = this.getReturnUrl();
@@ -92,50 +107,8 @@ export class LoginComponent {
     }
   }
 
-  togglePasswordVisibility(): void {
-    this.showPassword.set(!this.showPassword());
-  }
-
   private getReturnUrl(): string {
-    // Check for return URL in query params
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('returnUrl') || '/';
   }
-
-  // Convenience getters for template
-  get email() {
-    return this.loginForm.get('email');
-  }
-
-  get password() {
-    return this.loginForm.get('password');
-  }
-
-  /** Computed signal for email validation error */
-  readonly emailError = computed(() => {
-    // Access signal to create reactivity
-    this.emailTouched();
-    const email = this.email;
-    if (email?.hasError('required') && email?.touched) {
-      return this.translate.instant('auth.validation.emailRequired');
-    }
-    if (email?.hasError('email') && email?.touched) {
-      return this.translate.instant('auth.validation.emailInvalid');
-    }
-    return null;
-  });
-
-  /** Computed signal for password validation error */
-  readonly passwordError = computed(() => {
-    // Access signal to create reactivity
-    this.passwordTouched();
-    const password = this.password;
-    if (password?.hasError('required') && password?.touched) {
-      return this.translate.instant('auth.validation.passwordRequired');
-    }
-    if (password?.hasError('minlength') && password?.touched) {
-      return this.translate.instant('auth.validation.passwordMinLength');
-    }
-    return null;
-  });
 }

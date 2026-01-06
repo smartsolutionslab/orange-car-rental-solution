@@ -1,77 +1,83 @@
-import { Component, signal, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import {
-  SuccessAlertComponent,
-  ErrorAlertComponent,
-  IconComponent,
-  InputComponent,
-} from '@orange-car-rental/ui-components';
+  ForgotPasswordFormComponent,
+  type ForgotPasswordFormSubmitEvent,
+  type ForgotPasswordFormLabels,
+  type AuthFormConfig,
+} from '@orange-car-rental/auth';
 
 /**
- * Forgot Password Component
+ * Forgot Password Page Component
  *
- * Allows users to request a password reset link via email.
+ * Uses the shared ForgotPasswordFormComponent and handles password reset requests.
  * Integrates with Keycloak password reset functionality.
  */
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    RouterModule,
-    SuccessAlertComponent,
-    ErrorAlertComponent,
-    IconComponent,
-    InputComponent,
-    TranslateModule,
-  ],
-  templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css',
+  imports: [ForgotPasswordFormComponent],
+  template: `
+    <lib-forgot-password-form
+      [config]="authConfig"
+      [labels]="labels()"
+      [loading]="isLoading()"
+      [error]="errorMessage()"
+      [success]="emailSent()"
+      (formSubmit)="onSubmit($event)"
+    />
+  `,
 })
 export class ForgotPasswordComponent {
+  private readonly authService = inject(AuthService);
   private readonly translate = inject(TranslateService);
 
-  forgotPasswordForm: FormGroup;
-  isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
-  successMessage = signal<string | null>(null);
-  emailSent = signal(false);
+  readonly isLoading = signal(false);
+  readonly errorMessage = signal<string | null>(null);
+  readonly emailSent = signal(false);
 
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-  ) {
-    this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-    });
-  }
+  /**
+   * Auth form configuration
+   */
+  readonly authConfig: AuthFormConfig = {
+    showRememberMe: false,
+    showSocialLogin: false,
+    loginRoute: '/login',
+    registerRoute: '/register',
+    forgotPasswordRoute: '/forgot-password',
+  };
 
-  async onSubmit(): Promise<void> {
-    if (this.forgotPasswordForm.invalid) {
-      this.email?.markAsTouched();
-      return;
-    }
+  /**
+   * Computed labels from translation service
+   */
+  readonly labels = computed<ForgotPasswordFormLabels>(() => ({
+    title: this.translate.instant('auth.forgotPassword.title'),
+    subtitle: this.translate.instant('auth.forgotPassword.subtitle'),
+    emailLabel: this.translate.instant('common.labels.email'),
+    emailPlaceholder: this.translate.instant('common.placeholders.email'),
+    submitButton: this.translate.instant('auth.forgotPassword.submit'),
+    submittingButton: this.translate.instant('auth.forgotPassword.submitting'),
+    backToLoginLink: this.translate.instant('auth.forgotPassword.backToLogin'),
+    successTitle: this.translate.instant('auth.forgotPassword.successTitle'),
+    successMessage: this.translate.instant('auth.forgotPassword.successMessage'),
+    emailRequired: this.translate.instant('auth.validation.emailRequired'),
+    emailInvalid: this.translate.instant('auth.validation.emailInvalid'),
+  }));
 
+  /**
+   * Handle forgot password form submission
+   */
+  async onSubmit(event: ForgotPasswordFormSubmitEvent): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.successMessage.set(null);
 
     try {
-      const email = this.forgotPasswordForm.value.email;
+      await this.authService.resetPassword(event.email);
 
-      await this.authService.resetPassword(email);
-
+      // Always show success message (don't reveal if email exists)
       this.emailSent.set(true);
-      this.successMessage.set(this.translate.instant('auth.forgotPassword.success', { email }));
-
-      // Reset form
-      this.forgotPasswordForm.reset();
     } catch (error: unknown) {
       logError('ForgotPasswordComponent', 'Password reset error', error);
 
@@ -79,7 +85,6 @@ export class ForgotPasswordComponent {
       if (httpError.status === 404) {
         // Don't reveal if email exists or not for security
         this.emailSent.set(true);
-        this.successMessage.set(this.translate.instant('auth.forgotPassword.successGeneric'));
       } else if (httpError.message?.includes('Network')) {
         this.errorMessage.set(this.translate.instant('errors.network'));
       } else {
@@ -88,19 +93,5 @@ export class ForgotPasswordComponent {
     } finally {
       this.isLoading.set(false);
     }
-  }
-
-  get email() {
-    return this.forgotPasswordForm.get('email');
-  }
-
-  get emailError(): string | null {
-    if (this.email?.hasError('required') && this.email?.touched) {
-      return this.translate.instant('auth.validation.emailRequired');
-    }
-    if (this.email?.hasError('email') && this.email?.touched) {
-      return this.translate.instant('auth.validation.emailInvalid');
-    }
-    return null;
   }
 }
