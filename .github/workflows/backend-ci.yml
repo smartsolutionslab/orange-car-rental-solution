@@ -9,6 +9,7 @@ on:
       - '.github/workflows/_integration-tests.yml'
       - '.github/actions/setup-backend/**'
       - '.github/actions/setup-aspire/**'
+      - 'GitVersion.yml'
   pull_request:
     branches: [main, develop]
     paths:
@@ -17,6 +18,7 @@ on:
       - '.github/workflows/_integration-tests.yml'
       - '.github/actions/setup-backend/**'
       - '.github/actions/setup-aspire/**'
+      - 'GitVersion.yml'
 
 # Cancel in-progress runs for the same branch
 concurrency:
@@ -30,11 +32,56 @@ env:
 
 jobs:
   # ============================================================================
-  # Build Job - runs first, uploads artifacts for downstream jobs
+  # Version Job - Calculate semantic version using GitVersion
+  # ============================================================================
+  version:
+    name: Calculate Version
+    runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.semVer }}
+      fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
+      majorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}
+      preReleaseTag: ${{ steps.gitversion.outputs.preReleaseTag }}
+      preReleaseLabel: ${{ steps.gitversion.outputs.preReleaseLabel }}
+      buildMetaData: ${{ steps.gitversion.outputs.buildMetaData }}
+      informationalVersion: ${{ steps.gitversion.outputs.informationalVersion }}
+      assemblySemVer: ${{ steps.gitversion.outputs.assemblySemVer }}
+      assemblySemFileVer: ${{ steps.gitversion.outputs.assemblySemFileVer }}
+      nuGetVersionV2: ${{ steps.gitversion.outputs.nuGetVersionV2 }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+      with:
+        fetch-depth: 0  # Full history needed for GitVersion
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v3.0.0
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v3.0.0
+
+    - name: Display Version
+      run: |
+        echo "## Version Information" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+        echo "| SemVer | ${{ steps.gitversion.outputs.semVer }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| FullSemVer | ${{ steps.gitversion.outputs.fullSemVer }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| NuGetVersionV2 | ${{ steps.gitversion.outputs.nuGetVersionV2 }} |" >> $GITHUB_STEP_SUMMARY
+        echo "| PreReleaseTag | ${{ steps.gitversion.outputs.preReleaseTag }} |" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================================================
+  # Build Job - runs after version, uploads artifacts for downstream jobs
   # ============================================================================
   build:
     name: Build
     runs-on: ubuntu-latest
+    needs: version
     outputs:
       artifact-name: ${{ steps.upload.outputs.artifact-id }}
 
@@ -47,6 +94,11 @@ jobs:
 
     - name: Build solution
       working-directory: src/backend
+      env:
+        GITVERSION_SEMVER: ${{ needs.version.outputs.semVer }}
+        GITVERSION_ASSEMBLYSEMVER: ${{ needs.version.outputs.assemblySemVer }}
+        GITVERSION_ASSEMBLYSEMFILEVER: ${{ needs.version.outputs.assemblySemFileVer }}
+        GITVERSION_INFORMATIONALVERSION: ${{ needs.version.outputs.informationalVersion }}
       run: dotnet build OrangeCarRental.sln --no-restore --configuration Release -p:RunAnalyzers=false
 
     - name: Upload build artifacts
@@ -116,7 +168,7 @@ jobs:
     uses: ./.github/workflows/_integration-tests.yml
     with:
       portal: Infrastructure
-      timeout-minutes: 10
+      timeout-minutes: 12
     secrets:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
@@ -146,7 +198,7 @@ jobs:
   docker-build:
     name: Docker Build (${{ matrix.service }})
     runs-on: ubuntu-latest
-    needs: [unit-tests, integration-infrastructure, integration-public, integration-callcenter]
+    needs: [version, unit-tests, integration-infrastructure, integration-public, integration-callcenter]
     if: github.event_name == 'push'
 
     strategy:
@@ -187,18 +239,18 @@ jobs:
       with:
         images: ghcr.io/${{ github.repository }}/${{ matrix.service }}
         tags: |
-          # Branch name (e.g., main, develop)
-          type=ref,event=branch
-          # Short SHA (e.g., abc1234)
-          type=sha,prefix=,format=short
-          # Full SHA
-          type=sha,prefix=,format=long
+          # Semantic version (e.g., 1.0.0, 1.0.0-dev.5)
+          type=raw,value=${{ needs.version.outputs.semVer }}
+          # Full semantic version with build metadata
+          type=raw,value=${{ needs.version.outputs.fullSemVer }}
+          # Major.Minor.Patch only (e.g., 1.0.0)
+          type=raw,value=${{ needs.version.outputs.majorMinorPatch }},enable=${{ github.ref == 'refs/heads/main' }}
           # latest tag only on main branch
           type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-          # develop tag on develop branch
-          type=raw,value=develop,enable=${{ github.ref == 'refs/heads/develop' }}
-          # Date-based tag (e.g., 20260104)
-          type=raw,value={{date 'YYYYMMDD'}},enable=${{ github.ref == 'refs/heads/main' }}
+          # Branch name for non-main branches
+          type=ref,event=branch,enable=${{ github.ref != 'refs/heads/main' }}
+          # Short SHA for traceability
+          type=sha,prefix=,format=short
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
@@ -208,6 +260,9 @@ jobs:
         push: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop' }}
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          VERSION=${{ needs.version.outputs.semVer }}
+          INFORMATIONAL_VERSION=${{ needs.version.outputs.informationalVersion }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
 

@@ -602,14 +602,14 @@
       "orangecarrental.location.application": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
-          "OrangeCarRental.Location.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "OrangeCarRental.Location.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.location.domain": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )"
         }
       },
       "Azure.Identity": {

@@ -1,0 +1,154 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Getting Started/Introduction" />
+
+# Orange Car Rental Component Library
+
+Welcome to the Orange Car Rental UI Component Library. This library provides a comprehensive set of reusable Angular components designed for building car rental applications.
+
+## Overview
+
+The component library is built with:
+
+- **Angular 21** with Standalone Components
+- **Signals** for reactive state management
+- **Tailwind CSS 4** for styling with custom Orange brand theme
+- **TypeScript** with strict type checking
+- **Storybook 8** for documentation and visual testing
+
+## Installation
+
+The components are part of the `@orange-car-rental/ui-components` library within the monorepo.
+
+```typescript
+import { ModalComponent, StatusBadgeComponent } from '@orange-car-rental/ui-components';
+```
+
+## Component Categories
+
+### Layout Components
+- **Tabs** - Tabbed content organization
+- **Accordion** - Collapsible content panels
+- **Wizard** - Multi-step form flows
+
+### Data Display
+- **DataTable** - Feature-rich data tables with sorting, filtering, pagination
+- **StatusBadge** - Status indicators with semantic colors
+- **StatCard** - Statistics display cards
+
+### Form Components
+- **Input** - Text inputs with icons and validation
+- **Textarea** - Multi-line text input with character count
+- **Checkbox** - Custom styled checkboxes
+- **RadioGroup** - Radio button groups with descriptions
+- **Switch** - Toggle switches
+- **FileUpload** - Drag & drop file uploads
+- **FormField** - Form field wrapper with labels
+
+### Feedback Components
+- **Modal** - Dialog windows
+- **LoadingState** - Loading indicators
+- **EmptyState** - Empty data states
+- **ErrorAlert** - Error message alerts
+- **SuccessAlert** - Success message alerts
+
+### Navigation
+- **Pagination** - Page navigation controls
+
+### Authentication
+- **LoginForm** - Configurable login form
+- **ForgotPasswordForm** - Password reset request form
+
+## Quick Start
+
+### Using a Component
+
+```typescript
+import { Component } from '@angular/core';
+import { StatusBadgeComponent } from '@orange-car-rental/ui-components';
+
+@Component({
+  selector: 'app-example',
+  standalone: true,
+  imports: [StatusBadgeComponent],
+  template: `
+    <ocr-status-badge status="confirmed" />
+  `
+})
+export class ExampleComponent {}
+```
+
+### Using Form Components with Reactive Forms
+
+```typescript
+import { Component } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { InputComponent, CheckboxComponent } from '@orange-car-rental/ui-components';
+
+@Component({
+  selector: 'app-form-example',
+  standalone: true,
+  imports: [ReactiveFormsModule, InputComponent, CheckboxComponent],
+  template: `
+    <form [formGroup]="form">
+      <ocr-input
+        label="Email"
+        placeholder="Enter your email"
+        formControlName="email"
+        [error]="emailError()"
+      />
+      <ocr-checkbox
+        label="Subscribe to newsletter"
+        formControlName="newsletter"
+      />
+    </form>
+  `
+})
+export class FormExampleComponent {
+  private fb = inject(FormBuilder);
+
+  form = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    newsletter: [false]
+  });
+
+  emailError = computed(() => {
+    const email = this.form.get('email');
+    if (email?.hasError('required') && email?.touched) {
+      return 'Email is required';
+    }
+    if (email?.hasError('email') && email?.touched) {
+      return 'Please enter a valid email';
+    }
+    return null;
+  });
+}
+```
+
+## Design Principles
+
+### 1. Standalone Components
+All components are standalone and can be imported directly without NgModules.
+
+### 2. Signal-Based State
+Components use Angular Signals for reactive state management, providing better performance and cleaner code.
+
+### 3. Accessible by Default
+Components follow WAI-ARIA guidelines and support keyboard navigation.
+
+### 4. Configurable & Themeable
+Components accept configuration inputs for customization while maintaining the Orange brand identity.
+
+### 5. Reactive Forms Integration
+Form components implement `ControlValueAccessor` for seamless integration with Angular's reactive forms.
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## Contributing
+
+See the [Contributing Guide](?path=/docs/getting-started-contributing--docs) for information on how to add new components to the library.

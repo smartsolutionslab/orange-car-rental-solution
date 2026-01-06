@@ -64,7 +64,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                     b.Property<byte[]>("PdfDocument")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<Guid>("ReservationId")
+                    b.Property<Guid>("ReservationIdentifier")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime?>("SentAt")
@@ -90,7 +90,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("IX_Invoices_InvoiceNumber");
 
-                    b.HasIndex("ReservationId")
+                    b.HasIndex("ReservationIdentifier")
                         .HasDatabaseName("IX_Invoices_ReservationId");
 
                     b.HasIndex("Status")
@@ -109,7 +109,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("CustomerIdentifier")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CustomerId");
 
@@ -132,7 +132,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("RefundedAt");
 
-                    b.Property<Guid>("ReservationId")
+                    b.Property<Guid>("ReservationIdentifier")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("ReservationId");
 
@@ -168,9 +168,9 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerIdentifier");
 
-                    b.HasIndex("ReservationId");
+                    b.HasIndex("ReservationIdentifier");
 
                     b.HasIndex("Status");
 
@@ -201,7 +201,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("CreatedAt");
 
-                    b.Property<Guid>("CustomerId")
+                    b.Property<Guid>("CustomerIdentifier")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("CustomerId");
 
@@ -237,14 +237,14 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerIdentifier");
 
                     b.HasIndex("MandateReference")
                         .IsUnique();
 
                     b.HasIndex("Status");
 
-                    b.HasIndex("CustomerId", "Status");
+                    b.HasIndex("CustomerIdentifier", "Status");
 
                     b.ToTable("SepaMandates", "payments");
                 });
@@ -268,7 +268,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
                                 .HasColumnType("nvarchar(100)")
                                 .HasColumnName("CustomerCountry");
 
-                            b1.Property<Guid>("CustomerId")
+                            b1.Property<Guid>("CustomerIdentifier")
                                 .HasColumnType("uniqueidentifier")
                                 .HasColumnName("CustomerId");
 
@@ -297,7 +297,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Payments.Infrastructure.Migrations
 
                             b1.HasKey("InvoiceId");
 
-                            b1.HasIndex("CustomerId")
+                            b1.HasIndex("CustomerIdentifier")
                                 .HasDatabaseName("IX_Invoices_CustomerId");
 
                             b1.ToTable("Invoices", "payments");

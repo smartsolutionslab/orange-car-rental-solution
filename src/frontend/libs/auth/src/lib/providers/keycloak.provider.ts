@@ -1,4 +1,4 @@
-import type { Provider, EnvironmentProviders } from '@angular/core';
+import type { Provider, EnvironmentProviders } from "@angular/core";
 import {
   provideKeycloak,
   withAutoRefreshToken,
@@ -6,9 +6,9 @@ import {
   UserActivityService,
   includeBearerTokenInterceptor,
   createInterceptorCondition,
-  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG
-} from 'keycloak-angular';
-import type { IncludeBearerTokenCondition } from 'keycloak-angular';
+  INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+} from "keycloak-angular";
+import type { IncludeBearerTokenCondition } from "keycloak-angular";
 
 /**
  * Keycloak configuration options
@@ -41,7 +41,7 @@ export type KeycloakProviderOptions = {
    * What happens on inactivity timeout
    * @default 'logout'
    */
-  readonly onInactivityTimeout?: 'login' | 'logout' | 'none';
+  readonly onInactivityTimeout?: "login" | "logout" | "none";
 };
 
 /**
@@ -56,39 +56,41 @@ const DEFAULT_API_URL_PATTERN = /^(https?:\/\/[^/]+)?(\/api)(\/.*)?$/i;
  * @param options Keycloak configuration options
  * @returns Array of providers for Keycloak integration
  */
-export function provideKeycloakAuth(options: KeycloakProviderOptions): (Provider | EnvironmentProviders)[] {
+export function provideKeycloakAuth(
+  options: KeycloakProviderOptions,
+): (Provider | EnvironmentProviders)[] {
   const urlPattern = options.bearerTokenUrlPattern ?? DEFAULT_API_URL_PATTERN;
   const sessionTimeout = options.sessionTimeout ?? 300000;
-  const onInactivityTimeout = options.onInactivityTimeout ?? 'logout';
+  const onInactivityTimeout = options.onInactivityTimeout ?? "logout";
 
   const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
-    urlPattern
+    urlPattern,
   });
 
   return [
     {
       provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-      useValue: [urlCondition]
+      useValue: [urlCondition],
     },
     provideKeycloak({
       config: {
         url: options.config.url,
         realm: options.config.realm,
-        clientId: options.config.clientId
+        clientId: options.config.clientId,
       },
       initOptions: {
-        onLoad: 'check-sso',
+        onLoad: "check-sso",
         silentCheckSsoRedirectUri: `${window.location.origin}/assets/silent-check-sso.html`,
-        checkLoginIframe: false
+        checkLoginIframe: false,
       },
       features: [
         withAutoRefreshToken({
           onInactivityTimeout,
-          sessionTimeout
-        })
+          sessionTimeout,
+        }),
       ],
-      providers: [AutoRefreshTokenService, UserActivityService]
-    })
+      providers: [AutoRefreshTokenService, UserActivityService],
+    }),
   ];
 }
 

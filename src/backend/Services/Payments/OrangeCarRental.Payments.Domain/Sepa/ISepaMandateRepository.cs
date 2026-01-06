@@ -8,12 +8,12 @@ public interface ISepaMandateRepository : IRepository<SepaMandate, SepaMandateId
     /// <summary>
     ///     Gets the active mandate for a customer.
     /// </summary>
-    Task<SepaMandate?> GetActiveByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+    Task<SepaMandate?> GetActiveByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets all mandates for a customer.
     /// </summary>
-    Task<IReadOnlyList<SepaMandate>> GetByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<SepaMandate>> GetByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default);
 
     /// <summary>
     ///     Gets a mandate by its reference.
@@ -38,7 +38,7 @@ public interface ISepaMandateRepository : IRepository<SepaMandate, SepaMandateId
 
     /// <summary>
     ///     Streams all mandates for a customer.
-    ///     Memory-efficient alternative to GetByCustomerIdAsync.
+    ///     Memory-efficient alternative to GetByCustomerIdentifierAsync.
     /// </summary>
-    IAsyncEnumerable<SepaMandate> StreamByCustomerIdAsync(CustomerId customerId, CancellationToken cancellationToken = default);
+    IAsyncEnumerable<SepaMandate> StreamByCustomerIdentifierAsync(CustomerIdentifier customerId, CancellationToken cancellationToken = default);
 }

@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "baseUrl": ".",
+    "paths": {
+      "@orange-car-rental/shared": ["libs/shared/src/index.ts"],
+      "@orange-car-rental/shared/testing": ["libs/shared/src/lib/testing/index.ts"],
+      "@orange-car-rental/auth": ["libs/auth/src/index.ts"],
+      "@orange-car-rental/location-api": ["libs/location-api/src/index.ts"],
+      "@orange-car-rental/vehicle-api": ["libs/vehicle-api/src/index.ts"],
+      "@orange-car-rental/reservation-api": ["libs/reservation-api/src/index.ts"],
+      "@orange-car-rental/customer-api": ["libs/customer-api/src/index.ts"],
+      "@orange-car-rental/pricing-api": ["libs/pricing-api/src/index.ts"],
+      "@orange-car-rental/util": ["libs/util/src/index.ts"],
+      "@orange-car-rental/ui-components": ["libs/ui-components/src/index.ts"],
+      "@orange-car-rental/shared-ui": ["libs/shared-ui/src/index.ts"],
+      "@orange-car-rental/i18n": ["libs/i18n/src/index.ts"]
+    }
+  },
+  "include": [
+    "libs/**/*.ts",
+    "libs/**/*.stories.ts",
+    ".storybook/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ],
+  "angularCompilerOptions": {
+    "enableI18nLegacyMessageIdFormat": false,
+    "strictInjectionParameters": true,
+    "strictInputAccessModifiers": true,
+    "strictTemplates": true
+  }
+}

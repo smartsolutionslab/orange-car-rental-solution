@@ -12,8 +12,8 @@ public class InvoiceTests
     {
         // Arrange
         var invoiceNumber = InvoiceNumber.Create(1, 2025);
-        var reservationId = ReservationId.From(TestIds.Reservation1);
-        var customerId = CustomerId.From(TestIds.Customer1);
+        var reservationId = ReservationIdentifier.From(TestIds.Reservation1);
+        var customerId = CustomerIdentifier.From(TestIds.Customer1);
         var (pickup, returnDate) = TestDates.RentalPeriod();
         var customer = CreateTestCustomer(customerId);
         var lineItems = new[]
@@ -32,8 +32,8 @@ public class InvoiceTests
         // Assert
         invoice.Id.Value.ShouldNotBe(Guid.Empty);
         invoice.InvoiceNumber.ShouldBe(invoiceNumber);
-        invoice.ReservationId.Value.ShouldBe(reservationId.Value);
-        invoice.Customer.CustomerId.Value.ShouldBe(customerId.Value);
+        invoice.ReservationIdentifier.Value.ShouldBe(reservationId.Value);
+        invoice.Customer.CustomerIdentifier.Value.ShouldBe(customerId.Value);
         invoice.Customer.Name.ShouldBe(TestCustomer.MaxMustermann.FullName);
         invoice.Status.ShouldBe(InvoiceStatus.Created);
         invoice.LineItems.Count.ShouldBe(1);
@@ -83,7 +83,7 @@ public class InvoiceTests
         // Act
         var invoice = Domain.Invoice.Invoice.Create(
             invoiceNumber: InvoiceNumber.Create(1, 2025),
-            reservationId: ReservationId.From(Guid.CreateVersion7()),
+            reservationId: ReservationIdentifier.From(Guid.CreateVersion7()),
             customer: customer,
             lineItems: lineItems,
             serviceDate: DateOnly.FromDateTime(DateTime.UtcNow),
@@ -210,10 +210,10 @@ public class InvoiceTests
         invoice.Seller.ManagingDirector.Value.ShouldNotBeNullOrEmpty();
     }
 
-    private static CustomerInvoiceInfo CreateTestCustomer(CustomerId? customerId = null)
+    private static CustomerInvoiceInfo CreateTestCustomer(CustomerIdentifier? customerIdentifier = null)
     {
         return CustomerInvoiceInfo.Create(
-            customerId: customerId ?? CustomerId.From(TestIds.Customer1),
+            customerIdentifier: customerIdentifier ?? CustomerIdentifier.From(TestIds.Customer1),
             name: TestCustomer.MaxMustermann.FullName,
             street: TestCustomer.MaxMustermann.Street,
             postalCode: TestCustomer.MaxMustermann.PostalCode,
@@ -231,7 +231,7 @@ public class InvoiceTests
     {
         return Domain.Invoice.Invoice.Create(
             invoiceNumber: InvoiceNumber.Create(1, 2025),
-            reservationId: ReservationId.From(TestIds.Reservation1),
+            reservationId: ReservationIdentifier.From(TestIds.Reservation1),
             customer: CreateTestCustomer(),
             lineItems: lineItems ?? [CreateTestLineItem()],
             serviceDate: TestDates.DefaultReturn);

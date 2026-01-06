@@ -1,4 +1,3 @@
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -9,8 +8,7 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 ///     Loads the customer from database, updates profile information, and persists changes.
 /// </summary>
 public sealed class UpdateCustomerProfileCommandHandler(
-    ICustomerRepository repository,
-    IUnitOfWork unitOfWork)
+    ICustomerRepository repository)
     : ICommandHandler<UpdateCustomerProfileCommand, UpdateCustomerProfileResult>
 {
     /// <summary>
@@ -35,7 +33,7 @@ public sealed class UpdateCustomerProfileCommandHandler(
 
         // Persist changes to database
         await repository.UpdateAsync(updatedCustomer, cancellationToken);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        await repository.SaveChangesAsync(cancellationToken);
 
         return new UpdateCustomerProfileResult(
             updatedCustomer.Id.Value,

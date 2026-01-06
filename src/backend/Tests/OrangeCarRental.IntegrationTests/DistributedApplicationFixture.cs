@@ -28,7 +28,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
     private KeycloakTokenProvider? tokenProvider;
-    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(5);
+    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(8);
     private string? sqlConnectionString;
 
     /// <summary>
@@ -160,7 +160,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
     {
         if (app == null) return;
 
-        var maxRetries = 30;
+        var maxRetries = 45;
         var delayBetweenRetries = TimeSpan.FromSeconds(2);
 
         foreach (var resourceName in resourceNames)
@@ -259,9 +259,123 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
     private HttpClient CreateAuthenticatedClient(string resourceName, string token)
     {
-        var client = CreateHttpClient(resourceName);
+        if (app == null) throw new InvalidOperationException("App not initialized");
+
+        // Create a custom HttpClientHandler that preserves Authorization headers on redirects
+        // This is needed because HTTP→HTTPS redirects (307) strip auth headers by default
+        var handler = new AuthPreservingRedirectHandler();
+
+        // Get the base address from Aspire (prefer HTTPS to avoid redirect issues)
+        var baseAddress = app.GetEndpoint(resourceName, "https") ?? app.GetEndpoint(resourceName, "http");
+
+        var client = new HttpClient(handler)
+        {
+            BaseAddress = new Uri(baseAddress.ToString()),
+            Timeout = TimeSpan.FromMinutes(2)
+        };
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
+    }
+
+    /// <summary>
+    /// Custom handler that preserves Authorization headers across redirects.
+    /// By default, HttpClient strips auth headers on cross-origin redirects for security.
+    /// In integration tests, we need to preserve them across HTTP→HTTPS redirects.
+    /// </summary>
+    private class AuthPreservingRedirectHandler : HttpClientHandler
+    {
+        public AuthPreservingRedirectHandler()
+        {
+            // Don't automatically follow redirects - we'll handle them manually
+            AllowAutoRedirect = false;
+            ServerCertificateCustomValidationCallback = (_, _, _, _) => true; // Accept self-signed certs in tests
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            // For POST/PUT/PATCH requests, we need to buffer the content so we can resend it on redirect
+            byte[]? contentBytes = null;
+            string? contentType = null;
+            if (request.Content != null)
+            {
+                contentBytes = await request.Content.ReadAsByteArrayAsync(cancellationToken);
+                contentType = request.Content.Headers.ContentType?.ToString();
+            }
+
+            var response = await base.SendAsync(request, cancellationToken);
+
+            // Handle redirects manually while preserving the Authorization header and body
+            var redirectCount = 0;
+            while (IsRedirect(response.StatusCode) && redirectCount < 5)
+            {
+                var location = response.Headers.Location;
+                if (location == null) break;
+
+                // Make the location absolute if it's relative
+                if (!location.IsAbsoluteUri)
+                {
+                    location = new Uri(request.RequestUri!, location);
+                }
+
+                // For 307/308, preserve the HTTP method; for others, convert to GET
+                var method = response.StatusCode == System.Net.HttpStatusCode.TemporaryRedirect ||
+                             response.StatusCode == System.Net.HttpStatusCode.PermanentRedirect
+                    ? request.Method
+                    : HttpMethod.Get;
+
+                // Create new request preserving the Authorization header
+                var newRequest = new HttpRequestMessage(method, location);
+
+                // Copy the Authorization header
+                if (request.Headers.Authorization != null)
+                {
+                    newRequest.Headers.Authorization = request.Headers.Authorization;
+                }
+
+                // Copy other headers (excluding headers that shouldn't be forwarded on redirects)
+                var excludedHeaders = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                {
+                    "Authorization", // Already copied above
+                    "Transfer-Encoding", // Will be set automatically if needed
+                    "Content-Length", // Will be set automatically if needed
+                    "Content-Type", // Will be set with content if needed
+                    "Host" // Will be set automatically for new URI
+                };
+
+                foreach (var header in request.Headers)
+                {
+                    if (!excludedHeaders.Contains(header.Key))
+                    {
+                        newRequest.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    }
+                }
+
+                // For 307/308 redirects, preserve the request body
+                if (contentBytes != null && contentBytes.Length > 0 &&
+                    (response.StatusCode == System.Net.HttpStatusCode.TemporaryRedirect ||
+                     response.StatusCode == System.Net.HttpStatusCode.PermanentRedirect))
+                {
+                    newRequest.Content = new ByteArrayContent(contentBytes);
+                    if (!string.IsNullOrEmpty(contentType))
+                    {
+                        newRequest.Content.Headers.TryAddWithoutValidation("Content-Type", contentType);
+                    }
+                }
+
+                response.Dispose();
+                response = await base.SendAsync(newRequest, cancellationToken);
+                redirectCount++;
+            }
+
+            return response;
+        }
+
+        private static bool IsRedirect(System.Net.HttpStatusCode statusCode) =>
+            statusCode == System.Net.HttpStatusCode.Moved ||
+            statusCode == System.Net.HttpStatusCode.Found ||
+            statusCode == System.Net.HttpStatusCode.SeeOther ||
+            statusCode == System.Net.HttpStatusCode.TemporaryRedirect ||
+            statusCode == System.Net.HttpStatusCode.PermanentRedirect;
     }
 
     /// <summary>

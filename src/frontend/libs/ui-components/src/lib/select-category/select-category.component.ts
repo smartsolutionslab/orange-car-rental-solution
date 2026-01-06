@@ -1,9 +1,9 @@
-import { Component, forwardRef, input } from '@angular/core';
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef, input } from "@angular/core";
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import {
   VehicleCategory,
   VehicleCategoryLabel,
-} from '@orange-car-rental/vehicle-api';
+} from "@orange-car-rental/vehicle-api";
 
 export type SelectOption<T> = {
   value: T;
@@ -11,7 +11,7 @@ export type SelectOption<T> = {
 };
 
 @Component({
-  selector: 'ui-select-category',
+  selector: "ui-select-category",
   standalone: true,
   template: `
     <select
@@ -38,25 +38,25 @@ export type SelectOption<T> = {
   ],
 })
 export class SelectCategoryComponent implements ControlValueAccessor {
-  readonly id = input<string>('category');
-  readonly placeholder = input<string>('Alle Kategorien');
-  readonly cssClass = input<string>('form-input');
+  readonly id = input<string>("category");
+  readonly placeholder = input<string>("Alle Kategorien");
+  readonly cssClass = input<string>("form-input");
 
-  value: string = '';
+  value: string = "";
   disabled = false;
 
-  readonly options: SelectOption<string>[] = Object.entries(VehicleCategory).map(
-    ([, enumValue]) => ({
-      value: enumValue,
-      label: VehicleCategoryLabel[enumValue as VehicleCategory],
-    })
-  );
+  readonly options: SelectOption<string>[] = Object.entries(
+    VehicleCategory,
+  ).map(([, enumValue]) => ({
+    value: enumValue,
+    label: VehicleCategoryLabel[enumValue as VehicleCategory],
+  }));
 
   private onChange: (value: string) => void = () => {};
   onTouched: () => void = () => {};
 
   writeValue(value: string): void {
-    this.value = value ?? '';
+    this.value = value ?? "";
   }
 
   registerOnChange(fn: (value: string) => void): void {

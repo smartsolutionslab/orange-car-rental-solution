@@ -29,8 +29,8 @@ public static class InvoiceEndpoints
                 try
                 {
                     var command = new GenerateInvoiceCommand(
-                        ReservationId.From(request.ReservationId),
-                        CustomerId.From(request.CustomerId),
+                        ReservationIdentifier.From(request.ReservationId),
+                        CustomerIdentifier.From(request.CustomerId),
                         PersonName.Of(request.CustomerName),
                         Street.From(request.CustomerStreet),
                         PostalCode.From(request.CustomerPostalCode),
@@ -76,8 +76,11 @@ public static class InvoiceEndpoints
         invoices.MapGet("/{invoiceId:guid}", async Task<Results<Ok<InvoiceDto>, NotFound>> (
                 Guid invoiceId,
                 IPaymentsUnitOfWork unitOfWork,
+
                 CancellationToken cancellationToken) =>
             {
+
+
                 var invoice = await unitOfWork.Invoices
                     .GetByIdAsync(InvoiceIdentifier.From(invoiceId), cancellationToken);
 
@@ -118,7 +121,7 @@ public static class InvoiceEndpoints
                 CancellationToken cancellationToken) =>
             {
                 var invoice = await unitOfWork.Invoices
-                    .GetByReservationIdAsync(ReservationId.From(reservationId), cancellationToken);
+                    .GetByReservationIdentifierAsync(ReservationIdentifier.From(reservationId), cancellationToken);
 
                 if (invoice == null)
                     return TypedResults.NotFound();
@@ -136,7 +139,7 @@ public static class InvoiceEndpoints
                 CancellationToken cancellationToken) =>
             {
                 var invoices = await unitOfWork.Invoices
-                    .GetByCustomerIdAsync(CustomerId.From(customerId), cancellationToken);
+                    .GetByCustomerIdentifierAsync(CustomerIdentifier.From(customerId), cancellationToken);
 
                 return TypedResults.Ok(invoices.Select(MapToDto).ToList() as IReadOnlyList<InvoiceDto>);
             })
@@ -267,9 +270,9 @@ public static class InvoiceEndpoints
             ServiceDate: invoice.ServiceDate,
             DueDate: invoice.DueDate,
             Status: invoice.Status.ToString(),
-            CustomerId: invoice.Customer.CustomerId.Value,
+            CustomerId: invoice.Customer.CustomerIdentifier.Value,
             CustomerName: invoice.Customer.Name,
-            ReservationId: invoice.ReservationId.Value,
+            ReservationId: invoice.ReservationIdentifier.Value,
             LineItems: invoice.LineItems.Select(li => new InvoiceLineItemDto(
                 Position: li.Position,
                 Description: li.Description,

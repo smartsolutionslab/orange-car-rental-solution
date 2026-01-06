@@ -114,4 +114,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
 
         return bookedVehicleIds;
     }
+
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        context.SaveChangesAsync(cancellationToken);
 }

@@ -1,4 +1,4 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpParams } from "@angular/common/http";
 
 /**
  * Utility class for building HttpParams from objects.
@@ -31,11 +31,11 @@ export const HttpParamsBuilder = {
     }
 
     return Object.entries(params).reduce((httpParams, [key, value]) => {
-      if (value === null || value === undefined || value === '') {
+      if (value === null || value === undefined || value === "") {
         return httpParams;
       }
 
-      const stringValue = typeof value === 'string' ? value : String(value);
+      const stringValue = typeof value === "string" ? value : String(value);
       return httpParams.set(key, stringValue);
     }, new HttpParams());
   },
@@ -48,7 +48,7 @@ export const HttpParamsBuilder = {
    */
   fromObjectKeys<T extends object>(
     params: T | undefined | null,
-    keys: (keyof T)[]
+    keys: (keyof T)[],
   ): HttpParams {
     if (!params) {
       return new HttpParams();
@@ -56,11 +56,11 @@ export const HttpParamsBuilder = {
 
     return keys.reduce((httpParams, key) => {
       const value = params[key];
-      if (value === null || value === undefined || value === '') {
+      if (value === null || value === undefined || value === "") {
         return httpParams;
       }
 
-      const stringValue = typeof value === 'string' ? value : String(value);
+      const stringValue = typeof value === "string" ? value : String(value);
       return httpParams.set(String(key), stringValue);
     }, new HttpParams());
   },
@@ -73,19 +73,19 @@ export const HttpParamsBuilder = {
    */
   merge<T extends object>(
     existing: HttpParams,
-    params: T | undefined | null
+    params: T | undefined | null,
   ): HttpParams {
     if (!params) {
       return existing;
     }
 
     return Object.entries(params).reduce((httpParams, [key, value]) => {
-      if (value === null || value === undefined || value === '') {
+      if (value === null || value === undefined || value === "") {
         return httpParams;
       }
 
-      const stringValue = typeof value === 'string' ? value : String(value);
+      const stringValue = typeof value === "string" ? value : String(value);
       return httpParams.set(key, stringValue);
     }, existing);
-  }
+  },
 };

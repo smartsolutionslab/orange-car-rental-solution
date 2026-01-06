@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import type { Location, LocationCode } from '../models';
-import { API_CONFIG } from '@orange-car-rental/shared';
+import { Injectable, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import type { Location, LocationCode } from "../models";
+import { API_CONFIG } from "@orange-car-rental/shared";
 
 /**
  * Shared service for accessing the Location API
@@ -13,7 +13,7 @@ import { API_CONFIG } from '@orange-car-rental/shared';
  * providers: [{ provide: API_CONFIG, useExisting: ConfigService }]
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class LocationService {
   private readonly http = inject(HttpClient);

@@ -10,7 +10,7 @@ public class SepaMandateTests
     private readonly MandateReference _validReference = MandateReference.Create(1, TestDates.Today);
     private readonly IBAN _validIBAN = IBAN.Create("DE89370400440532013000");
     private readonly BIC _validBIC = BIC.Create("DEUTDEDBFRA");
-    private readonly CustomerId _customerId = CustomerId.From(TestIds.Customer1);
+    private readonly CustomerIdentifier _customerId = CustomerIdentifier.From(TestIds.Customer1);
     private static string ValidAccountHolder => TestCustomer.MaxMustermann.FullName;
 
     [Fact]
@@ -31,7 +31,7 @@ public class SepaMandateTests
         // Assert
         mandate.Id.Value.ShouldNotBe(Guid.Empty);
         mandate.MandateReference.ShouldBe(_validReference);
-        mandate.CustomerId.Value.ShouldBe(_customerId.Value);
+        mandate.CustomerIdentifier.Value.ShouldBe(_customerId.Value);
         mandate.IBAN.ShouldBe(_validIBAN);
         mandate.BIC.ShouldBe(_validBIC);
         mandate.AccountHolder.Value.ShouldBe(ValidAccountHolder);

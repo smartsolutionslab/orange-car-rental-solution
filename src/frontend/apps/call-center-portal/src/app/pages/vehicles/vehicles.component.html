@@ -76,11 +76,6 @@
     </button>
   </div>
 
-  <!-- Loading State -->
-  @if (loading()) {
-    <ui-loading-state [message]="'vehicles.loading' | translate"></ui-loading-state>
-  }
-
   <!-- Error State -->
   @if (error()) {
     <ui-error-state
@@ -90,63 +85,95 @@
     ></ui-error-state>
   }
 
-  <!-- Vehicles Table -->
-  @if (!loading() && !error() && vehicles().length > 0) {
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>{{ 'vehicles.table.licensePlate' | translate }}</th>
-            <th>{{ 'vehicles.table.vehicle' | translate }}</th>
-            <th>{{ 'vehicles.table.category' | translate }}</th>
-            <th>{{ 'vehicles.table.location' | translate }}</th>
-            <th>{{ 'vehicles.table.dailyRate' | translate }}</th>
-            <th>{{ 'vehicles.table.status' | translate }}</th>
-            <th>{{ 'common.labels.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (vehicle of vehicles(); track vehicle.id) {
-            <tr>
-              <td>
-                @if (vehicle.licensePlate) {
-                  <span class="license-plate">{{ vehicle.licensePlate }}</span>
-                } @else {
-                  <span class="text-muted">-</span>
-                }
-              </td>
-              <td>{{ vehicle.manufacturer }} {{ vehicle.model }} ({{ vehicle.year }})</td>
-              <td>{{ vehicle.categoryCode }}</td>
-              <td>{{ vehicle.locationCode }}</td>
-              <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
-              <td><ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge></td>
-              <td>
-                <button
-                  class="btn-icon"
-                  (click)="viewDetails(vehicle)"
-                  [title]="'common.actions.viewDetails' | translate"
-                  [attr.aria-label]="'vehicles.ariaLabels.viewDetails' | translate"
-                >
-                  <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  }
+  <!-- Vehicles Data Table -->
+  @if (!error()) {
+    <ocr-data-table
+      [data]="vehicles()"
+      [loading]="loading()"
+      [loadingMessage]="'vehicles.loading' | translate"
+      [rowClickable]="true"
+      (rowClick)="viewDetails($event.item)"
+      emptyIcon="car"
+      [emptyTitle]="'vehicles.noResults.title' | translate"
+      [emptyDescription]="'vehicles.noResults.description' | translate"
+      [trackByFn]="trackByVehicleId"
+    >
+      <!-- License Plate Column -->
+      <ng-template
+        ocrDataTableColumn="licensePlate"
+        [header]="'vehicles.table.licensePlate' | translate"
+        let-vehicle
+      >
+        @if (vehicle.licensePlate) {
+          <span class="license-plate">{{ vehicle.licensePlate }}</span>
+        } @else {
+          <span class="text-muted">-</span>
+        }
+      </ng-template>
 
-  <!-- No Results -->
-  @if (!loading() && !error() && vehicles().length === 0) {
-    <ui-empty-state
-      icon="car"
-      [title]="'vehicles.noResults.title' | translate"
-      [description]="'vehicles.noResults.description' | translate"
-      [showAction]="true"
-      [actionLabel]="'common.actions.resetFilters' | translate"
-      (action)="clearFilters()"
-    ></ui-empty-state>
+      <!-- Vehicle Column -->
+      <ng-template
+        ocrDataTableColumn="vehicle"
+        [header]="'vehicles.table.vehicle' | translate"
+        let-vehicle
+      >
+        {{ vehicle.manufacturer }} {{ vehicle.model }} ({{ vehicle.year }})
+      </ng-template>
+
+      <!-- Category Column -->
+      <ng-template
+        ocrDataTableColumn="categoryCode"
+        [header]="'vehicles.table.category' | translate"
+        let-vehicle
+      >
+        {{ vehicle.categoryCode }}
+      </ng-template>
+
+      <!-- Location Column -->
+      <ng-template
+        ocrDataTableColumn="locationCode"
+        [header]="'vehicles.table.location' | translate"
+        [hideOnMobile]="true"
+        let-vehicle
+      >
+        {{ vehicle.locationCode }}
+      </ng-template>
+
+      <!-- Daily Rate Column -->
+      <ng-template
+        ocrDataTableColumn="dailyRateGross"
+        [header]="'vehicles.table.dailyRate' | translate"
+        [hideOnMobile]="true"
+        let-vehicle
+      >
+        {{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}
+      </ng-template>
+
+      <!-- Status Column -->
+      <ng-template
+        ocrDataTableColumn="status"
+        [header]="'vehicles.table.status' | translate"
+        let-vehicle
+      >
+        <ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge>
+      </ng-template>
+
+      <!-- Actions Column -->
+      <ng-template
+        ocrDataTableColumn="actions"
+        [header]="'common.labels.actions' | translate"
+        let-vehicle
+      >
+        <button
+          class="btn-icon"
+          (click)="viewDetails(vehicle); $event.stopPropagation()"
+          [title]="'common.actions.viewDetails' | translate"
+          [attr.aria-label]="'vehicles.ariaLabels.viewDetails' | translate"
+        >
+          <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
+        </button>
+      </ng-template>
+    </ocr-data-table>
   }
 </div>
 

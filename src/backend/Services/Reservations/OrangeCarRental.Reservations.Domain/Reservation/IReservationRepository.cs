@@ -1,5 +1,4 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
-using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -57,4 +56,11 @@ public interface IReservationRepository
     Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
         BookingPeriod period,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Saves all pending changes to the database.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The number of state entries written to the database.</returns>
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

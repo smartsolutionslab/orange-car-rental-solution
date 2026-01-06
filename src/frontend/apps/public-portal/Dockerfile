@@ -22,6 +22,9 @@ COPY libs/reservation-api/package.json ./libs/reservation-api/
 COPY libs/customer-api/package.json ./libs/customer-api/
 COPY libs/pricing-api/package.json ./libs/pricing-api/
 
+# Copy patches directory for patch-package postinstall
+COPY patches/ ./patches/
+
 # Install dependencies
 RUN yarn install --frozen-lockfile
 

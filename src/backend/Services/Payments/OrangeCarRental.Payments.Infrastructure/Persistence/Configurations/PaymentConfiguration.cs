@@ -22,18 +22,18 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
             .IsRequired();
 
         // Foreign keys (value objects)
-        builder.Property(p => p.ReservationId)
+        builder.Property(p => p.ReservationIdentifier)
             .HasColumnName("ReservationId")
             .HasConversion(
                 id => id.Value,
-                value => ReservationId.From(value))
+                value => ReservationIdentifier.From(value))
             .IsRequired();
 
-        builder.Property(p => p.CustomerId)
+        builder.Property(p => p.CustomerIdentifier)
             .HasColumnName("CustomerId")
             .HasConversion(
                 id => id.Value,
-                value => CustomerId.From(value))
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
         // Money value object - complex type mapping
@@ -98,8 +98,8 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Ignore(p => p.DomainEvents);
 
         // Indexes
-        builder.HasIndex(p => p.ReservationId);
-        builder.HasIndex(p => p.CustomerId);
+        builder.HasIndex(p => p.ReservationIdentifier);
+        builder.HasIndex(p => p.CustomerIdentifier);
         builder.HasIndex(p => p.Status);
         builder.HasIndex(p => p.TransactionId);
     }

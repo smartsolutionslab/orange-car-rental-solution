@@ -39,8 +39,8 @@ public static class PaymentEndpoints
                     var amount = Money.FromGross(request.Amount, 0.19m, currency);
 
                     var command = new ProcessPaymentCommand(
-                        ReservationId.From(request.ReservationId),
-                        CustomerId.From(request.CustomerId),
+                        ReservationIdentifier.From(request.ReservationId),
+                        CustomerIdentifier.From(request.CustomerId),
                         amount,
                         paymentMethod);
 

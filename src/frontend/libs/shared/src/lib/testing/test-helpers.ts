@@ -1,7 +1,7 @@
 /**
  * Shared test helper utilities
  */
-import type { ISODateString } from '../types/common/iso-date-string.type';
+import type { ISODateString } from "../types/common/iso-date-string.type";
 
 /**
  * Get a future date as ISO string
@@ -11,7 +11,7 @@ import type { ISODateString } from '../types/common/iso-date-string.type';
 export function getFutureDate(daysFromNow: number): ISODateString {
   const date = new Date();
   date.setDate(date.getDate() + daysFromNow);
-  return date.toISOString().split('T')[0]! as ISODateString;
+  return date.toISOString().split("T")[0]! as ISODateString;
 }
 
 /**
@@ -22,7 +22,7 @@ export function getFutureDate(daysFromNow: number): ISODateString {
 export function getPastDate(daysAgo: number): ISODateString {
   const date = new Date();
   date.setDate(date.getDate() - daysAgo);
-  return date.toISOString().split('T')[0]! as ISODateString;
+  return date.toISOString().split("T")[0]! as ISODateString;
 }
 
 /**
@@ -54,13 +54,13 @@ export function getPastDateTime(daysAgo: number): ISODateString {
 export function generateTestId(seed?: number): string {
   if (seed !== undefined) {
     // Deterministic UUID based on seed
-    const hex = seed.toString(16).padStart(8, '0');
-    return `${hex}-e89b-12d3-a456-426614174${seed.toString().padStart(3, '0')}`;
+    const hex = seed.toString(16).padStart(8, "0");
+    return `${hex}-e89b-12d3-a456-426614174${seed.toString().padStart(3, "0")}`;
   }
   // Random UUID
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
     return v.toString(16);
   });
 }

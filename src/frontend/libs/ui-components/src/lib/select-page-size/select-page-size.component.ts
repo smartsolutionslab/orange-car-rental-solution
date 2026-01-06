@@ -1,5 +1,5 @@
-import { Component, forwardRef, input } from '@angular/core';
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef, input } from "@angular/core";
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 type PageSizeOption = {
   value: number;
@@ -11,7 +11,7 @@ type PageSizeOption = {
  * Provides common page size options (10, 25, 50, 100)
  */
 @Component({
-  selector: 'ui-select-page-size',
+  selector: "ui-select-page-size",
   standalone: true,
   template: `
     <select
@@ -37,17 +37,17 @@ type PageSizeOption = {
   ],
 })
 export class SelectPageSizeComponent implements ControlValueAccessor {
-  readonly id = input<string>('pageSize');
-  readonly cssClass = input<string>('form-input');
+  readonly id = input<string>("pageSize");
+  readonly cssClass = input<string>("form-input");
 
   value: number = 10;
   disabled = false;
 
   readonly options: PageSizeOption[] = [
-    { value: 10, label: '10' },
-    { value: 25, label: '25' },
-    { value: 50, label: '50' },
-    { value: 100, label: '100' },
+    { value: 10, label: "10" },
+    { value: 25, label: "25" },
+    { value: 50, label: "50" },
+    { value: 100, label: "100" },
   ];
 
   private onChange: (value: number) => void = () => {};

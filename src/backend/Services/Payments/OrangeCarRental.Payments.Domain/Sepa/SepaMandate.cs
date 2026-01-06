@@ -57,7 +57,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// <summary>
     ///     Referenced customer ID.
     /// </summary>
-    public CustomerId CustomerId { get; init; }
+    public CustomerIdentifier CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     Date when mandate was signed.
@@ -84,7 +84,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// </summary>
     public static SepaMandate Create(
         MandateReference mandateReference,
-        CustomerId customerId,
+        CustomerIdentifier customerId,
         IBAN iban,
         BIC bic,
         string accountHolder,
@@ -94,7 +94,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
         {
             Id = SepaMandateIdentifier.New(),
             MandateReference = mandateReference,
-            CustomerId = customerId,
+            CustomerIdentifier = customerId,
             IBAN = iban,
             BIC = bic,
             AccountHolder = PersonName.Of(accountHolder),
@@ -113,7 +113,7 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
         {
             Id = Id,
             MandateReference = MandateReference,
-            CustomerId = CustomerId,
+            CustomerIdentifier = CustomerIdentifier,
             IBAN = IBAN,
             BIC = BIC,
             AccountHolder = AccountHolder,

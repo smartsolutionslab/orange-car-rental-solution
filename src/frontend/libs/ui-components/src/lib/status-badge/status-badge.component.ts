@@ -1,11 +1,11 @@
-import { Component, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
 import {
   getVehicleStatusClass,
   getVehicleStatusLabel,
   getReservationStatusClass,
   getReservationStatusLabel,
-} from '../utils/status-display.utils';
+} from "../utils/status-display.utils";
 
 /**
  * Status Badge Component
@@ -16,7 +16,7 @@ import {
  * <ui-status-badge type="reservation" status="Confirmed"></ui-status-badge>
  */
 @Component({
-  selector: 'ui-status-badge',
+  selector: "ui-status-badge",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -24,62 +24,64 @@ import {
       {{ statusLabel() }}
     </span>
   `,
-  styles: [`
-    .status-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 500;
-      text-transform: capitalize;
-      white-space: nowrap;
-    }
+  styles: [
+    `
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: capitalize;
+        white-space: nowrap;
+      }
 
-    .status-success {
-      background-color: #dcfce7;
-      color: #166534;
-    }
+      .status-success {
+        background-color: #dcfce7;
+        color: #166534;
+      }
 
-    .status-info {
-      background-color: #dbeafe;
-      color: #1e40af;
-    }
+      .status-info {
+        background-color: #dbeafe;
+        color: #1e40af;
+      }
 
-    .status-warning {
-      background-color: #fef3c7;
-      color: #92400e;
-    }
+      .status-warning {
+        background-color: #fef3c7;
+        color: #92400e;
+      }
 
-    .status-error {
-      background-color: #fee2e2;
-      color: #991b1b;
-    }
+      .status-error {
+        background-color: #fee2e2;
+        color: #991b1b;
+      }
 
-    .status-completed {
-      background-color: #e0e7ff;
-      color: #3730a3;
-    }
+      .status-completed {
+        background-color: #e0e7ff;
+        color: #3730a3;
+      }
 
-    .status-default {
-      background-color: #f3f4f6;
-      color: #374151;
-    }
-  `]
+      .status-default {
+        background-color: #f3f4f6;
+        color: #374151;
+      }
+    `,
+  ],
 })
 export class StatusBadgeComponent {
   readonly status = input.required<string>();
-  readonly type = input.required<'vehicle' | 'reservation'>();
+  readonly type = input.required<"vehicle" | "reservation">();
 
   protected readonly statusClass = computed(() => {
-    if (this.type() === 'vehicle') {
-      return getVehicleStatusClass(this.status()) || 'status-default';
+    if (this.type() === "vehicle") {
+      return getVehicleStatusClass(this.status()) || "status-default";
     }
-    return getReservationStatusClass(this.status()) || 'status-default';
+    return getReservationStatusClass(this.status()) || "status-default";
   });
 
   protected readonly statusLabel = computed(() => {
-    if (this.type() === 'vehicle') {
+    if (this.type() === "vehicle") {
       return getVehicleStatusLabel(this.status());
     }
     return getReservationStatusLabel(this.status());

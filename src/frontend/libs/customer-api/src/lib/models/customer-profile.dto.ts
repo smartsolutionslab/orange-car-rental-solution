@@ -8,8 +8,12 @@ import type {
   PhoneNumber,
   FirstName,
   LastName,
-} from '@orange-car-rental/shared';
-import type { CustomerId, AddressDetails, DriversLicenseDetails } from '@orange-car-rental/reservation-api';
+} from "@orange-car-rental/shared";
+import type {
+  CustomerId,
+  AddressDetails,
+  DriversLicenseDetails,
+} from "@orange-car-rental/reservation-api";
 
 export type CustomerProfile = {
   readonly id: CustomerId;

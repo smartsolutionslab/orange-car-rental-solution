@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "analytics": false
+  },
+  "newProjectRoot": "libs",
+  "projects": {
+    "storybook-host": {
+      "projectType": "application",
+      "root": "",
+      "sourceRoot": "libs",
+      "prefix": "ocr",
+      "architect": {
+        "storybook": {
+          "builder": "@storybook/angular:start-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "storybook-host:build",
+            "compodoc": false,
+            "port": 6006
+          }
+        },
+        "build-storybook": {
+          "builder": "@storybook/angular:build-storybook",
+          "options": {
+            "configDir": ".storybook",
+            "browserTarget": "storybook-host:build",
+            "compodoc": false,
+            "outputDir": "storybook-static"
+          }
+        },
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/storybook-host",
+            "index": "apps/public-portal/src/index.html",
+            "main": "apps/public-portal/src/main.ts",
+            "polyfills": ["zone.js"],
+            "tsConfig": "tsconfig.storybook.json",
+            "inlineStyleLanguage": "css",
+            "styles": [
+              "apps/public-portal/src/styles.css"
+            ],
+            "scripts": []
+          }
+        }
+      }
+    }
+  }
+}

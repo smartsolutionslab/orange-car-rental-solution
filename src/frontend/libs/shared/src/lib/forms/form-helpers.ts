@@ -1,5 +1,5 @@
-import { FormGroup } from '@angular/forms';
-import type { AbstractControl } from '@angular/forms';
+import { FormGroup } from "@angular/forms";
+import type { AbstractControl } from "@angular/forms";
 
 /**
  * Validation message function type.
@@ -12,31 +12,34 @@ type ValidationMessageFn = (params: Record<string, unknown>) => string;
  * German error messages for common validation errors.
  * Used by getFieldError to provide localized error messages.
  */
-export const ValidationMessages: Record<string, string | ValidationMessageFn> = {
-  required: 'Dieses Feld ist erforderlich',
-  email: 'Bitte geben Sie eine gültige E-Mail-Adresse ein',
-  minlength: (params) =>
-    `Mindestens ${params['requiredLength']} Zeichen erforderlich`,
-  maxlength: (params) =>
-    `Maximal ${params['requiredLength']} Zeichen erlaubt`,
-  min: (params) => `Der Wert muss mindestens ${params['min']} sein`,
-  max: (params) => `Der Wert darf maximal ${params['max']} sein`,
-  pattern: 'Ungültiges Format',
-  weakPassword: 'Passwort muss Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen enthalten',
-  passwordMismatch: 'Passwörter stimmen nicht überein',
-  underage: (params) =>
-    `Sie müssen mindestens ${params['minAge']} Jahre alt sein`,
-  pastDate: 'Das Datum darf nicht in der Vergangenheit liegen',
-  dateAfter: 'Das Startdatum muss vor dem Enddatum liegen',
-  invalidPhone: 'Bitte geben Sie eine gültige Telefonnummer ein',
-  invalidPostalCode: 'Bitte geben Sie eine gültige Postleitzahl ein (5 Ziffern)',
-  invalidLicensePlate: 'Bitte geben Sie ein gültiges Kennzeichen ein',
-  noneSelected: 'Bitte wählen Sie mindestens eine Option',
-  outOfRange: (params) =>
-    `Der Wert muss zwischen ${params['min']} und ${params['max']} liegen`,
-  notPositive: 'Bitte geben Sie einen positiven Wert ein',
-  notANumber: 'Bitte geben Sie eine gültige Zahl ein',
-};
+export const ValidationMessages: Record<string, string | ValidationMessageFn> =
+  {
+    required: "Dieses Feld ist erforderlich",
+    email: "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+    minlength: (params) =>
+      `Mindestens ${params["requiredLength"]} Zeichen erforderlich`,
+    maxlength: (params) =>
+      `Maximal ${params["requiredLength"]} Zeichen erlaubt`,
+    min: (params) => `Der Wert muss mindestens ${params["min"]} sein`,
+    max: (params) => `Der Wert darf maximal ${params["max"]} sein`,
+    pattern: "Ungültiges Format",
+    weakPassword:
+      "Passwort muss Groß- und Kleinbuchstaben, Zahlen und Sonderzeichen enthalten",
+    passwordMismatch: "Passwörter stimmen nicht überein",
+    underage: (params) =>
+      `Sie müssen mindestens ${params["minAge"]} Jahre alt sein`,
+    pastDate: "Das Datum darf nicht in der Vergangenheit liegen",
+    dateAfter: "Das Startdatum muss vor dem Enddatum liegen",
+    invalidPhone: "Bitte geben Sie eine gültige Telefonnummer ein",
+    invalidPostalCode:
+      "Bitte geben Sie eine gültige Postleitzahl ein (5 Ziffern)",
+    invalidLicensePlate: "Bitte geben Sie ein gültiges Kennzeichen ein",
+    noneSelected: "Bitte wählen Sie mindestens eine Option",
+    outOfRange: (params) =>
+      `Der Wert muss zwischen ${params["min"]} und ${params["max"]} liegen`,
+    notPositive: "Bitte geben Sie einen positiven Wert ein",
+    notANumber: "Bitte geben Sie eine gültige Zahl ein",
+  };
 
 /**
  * Form Helper Utilities
@@ -60,7 +63,7 @@ export const FormHelpers = {
    * @param formGroup - The form group to mark
    */
   markAllTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup) {
         FormHelpers.markAllTouched(control);
@@ -75,7 +78,7 @@ export const FormHelpers = {
    * @param formGroup - The form group to reset
    */
   markAllUntouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup) {
         FormHelpers.markAllUntouched(control);
@@ -105,7 +108,7 @@ export const FormHelpers = {
    * @param formGroup - The form group to check
    */
   isDirty(formGroup: FormGroup): boolean {
-    return Object.keys(formGroup.controls).some(key => {
+    return Object.keys(formGroup.controls).some((key) => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup) {
         return FormHelpers.isDirty(control);
@@ -121,13 +124,15 @@ export const FormHelpers = {
    */
   getValues<T extends Record<string, any>>(
     formGroup: FormGroup,
-    excludeEmpty = false
+    excludeEmpty = false,
   ): T {
     const values = formGroup.value;
     if (!excludeEmpty) return values;
 
     return Object.fromEntries(
-      Object.entries(values).filter(([_, v]) => v !== '' && v !== null && v !== undefined)
+      Object.entries(values).filter(
+        ([_, v]) => v !== "" && v !== null && v !== undefined,
+      ),
     ) as T;
   },
 
@@ -137,7 +142,7 @@ export const FormHelpers = {
    * @param except - Optional array of control names to leave enabled
    */
   disableAll(formGroup: FormGroup, except: string[] = []): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       if (!except.includes(key)) {
         formGroup.get(key)?.disable();
       }
@@ -150,7 +155,7 @@ export const FormHelpers = {
    * @param except - Optional array of control names to leave disabled
    */
   enableAll(formGroup: FormGroup, except: string[] = []): void {
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       if (!except.includes(key)) {
         formGroup.get(key)?.enable();
       }
@@ -163,7 +168,7 @@ export const FormHelpers = {
    */
   getErrorCount(formGroup: FormGroup): number {
     let count = 0;
-    Object.keys(formGroup.controls).forEach(key => {
+    Object.keys(formGroup.controls).forEach((key) => {
       const control = formGroup.get(key);
       if (control instanceof FormGroup) {
         count += FormHelpers.getErrorCount(control);
@@ -172,7 +177,7 @@ export const FormHelpers = {
       }
     });
     return count;
-  }
+  },
 };
 
 /**
@@ -196,7 +201,7 @@ export const FormHelpers = {
  */
 export function getFieldError(
   control: AbstractControl | null,
-  onlyWhenTouched = true
+  onlyWhenTouched = true,
 ): string | null {
   if (!control?.errors) return null;
   if (onlyWhenTouched && !control.touched) return null;
@@ -209,7 +214,7 @@ export function getFieldError(
     return `Validierungsfehler: ${errorKey}`;
   }
 
-  return typeof message === 'function' ? message(errorValue) : message;
+  return typeof message === "function" ? message(errorValue) : message;
 }
 
 /**
@@ -220,12 +225,12 @@ export function getFieldError(
  */
 export function getAllFieldErrors(
   control: AbstractControl | null,
-  onlyWhenTouched = true
+  onlyWhenTouched = true,
 ): string[] {
   if (!control?.errors) return [];
   if (onlyWhenTouched && !control.touched) return [];
 
-  return Object.keys(control.errors).map(errorKey => {
+  return Object.keys(control.errors).map((errorKey) => {
     const errorValue = control.errors![errorKey];
     const message = ValidationMessages[errorKey];
 
@@ -233,7 +238,7 @@ export function getAllFieldErrors(
       return `Validierungsfehler: ${errorKey}`;
     }
 
-    return typeof message === 'function' ? message(errorValue) : message;
+    return typeof message === "function" ? message(errorValue) : message;
   });
 }
 
@@ -246,7 +251,7 @@ export function getAllFieldErrors(
 export function hasError(
   control: AbstractControl | null,
   errorKey: string,
-  onlyWhenTouched = true
+  onlyWhenTouched = true,
 ): boolean {
   if (!control) return false;
   if (onlyWhenTouched && !control.touched) return false;

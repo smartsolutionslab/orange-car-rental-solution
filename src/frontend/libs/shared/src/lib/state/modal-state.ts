@@ -1,5 +1,5 @@
-import { signal, computed } from '@angular/core';
-import type { Signal, WritableSignal } from '@angular/core';
+import { signal, computed } from "@angular/core";
+import type { Signal, WritableSignal } from "@angular/core";
 
 /**
  * Generic state manager for modal dialogs with selected item.

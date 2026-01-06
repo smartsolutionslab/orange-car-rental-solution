@@ -1,9 +1,9 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed } from "@angular/core";
 
 /**
  * Toast notification type
  */
-export type ToastType = 'success' | 'error' | 'info' | 'warning';
+export type ToastType = "success" | "error" | "info" | "warning";
 
 /**
  * Toast notification interface
@@ -45,7 +45,7 @@ const DEFAULT_DURATION = 5000;
  * this.toast.success('Nachricht gesendet', { duration: 10000 });
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ToastService {
   private readonly _toasts = signal<Toast[]>([]);
@@ -58,29 +58,29 @@ export class ToastService {
   /**
    * Show a success toast notification
    */
-  success(message: string, options?: Omit<ToastOptions, 'type'>): void {
-    this.show(message, { ...options, type: 'success' });
+  success(message: string, options?: Omit<ToastOptions, "type">): void {
+    this.show(message, { ...options, type: "success" });
   }
 
   /**
    * Show an error toast notification
    */
-  error(message: string, options?: Omit<ToastOptions, 'type'>): void {
-    this.show(message, { ...options, type: 'error' });
+  error(message: string, options?: Omit<ToastOptions, "type">): void {
+    this.show(message, { ...options, type: "error" });
   }
 
   /**
    * Show an info toast notification
    */
-  info(message: string, options?: Omit<ToastOptions, 'type'>): void {
-    this.show(message, { ...options, type: 'info' });
+  info(message: string, options?: Omit<ToastOptions, "type">): void {
+    this.show(message, { ...options, type: "info" });
   }
 
   /**
    * Show a warning toast notification
    */
-  warning(message: string, options?: Omit<ToastOptions, 'type'>): void {
-    this.show(message, { ...options, type: 'warning' });
+  warning(message: string, options?: Omit<ToastOptions, "type">): void {
+    this.show(message, { ...options, type: "warning" });
   }
 
   /**
@@ -89,12 +89,12 @@ export class ToastService {
   show(message: string, options: ToastOptions = {}): void {
     const toast: Toast = {
       id: this.generateId(),
-      type: options.type ?? 'info',
+      type: options.type ?? "info",
       message,
-      duration: options.duration ?? DEFAULT_DURATION
+      duration: options.duration ?? DEFAULT_DURATION,
     };
 
-    this._toasts.update(toasts => [...toasts, toast]);
+    this._toasts.update((toasts) => [...toasts, toast]);
 
     // Auto-remove after duration
     if (toast.duration > 0) {
@@ -108,7 +108,7 @@ export class ToastService {
    * Remove a toast by ID
    */
   remove(id: string): void {
-    this._toasts.update(toasts => toasts.filter(t => t.id !== id));
+    this._toasts.update((toasts) => toasts.filter((t) => t.id !== id));
   }
 
   /**

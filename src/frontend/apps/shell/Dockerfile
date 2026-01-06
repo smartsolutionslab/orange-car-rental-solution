@@ -9,6 +9,9 @@ RUN corepack enable && corepack prepare yarn@1.22.22 --activate
 COPY package.json yarn.lock ./
 COPY apps/shell/package.json ./apps/shell/
 
+# Copy patches directory for patch-package postinstall
+COPY patches/ ./patches/
+
 # Install dependencies
 RUN yarn install --frozen-lockfile
 

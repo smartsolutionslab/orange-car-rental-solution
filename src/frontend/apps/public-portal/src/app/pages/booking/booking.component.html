@@ -148,262 +148,220 @@
 
     <!-- Step 2: Customer Information -->
     @if (currentStep() === 2) {
-      <div class="form-step">
-        <h2>{{ 'booking.steps.personal' | translate }}</h2>
-        <p class="step-description">{{ 'booking.step2.description' | translate }}</p>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="firstName">{{ 'common.labels.firstName' | translate }} *</label>
-            <input
-              type="text"
-              id="firstName"
-              formControlName="firstName"
+      <ocr-form-section
+        [title]="'booking.steps.personal' | translate"
+        [description]="'booking.step2.description' | translate"
+        icon="user"
+      >
+        <div ocrFormGroup>
+          <div ocrFormRow [columns]="2">
+            <ocr-input
+              [label]="'common.labels.firstName' | translate"
               [placeholder]="'common.placeholders.firstName' | translate"
-              [class.invalid]="
+              formControlName="firstName"
+              [required]="true"
+              leadingIcon="user"
+              [error]="
                 bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
               "
             />
-            @if (bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched) {
-              <span class="error-text">{{ 'booking.errors.minLength2' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field">
-            <label for="lastName">{{ 'common.labels.lastName' | translate }} *</label>
-            <input
-              type="text"
-              id="lastName"
-              formControlName="lastName"
+            <ocr-input
+              [label]="'common.labels.lastName' | translate"
               [placeholder]="'common.placeholders.lastName' | translate"
-              [class.invalid]="
+              formControlName="lastName"
+              [required]="true"
+              leadingIcon="user"
+              [error]="
                 bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
               "
             />
-            @if (bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched) {
-              <span class="error-text">{{ 'booking.errors.minLength2' | translate }}</span>
-            }
           </div>
 
-          <div class="form-field full-width">
-            <label for="email">{{ 'common.labels.email' | translate }} *</label>
-            <input
-              type="email"
-              id="email"
-              formControlName="email"
-              [placeholder]="'common.placeholders.email' | translate"
-              [class.invalid]="
-                bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched
-              "
-            />
-            @if (bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched) {
-              <span class="error-text">{{ 'booking.errors.email' | translate }}</span>
-            }
-          </div>
+          <ocr-input
+            [label]="'common.labels.email' | translate"
+            [placeholder]="'common.placeholders.email' | translate"
+            type="email"
+            formControlName="email"
+            [required]="true"
+            leadingIcon="mail"
+            autocomplete="email"
+            [error]="
+              bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched
+                ? ('booking.errors.email' | translate)
+                : null
+            "
+          />
 
-          <div class="form-field">
-            <label for="phoneNumber">{{ 'common.labels.phone' | translate }} *</label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              formControlName="phoneNumber"
+          <div ocrFormRow [columns]="2">
+            <ocr-input
+              [label]="'common.labels.phone' | translate"
               [placeholder]="'common.placeholders.phone' | translate"
-              [class.invalid]="
+              type="tel"
+              formControlName="phoneNumber"
+              [required]="true"
+              leadingIcon="phone"
+              autocomplete="tel"
+              [error]="
                 bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched
+                  ? ('booking.errors.phone' | translate)
+                  : null
               "
             />
-            @if (
-              bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.phone' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field">
-            <label for="dateOfBirth">{{ 'common.labels.dateOfBirth' | translate }} *</label>
-            <input
+            <ocr-input
+              [label]="'common.labels.dateOfBirth' | translate"
               type="date"
-              id="dateOfBirth"
               formControlName="dateOfBirth"
+              [required]="true"
+              leadingIcon="calendar"
               [max]="today"
-              [class.invalid]="
+              [error]="
                 bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched
+                  ? ('booking.errors.dateOfBirth' | translate)
+                  : null
               "
             />
-            @if (
-              bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.dateOfBirth' | translate }}</span>
-            }
           </div>
         </div>
-      </div>
+      </ocr-form-section>
     }
 
     <!-- Step 3: Address -->
     @if (currentStep() === 3) {
-      <div class="form-step">
-        <h2>{{ 'booking.steps.address' | translate }}</h2>
-        <p class="step-description">{{ 'booking.step3.description' | translate }}</p>
+      <ocr-form-section
+        [title]="'booking.steps.address' | translate"
+        [description]="'booking.step3.description' | translate"
+        icon="map-pin"
+      >
+        <div ocrFormGroup>
+          <ocr-input
+            [label]="'booking.fields.streetAndNumber' | translate"
+            [placeholder]="'common.placeholders.street' | translate"
+            formControlName="street"
+            [required]="true"
+            leadingIcon="home"
+            autocomplete="street-address"
+            [error]="
+              bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched
+                ? ('booking.errors.minLength5' | translate)
+                : null
+            "
+          />
 
-        <div class="form-grid">
-          <div class="form-field full-width">
-            <label for="street">{{ 'booking.fields.streetAndNumber' | translate }} *</label>
-            <input
-              type="text"
-              id="street"
-              formControlName="street"
-              [placeholder]="'common.placeholders.street' | translate"
-              [class.invalid]="
-                bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched
-              "
-            />
-            @if (bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched) {
-              <span class="error-text">{{ 'booking.errors.minLength5' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field">
-            <label for="postalCode">{{ 'common.labels.postalCode' | translate }} *</label>
-            <input
-              type="text"
-              id="postalCode"
-              formControlName="postalCode"
+          <div ocrFormRow [columns]="2">
+            <ocr-input
+              [label]="'common.labels.postalCode' | translate"
               [placeholder]="'common.placeholders.postalCode' | translate"
-              maxlength="5"
-              [class.invalid]="
+              formControlName="postalCode"
+              [required]="true"
+              leadingIcon="hash"
+              autocomplete="postal-code"
+              [error]="
                 bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched
+                  ? ('booking.errors.postalCode' | translate)
+                  : null
               "
             />
-            @if (bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched) {
-              <span class="error-text">{{ 'booking.errors.postalCode' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field">
-            <label for="city">{{ 'common.labels.city' | translate }} *</label>
-            <input
-              type="text"
-              id="city"
-              formControlName="city"
+            <ocr-input
+              [label]="'common.labels.city' | translate"
               [placeholder]="'common.placeholders.city' | translate"
-              [class.invalid]="bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched"
-            />
-            @if (bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched) {
-              <span class="error-text">{{ 'booking.errors.minLength2' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field full-width">
-            <label for="country">{{ 'common.labels.country' | translate }} *</label>
-            <input
-              type="text"
-              id="country"
-              formControlName="country"
-              [class.invalid]="
-                bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched
+              formControlName="city"
+              [required]="true"
+              leadingIcon="building"
+              autocomplete="address-level2"
+              [error]="
+                bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
               "
             />
-            @if (bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched) {
-              <span class="error-text">{{ 'booking.errors.country' | translate }}</span>
-            }
           </div>
+
+          <ocr-input
+            [label]="'common.labels.country' | translate"
+            formControlName="country"
+            [required]="true"
+            leadingIcon="globe"
+            autocomplete="country-name"
+            [error]="
+              bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched
+                ? ('booking.errors.country' | translate)
+                : null
+            "
+          />
         </div>
-      </div>
+      </ocr-form-section>
     }
 
     <!-- Step 4: Driver's License -->
     @if (currentStep() === 4) {
-      <div class="form-step">
-        <h2>{{ 'booking.steps.license' | translate }}</h2>
-        <p class="step-description">{{ 'booking.step4.description' | translate }}</p>
-
-        <div class="form-grid">
-          <div class="form-field full-width">
-            <label for="licenseNumber">{{ 'booking.fields.licenseNumber' | translate }} *</label>
-            <input
-              type="text"
-              id="licenseNumber"
-              formControlName="licenseNumber"
-              [placeholder]="'common.placeholders.licenseNumber' | translate"
-              [class.invalid]="
-                bookingForm.get('licenseNumber')?.invalid &&
-                bookingForm.get('licenseNumber')?.touched
-              "
-            />
-            @if (
+      <ocr-form-section
+        [title]="'booking.steps.license' | translate"
+        [description]="'booking.step4.description' | translate"
+        icon="file-text"
+      >
+        <div ocrFormGroup>
+          <ocr-input
+            [label]="'booking.fields.licenseNumber' | translate"
+            [placeholder]="'common.placeholders.licenseNumber' | translate"
+            formControlName="licenseNumber"
+            [required]="true"
+            leadingIcon="credit-card"
+            [error]="
               bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.minLength5' | translate }}</span>
-            }
-          </div>
+                ? ('booking.errors.minLength5' | translate)
+                : null
+            "
+          />
 
-          <div class="form-field full-width">
-            <label for="licenseIssueCountry"
-              >{{ 'booking.fields.licenseIssueCountry' | translate }} *</label
-            >
-            <input
-              type="text"
-              id="licenseIssueCountry"
-              formControlName="licenseIssueCountry"
-              [class.invalid]="
-                bookingForm.get('licenseIssueCountry')?.invalid &&
-                bookingForm.get('licenseIssueCountry')?.touched
-              "
-            />
-            @if (
+          <ocr-input
+            [label]="'booking.fields.licenseIssueCountry' | translate"
+            formControlName="licenseIssueCountry"
+            [required]="true"
+            leadingIcon="globe"
+            [error]="
               bookingForm.get('licenseIssueCountry')?.invalid &&
               bookingForm.get('licenseIssueCountry')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.licenseIssueCountry' | translate }}</span>
-            }
-          </div>
+                ? ('booking.errors.licenseIssueCountry' | translate)
+                : null
+            "
+          />
 
-          <div class="form-field">
-            <label for="licenseIssueDate"
-              >{{ 'booking.fields.licenseIssueDate' | translate }} *</label
-            >
-            <input
+          <div ocrFormRow [columns]="2">
+            <ocr-input
+              [label]="'booking.fields.licenseIssueDate' | translate"
               type="date"
-              id="licenseIssueDate"
               formControlName="licenseIssueDate"
+              [required]="true"
+              leadingIcon="calendar"
               [max]="maxLicenseIssueDate()"
-              [class.invalid]="
+              [error]="
                 bookingForm.get('licenseIssueDate')?.invalid &&
                 bookingForm.get('licenseIssueDate')?.touched
+                  ? ('booking.errors.licenseIssueDate' | translate)
+                  : null
               "
             />
-            @if (
-              bookingForm.get('licenseIssueDate')?.invalid &&
-              bookingForm.get('licenseIssueDate')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.licenseIssueDate' | translate }}</span>
-            }
-          </div>
-
-          <div class="form-field">
-            <label for="licenseExpiryDate"
-              >{{ 'booking.fields.licenseExpiryDate' | translate }} *</label
-            >
-            <input
+            <ocr-input
+              [label]="'booking.fields.licenseExpiryDate' | translate"
               type="date"
-              id="licenseExpiryDate"
               formControlName="licenseExpiryDate"
+              [required]="true"
+              leadingIcon="calendar"
               [min]="minLicenseExpiryDate()"
-              [class.invalid]="
+              [error]="
                 bookingForm.get('licenseExpiryDate')?.invalid &&
                 bookingForm.get('licenseExpiryDate')?.touched
+                  ? ('booking.errors.licenseExpiryDate' | translate)
+                  : null
               "
             />
-            @if (
-              bookingForm.get('licenseExpiryDate')?.invalid &&
-              bookingForm.get('licenseExpiryDate')?.touched
-            ) {
-              <span class="error-text">{{ 'booking.errors.licenseExpiryDate' | translate }}</span>
-            }
           </div>
         </div>
-      </div>
+      </ocr-form-section>
     }
 
     <!-- Step 5: Review and Submit -->
@@ -487,10 +445,10 @@
         <!-- Update Profile Option (only for authenticated users) -->
         @if (isAuthenticated()) {
           <div class="profile-update-option">
-            <label class="checkbox-label">
-              <input type="checkbox" formControlName="updateMyProfile" class="checkbox-input" />
-              <span class="checkbox-text">{{ 'booking.review.saveToProfile' | translate }}</span>
-            </label>
+            <ocr-checkbox
+              [label]="'booking.review.saveToProfile' | translate"
+              formControlName="updateMyProfile"
+            />
             <p class="profile-update-hint">{{ 'booking.review.saveToProfileHint' | translate }}</p>
           </div>
         }

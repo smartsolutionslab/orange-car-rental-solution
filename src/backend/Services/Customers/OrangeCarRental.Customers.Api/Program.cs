@@ -60,9 +60,8 @@ builder.AddSqlServerDbContext<CustomersDbContext>("customers", configureDbContex
     });
 });
 
-// Register repository and unit of work
+// Register repository
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<CustomersDbContext>());
 
 // Register command handlers
 builder.Services.AddScoped<ICommandHandler<RegisterCustomerCommand, RegisterCustomerResult>, RegisterCustomerCommandHandler>();

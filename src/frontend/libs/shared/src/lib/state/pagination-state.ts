@@ -1,5 +1,5 @@
-import { signal, computed } from '@angular/core';
-import type { Signal, WritableSignal } from '@angular/core';
+import { signal, computed } from "@angular/core";
+import type { Signal, WritableSignal } from "@angular/core";
 
 /**
  * State manager for pagination.
@@ -52,17 +52,17 @@ export class PaginationState {
 
   /** Total number of pages */
   readonly totalPages: Signal<number> = computed(() =>
-    Math.max(1, Math.ceil(this._totalCount() / this._pageSize()))
+    Math.max(1, Math.ceil(this._totalCount() / this._pageSize())),
   );
 
   /** Whether there is a next page */
-  readonly hasNextPage: Signal<boolean> = computed(() =>
-    this._currentPage() < this.totalPages()
+  readonly hasNextPage: Signal<boolean> = computed(
+    () => this._currentPage() < this.totalPages(),
   );
 
   /** Whether there is a previous page */
-  readonly hasPreviousPage: Signal<boolean> = computed(() =>
-    this._currentPage() > 1
+  readonly hasPreviousPage: Signal<boolean> = computed(
+    () => this._currentPage() > 1,
   );
 
   /** Starting item number for current page (1-indexed) */
@@ -100,7 +100,7 @@ export class PaginationState {
    */
   nextPage(): boolean {
     if (this.hasNextPage()) {
-      this._currentPage.update(p => p + 1);
+      this._currentPage.update((p) => p + 1);
       return true;
     }
     return false;
@@ -112,7 +112,7 @@ export class PaginationState {
    */
   previousPage(): boolean {
     if (this.hasPreviousPage()) {
-      this._currentPage.update(p => p - 1);
+      this._currentPage.update((p) => p - 1);
       return true;
     }
     return false;
@@ -178,7 +178,7 @@ export class PaginationState {
   getQueryParams(): { page: number; pageSize: number } {
     return {
       page: this._currentPage(),
-      pageSize: this._pageSize()
+      pageSize: this._pageSize(),
     };
   }
 

@@ -12,10 +12,14 @@
     <Product>Orange Car Rental System</Product>
     <Copyright>Copyright © 2025 Smart Solutions Lab</Copyright>
 
-    <!-- Versioning -->
-    <Version>1.0.0</Version>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <!-- Versioning - Uses GitVersion in CI, defaults for local development -->
+    <Version Condition="'$(GITVERSION_SEMVER)' != ''">$(GITVERSION_SEMVER)</Version>
+    <Version Condition="'$(GITVERSION_SEMVER)' == ''">1.0.0-local</Version>
+    <AssemblyVersion Condition="'$(GITVERSION_ASSEMBLYSEMVER)' != ''">$(GITVERSION_ASSEMBLYSEMVER)</AssemblyVersion>
+    <AssemblyVersion Condition="'$(GITVERSION_ASSEMBLYSEMVER)' == ''">1.0.0.0</AssemblyVersion>
+    <FileVersion Condition="'$(GITVERSION_ASSEMBLYSEMFILEVER)' != ''">$(GITVERSION_ASSEMBLYSEMFILEVER)</FileVersion>
+    <FileVersion Condition="'$(GITVERSION_ASSEMBLYSEMFILEVER)' == ''">1.0.0.0</FileVersion>
+    <InformationalVersion Condition="'$(GITVERSION_INFORMATIONALVERSION)' != ''">$(GITVERSION_INFORMATIONALVERSION)</InformationalVersion>
 
     <!-- Build Output -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

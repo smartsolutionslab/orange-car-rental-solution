@@ -64,11 +64,11 @@ internal sealed class SepaMandateConfiguration : IEntityTypeConfiguration<SepaMa
             .IsRequired();
 
         // Customer reference (value object)
-        builder.Property(m => m.CustomerId)
+        builder.Property(m => m.CustomerIdentifier)
             .HasColumnName("CustomerId")
             .HasConversion(
                 id => id.Value,
-                value => CustomerId.From(value))
+                value => CustomerIdentifier.From(value))
             .IsRequired();
 
         // Timestamps
@@ -90,9 +90,9 @@ internal sealed class SepaMandateConfiguration : IEntityTypeConfiguration<SepaMa
         builder.Ignore(m => m.DomainEvents);
 
         // Indexes
-        builder.HasIndex(m => m.CustomerId);
+        builder.HasIndex(m => m.CustomerIdentifier);
         builder.HasIndex(m => m.MandateReference).IsUnique();
         builder.HasIndex(m => m.Status);
-        builder.HasIndex(m => new { m.CustomerId, m.Status });
+        builder.HasIndex(m => new { m.CustomerIdentifier, m.Status });
     }
 }

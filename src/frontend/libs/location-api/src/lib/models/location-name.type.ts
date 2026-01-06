@@ -2,7 +2,7 @@
  * Location Name - branded type for type safety
  * Matches backend LocationName value object
  */
-export type LocationName = string & { readonly __brand: 'LocationName' };
+export type LocationName = string & { readonly __brand: "LocationName" };
 
 const MAX_LENGTH = 200;
 
@@ -21,7 +21,9 @@ export function createLocationName(value: string): LocationName {
 /**
  * Safely convert a string to LocationName, returning undefined if invalid
  */
-export function toLocationName(value: string | null | undefined): LocationName | undefined {
+export function toLocationName(
+  value: string | null | undefined,
+): LocationName | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isLocationName(trimmed) ? trimmed : undefined;

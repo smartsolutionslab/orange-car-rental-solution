@@ -2,7 +2,7 @@
  * Manufacturer - branded type for type safety
  * Matches backend Manufacturer value object
  */
-export type Manufacturer = string & { readonly __brand: 'Manufacturer' };
+export type Manufacturer = string & { readonly __brand: "Manufacturer" };
 
 const MAX_LENGTH = 100;
 
@@ -21,7 +21,9 @@ export function createManufacturer(value: string): Manufacturer {
 /**
  * Safely convert a string to Manufacturer, returning undefined if invalid
  */
-export function toManufacturer(value: string | null | undefined): Manufacturer | undefined {
+export function toManufacturer(
+  value: string | null | undefined,
+): Manufacturer | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isManufacturer(trimmed) ? trimmed : undefined;

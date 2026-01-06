@@ -2,7 +2,7 @@
  * City Name - branded type for type safety
  * Matches backend City value object
  */
-export type CityName = string & { readonly __brand: 'CityName' };
+export type CityName = string & { readonly __brand: "CityName" };
 
 const MAX_LENGTH = 100;
 
@@ -21,7 +21,9 @@ export function createCityName(value: string): CityName {
 /**
  * Safely convert a string to CityName, returning undefined if invalid
  */
-export function toCityName(value: string | null | undefined): CityName | undefined {
+export function toCityName(
+  value: string | null | undefined,
+): CityName | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isCityName(trimmed) ? trimmed : undefined;

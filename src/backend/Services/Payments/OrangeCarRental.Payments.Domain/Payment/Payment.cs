@@ -17,14 +17,14 @@ public sealed class Payment : AggregateRoot<PaymentIdentifier>
     }
 
     /// <summary>
-    ///     Referenced reservation ID.
+    ///     Referenced reservation identifier.
     /// </summary>
-    public ReservationId ReservationId { get; init; }
+    public ReservationIdentifier ReservationIdentifier { get; init; }
 
     /// <summary>
-    ///     Referenced customer ID.
+    ///     Referenced customer identifier.
     /// </summary>
-    public CustomerId CustomerId { get; init; }
+    public CustomerIdentifier CustomerIdentifier { get; init; }
 
     /// <summary>
     ///     Payment amount.
@@ -70,16 +70,16 @@ public sealed class Payment : AggregateRoot<PaymentIdentifier>
     ///     Creates a new payment.
     /// </summary>
     public static Payment Create(
-        ReservationId reservationId,
-        CustomerId customerId,
+        ReservationIdentifier reservationIdentifier,
+        CustomerIdentifier customerIdentifier,
         Money amount,
         PaymentMethod method)
     {
         return new Payment
         {
             Id = PaymentIdentifier.New(),
-            ReservationId = reservationId,
-            CustomerId = customerId,
+            ReservationIdentifier = reservationIdentifier,
+            CustomerIdentifier = customerIdentifier,
             Amount = amount,
             Method = method,
             Status = PaymentStatus.Pending,
@@ -97,8 +97,8 @@ public sealed class Payment : AggregateRoot<PaymentIdentifier>
         return new Payment
         {
             Id = Id,
-            ReservationId = ReservationId,
-            CustomerId = CustomerId,
+            ReservationIdentifier = ReservationIdentifier,
+            CustomerIdentifier = CustomerIdentifier,
             Amount = Amount,
             Method = Method,
             Status = status ?? Status,

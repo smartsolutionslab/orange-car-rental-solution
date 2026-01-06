@@ -10,9 +10,9 @@ export class CurrencyFormatter {
    * @param currency - Currency code (default: EUR)
    * @returns Formatted currency string (e.g., "1.234,56 €")
    */
-  static formatGerman(amount: number, currency: string = 'EUR'): string {
-    const formatter = new Intl.NumberFormat('de-DE', {
-      style: 'currency',
+  static formatGerman(amount: number, currency: string = "EUR"): string {
+    const formatter = new Intl.NumberFormat("de-DE", {
+      style: "currency",
       currency: currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -28,7 +28,7 @@ export class CurrencyFormatter {
    */
   static formatWithVat(
     netAmount: number,
-    vatRate: number = 0.19
+    vatRate: number = 0.19,
   ): {
     net: string;
     vat: string;
@@ -57,11 +57,11 @@ export class CurrencyFormatter {
    */
   static parseGerman(value: string): number {
     // Remove currency symbols and spaces
-    let cleaned = value.replace(/[€$£\s]/g, '');
+    let cleaned = value.replace(/[€$£\s]/g, "");
     // Replace German decimal separator (,) with dot
-    cleaned = cleaned.replace(',', '.');
+    cleaned = cleaned.replace(",", ".");
     // Remove thousands separators
-    cleaned = cleaned.replace(/\./g, '');
+    cleaned = cleaned.replace(/\./g, "");
     return parseFloat(cleaned);
   }
 }

@@ -1,6 +1,5 @@
 using Moq;
 using Shouldly;
-using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.Customers.Application.Commands;
 using SmartSolutionsLab.OrangeCarRental.Customers.Domain.Customer;
 
@@ -9,12 +8,11 @@ namespace SmartSolutionsLab.OrangeCarRental.Customers.Tests.Application.Commands
 public class RegisterCustomerCommandHandlerTests
 {
     private readonly Mock<ICustomerRepository> _repositoryMock = new();
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock = new();
     private readonly RegisterCustomerCommandHandler _handler;
 
     public RegisterCustomerCommandHandlerTests()
     {
-        _handler = new RegisterCustomerCommandHandler(_repositoryMock.Object, _unitOfWorkMock.Object);
+        _handler = new RegisterCustomerCommandHandler(_repositoryMock.Object);
     }
 
     [Fact]

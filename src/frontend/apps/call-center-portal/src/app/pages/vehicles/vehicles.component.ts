@@ -32,11 +32,11 @@ import {
   SelectCategoryComponent,
   StatusBadgeComponent,
   ModalComponent,
-  LoadingStateComponent,
-  EmptyStateComponent,
   ErrorStateComponent,
   StatCardComponent,
   IconComponent,
+  DataTableComponent,
+  DataTableColumnDirective,
   getVehicleStatusClass,
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
@@ -65,11 +65,11 @@ import {
     SelectCategoryComponent,
     StatusBadgeComponent,
     ModalComponent,
-    LoadingStateComponent,
-    EmptyStateComponent,
     ErrorStateComponent,
     StatCardComponent,
     IconComponent,
+    DataTableComponent,
+    DataTableColumnDirective,
   ],
   templateUrl: './vehicles.component.html',
   styleUrl: './vehicles.component.css',
@@ -259,6 +259,11 @@ export class VehiclesComponent implements OnInit {
     this.showDetails.set(false);
     this.selectedVehicle.set(null);
   }
+
+  /**
+   * Track by function for DataTable
+   */
+  protected readonly trackByVehicleId = (_index: number, vehicle: Vehicle) => vehicle.id;
 
   /**
    * Total number of vehicles

@@ -94,6 +94,9 @@ public sealed class CustomerRepository(CustomersDbContext context) : ICustomerRe
         context.Customers.Remove(customer);
     }
 
+    public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default) =>
+        context.SaveChangesAsync(cancellationToken);
+
     /// <summary>
     ///     Sort field selectors for customer queries.
     /// </summary>
