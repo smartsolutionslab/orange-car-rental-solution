@@ -325,7 +325,8 @@ describe('ForgotPasswordComponent', () => {
   describe('Accessibility', () => {
     it('should have proper form labels', () => {
       fixture.detectChanges();
-      const label = fixture.nativeElement.querySelector('label[for="email"]');
+      // Label is now inside ocr-input component
+      const label = fixture.nativeElement.querySelector('ocr-input .input-label');
       expect(label).toBeTruthy();
       // With TranslateModule.forRoot(), the key is rendered
       expect(label.textContent).toContain('common.labels.email');

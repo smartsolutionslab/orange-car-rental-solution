@@ -356,7 +356,8 @@ describe('RegisterComponent', () => {
     it('should show step 1 form fields initially', () => {
       expect(component.currentStep()).toBe(1);
       fixture.detectChanges();
-      const emailInput = fixture.nativeElement.querySelector('#email');
+      // Email input is now inside ocr-input component
+      const emailInput = fixture.nativeElement.querySelector('ocr-input input');
       expect(emailInput).toBeTruthy();
     });
 
