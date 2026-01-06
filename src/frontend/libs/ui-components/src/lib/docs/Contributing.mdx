@@ -1,0 +1,343 @@
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Getting Started/Contributing" />
+
+# Contributing Guide
+
+This guide explains how to add new components to the Orange Car Rental component library.
+
+## Component Structure
+
+Each component should follow this structure:
+
+```
+libs/ui-components/src/lib/
+└── component-name/
+    ├── component-name.component.ts      # Main component
+    ├── component-name.component.stories.ts  # Storybook stories
+    ├── index.ts                         # Public exports
+    └── component-name.types.ts          # Types (optional)
+```
+
+## Creating a New Component
+
+### 1. Create the Directory
+
+```bash
+mkdir libs/ui-components/src/lib/my-component
+```
+
+### 2. Create the Component
+
+```typescript
+// my-component.component.ts
+import { Component, input, output, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+export type MyComponentSize = 'sm' | 'md' | 'lg';
+
+@Component({
+  selector: 'ocr-my-component',
+  standalone: true,
+  imports: [CommonModule],
+  template: `
+    <div
+      class="my-component"
+      [class.my-component-sm]="size() === 'sm'"
+      [class.my-component-lg]="size() === 'lg'"
+    >
+      <ng-content />
+    </div>
+  `,
+  styles: [`
+    .my-component {
+      /* Default styles */
+    }
+
+    .my-component-sm {
+      /* Small variant */
+    }
+
+    .my-component-lg {
+      /* Large variant */
+    }
+  `]
+})
+export class MyComponentComponent {
+  /** Component size */
+  readonly size = input<MyComponentSize>('md');
+
+  /** Whether component is disabled */
+  readonly disabled = input(false);
+
+  /** Emitted when component is clicked */
+  readonly clicked = output<void>();
+}
+```
+
+### 3. Create the Index File
+
+```typescript
+// index.ts
+export { MyComponentComponent, type MyComponentSize } from './my-component.component';
+```
+
+### 4. Create Storybook Stories
+
+```typescript
+// my-component.component.stories.ts
+import type { Meta, StoryObj } from '@storybook/angular';
+import { MyComponentComponent } from './my-component.component';
+
+const meta: Meta<MyComponentComponent> = {
+  title: 'Category/My Component',
+  component: MyComponentComponent,
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: `
+Description of what the component does and when to use it.
+
+## Features
+- Feature 1
+- Feature 2
+
+## Usage
+
+\`\`\`html
+<ocr-my-component>Content</ocr-my-component>
+\`\`\`
+        `,
+      },
+    },
+  },
+  tags: ['autodocs'],
+  argTypes: {
+    size: {
+      control: 'select',
+      options: ['sm', 'md', 'lg'],
+    },
+  },
+};
+
+export default meta;
+type Story = StoryObj<MyComponentComponent>;
+
+/**
+ * Default state of the component
+ */
+export const Default: Story = {
+  args: {
+    size: 'md',
+    disabled: false,
+  },
+};
+
+/**
+ * Small variant
+ */
+export const Small: Story = {
+  args: {
+    size: 'sm',
+  },
+};
+
+/**
+ * Large variant
+ */
+export const Large: Story = {
+  args: {
+    size: 'lg',
+  },
+};
+
+/**
+ * Disabled state
+ */
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};
+```
+
+## Component Guidelines
+
+### Naming Conventions
+
+- **Selector prefix**: `ocr-` (e.g., `ocr-button`, `ocr-input`)
+- **Component name**: PascalCase with `Component` suffix
+- **File name**: kebab-case (e.g., `my-component.component.ts`)
+
+### Input/Output Conventions
+
+```typescript
+// Use Angular signals for inputs
+readonly label = input<string>();           // Optional
+readonly required = input(false);           // With default
+readonly items = input.required<Item[]>();  // Required
+
+// Use output() for events
+readonly clicked = output<void>();
+readonly valueChange = output<string>();
+```
+
+### Styling Guidelines
+
+1. **Use component styles, not global CSS**
+2. **Follow the design system** (colors, spacing, typography)
+3. **Support size variants** (`sm`, `md`, `lg`) where appropriate
+4. **Include hover, focus, and disabled states**
+
+```typescript
+styles: [`
+  .component {
+    /* Use CSS variables or design tokens */
+    padding: 0.625rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    transition: all 0.15s ease;
+  }
+
+  .component:hover:not(:disabled) {
+    /* Hover state */
+  }
+
+  .component:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+  }
+
+  .component:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`]
+```
+
+### Accessibility Requirements
+
+1. **Keyboard navigation**: All interactive elements must be keyboard accessible
+2. **Focus indicators**: Visible focus states for all focusable elements
+3. **ARIA attributes**: Use appropriate ARIA roles and properties
+4. **Color contrast**: Meet WCAG AA requirements (4.5:1 for text)
+5. **Screen reader support**: Meaningful announcements for dynamic content
+
+```typescript
+template: `
+  <button
+    type="button"
+    [attr.aria-pressed]="pressed()"
+    [attr.aria-disabled]="disabled()"
+    (click)="onClick()"
+    (keydown.enter)="onClick()"
+    (keydown.space)="onClick()"
+  >
+    <ng-content />
+  </button>
+`
+```
+
+### Form Component Requirements
+
+Form components must implement `ControlValueAccessor`:
+
+```typescript
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+
+@Component({
+  selector: 'ocr-my-input',
+  providers: [
+    {
+      provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => MyInputComponent),
+      multi: true,
+    },
+  ],
+})
+export class MyInputComponent implements ControlValueAccessor {
+  readonly value = signal('');
+
+  private onChange: (value: string) => void = () => {};
+  private onTouched: () => void = () => {};
+
+  writeValue(value: string): void {
+    this.value.set(value ?? '');
+  }
+
+  registerOnChange(fn: (value: string) => void): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: () => void): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    // Handle disabled state
+  }
+
+  onInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.value.set(value);
+    this.onChange(value);
+  }
+
+  onBlur(): void {
+    this.onTouched();
+  }
+}
+```
+
+## Story Categories
+
+Organize stories in these categories:
+
+| Category | Components |
+|----------|------------|
+| `Getting Started/` | Documentation (MDX) |
+| `Layout/` | Tabs, Accordion, Wizard |
+| `Data Display/` | DataTable, StatusBadge, StatCard |
+| `Forms/` | Input, Textarea, Checkbox, Radio, Switch |
+| `Feedback/` | Modal, LoadingState, Alerts |
+| `Navigation/` | Pagination |
+| `Auth/` | LoginForm, ForgotPasswordForm |
+
+## Testing
+
+### Run Storybook
+
+```bash
+cd src/frontend
+yarn storybook
+```
+
+### Build Storybook
+
+```bash
+yarn build:storybook
+```
+
+### Verify No Errors
+
+Before submitting:
+
+1. Component compiles without TypeScript errors
+2. Storybook builds successfully
+3. Stories render correctly
+4. Accessibility addon shows no violations
+5. Component works with reactive forms (if applicable)
+
+## Pull Request Checklist
+
+- [ ] Component follows naming conventions
+- [ ] Inputs use signal-based API
+- [ ] All inputs are documented with JSDoc
+- [ ] Component includes all size variants
+- [ ] Styles follow design system
+- [ ] Accessibility requirements are met
+- [ ] Storybook stories are comprehensive
+- [ ] Stories include documentation
+- [ ] Index file exports all public types
+- [ ] No TypeScript/linting errors
