@@ -80,15 +80,28 @@
   align-items: center;
 }
 
+.password-field-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.password-label-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: -1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
 .forgot-link {
-  font-size: 0.875rem;
-  color: #667eea;
+  font-size: 0.75rem;
+  color: #f97316;
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .forgot-link:hover {
-  color: #764ba2;
+  color: #ea580c;
   text-decoration: underline;
 }
 

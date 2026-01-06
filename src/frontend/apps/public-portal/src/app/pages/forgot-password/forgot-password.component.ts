@@ -10,6 +10,7 @@ import {
   SuccessAlertComponent,
   ErrorAlertComponent,
   IconComponent,
+  InputComponent,
 } from '@orange-car-rental/ui-components';
 
 /**
@@ -29,6 +30,7 @@ import {
     SuccessAlertComponent,
     ErrorAlertComponent,
     IconComponent,
+    InputComponent,
     TranslateModule,
   ],
   templateUrl: './forgot-password.component.html',

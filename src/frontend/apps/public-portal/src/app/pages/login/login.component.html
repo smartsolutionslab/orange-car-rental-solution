@@ -14,71 +14,41 @@
     <!-- Login Form -->
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
       <!-- Email Field -->
-      <div class="form-group">
-        <label for="email" class="form-label">{{ 'auth.login.email' | translate }}</label>
-        <input
-          id="email"
-          type="email"
-          formControlName="email"
-          class="form-input"
-          [class.input-error]="emailError()"
-          [placeholder]="'common.placeholders.email' | translate"
-          autocomplete="email"
-        />
-        @if (emailError()) {
-          <span class="field-error">{{ emailError() }}</span>
-        }
-      </div>
+      <ocr-input
+        [label]="'auth.login.email' | translate"
+        type="email"
+        formControlName="email"
+        [placeholder]="'common.placeholders.email' | translate"
+        autocomplete="email"
+        leadingIcon="mail"
+        [error]="emailError()"
+      />
 
       <!-- Password Field -->
-      <div class="form-group">
-        <div class="label-row">
-          <label for="password" class="form-label">{{ 'auth.login.password' | translate }}</label>
+      <div class="password-field-wrapper">
+        <div class="password-label-row">
+          <span></span>
           <a routerLink="/forgot-password" class="forgot-link">{{
             'auth.login.forgotPassword' | translate
           }}</a>
         </div>
-        <div class="password-wrapper">
-          <input
-            id="password"
-            [type]="showPassword() ? 'text' : 'password'"
-            formControlName="password"
-            class="form-input"
-            [class.input-error]="passwordError()"
-            placeholder="••••••••"
-            autocomplete="current-password"
-          />
-          <button
-            type="button"
-            class="password-toggle"
-            (click)="togglePasswordVisibility()"
-            [attr.aria-label]="
-              showPassword()
-                ? ('auth.login.hidePassword' | translate)
-                : ('auth.login.showPassword' | translate)
-            "
-          >
-            @if (showPassword()) {
-              <!-- Eye Slash Icon -->
-              <lib-icon name="eye-off" variant="outline" size="sm" />
-            } @else {
-              <!-- Eye Icon -->
-              <lib-icon name="eye" variant="outline" size="sm" />
-            }
-          </button>
-        </div>
-        @if (passwordError()) {
-          <span class="field-error">{{ passwordError() }}</span>
-        }
+        <ocr-input
+          [label]="'auth.login.password' | translate"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          autocomplete="current-password"
+          leadingIcon="lock"
+          [showPasswordToggle]="true"
+          [error]="passwordError()"
+        />
       </div>
 
       <!-- Remember Me -->
-      <div class="form-group">
-        <label class="checkbox-label">
-          <input type="checkbox" formControlName="rememberMe" class="checkbox-input" />
-          <span>{{ 'auth.login.rememberMe' | translate }}</span>
-        </label>
-      </div>
+      <ocr-checkbox
+        [label]="'auth.login.rememberMe' | translate"
+        formControlName="rememberMe"
+      />
 
       <!-- Submit Button -->
       <button type="submit" class="submit-button" [disabled]="isLoading()">

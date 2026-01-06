@@ -127,3 +127,11 @@ export {
   type DataTableHeaderContext,
   type SortDirection,
 } from './lib/data-table';
+
+// Form Components
+export { InputComponent, type InputSize, type InputType } from './lib/input';
+export { TextareaComponent, type TextareaSize, type TextareaResize } from './lib/textarea';
+export { CheckboxComponent, type CheckboxSize } from './lib/checkbox';
+export { RadioGroupComponent, type RadioGroupSize, type RadioGroupOrientation, type RadioOption } from './lib/radio-group';
+export { SwitchComponent, type SwitchSize } from './lib/switch';
+export { FileUploadComponent, type UploadedFile } from './lib/file-upload';

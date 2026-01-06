@@ -6,7 +6,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AuthService } from '../../services/auth.service';
 import { logError } from '@orange-car-rental/util';
 import { FormHelpers } from '@orange-car-rental/shared';
-import { ErrorAlertComponent, IconComponent } from '@orange-car-rental/ui-components';
+import { ErrorAlertComponent, IconComponent, InputComponent, CheckboxComponent } from '@orange-car-rental/ui-components';
 
 /**
  * Login Component
@@ -24,6 +24,8 @@ import { ErrorAlertComponent, IconComponent } from '@orange-car-rental/ui-compon
     TranslateModule,
     ErrorAlertComponent,
     IconComponent,
+    InputComponent,
+    CheckboxComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
