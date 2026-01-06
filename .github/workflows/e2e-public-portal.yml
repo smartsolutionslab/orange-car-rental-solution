@@ -104,8 +104,8 @@ jobs:
         run: |
           # Install serve globally
           npm install -g serve
-          # Start server in background
-          serve -s dist/public-portal -l 4301 &
+          # Start server in background (Angular outputs to browser/ subdirectory)
+          serve -s dist/public-portal/browser -l 4301 &
           # Wait for server to be ready
           npx wait-on http://localhost:4301 --timeout 30000
           # Run tests (skip webServer since we're serving static build)
