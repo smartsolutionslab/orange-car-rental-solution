@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { InputComponent } from './input.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { InputComponent } from "./input.component";
 
 const meta: Meta<InputComponent> = {
-  title: 'Forms/Input',
+  title: "Forms/Input",
   component: InputComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -48,21 +48,21 @@ and reactive forms integration.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     type: {
-      control: 'select',
-      options: ['text', 'email', 'password', 'number', 'tel', 'url', 'search'],
+      control: "select",
+      options: ["text", "email", "password", "number", "tel", "url", "search"],
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
   },
   decorators: [
     (story) => ({
       ...story,
-      styles: ['div { width: 320px; }'],
+      styles: ["div { width: 320px; }"],
     }),
   ],
 };
@@ -75,10 +75,10 @@ type Story = StoryObj<InputComponent>;
  */
 export const Default: Story = {
   args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    type: 'text',
-    size: 'md',
+    label: "Email",
+    placeholder: "Enter your email",
+    type: "text",
+    size: "md",
   },
 };
 
@@ -87,10 +87,10 @@ export const Default: Story = {
  */
 export const WithLeadingIcon: Story = {
   args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    leadingIcon: 'mail',
-    type: 'email',
+    label: "Email",
+    placeholder: "Enter your email",
+    leadingIcon: "mail",
+    type: "email",
   },
 };
 
@@ -99,10 +99,10 @@ export const WithLeadingIcon: Story = {
  */
 export const WithTrailingIcon: Story = {
   args: {
-    label: 'Search',
-    placeholder: 'Search...',
-    trailingIcon: 'search',
-    type: 'search',
+    label: "Search",
+    placeholder: "Search...",
+    trailingIcon: "search",
+    type: "search",
   },
 };
 
@@ -111,11 +111,11 @@ export const WithTrailingIcon: Story = {
  */
 export const WithBothIcons: Story = {
   args: {
-    label: 'Website',
-    placeholder: 'https://example.com',
-    leadingIcon: 'globe',
-    trailingIcon: 'external-link',
-    type: 'url',
+    label: "Website",
+    placeholder: "https://example.com",
+    leadingIcon: "globe",
+    trailingIcon: "external-link",
+    type: "url",
   },
 };
 
@@ -124,10 +124,10 @@ export const WithBothIcons: Story = {
  */
 export const Password: Story = {
   args: {
-    label: 'Password',
-    placeholder: 'Enter your password',
-    type: 'password',
-    leadingIcon: 'lock',
+    label: "Password",
+    placeholder: "Enter your password",
+    type: "password",
+    leadingIcon: "lock",
     showPasswordToggle: true,
   },
 };
@@ -137,10 +137,10 @@ export const Password: Story = {
  */
 export const Small: Story = {
   args: {
-    label: 'Small Input',
-    placeholder: 'Small placeholder',
-    size: 'sm',
-    leadingIcon: 'user',
+    label: "Small Input",
+    placeholder: "Small placeholder",
+    size: "sm",
+    leadingIcon: "user",
   },
 };
 
@@ -149,10 +149,10 @@ export const Small: Story = {
  */
 export const Large: Story = {
   args: {
-    label: 'Large Input',
-    placeholder: 'Large placeholder',
-    size: 'lg',
-    leadingIcon: 'user',
+    label: "Large Input",
+    placeholder: "Large placeholder",
+    size: "lg",
+    leadingIcon: "user",
   },
 };
 
@@ -161,8 +161,8 @@ export const Large: Story = {
  */
 export const Required: Story = {
   args: {
-    label: 'Required Field',
-    placeholder: 'This field is required',
+    label: "Required Field",
+    placeholder: "This field is required",
     required: true,
   },
 };
@@ -172,10 +172,10 @@ export const Required: Story = {
  */
 export const WithError: Story = {
   args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    leadingIcon: 'mail',
-    error: 'Please enter a valid email address',
+    label: "Email",
+    placeholder: "Enter your email",
+    leadingIcon: "mail",
+    error: "Please enter a valid email address",
   },
 };
 
@@ -184,10 +184,10 @@ export const WithError: Story = {
  */
 export const WithHint: Story = {
   args: {
-    label: 'Username',
-    placeholder: 'Choose a username',
-    leadingIcon: 'user',
-    hint: 'Must be between 3-20 characters',
+    label: "Username",
+    placeholder: "Choose a username",
+    leadingIcon: "user",
+    hint: "Must be between 3-20 characters",
   },
 };
 
@@ -196,10 +196,10 @@ export const WithHint: Story = {
  */
 export const Disabled: Story = {
   args: {
-    label: 'Disabled Input',
-    placeholder: 'This input is disabled',
+    label: "Disabled Input",
+    placeholder: "This input is disabled",
     disabled: true,
-    leadingIcon: 'lock',
+    leadingIcon: "lock",
   },
 };
 
@@ -208,8 +208,8 @@ export const Disabled: Story = {
  */
 export const ReadOnly: Story = {
   args: {
-    label: 'Read Only',
-    placeholder: 'This input is read-only',
+    label: "Read Only",
+    placeholder: "This input is read-only",
     readonly: true,
   },
 };
@@ -219,11 +219,11 @@ export const ReadOnly: Story = {
  */
 export const PhoneNumber: Story = {
   args: {
-    label: 'Phone Number',
-    placeholder: '+49 123 456789',
-    type: 'tel',
-    leadingIcon: 'phone',
-    autocomplete: 'tel',
+    label: "Phone Number",
+    placeholder: "+49 123 456789",
+    type: "tel",
+    leadingIcon: "phone",
+    autocomplete: "tel",
   },
 };
 
@@ -232,10 +232,10 @@ export const PhoneNumber: Story = {
  */
 export const NumberInput: Story = {
   args: {
-    label: 'Quantity',
-    placeholder: '0',
-    type: 'number',
-    leadingIcon: 'hash',
+    label: "Quantity",
+    placeholder: "0",
+    type: "number",
+    leadingIcon: "hash",
   },
 };
 

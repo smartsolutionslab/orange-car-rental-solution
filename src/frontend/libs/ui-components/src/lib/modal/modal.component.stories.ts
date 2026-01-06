@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { ModalComponent } from './modal.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { ModalComponent } from "./modal.component";
 
 const meta: Meta<ModalComponent> = {
-  title: 'Components/Modal',
+  title: "Components/Modal",
   component: ModalComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [ModalComponent],
@@ -13,27 +13,28 @@ const meta: Meta<ModalComponent> = {
   ],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg', 'xl'],
-      description: 'Size of the modal dialog',
+      control: "select",
+      options: ["sm", "md", "lg", "xl"],
+      description: "Size of the modal dialog",
     },
     showFooter: {
-      control: 'boolean',
-      description: 'Whether to show the footer section',
+      control: "boolean",
+      description: "Whether to show the footer section",
     },
     closeOnEscape: {
-      control: 'boolean',
-      description: 'Close modal when Escape key is pressed',
+      control: "boolean",
+      description: "Close modal when Escape key is pressed",
     },
     closeOnOverlayClick: {
-      control: 'boolean',
-      description: 'Close modal when clicking the overlay',
+      control: "boolean",
+      description: "Close modal when clicking the overlay",
     },
   },
   parameters: {
     docs: {
       description: {
-        component: 'A reusable modal dialog with overlay, header, body, and footer sections. Supports keyboard navigation and accessible ARIA attributes.',
+        component:
+          "A reusable modal dialog with overlay, header, body, and footer sections. Supports keyboard navigation and accessible ARIA attributes.",
       },
     },
   },
@@ -47,7 +48,7 @@ export const Default: Story = {
     props: {
       ...args,
       isOpen: true,
-      onClose: () => console.log('Modal closed'),
+      onClose: () => console.log("Modal closed"),
     },
     template: `
       <ui-modal
@@ -68,8 +69,8 @@ export const Default: Story = {
     `,
   }),
   args: {
-    title: 'Edit Vehicle',
-    size: 'md',
+    title: "Edit Vehicle",
+    size: "md",
     showFooter: true,
     closeOnEscape: true,
     closeOnOverlayClick: true,
@@ -92,7 +93,7 @@ export const SmallModal: Story = {
     `,
   }),
   args: {
-    title: 'Confirm Action',
+    title: "Confirm Action",
   },
 };
 
@@ -133,7 +134,7 @@ export const LargeModal: Story = {
     `,
   }),
   args: {
-    title: 'Vehicle Information',
+    title: "Vehicle Information",
   },
 };
 
@@ -152,7 +153,7 @@ export const WithoutFooter: Story = {
     `,
   }),
   args: {
-    title: 'Information',
+    title: "Information",
   },
 };
 
@@ -193,7 +194,8 @@ export const AllSizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Visual comparison of all modal sizes. The actual modals are rendered as overlays, these are static representations.',
+        story:
+          "Visual comparison of all modal sizes. The actual modals are rendered as overlays, these are static representations.",
       },
     },
   },

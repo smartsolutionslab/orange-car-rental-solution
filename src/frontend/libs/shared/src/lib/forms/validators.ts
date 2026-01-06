@@ -1,5 +1,9 @@
-import { FormGroup } from '@angular/forms';
-import type { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import { FormGroup } from "@angular/forms";
+import type {
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from "@angular/forms";
 
 /**
  * Custom Validators
@@ -73,7 +77,10 @@ export const CustomValidators = {
       let age = today.getFullYear() - birthDate.getFullYear();
       const monthDiff = today.getMonth() - birthDate.getMonth();
 
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      if (
+        monthDiff < 0 ||
+        (monthDiff === 0 && today.getDate() < birthDate.getDate())
+      ) {
         age--;
       }
 
@@ -115,7 +122,9 @@ export const CustomValidators = {
       const thisDate = new Date(control.value);
       const otherDate = new Date(otherControl.value);
 
-      return thisDate < otherDate ? null : { dateAfter: { other: otherControlName } };
+      return thisDate < otherDate
+        ? null
+        : { dateAfter: { other: otherControlName } };
     };
   },
 
@@ -129,7 +138,7 @@ export const CustomValidators = {
 
       // German phone: optional +49 or 0, then digits (spaces/dashes allowed)
       const phoneRegex = /^(\+49|0)[1-9][0-9\s\-]{6,14}$/;
-      const cleanValue = control.value.replace(/[\s\-]/g, '');
+      const cleanValue = control.value.replace(/[\s\-]/g, "");
 
       return phoneRegex.test(cleanValue) ? null : { invalidPhone: true };
     };
@@ -144,7 +153,9 @@ export const CustomValidators = {
       if (!control.value) return null;
 
       const postalRegex = /^[0-9]{5}$/;
-      return postalRegex.test(control.value) ? null : { invalidPostalCode: true };
+      return postalRegex.test(control.value)
+        ? null
+        : { invalidPostalCode: true };
     };
   },
 
@@ -158,7 +169,9 @@ export const CustomValidators = {
 
       // German format: 1-3 letters, space, 1-2 letters, space, 1-4 digits
       const plateRegex = /^[A-Z]{1,3}\s?[A-Z]{1,2}\s?\d{1,4}$/i;
-      return plateRegex.test(control.value) ? null : { invalidLicensePlate: true };
+      return plateRegex.test(control.value)
+        ? null
+        : { invalidLicensePlate: true };
     };
   },
 
@@ -172,7 +185,9 @@ export const CustomValidators = {
       const controls = group.controls;
       if (!controls) return null;
 
-      const hasChecked = Object.keys(controls).some(key => controls[key].value === true);
+      const hasChecked = Object.keys(controls).some(
+        (key) => controls[key].value === true,
+      );
       return hasChecked ? null : { noneSelected: true };
     };
   },
@@ -185,14 +200,20 @@ export const CustomValidators = {
    */
   numberRange(min: number, max: number): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (control.value === null || control.value === undefined || control.value === '') {
+      if (
+        control.value === null ||
+        control.value === undefined ||
+        control.value === ""
+      ) {
         return null;
       }
 
       const value = Number(control.value);
       if (isNaN(value)) return { notANumber: true };
 
-      return value >= min && value <= max ? null : { outOfRange: { min, max, actual: value } };
+      return value >= min && value <= max
+        ? null
+        : { outOfRange: { min, max, actual: value } };
     };
   },
 
@@ -202,12 +223,16 @@ export const CustomValidators = {
    */
   positiveNumber(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      if (control.value === null || control.value === undefined || control.value === '') {
+      if (
+        control.value === null ||
+        control.value === undefined ||
+        control.value === ""
+      ) {
         return null;
       }
 
       const value = Number(control.value);
       return !isNaN(value) && value > 0 ? null : { notPositive: true };
     };
-  }
+  },
 };

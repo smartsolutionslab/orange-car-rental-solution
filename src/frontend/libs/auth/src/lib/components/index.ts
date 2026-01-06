@@ -1,7 +1,7 @@
 // Auth Form Components
-export { LoginFormComponent } from './login-form';
-export { RegisterFormComponent } from './register-form';
-export { ForgotPasswordFormComponent } from './forgot-password-form';
+export { LoginFormComponent } from "./login-form";
+export { RegisterFormComponent } from "./register-form";
+export { ForgotPasswordFormComponent } from "./forgot-password-form";
 
 // Types and Configurations
 export {
@@ -18,4 +18,4 @@ export {
   DEFAULT_LOGIN_LABELS_DE,
   DEFAULT_REGISTER_LABELS_DE,
   DEFAULT_FORGOT_PASSWORD_LABELS_DE,
-} from './auth-forms.types';
+} from "./auth-forms.types";

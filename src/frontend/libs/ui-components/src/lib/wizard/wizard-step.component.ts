@@ -1,4 +1,11 @@
-import { Component, input, signal, TemplateRef, contentChild, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  signal,
+  TemplateRef,
+  contentChild,
+  computed,
+} from "@angular/core";
 
 /**
  * Wizard Step Component
@@ -14,10 +21,16 @@ import { Component, input, signal, TemplateRef, contentChild, computed } from '@
  * </ocr-wizard-step>
  */
 @Component({
-  selector: 'ocr-wizard-step',
+  selector: "ocr-wizard-step",
   standalone: true,
   template: `<ng-content></ng-content>`,
-  styles: [`:host { display: contents; }`]
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
 })
 export class WizardStepComponent {
   /**

@@ -3,7 +3,7 @@
  * Matches backend LicenseNumber value object
  * Various international formats supported
  */
-export type LicenseNumber = string & { readonly __brand: 'LicenseNumber' };
+export type LicenseNumber = string & { readonly __brand: "LicenseNumber" };
 
 const MIN_LENGTH = 3;
 const MAX_LENGTH = 30;
@@ -23,7 +23,9 @@ export function createLicenseNumber(value: string): LicenseNumber {
 /**
  * Safely convert a string to LicenseNumber, returning undefined if invalid
  */
-export function toLicenseNumber(value: string | null | undefined): LicenseNumber | undefined {
+export function toLicenseNumber(
+  value: string | null | undefined,
+): LicenseNumber | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isLicenseNumber(trimmed) ? trimmed : undefined;

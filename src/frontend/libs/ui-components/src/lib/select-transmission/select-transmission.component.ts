@@ -1,9 +1,9 @@
-import { Component, forwardRef, input } from '@angular/core';
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef, input } from "@angular/core";
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 import {
   TransmissionType,
   TransmissionTypeLabel,
-} from '@orange-car-rental/vehicle-api';
+} from "@orange-car-rental/vehicle-api";
 
 type SelectOption<T> = {
   value: T;
@@ -11,7 +11,7 @@ type SelectOption<T> = {
 };
 
 @Component({
-  selector: 'ui-select-transmission',
+  selector: "ui-select-transmission",
   standalone: true,
   template: `
     <select
@@ -38,25 +38,25 @@ type SelectOption<T> = {
   ],
 })
 export class SelectTransmissionComponent implements ControlValueAccessor {
-  readonly id = input<string>('transmission');
-  readonly placeholder = input<string>('Alle Getriebe');
-  readonly cssClass = input<string>('form-input');
+  readonly id = input<string>("transmission");
+  readonly placeholder = input<string>("Alle Getriebe");
+  readonly cssClass = input<string>("form-input");
 
-  value: string = '';
+  value: string = "";
   disabled = false;
 
-  readonly options: SelectOption<string>[] = Object.entries(TransmissionType).map(
-    ([, enumValue]) => ({
-      value: enumValue,
-      label: TransmissionTypeLabel[enumValue as TransmissionType],
-    })
-  );
+  readonly options: SelectOption<string>[] = Object.entries(
+    TransmissionType,
+  ).map(([, enumValue]) => ({
+    value: enumValue,
+    label: TransmissionTypeLabel[enumValue as TransmissionType],
+  }));
 
   private onChange: (value: string) => void = () => {};
   onTouched: () => void = () => {};
 
   writeValue(value: string): void {
-    this.value = value ?? '';
+    this.value = value ?? "";
   }
 
   registerOnChange(fn: (value: string) => void): void {

@@ -1,30 +1,30 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { StatusBadgeComponent } from './status-badge.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { StatusBadgeComponent } from "./status-badge.component";
 
 const meta: Meta<StatusBadgeComponent> = {
-  title: 'Components/StatusBadge',
+  title: "Components/StatusBadge",
   component: StatusBadgeComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     type: {
-      control: 'radio',
-      options: ['vehicle', 'reservation'],
-      description: 'The type of status badge to display',
+      control: "radio",
+      options: ["vehicle", "reservation"],
+      description: "The type of status badge to display",
     },
     status: {
-      control: 'select',
+      control: "select",
       options: [
-        'Available',
-        'Rented',
-        'Maintenance',
-        'OutOfService',
-        'Confirmed',
-        'Active',
-        'Pending',
-        'Completed',
-        'Cancelled',
+        "Available",
+        "Rented",
+        "Maintenance",
+        "OutOfService",
+        "Confirmed",
+        "Active",
+        "Pending",
+        "Completed",
+        "Cancelled",
       ],
-      description: 'The status value to display',
+      description: "The status value to display",
     },
   },
   parameters: {
@@ -59,65 +59,65 @@ type Story = StoryObj<StatusBadgeComponent>;
 // Vehicle Status Stories
 export const VehicleAvailable: Story = {
   args: {
-    type: 'vehicle',
-    status: 'Available',
+    type: "vehicle",
+    status: "Available",
   },
 };
 
 export const VehicleRented: Story = {
   args: {
-    type: 'vehicle',
-    status: 'Rented',
+    type: "vehicle",
+    status: "Rented",
   },
 };
 
 export const VehicleMaintenance: Story = {
   args: {
-    type: 'vehicle',
-    status: 'Maintenance',
+    type: "vehicle",
+    status: "Maintenance",
   },
 };
 
 export const VehicleOutOfService: Story = {
   args: {
-    type: 'vehicle',
-    status: 'OutOfService',
+    type: "vehicle",
+    status: "OutOfService",
   },
 };
 
 // Reservation Status Stories
 export const ReservationConfirmed: Story = {
   args: {
-    type: 'reservation',
-    status: 'Confirmed',
+    type: "reservation",
+    status: "Confirmed",
   },
 };
 
 export const ReservationActive: Story = {
   args: {
-    type: 'reservation',
-    status: 'Active',
+    type: "reservation",
+    status: "Active",
   },
 };
 
 export const ReservationPending: Story = {
   args: {
-    type: 'reservation',
-    status: 'Pending',
+    type: "reservation",
+    status: "Pending",
   },
 };
 
 export const ReservationCompleted: Story = {
   args: {
-    type: 'reservation',
-    status: 'Completed',
+    type: "reservation",
+    status: "Completed",
   },
 };
 
 export const ReservationCancelled: Story = {
   args: {
-    type: 'reservation',
-    status: 'Cancelled',
+    type: "reservation",
+    status: "Cancelled",
   },
 };
 
@@ -136,7 +136,7 @@ export const AllVehicleStatuses: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'All available vehicle statuses displayed together.',
+        story: "All available vehicle statuses displayed together.",
       },
     },
   },
@@ -158,7 +158,7 @@ export const AllReservationStatuses: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'All available reservation statuses displayed together.',
+        story: "All available reservation statuses displayed together.",
       },
     },
   },

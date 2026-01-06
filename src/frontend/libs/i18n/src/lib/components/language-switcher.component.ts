@@ -1,5 +1,5 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
-import { I18nService } from '../i18n.service';
+import { Component, inject, ChangeDetectionStrategy } from "@angular/core";
+import { I18nService } from "../i18n.service";
 
 /**
  * Language Switcher Component
@@ -13,7 +13,7 @@ import { I18nService } from '../i18n.service';
  * ```
  */
 @Component({
-  selector: 'lib-language-switcher',
+  selector: "lib-language-switcher",
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `

@@ -161,7 +161,11 @@
               formControlName="firstName"
               [required]="true"
               leadingIcon="user"
-              [error]="bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched ? ('booking.errors.minLength2' | translate) : null"
+              [error]="
+                bookingForm.get('firstName')?.invalid && bookingForm.get('firstName')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
+              "
             />
             <ocr-input
               [label]="'common.labels.lastName' | translate"
@@ -169,7 +173,11 @@
               formControlName="lastName"
               [required]="true"
               leadingIcon="user"
-              [error]="bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched ? ('booking.errors.minLength2' | translate) : null"
+              [error]="
+                bookingForm.get('lastName')?.invalid && bookingForm.get('lastName')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
+              "
             />
           </div>
 
@@ -181,7 +189,11 @@
             [required]="true"
             leadingIcon="mail"
             autocomplete="email"
-            [error]="bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched ? ('booking.errors.email' | translate) : null"
+            [error]="
+              bookingForm.get('email')?.invalid && bookingForm.get('email')?.touched
+                ? ('booking.errors.email' | translate)
+                : null
+            "
           />
 
           <div ocrFormRow [columns]="2">
@@ -193,7 +205,11 @@
               [required]="true"
               leadingIcon="phone"
               autocomplete="tel"
-              [error]="bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched ? ('booking.errors.phone' | translate) : null"
+              [error]="
+                bookingForm.get('phoneNumber')?.invalid && bookingForm.get('phoneNumber')?.touched
+                  ? ('booking.errors.phone' | translate)
+                  : null
+              "
             />
             <ocr-input
               [label]="'common.labels.dateOfBirth' | translate"
@@ -202,7 +218,11 @@
               [required]="true"
               leadingIcon="calendar"
               [max]="today"
-              [error]="bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched ? ('booking.errors.dateOfBirth' | translate) : null"
+              [error]="
+                bookingForm.get('dateOfBirth')?.invalid && bookingForm.get('dateOfBirth')?.touched
+                  ? ('booking.errors.dateOfBirth' | translate)
+                  : null
+              "
             />
           </div>
         </div>
@@ -224,7 +244,11 @@
             [required]="true"
             leadingIcon="home"
             autocomplete="street-address"
-            [error]="bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched ? ('booking.errors.minLength5' | translate) : null"
+            [error]="
+              bookingForm.get('street')?.invalid && bookingForm.get('street')?.touched
+                ? ('booking.errors.minLength5' | translate)
+                : null
+            "
           />
 
           <div ocrFormRow [columns]="2">
@@ -235,7 +259,11 @@
               [required]="true"
               leadingIcon="hash"
               autocomplete="postal-code"
-              [error]="bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched ? ('booking.errors.postalCode' | translate) : null"
+              [error]="
+                bookingForm.get('postalCode')?.invalid && bookingForm.get('postalCode')?.touched
+                  ? ('booking.errors.postalCode' | translate)
+                  : null
+              "
             />
             <ocr-input
               [label]="'common.labels.city' | translate"
@@ -244,7 +272,11 @@
               [required]="true"
               leadingIcon="building"
               autocomplete="address-level2"
-              [error]="bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched ? ('booking.errors.minLength2' | translate) : null"
+              [error]="
+                bookingForm.get('city')?.invalid && bookingForm.get('city')?.touched
+                  ? ('booking.errors.minLength2' | translate)
+                  : null
+              "
             />
           </div>
 
@@ -254,7 +286,11 @@
             [required]="true"
             leadingIcon="globe"
             autocomplete="country-name"
-            [error]="bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched ? ('booking.errors.country' | translate) : null"
+            [error]="
+              bookingForm.get('country')?.invalid && bookingForm.get('country')?.touched
+                ? ('booking.errors.country' | translate)
+                : null
+            "
           />
         </div>
       </ocr-form-section>
@@ -274,7 +310,11 @@
             formControlName="licenseNumber"
             [required]="true"
             leadingIcon="credit-card"
-            [error]="bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched ? ('booking.errors.minLength5' | translate) : null"
+            [error]="
+              bookingForm.get('licenseNumber')?.invalid && bookingForm.get('licenseNumber')?.touched
+                ? ('booking.errors.minLength5' | translate)
+                : null
+            "
           />
 
           <ocr-input
@@ -282,7 +322,12 @@
             formControlName="licenseIssueCountry"
             [required]="true"
             leadingIcon="globe"
-            [error]="bookingForm.get('licenseIssueCountry')?.invalid && bookingForm.get('licenseIssueCountry')?.touched ? ('booking.errors.licenseIssueCountry' | translate) : null"
+            [error]="
+              bookingForm.get('licenseIssueCountry')?.invalid &&
+              bookingForm.get('licenseIssueCountry')?.touched
+                ? ('booking.errors.licenseIssueCountry' | translate)
+                : null
+            "
           />
 
           <div ocrFormRow [columns]="2">
@@ -293,7 +338,12 @@
               [required]="true"
               leadingIcon="calendar"
               [max]="maxLicenseIssueDate()"
-              [error]="bookingForm.get('licenseIssueDate')?.invalid && bookingForm.get('licenseIssueDate')?.touched ? ('booking.errors.licenseIssueDate' | translate) : null"
+              [error]="
+                bookingForm.get('licenseIssueDate')?.invalid &&
+                bookingForm.get('licenseIssueDate')?.touched
+                  ? ('booking.errors.licenseIssueDate' | translate)
+                  : null
+              "
             />
             <ocr-input
               [label]="'booking.fields.licenseExpiryDate' | translate"
@@ -302,7 +352,12 @@
               [required]="true"
               leadingIcon="calendar"
               [min]="minLicenseExpiryDate()"
-              [error]="bookingForm.get('licenseExpiryDate')?.invalid && bookingForm.get('licenseExpiryDate')?.touched ? ('booking.errors.licenseExpiryDate' | translate) : null"
+              [error]="
+                bookingForm.get('licenseExpiryDate')?.invalid &&
+                bookingForm.get('licenseExpiryDate')?.touched
+                  ? ('booking.errors.licenseExpiryDate' | translate)
+                  : null
+              "
             />
           </div>
         </div>

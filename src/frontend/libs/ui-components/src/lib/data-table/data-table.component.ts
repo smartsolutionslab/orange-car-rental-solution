@@ -6,14 +6,14 @@ import {
   computed,
   contentChildren,
   TemplateRef,
-} from '@angular/core';
-import type { TrackByFunction } from '@angular/core';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { DataTableColumnDirective } from './data-table-column.directive';
-import { PaginationComponent } from '../pagination/pagination.component';
-import { LoadingStateComponent } from '../state-display/loading-state.component';
-import { EmptyStateComponent } from '../state-display/empty-state.component';
+} from "@angular/core";
+import type { TrackByFunction } from "@angular/core";
+import { CommonModule, NgTemplateOutlet } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { DataTableColumnDirective } from "./data-table-column.directive";
+import { PaginationComponent } from "../pagination/pagination.component";
+import { LoadingStateComponent } from "../state-display/loading-state.component";
+import { EmptyStateComponent } from "../state-display/empty-state.component";
 import type {
   DataTableColumn,
   DataTableSort,
@@ -23,7 +23,7 @@ import type {
   SortDirection,
   DataTableCellContext,
   DataTableHeaderContext,
-} from './data-table.types';
+} from "./data-table.types";
 
 /**
  * Data Table Component
@@ -42,7 +42,7 @@ import type {
  * </ocr-data-table>
  */
 @Component({
-  selector: 'ocr-data-table',
+  selector: "ocr-data-table",
   standalone: true,
   imports: [
     CommonModule,
@@ -72,7 +72,9 @@ import type {
               aria-label="Filter löschen"
             >
               <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
               </svg>
             </button>
           }
@@ -114,7 +116,9 @@ import type {
                   <th
                     class="data-table__th"
                     [class.data-table__th--sortable]="col.sortable"
-                    [class.data-table__th--sorted]="currentSort()?.column === col.key"
+                    [class.data-table__th--sorted]="
+                      currentSort()?.column === col.key
+                    "
                     [class.data-table__th--hide-mobile]="col.hideOnMobile"
                     [style.width]="col.width"
                     [style.min-width]="col.minWidth"
@@ -127,7 +131,10 @@ import type {
                   >
                     @if (col.headerTemplate) {
                       <ng-container
-                        *ngTemplateOutlet="col.headerTemplate; context: getHeaderContext(col)"
+                        *ngTemplateOutlet="
+                          col.headerTemplate;
+                          context: getHeaderContext(col)
+                        "
                       ></ng-container>
                     } @else {
                       <span class="data-table__th-content">
@@ -135,18 +142,24 @@ import type {
                         @if (col.sortable) {
                           <span class="data-table__sort-icon">
                             @if (currentSort()?.column === col.key) {
-                              @if (currentSort()?.direction === 'asc') {
+                              @if (currentSort()?.direction === "asc") {
                                 <svg viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M7 14l5-5 5 5z"/>
+                                  <path d="M7 14l5-5 5 5z" />
                                 </svg>
                               } @else {
                                 <svg viewBox="0 0 24 24" fill="currentColor">
-                                  <path d="M7 10l5 5 5-5z"/>
+                                  <path d="M7 10l5 5 5-5z" />
                                 </svg>
                               }
                             } @else {
-                              <svg viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.3">
-                                <path d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"/>
+                              <svg
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                style="opacity: 0.3"
+                              >
+                                <path
+                                  d="M12 5.83L15.17 9l1.41-1.41L12 3 7.41 7.59 8.83 9 12 5.83zm0 12.34L8.83 15l-1.41 1.41L12 21l4.59-4.59L15.17 15 12 18.17z"
+                                />
                               </svg>
                             }
                           </span>
@@ -158,7 +171,11 @@ import type {
               </tr>
             </thead>
             <tbody>
-              @for (item of displayData(); track trackByFn()(i, item); let i = $index) {
+              @for (
+                item of displayData();
+                track trackByFn()(i, item);
+                let i = $index
+              ) {
                 <tr
                   class="data-table__row"
                   [class.data-table__row--selected]="isSelected(item)"
@@ -184,7 +201,10 @@ import type {
                     >
                       @if (col.cellTemplate) {
                         <ng-container
-                          *ngTemplateOutlet="col.cellTemplate; context: getCellContext(item, col, i)"
+                          *ngTemplateOutlet="
+                            col.cellTemplate;
+                            context: getCellContext(item, col, i)
+                          "
                         ></ng-container>
                       } @else {
                         {{ getCellValue(item, col) }}
@@ -199,7 +219,11 @@ import type {
 
         <!-- Mobile card view -->
         <div class="data-table__cards">
-          @for (item of displayData(); track trackByFn()(i, item); let i = $index) {
+          @for (
+            item of displayData();
+            track trackByFn()(i, item);
+            let i = $index
+          ) {
             <div
               class="data-table__card"
               [class.data-table__card--selected]="isSelected(item)"
@@ -223,7 +247,10 @@ import type {
                     <span class="data-table__card-value">
                       @if (col.cellTemplate) {
                         <ng-container
-                          *ngTemplateOutlet="col.cellTemplate; context: getCellContext(item, col, i)"
+                          *ngTemplateOutlet="
+                            col.cellTemplate;
+                            context: getCellContext(item, col, i)
+                          "
                         ></ng-container>
                       } @else {
                         {{ getCellValue(item, col) }}
@@ -254,240 +281,242 @@ import type {
       }
     </div>
   `,
-  styles: [`
-    .data-table {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .data-table--loading {
-      min-height: 200px;
-    }
-
-    .data-table__filter {
-      position: relative;
-      max-width: 20rem;
-    }
-
-    .data-table__filter-input {
-      width: 100%;
-      padding: 0.5rem 2.5rem 0.5rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transition: border-color 0.15s ease;
-    }
-
-    .data-table__filter-input:focus {
-      outline: none;
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
-
-    .data-table__filter-clear {
-      position: absolute;
-      right: 0.5rem;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      padding: 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: #9ca3af;
-      border-radius: 0.25rem;
-    }
-
-    .data-table__filter-clear:hover {
-      color: #6b7280;
-      background-color: #f3f4f6;
-    }
-
-    .data-table__filter-clear svg {
-      width: 1rem;
-      height: 1rem;
-    }
-
-    .data-table__wrapper {
-      overflow-x: auto;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-    }
-
-    .data-table__table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-
-    .data-table__th {
-      padding: 0.75rem 1rem;
-      text-align: left;
-      font-weight: 600;
-      color: #374151;
-      background-color: #f9fafb;
-      border-bottom: 1px solid #e5e7eb;
-      white-space: nowrap;
-    }
-
-    .data-table__th--sortable {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .data-table__th--sortable:hover {
-      background-color: #f3f4f6;
-    }
-
-    .data-table__th--sortable:focus-visible {
-      outline: 2px solid #f97316;
-      outline-offset: -2px;
-    }
-
-    .data-table__th--sorted {
-      color: #f97316;
-    }
-
-    .data-table__th--checkbox {
-      width: 3rem;
-      text-align: center;
-    }
-
-    .data-table__th-content {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .data-table__sort-icon {
-      display: flex;
-      align-items: center;
-    }
-
-    .data-table__sort-icon svg {
-      width: 1rem;
-      height: 1rem;
-    }
-
-    .data-table__row {
-      transition: background-color 0.15s ease;
-    }
-
-    .data-table__row:hover {
-      background-color: #f9fafb;
-    }
-
-    .data-table__row--selected {
-      background-color: #fff7ed !important;
-    }
-
-    .data-table__row--clickable {
-      cursor: pointer;
-    }
-
-    .data-table__td {
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #e5e7eb;
-      color: #374151;
-    }
-
-    .data-table__td--checkbox {
-      width: 3rem;
-      text-align: center;
-    }
-
-    /* Mobile card view */
-    .data-table__cards {
-      display: none;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .data-table__card {
-      display: flex;
-      gap: 0.75rem;
-      padding: 1rem;
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-      transition: background-color 0.15s ease;
-    }
-
-    .data-table__card--selected {
-      background-color: #fff7ed;
-      border-color: #fed7aa;
-    }
-
-    .data-table__card--clickable {
-      cursor: pointer;
-    }
-
-    .data-table__card--clickable:hover {
-      background-color: #f9fafb;
-    }
-
-    .data-table__card-checkbox {
-      padding-top: 0.125rem;
-    }
-
-    .data-table__card-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .data-table__card-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-
-    .data-table__card-label {
-      font-size: 0.75rem;
-      color: #6b7280;
-      flex-shrink: 0;
-    }
-
-    .data-table__card-value {
-      font-size: 0.875rem;
-      color: #111827;
-      text-align: right;
-    }
-
-    .data-table__pagination {
-      padding-top: 0.5rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .data-table__wrapper {
-        display: none;
-      }
-
-      .data-table__cards {
+  styles: [
+    `
+      .data-table {
         display: flex;
+        flex-direction: column;
+        gap: 1rem;
       }
 
-      .data-table__th--hide-mobile,
-      .data-table__td--hide-mobile {
+      .data-table--loading {
+        min-height: 200px;
+      }
+
+      .data-table__filter {
+        position: relative;
+        max-width: 20rem;
+      }
+
+      .data-table__filter-input {
+        width: 100%;
+        padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition: border-color 0.15s ease;
+      }
+
+      .data-table__filter-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
+
+      .data-table__filter-clear {
+        position: absolute;
+        right: 0.5rem;
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        padding: 0;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #9ca3af;
+        border-radius: 0.25rem;
+      }
+
+      .data-table__filter-clear:hover {
+        color: #6b7280;
+        background-color: #f3f4f6;
+      }
+
+      .data-table__filter-clear svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .data-table__wrapper {
+        overflow-x: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+      }
+
+      .data-table__table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+      }
+
+      .data-table__th {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        background-color: #f9fafb;
+        border-bottom: 1px solid #e5e7eb;
+        white-space: nowrap;
+      }
+
+      .data-table__th--sortable {
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .data-table__th--sortable:hover {
+        background-color: #f3f4f6;
+      }
+
+      .data-table__th--sortable:focus-visible {
+        outline: 2px solid #f97316;
+        outline-offset: -2px;
+      }
+
+      .data-table__th--sorted {
+        color: #f97316;
+      }
+
+      .data-table__th--checkbox {
+        width: 3rem;
+        text-align: center;
+      }
+
+      .data-table__th-content {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .data-table__sort-icon {
+        display: flex;
+        align-items: center;
+      }
+
+      .data-table__sort-icon svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
+      .data-table__row {
+        transition: background-color 0.15s ease;
+      }
+
+      .data-table__row:hover {
+        background-color: #f9fafb;
+      }
+
+      .data-table__row--selected {
+        background-color: #fff7ed !important;
+      }
+
+      .data-table__row--clickable {
+        cursor: pointer;
+      }
+
+      .data-table__td {
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e5e7eb;
+        color: #374151;
+      }
+
+      .data-table__td--checkbox {
+        width: 3rem;
+        text-align: center;
+      }
+
+      /* Mobile card view */
+      .data-table__cards {
         display: none;
+        flex-direction: column;
+        gap: 0.75rem;
       }
-    }
 
-    /* Checkbox styling */
-    input[type="checkbox"] {
-      width: 1rem;
-      height: 1rem;
-      cursor: pointer;
-      accent-color: #f97316;
-    }
-  `]
+      .data-table__card {
+        display: flex;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        transition: background-color 0.15s ease;
+      }
+
+      .data-table__card--selected {
+        background-color: #fff7ed;
+        border-color: #fed7aa;
+      }
+
+      .data-table__card--clickable {
+        cursor: pointer;
+      }
+
+      .data-table__card--clickable:hover {
+        background-color: #f9fafb;
+      }
+
+      .data-table__card-checkbox {
+        padding-top: 0.125rem;
+      }
+
+      .data-table__card-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .data-table__card-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .data-table__card-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        flex-shrink: 0;
+      }
+
+      .data-table__card-value {
+        font-size: 0.875rem;
+        color: #111827;
+        text-align: right;
+      }
+
+      .data-table__pagination {
+        padding-top: 0.5rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .data-table__wrapper {
+          display: none;
+        }
+
+        .data-table__cards {
+          display: flex;
+        }
+
+        .data-table__th--hide-mobile,
+        .data-table__td--hide-mobile {
+          display: none;
+        }
+      }
+
+      /* Checkbox styling */
+      input[type="checkbox"] {
+        width: 1rem;
+        height: 1rem;
+        cursor: pointer;
+        accent-color: #f97316;
+      }
+    `,
+  ],
 })
 export class DataTableComponent<T = unknown> {
   /**
@@ -508,7 +537,7 @@ export class DataTableComponent<T = unknown> {
   /**
    * Loading message
    */
-  readonly loadingMessage = input('Lade Daten...');
+  readonly loadingMessage = input("Lade Daten...");
 
   /**
    * Whether rows are selectable
@@ -518,7 +547,7 @@ export class DataTableComponent<T = unknown> {
   /**
    * Selection mode
    */
-  readonly selectionMode = input<'single' | 'multiple'>('multiple');
+  readonly selectionMode = input<"single" | "multiple">("multiple");
 
   /**
    * Whether rows are clickable
@@ -533,7 +562,7 @@ export class DataTableComponent<T = unknown> {
   /**
    * Filter placeholder text
    */
-  readonly filterPlaceholder = input('Suchen...');
+  readonly filterPlaceholder = input("Suchen...");
 
   /**
    * Whether to enable client-side pagination
@@ -558,32 +587,36 @@ export class DataTableComponent<T = unknown> {
   /**
    * Item label for pagination
    */
-  readonly itemLabel = input('Eintrag');
+  readonly itemLabel = input("Eintrag");
 
   /**
    * Item label plural for pagination
    */
-  readonly itemLabelPlural = input('Einträge');
+  readonly itemLabelPlural = input("Einträge");
 
   /**
    * Empty state icon
    */
-  readonly emptyIcon = input<'default' | 'car' | 'reservation' | 'location' | 'search' | 'document'>('search');
+  readonly emptyIcon = input<
+    "default" | "car" | "reservation" | "location" | "search" | "document"
+  >("search");
 
   /**
    * Empty state title
    */
-  readonly emptyTitle = input('Keine Daten gefunden');
+  readonly emptyTitle = input("Keine Daten gefunden");
 
   /**
    * Empty state description
    */
-  readonly emptyDescription = input('');
+  readonly emptyDescription = input("");
 
   /**
    * Track by function for ngFor
    */
-  readonly trackByFn = input<TrackByFunction<T>>((index: number, _item: T) => index);
+  readonly trackByFn = input<TrackByFunction<T>>(
+    (index: number, _item: T) => index,
+  );
 
   /**
    * Emitted when sort changes
@@ -623,7 +656,7 @@ export class DataTableComponent<T = unknown> {
   /**
    * Current filter value
    */
-  readonly filterValue = signal('');
+  readonly filterValue = signal("");
 
   /**
    * Current page (internal)
@@ -645,7 +678,7 @@ export class DataTableComponent<T = unknown> {
     }
 
     // Convert directives to column definitions
-    return this.columnDirectives().map(dir => ({
+    return this.columnDirectives().map((dir) => ({
       key: dir.key,
       header: dir.header(),
       sortable: dir.sortable(),
@@ -654,7 +687,9 @@ export class DataTableComponent<T = unknown> {
       minWidth: dir.minWidth(),
       align: dir.align(),
       hideOnMobile: dir.hideOnMobile(),
-      cellTemplate: dir.cellTemplate() as TemplateRef<DataTableCellContext<T>> | undefined,
+      cellTemplate: dir.cellTemplate() as
+        | TemplateRef<DataTableCellContext<T>>
+        | undefined,
       headerTemplate: dir.headerTemplate(),
     }));
   });
@@ -668,8 +703,8 @@ export class DataTableComponent<T = unknown> {
 
     if (!filter) return data;
 
-    return data.filter(item => {
-      return this.effectiveColumns().some(col => {
+    return data.filter((item) => {
+      return this.effectiveColumns().some((col) => {
         if (col.filterFn) {
           return col.filterFn(item, filter);
         }
@@ -688,7 +723,7 @@ export class DataTableComponent<T = unknown> {
 
     if (!sort || !sort.direction) return data;
 
-    const column = this.effectiveColumns().find(c => c.key === sort.column);
+    const column = this.effectiveColumns().find((c) => c.key === sort.column);
     if (!column) return data;
 
     return data.sort((a, b) => {
@@ -701,13 +736,23 @@ export class DataTableComponent<T = unknown> {
 
       let comparison = 0;
       // Handle comparison of unknown values by converting to comparable types
-      const aComp = aValue == null ? '' : typeof aValue === 'number' ? aValue : String(aValue);
-      const bComp = bValue == null ? '' : typeof bValue === 'number' ? bValue : String(bValue);
+      const aComp =
+        aValue == null
+          ? ""
+          : typeof aValue === "number"
+            ? aValue
+            : String(aValue);
+      const bComp =
+        bValue == null
+          ? ""
+          : typeof bValue === "number"
+            ? bValue
+            : String(bValue);
 
       if (aComp < bComp) comparison = -1;
       else if (aComp > bComp) comparison = 1;
 
-      return sort.direction === 'desc' ? -comparison : comparison;
+      return sort.direction === "desc" ? -comparison : comparison;
     });
   });
 
@@ -747,7 +792,7 @@ export class DataTableComponent<T = unknown> {
   readonly allSelected = computed(() => {
     const display = this.displayData();
     if (display.length === 0) return false;
-    return display.every(item => this.selectedItems().has(item));
+    return display.every((item) => this.selectedItems().has(item));
   });
 
   /**
@@ -756,7 +801,7 @@ export class DataTableComponent<T = unknown> {
   readonly someSelected = computed(() => {
     const display = this.displayData();
     const selected = this.selectedItems();
-    return display.some(item => selected.has(item));
+    return display.some((item) => selected.has(item));
   });
 
   /**
@@ -772,7 +817,11 @@ export class DataTableComponent<T = unknown> {
   /**
    * Get cell template context
    */
-  getCellContext(item: T, column: DataTableColumn<T>, rowIndex: number): DataTableCellContext<T> {
+  getCellContext(
+    item: T,
+    column: DataTableColumn<T>,
+    rowIndex: number,
+  ): DataTableCellContext<T> {
     return {
       $implicit: item,
       column,
@@ -796,10 +845,10 @@ export class DataTableComponent<T = unknown> {
   /**
    * Get ARIA sort attribute value
    */
-  getAriaSort(columnKey: string): 'ascending' | 'descending' | 'none' | null {
+  getAriaSort(columnKey: string): "ascending" | "descending" | "none" | null {
     const sort = this.currentSort();
-    if (sort?.column !== columnKey) return 'none';
-    return sort.direction === 'asc' ? 'ascending' : 'descending';
+    if (sort?.column !== columnKey) return "none";
+    return sort.direction === "asc" ? "ascending" : "descending";
   }
 
   /**
@@ -810,14 +859,16 @@ export class DataTableComponent<T = unknown> {
     let newDirection: SortDirection;
 
     if (current?.column !== columnKey) {
-      newDirection = 'asc';
-    } else if (current.direction === 'asc') {
-      newDirection = 'desc';
+      newDirection = "asc";
+    } else if (current.direction === "asc") {
+      newDirection = "desc";
     } else {
       newDirection = null;
     }
 
-    const newSort = newDirection ? { column: columnKey, direction: newDirection } : null;
+    const newSort = newDirection
+      ? { column: columnKey, direction: newDirection }
+      : null;
     this.currentSort.set(newSort);
 
     this.sortChange.emit({
@@ -840,7 +891,7 @@ export class DataTableComponent<T = unknown> {
     const selected = new Set(this.selectedItems());
     const isNowSelected = !selected.has(item);
 
-    if (this.selectionMode() === 'single') {
+    if (this.selectionMode() === "single") {
       selected.clear();
       if (isNowSelected) {
         selected.add(item);
@@ -873,10 +924,10 @@ export class DataTableComponent<T = unknown> {
 
     if (allCurrentlySelected) {
       // Deselect all displayed items
-      display.forEach(item => selected.delete(item));
+      display.forEach((item) => selected.delete(item));
     } else {
       // Select all displayed items
-      display.forEach(item => selected.add(item));
+      display.forEach((item) => selected.add(item));
     }
 
     this.selectedItems.set(selected);
@@ -912,7 +963,7 @@ export class DataTableComponent<T = unknown> {
    * Clear filter
    */
   clearFilter(): void {
-    this.onFilterChange('');
+    this.onFilterChange("");
   }
 
   /**

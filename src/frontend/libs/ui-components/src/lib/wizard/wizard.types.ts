@@ -1,4 +1,4 @@
-import type { Signal } from '@angular/core';
+import type { Signal } from "@angular/core";
 
 /**
  * Configuration for a wizard step
@@ -26,7 +26,12 @@ export interface WizardStepConfig {
 /**
  * Status of a wizard step
  */
-export type WizardStepStatus = 'pending' | 'active' | 'completed' | 'error' | 'skipped';
+export type WizardStepStatus =
+  | "pending"
+  | "active"
+  | "completed"
+  | "error"
+  | "skipped";
 
 /**
  * Internal state for tracking step status
@@ -61,7 +66,7 @@ export interface WizardStepChangeEvent {
   currentStepId: string;
 
   /** Direction of navigation */
-  direction: 'forward' | 'backward';
+  direction: "forward" | "backward";
 
   /** Current step index (0-based) */
   currentIndex: number;

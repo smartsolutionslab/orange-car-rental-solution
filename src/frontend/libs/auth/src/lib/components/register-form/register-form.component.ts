@@ -1,24 +1,36 @@
-import { Component, input, output, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  inject,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { RouterModule } from "@angular/router";
 import {
   ErrorAlertComponent,
   SuccessAlertComponent,
   IconComponent,
   InputComponent,
   CheckboxComponent,
-} from '@orange-car-rental/ui-components';
-import { CustomValidators } from '@orange-car-rental/shared';
+} from "@orange-car-rental/ui-components";
+import { CustomValidators } from "@orange-car-rental/shared";
 import type {
   AuthFormConfig,
   RegisterFormSubmitEvent,
   RegisterFormLabels,
-} from '../auth-forms.types';
+} from "../auth-forms.types";
 import {
   DEFAULT_AUTH_CONFIG,
   DEFAULT_REGISTER_LABELS_DE,
-} from '../auth-forms.types';
+} from "../auth-forms.types";
 
 /**
  * Reusable Register Form Component
@@ -36,7 +48,7 @@ import {
  * />
  */
 @Component({
-  selector: 'lib-register-form',
+  selector: "lib-register-form",
   standalone: true,
   imports: [
     CommonModule,
@@ -54,7 +66,11 @@ import {
         <!-- Header -->
         <div class="register-header">
           @if (config().logoUrl) {
-            <img [src]="config().logoUrl" [alt]="config().brandName || 'Logo'" class="register-logo" />
+            <img
+              [src]="config().logoUrl"
+              [alt]="config().brandName || 'Logo'"
+              class="register-logo"
+            />
           }
           <h1 class="register-title">{{ labels().title }}</h1>
           <p class="register-subtitle">{{ labels().subtitle }}</p>
@@ -95,7 +111,11 @@ import {
         }
 
         <!-- Registration Form -->
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+        <form
+          [formGroup]="registerForm"
+          (ngSubmit)="onSubmit()"
+          class="register-form"
+        >
           <!-- Step 1: Account Information -->
           @if (currentStep() === 1) {
             <div class="form-step">
@@ -205,7 +225,11 @@ import {
               <ocr-checkbox formControlName="acceptTerms" [required]="true">
                 {{ acceptTermsPrefix() }}
                 @if (config().termsUrl) {
-                  <a [href]="config().termsUrl" target="_blank" class="terms-link">
+                  <a
+                    [href]="config().termsUrl"
+                    target="_blank"
+                    class="terms-link"
+                  >
                     {{ termsLinkText() }}
                   </a>
                 }
@@ -214,7 +238,11 @@ import {
               <ocr-checkbox formControlName="acceptPrivacy" [required]="true">
                 {{ acceptPrivacyPrefix() }}
                 @if (config().privacyUrl) {
-                  <a [href]="config().privacyUrl" target="_blank" class="terms-link">
+                  <a
+                    [href]="config().privacyUrl"
+                    target="_blank"
+                    class="terms-link"
+                  >
                     {{ privacyLinkText() }}
                   </a>
                 }
@@ -225,7 +253,12 @@ import {
               </ocr-checkbox>
 
               <div class="info-box">
-                <lib-icon name="information-circle" variant="outline" size="sm" class="info-icon" />
+                <lib-icon
+                  name="information-circle"
+                  variant="outline"
+                  size="sm"
+                  class="info-icon"
+                />
                 <div>
                   <p class="info-title">{{ privacyInfoTitle() }}</p>
                   <p class="info-text">{{ privacyInfoText() }}</p>
@@ -237,7 +270,11 @@ import {
           <!-- Navigation Buttons -->
           <div class="form-actions">
             @if (currentStep() > 1) {
-              <button type="button" class="secondary-button" (click)="previousStep()">
+              <button
+                type="button"
+                class="secondary-button"
+                (click)="previousStep()"
+              >
                 {{ labels().previousButton }}
               </button>
             }
@@ -254,7 +291,11 @@ import {
             }
 
             @if (currentStep() === totalSteps) {
-              <button type="submit" class="primary-button" [disabled]="loading()">
+              <button
+                type="submit"
+                class="primary-button"
+                [disabled]="loading()"
+              >
                 @if (loading()) {
                   <span class="spinner"></span>
                   <span>{{ labels().submittingButton }}</span>
@@ -280,301 +321,309 @@ import {
       </div>
     </div>
   `,
-  styles: [`
-    .register-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100%;
-      padding: 2rem 1rem;
-    }
-
-    .register-card {
-      width: 100%;
-      max-width: 28rem;
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      padding: 2rem;
-    }
-
-    .register-header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .register-logo {
-      height: 3rem;
-      margin-bottom: 1rem;
-    }
-
-    .register-title {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #111827;
-    }
-
-    .register-subtitle {
-      margin: 0.5rem 0 0;
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
-
-    .progress-steps {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    .progress-steps::before {
-      content: '';
-      position: absolute;
-      top: 1rem;
-      left: 2rem;
-      right: 2rem;
-      height: 2px;
-      background: #e5e7eb;
-      z-index: 0;
-    }
-
-    .progress-step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.5rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .step-number {
-      width: 2rem;
-      height: 2rem;
-      border-radius: 50%;
-      background: #e5e7eb;
-      color: #6b7280;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.875rem;
-      font-weight: 600;
-      transition: all 0.2s ease;
-    }
-
-    .progress-step.active .step-number {
-      background: #f97316;
-      color: white;
-    }
-
-    .progress-step.current .step-number {
-      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
-    }
-
-    .step-label {
-      font-size: 0.75rem;
-      color: #6b7280;
-      text-align: center;
-    }
-
-    .progress-step.active .step-label {
-      color: #374151;
-      font-weight: 500;
-    }
-
-    .register-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .form-step {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-
-    @media (max-width: 480px) {
-      .form-row {
-        grid-template-columns: 1fr;
+  styles: [
+    `
+      .register-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+        padding: 2rem 1rem;
       }
-    }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+      .register-card {
+        width: 100%;
+        max-width: 28rem;
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+      }
 
-    .form-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .register-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
 
-    .form-input {
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
+      .register-logo {
+        height: 3rem;
+        margin-bottom: 1rem;
+      }
 
-    .form-input:focus {
-      outline: none;
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
+      .register-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
 
-    .form-input.input-error {
-      border-color: #ef4444;
-    }
+      .register-subtitle {
+        margin: 0.5rem 0 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
 
-    .field-error {
-      font-size: 0.75rem;
-      color: #ef4444;
-      margin-top: 0.25rem;
-    }
+      .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        position: relative;
+      }
 
-    .field-hint {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.25rem;
-    }
+      .progress-steps::before {
+        content: "";
+        position: absolute;
+        top: 1rem;
+        left: 2rem;
+        right: 2rem;
+        height: 2px;
+        background: #e5e7eb;
+        z-index: 0;
+      }
 
-    .password-field-with-hint,
-    .date-field-with-hint {
-      display: flex;
-      flex-direction: column;
-    }
+      .progress-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        z-index: 1;
+      }
 
-    .terms-link {
-      color: #f97316;
-      text-decoration: none;
-    }
+      .step-number {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background: #e5e7eb;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        transition: all 0.2s ease;
+      }
 
-    .terms-link:hover {
-      text-decoration: underline;
-    }
+      .progress-step.active .step-number {
+        background: #f97316;
+        color: white;
+      }
 
-    .info-box {
-      display: flex;
-      gap: 0.75rem;
-      padding: 1rem;
-      background: #f3f4f6;
-      border-radius: 0.5rem;
-      margin-top: 0.5rem;
-    }
+      .progress-step.current .step-number {
+        box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+      }
 
-    .info-icon {
-      color: #6b7280;
-      flex-shrink: 0;
-    }
+      .step-label {
+        font-size: 0.75rem;
+        color: #6b7280;
+        text-align: center;
+      }
 
-    .info-title {
-      margin: 0 0 0.25rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .progress-step.active .step-label {
+        color: #374151;
+        font-weight: 500;
+      }
 
-    .info-text {
-      margin: 0;
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
+      .register-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    .form-actions {
-      display: flex;
-      gap: 0.75rem;
-      margin-top: 0.5rem;
-    }
+      .form-step {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    .primary-button,
-    .secondary-button {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 0.625rem 1rem;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border-radius: 0.375rem;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
 
-    .primary-button {
-      background-color: #f97316;
-      color: white;
-      border: none;
-    }
+      @media (max-width: 480px) {
+        .form-row {
+          grid-template-columns: 1fr;
+        }
+      }
 
-    .primary-button:hover:not(:disabled) {
-      background-color: #ea580c;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
 
-    .primary-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
+      .form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
 
-    .primary-button.full-width {
-      flex: 1;
-    }
+      .form-input {
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
 
-    .secondary-button {
-      background-color: white;
-      color: #374151;
-      border: 1px solid #d1d5db;
-    }
+      .form-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
 
-    .secondary-button:hover {
-      background-color: #f9fafb;
-    }
+      .form-input.input-error {
+        border-color: #ef4444;
+      }
 
-    .spinner {
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+      .field-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+      }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+      .field-hint {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+      }
 
-    .login-section {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
+      .password-field-with-hint,
+      .date-field-with-hint {
+        display: flex;
+        flex-direction: column;
+      }
 
-    .login-text {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #6b7280;
-    }
+      .terms-link {
+        color: #f97316;
+        text-decoration: none;
+      }
 
-    .login-link {
-      color: #f97316;
-      text-decoration: none;
-      font-weight: 500;
-    }
+      .terms-link:hover {
+        text-decoration: underline;
+      }
 
-    .login-link:hover {
-      text-decoration: underline;
-    }
-  `]
+      .info-box {
+        display: flex;
+        gap: 0.75rem;
+        padding: 1rem;
+        background: #f3f4f6;
+        border-radius: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .info-icon {
+        color: #6b7280;
+        flex-shrink: 0;
+      }
+
+      .info-title {
+        margin: 0 0 0.25rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
+
+      .info-text {
+        margin: 0;
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+      }
+
+      .primary-button,
+      .secondary-button {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .primary-button {
+        background-color: #f97316;
+        color: white;
+        border: none;
+      }
+
+      .primary-button:hover:not(:disabled) {
+        background-color: #ea580c;
+      }
+
+      .primary-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
+
+      .primary-button.full-width {
+        flex: 1;
+      }
+
+      .secondary-button {
+        background-color: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+      }
+
+      .secondary-button:hover {
+        background-color: #f9fafb;
+      }
+
+      .spinner {
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .login-section {
+        text-align: center;
+        margin-top: 1.5rem;
+      }
+
+      .login-text {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+      }
+
+      .login-link {
+        color: #f97316;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .login-link:hover {
+        text-decoration: underline;
+      }
+    `,
+  ],
 })
 export class RegisterFormComponent {
   private readonly fb = inject(FormBuilder);
@@ -631,118 +680,138 @@ export class RegisterFormComponent {
     this.registerForm = this.fb.group(
       {
         // Step 1: Account Information
-        email: ['', [Validators.required, Validators.email]],
+        email: ["", [Validators.required, Validators.email]],
         password: [
-          '',
-          [Validators.required, Validators.minLength(minPasswordLength), CustomValidators.passwordStrength()],
+          "",
+          [
+            Validators.required,
+            Validators.minLength(minPasswordLength),
+            CustomValidators.passwordStrength(),
+          ],
         ],
-        confirmPassword: ['', [Validators.required]],
+        confirmPassword: ["", [Validators.required]],
 
         // Step 2: Personal Information
-        firstName: ['', [Validators.required, Validators.minLength(2)]],
-        lastName: ['', [Validators.required, Validators.minLength(2)]],
-        phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
-        dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(minAge)]],
+        firstName: ["", [Validators.required, Validators.minLength(2)]],
+        lastName: ["", [Validators.required, Validators.minLength(2)]],
+        phoneNumber: [
+          "",
+          [Validators.required, CustomValidators.germanPhone()],
+        ],
+        dateOfBirth: [
+          "",
+          [Validators.required, CustomValidators.minimumAge(minAge)],
+        ],
 
         // Step 3: Terms
         acceptTerms: [false, [Validators.requiredTrue]],
         acceptPrivacy: [false, [Validators.requiredTrue]],
         acceptMarketing: [false],
       },
-      { validators: CustomValidators.passwordMatch('password', 'confirmPassword') },
+      {
+        validators: CustomValidators.passwordMatch(
+          "password",
+          "confirmPassword",
+        ),
+      },
     );
   }
 
   // Computed labels for display
-  readonly passwordHint = computed(() =>
-    `Mindestens ${this.config().minPasswordLength ?? 8} Zeichen mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen`
+  readonly passwordHint = computed(
+    () =>
+      `Mindestens ${this.config().minPasswordLength ?? 8} Zeichen mit Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen`,
   );
 
-  readonly ageHint = computed(() =>
-    `Sie müssen mindestens ${this.config().minAge ?? 21} Jahre alt sein`
+  readonly ageHint = computed(
+    () => `Sie müssen mindestens ${this.config().minAge ?? 21} Jahre alt sein`,
   );
 
-  readonly acceptTermsPrefix = computed(() => 'Ich akzeptiere die ');
-  readonly termsLinkText = computed(() => 'AGB');
-  readonly acceptPrivacyPrefix = computed(() => 'Ich akzeptiere die ');
-  readonly privacyLinkText = computed(() => 'Datenschutzerklärung');
-  readonly privacyInfoTitle = computed(() => 'Datenschutz');
-  readonly privacyInfoText = computed(() =>
-    'Ihre Daten werden gemäß DSGVO verarbeitet und nicht an Dritte weitergegeben.'
+  readonly acceptTermsPrefix = computed(() => "Ich akzeptiere die ");
+  readonly termsLinkText = computed(() => "AGB");
+  readonly acceptPrivacyPrefix = computed(() => "Ich akzeptiere die ");
+  readonly privacyLinkText = computed(() => "Datenschutzerklärung");
+  readonly privacyInfoTitle = computed(() => "Datenschutz");
+  readonly privacyInfoText = computed(
+    () =>
+      "Ihre Daten werden gemäß DSGVO verarbeitet und nicht an Dritte weitergegeben.",
   );
 
   // Validation error computeds
   readonly emailError = computed(() => {
-    const email = this.registerForm.get('email');
-    if (email?.hasError('required') && email?.touched) {
+    const email = this.registerForm.get("email");
+    if (email?.hasError("required") && email?.touched) {
       return this.labels().emailRequired;
     }
-    if (email?.hasError('email') && email?.touched) {
+    if (email?.hasError("email") && email?.touched) {
       return this.labels().emailInvalid;
     }
     return null;
   });
 
   readonly passwordError = computed(() => {
-    const password = this.registerForm.get('password');
-    if (password?.hasError('required') && password?.touched) {
+    const password = this.registerForm.get("password");
+    if (password?.hasError("required") && password?.touched) {
       return this.labels().passwordRequired;
     }
-    if (password?.hasError('minlength') && password?.touched) {
+    if (password?.hasError("minlength") && password?.touched) {
       return this.labels().passwordMinLength;
     }
-    if (password?.hasError('weakPassword') && password?.touched) {
+    if (password?.hasError("weakPassword") && password?.touched) {
       return this.labels().passwordWeak;
     }
     return null;
   });
 
   readonly confirmPasswordError = computed(() => {
-    const confirmPassword = this.registerForm.get('confirmPassword');
-    if (confirmPassword?.hasError('required') && confirmPassword?.touched) {
+    const confirmPassword = this.registerForm.get("confirmPassword");
+    if (confirmPassword?.hasError("required") && confirmPassword?.touched) {
       return this.labels().confirmPasswordRequired;
     }
-    if (this.registerForm.hasError('passwordMismatch') && confirmPassword?.touched) {
+    if (
+      this.registerForm.hasError("passwordMismatch") &&
+      confirmPassword?.touched
+    ) {
       return this.labels().passwordMismatch;
     }
     return null;
   });
 
   readonly firstNameError = computed(() => {
-    const firstName = this.registerForm.get('firstName');
-    if (firstName?.hasError('required') && firstName?.touched) {
+    const firstName = this.registerForm.get("firstName");
+    if (firstName?.hasError("required") && firstName?.touched) {
       return this.labels().firstNameRequired;
     }
     return null;
   });
 
   readonly lastNameError = computed(() => {
-    const lastName = this.registerForm.get('lastName');
-    if (lastName?.hasError('required') && lastName?.touched) {
+    const lastName = this.registerForm.get("lastName");
+    if (lastName?.hasError("required") && lastName?.touched) {
       return this.labels().lastNameRequired;
     }
     return null;
   });
 
   readonly phoneNumberError = computed(() => {
-    const phoneNumber = this.registerForm.get('phoneNumber');
-    if (phoneNumber?.hasError('required') && phoneNumber?.touched) {
+    const phoneNumber = this.registerForm.get("phoneNumber");
+    if (phoneNumber?.hasError("required") && phoneNumber?.touched) {
       return this.labels().phoneRequired;
     }
-    if (phoneNumber?.hasError('invalidPhone') && phoneNumber?.touched) {
+    if (phoneNumber?.hasError("invalidPhone") && phoneNumber?.touched) {
       return this.labels().phoneInvalid;
     }
     return null;
   });
 
   readonly dateOfBirthError = computed(() => {
-    const dateOfBirth = this.registerForm.get('dateOfBirth');
-    if (dateOfBirth?.hasError('required') && dateOfBirth?.touched) {
+    const dateOfBirth = this.registerForm.get("dateOfBirth");
+    if (dateOfBirth?.hasError("required") && dateOfBirth?.touched) {
       return this.labels().dateOfBirthRequired;
     }
-    if (dateOfBirth?.hasError('underage') && dateOfBirth?.touched) {
+    if (dateOfBirth?.hasError("underage") && dateOfBirth?.touched) {
       const minAge = this.config().minAge ?? 21;
-      return this.labels().minAgeError.replace('{minAge}', String(minAge));
+      return this.labels().minAgeError.replace("{minAge}", String(minAge));
     }
     return null;
   });
@@ -774,22 +843,22 @@ export class RegisterFormComponent {
     switch (this.currentStep()) {
       case 1:
         return !!(
-          this.registerForm.get('email')?.valid &&
-          this.registerForm.get('password')?.valid &&
-          this.registerForm.get('confirmPassword')?.valid &&
-          !this.registerForm.hasError('passwordMismatch')
+          this.registerForm.get("email")?.valid &&
+          this.registerForm.get("password")?.valid &&
+          this.registerForm.get("confirmPassword")?.valid &&
+          !this.registerForm.hasError("passwordMismatch")
         );
       case 2:
         return !!(
-          this.registerForm.get('firstName')?.valid &&
-          this.registerForm.get('lastName')?.valid &&
-          this.registerForm.get('phoneNumber')?.valid &&
-          this.registerForm.get('dateOfBirth')?.valid
+          this.registerForm.get("firstName")?.valid &&
+          this.registerForm.get("lastName")?.valid &&
+          this.registerForm.get("phoneNumber")?.valid &&
+          this.registerForm.get("dateOfBirth")?.valid
         );
       case 3:
         return !!(
-          this.registerForm.get('acceptTerms')?.valid &&
-          this.registerForm.get('acceptPrivacy')?.valid
+          this.registerForm.get("acceptTerms")?.valid &&
+          this.registerForm.get("acceptPrivacy")?.valid
         );
       default:
         return false;
@@ -810,11 +879,11 @@ export class RegisterFormComponent {
   private getCurrentStepControls(): string[] {
     switch (this.currentStep()) {
       case 1:
-        return ['email', 'password', 'confirmPassword'];
+        return ["email", "password", "confirmPassword"];
       case 2:
-        return ['firstName', 'lastName', 'phoneNumber', 'dateOfBirth'];
+        return ["firstName", "lastName", "phoneNumber", "dateOfBirth"];
       case 3:
-        return ['acceptTerms', 'acceptPrivacy'];
+        return ["acceptTerms", "acceptPrivacy"];
       default:
         return [];
     }

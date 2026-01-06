@@ -1,37 +1,38 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { StatCardComponent } from './stat-card.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { StatCardComponent } from "./stat-card.component";
 
 const meta: Meta<StatCardComponent> = {
-  title: 'Components/DataDisplay/StatCard',
+  title: "Components/DataDisplay/StatCard",
   component: StatCardComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     label: {
-      control: 'text',
-      description: 'The title/label for the statistic',
+      control: "text",
+      description: "The title/label for the statistic",
     },
     value: {
-      control: 'text',
-      description: 'The value to display (number or string)',
+      control: "text",
+      description: "The value to display (number or string)",
     },
     subtitle: {
-      control: 'text',
-      description: 'Optional subtitle or additional info',
+      control: "text",
+      description: "Optional subtitle or additional info",
     },
     variant: {
-      control: 'select',
-      options: ['default', 'success', 'warning', 'info', 'error'],
-      description: 'Visual variant for the card icon',
+      control: "select",
+      options: ["default", "success", "warning", "info", "error"],
+      description: "Visual variant for the card icon",
     },
     loading: {
-      control: 'boolean',
-      description: 'Whether to show loading state',
+      control: "boolean",
+      description: "Whether to show loading state",
     },
   },
   parameters: {
     docs: {
       description: {
-        component: 'A statistic card for dashboards. Displays a value with label, optional subtitle, and icon. Supports multiple color variants.',
+        component:
+          "A statistic card for dashboards. Displays a value with label, optional subtitle, and icon. Supports multiple color variants.",
       },
     },
   },
@@ -42,79 +43,79 @@ type Story = StoryObj<StatCardComponent>;
 
 export const Default: Story = {
   args: {
-    label: 'Gesamte Fahrzeuge',
+    label: "Gesamte Fahrzeuge",
     value: 42,
-    subtitle: '+5 seit letztem Monat',
-    variant: 'default',
+    subtitle: "+5 seit letztem Monat",
+    variant: "default",
     loading: false,
   },
 };
 
 export const Success: Story = {
   args: {
-    label: 'Verfügbare Fahrzeuge',
+    label: "Verfügbare Fahrzeuge",
     value: 28,
-    subtitle: 'Bereit zur Vermietung',
-    variant: 'success',
+    subtitle: "Bereit zur Vermietung",
+    variant: "success",
     loading: false,
   },
 };
 
 export const Warning: Story = {
   args: {
-    label: 'In Wartung',
+    label: "In Wartung",
     value: 8,
-    subtitle: '3 planmäßig, 5 ungeplant',
-    variant: 'warning',
+    subtitle: "3 planmäßig, 5 ungeplant",
+    variant: "warning",
     loading: false,
   },
 };
 
 export const Info: Story = {
   args: {
-    label: 'Aktive Reservierungen',
+    label: "Aktive Reservierungen",
     value: 156,
-    subtitle: 'Diese Woche',
-    variant: 'info',
+    subtitle: "Diese Woche",
+    variant: "info",
     loading: false,
   },
 };
 
 export const Error: Story = {
   args: {
-    label: 'Überfällige Rückgaben',
+    label: "Überfällige Rückgaben",
     value: 3,
-    subtitle: 'Sofortige Aktion erforderlich',
-    variant: 'error',
+    subtitle: "Sofortige Aktion erforderlich",
+    variant: "error",
     loading: false,
   },
 };
 
 export const Loading: Story = {
   args: {
-    label: 'Lädt...',
-    value: '-',
-    subtitle: '',
-    variant: 'default',
+    label: "Lädt...",
+    value: "-",
+    subtitle: "",
+    variant: "default",
     loading: true,
   },
 };
 
 export const WithStringValue: Story = {
   args: {
-    label: 'Durchschnittliche Bewertung',
-    value: '4.8 / 5.0',
-    subtitle: 'Basierend auf 234 Bewertungen',
-    variant: 'success',
+    label: "Durchschnittliche Bewertung",
+    value: "4.8 / 5.0",
+    subtitle: "Basierend auf 234 Bewertungen",
+    variant: "success",
     loading: false,
   },
 };
 
 export const WithoutSubtitle: Story = {
   args: {
-    label: 'Standorte',
+    label: "Standorte",
     value: 12,
-    variant: 'default',
+    variant: "default",
     loading: false,
   },
 };
@@ -134,7 +135,7 @@ export const AllVariants: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'All available color variants for the stat card component.',
+        story: "All available color variants for the stat card component.",
       },
     },
   },
@@ -157,7 +158,7 @@ export const DashboardExample: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of stat cards arranged in a dashboard layout.',
+        story: "Example of stat cards arranged in a dashboard layout.",
       },
     },
   },

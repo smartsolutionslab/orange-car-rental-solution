@@ -1,16 +1,10 @@
-import {
-  Component,
-  input,
-  output,
-  signal,
-  forwardRef,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import type { ControlValueAccessor } from '@angular/forms';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IconComponent } from '../icon';
+import { Component, input, output, signal, forwardRef } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import type { ControlValueAccessor } from "@angular/forms";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { IconComponent } from "../icon";
 
-export type CheckboxSize = 'sm' | 'md' | 'lg';
+export type CheckboxSize = "sm" | "md" | "lg";
 
 /**
  * Custom Checkbox Component
@@ -25,7 +19,7 @@ export type CheckboxSize = 'sm' | 'md' | 'lg';
  * />
  */
 @Component({
-  selector: 'ocr-checkbox',
+  selector: "ocr-checkbox",
   standalone: true,
   imports: [CommonModule, IconComponent],
   providers: [
@@ -69,131 +63,135 @@ export type CheckboxSize = 'sm' | 'md' | 'lg';
       <ng-content></ng-content>
     </label>
     @if (error()) {
-      <span [id]="checkboxId() + '-error'" class="checkbox-error">{{ error() }}</span>
+      <span [id]="checkboxId() + '-error'" class="checkbox-error">{{
+        error()
+      }}</span>
     } @else if (hint()) {
       <span class="checkbox-hint">{{ hint() }}</span>
     }
   `,
-  styles: [`
-    :host {
-      display: block;
-    }
+  styles: [
+    `
+      :host {
+        display: block;
+      }
 
-    .checkbox-wrapper {
-      display: inline-flex;
-      align-items: flex-start;
-      gap: 0.5rem;
-      cursor: pointer;
-      user-select: none;
-    }
+      .checkbox-wrapper {
+        display: inline-flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        cursor: pointer;
+        user-select: none;
+      }
 
-    .checkbox-wrapper.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+      .checkbox-wrapper.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
 
-    .checkbox-input {
-      position: absolute;
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+      .checkbox-input {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
 
-    .checkbox-box {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.25rem;
-      height: 1.25rem;
-      flex-shrink: 0;
-      background: white;
-      border: 2px solid #d1d5db;
-      border-radius: 0.25rem;
-      transition: all 0.15s ease;
-      color: white;
-    }
+      .checkbox-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.25rem;
+        height: 1.25rem;
+        flex-shrink: 0;
+        background: white;
+        border: 2px solid #d1d5db;
+        border-radius: 0.25rem;
+        transition: all 0.15s ease;
+        color: white;
+      }
 
-    .checkbox-box.checked {
-      background-color: #f97316;
-      border-color: #f97316;
-    }
+      .checkbox-box.checked {
+        background-color: #f97316;
+        border-color: #f97316;
+      }
 
-    .checkbox-wrapper:hover:not(.disabled) .checkbox-box:not(.checked) {
-      border-color: #f97316;
-    }
+      .checkbox-wrapper:hover:not(.disabled) .checkbox-box:not(.checked) {
+        border-color: #f97316;
+      }
 
-    .checkbox-input:focus + .checkbox-box {
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
-    }
+      .checkbox-input:focus + .checkbox-box {
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+      }
 
-    .checkbox-wrapper.has-error .checkbox-box {
-      border-color: #ef4444;
-    }
+      .checkbox-wrapper.has-error .checkbox-box {
+        border-color: #ef4444;
+      }
 
-    .checkbox-wrapper.has-error .checkbox-box.checked {
-      background-color: #ef4444;
-      border-color: #ef4444;
-    }
+      .checkbox-wrapper.has-error .checkbox-box.checked {
+        background-color: #ef4444;
+        border-color: #ef4444;
+      }
 
-    .checkbox-label {
-      font-size: 0.875rem;
-      color: #374151;
-      line-height: 1.25rem;
-    }
+      .checkbox-label {
+        font-size: 0.875rem;
+        color: #374151;
+        line-height: 1.25rem;
+      }
 
-    .required-marker {
-      color: #ef4444;
-      margin-left: 0.125rem;
-    }
+      .required-marker {
+        color: #ef4444;
+        margin-left: 0.125rem;
+      }
 
-    /* Size variants */
-    .checkbox-sm .checkbox-box {
-      width: 1rem;
-      height: 1rem;
-    }
+      /* Size variants */
+      .checkbox-sm .checkbox-box {
+        width: 1rem;
+        height: 1rem;
+      }
 
-    .checkbox-sm .checkbox-label {
-      font-size: 0.75rem;
-      line-height: 1rem;
-    }
+      .checkbox-sm .checkbox-label {
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
 
-    .checkbox-lg .checkbox-box {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
+      .checkbox-lg .checkbox-box {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
 
-    .checkbox-lg .checkbox-label {
-      font-size: 1rem;
-      line-height: 1.5rem;
-    }
+      .checkbox-lg .checkbox-label {
+        font-size: 1rem;
+        line-height: 1.5rem;
+      }
 
-    /* Error and hint */
-    .checkbox-error {
-      display: block;
-      font-size: 0.75rem;
-      color: #ef4444;
-      margin-top: 0.25rem;
-      margin-left: 1.75rem;
-    }
+      /* Error and hint */
+      .checkbox-error {
+        display: block;
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+        margin-left: 1.75rem;
+      }
 
-    .checkbox-hint {
-      display: block;
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.25rem;
-      margin-left: 1.75rem;
-    }
+      .checkbox-hint {
+        display: block;
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+        margin-left: 1.75rem;
+      }
 
-    .checkbox-sm .checkbox-error,
-    .checkbox-sm .checkbox-hint {
-      margin-left: 1.5rem;
-    }
+      .checkbox-sm .checkbox-error,
+      .checkbox-sm .checkbox-hint {
+        margin-left: 1.5rem;
+      }
 
-    .checkbox-lg .checkbox-error,
-    .checkbox-lg .checkbox-hint {
-      margin-left: 2rem;
-    }
-  `],
+      .checkbox-lg .checkbox-error,
+      .checkbox-lg .checkbox-hint {
+        margin-left: 2rem;
+      }
+    `,
+  ],
 })
 export class CheckboxComponent implements ControlValueAccessor {
   private static idCounter = 0;
@@ -202,7 +200,7 @@ export class CheckboxComponent implements ControlValueAccessor {
   readonly label = input<string>();
 
   /** Checkbox size */
-  readonly size = input<CheckboxSize>('md');
+  readonly size = input<CheckboxSize>("md");
 
   /** Error message */
   readonly error = input<string | null>(null);
@@ -228,9 +226,9 @@ export class CheckboxComponent implements ControlValueAccessor {
   /** Computed icon size based on checkbox size */
   readonly iconSize = () => {
     const size = this.size();
-    if (size === 'sm') return 'xs';
-    if (size === 'lg') return 'md';
-    return 'sm';
+    if (size === "sm") return "xs";
+    if (size === "lg") return "md";
+    return "sm";
   };
 
   private onChange: (value: boolean) => void = () => {};

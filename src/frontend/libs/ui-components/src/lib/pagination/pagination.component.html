@@ -2,7 +2,8 @@
   <div class="pagination-container">
     @if (showItemRange() && totalItems() && pageSize()) {
       <div class="pagination-info">
-        Zeige {{ rangeStart() }} - {{ rangeEnd() }} von {{ totalItems() }} {{ totalItems() === 1 ? itemLabel() : itemLabelPlural() }}
+        Zeige {{ rangeStart() }} - {{ rangeEnd() }} von {{ totalItems() }}
+        {{ totalItems() === 1 ? itemLabel() : itemLabelPlural() }}
       </div>
     }
 
@@ -12,7 +13,11 @@
         (click)="previousPage()"
         [disabled]="currentPage() === 1"
       >
-        <lib-icon name="chevron-left-filled" variant="filled" [customSize]="20" />
+        <lib-icon
+          name="chevron-left-filled"
+          variant="filled"
+          [customSize]="20"
+        />
         {{ previousLabel() }}
       </button>
 
@@ -38,7 +43,9 @@
           @if (showTrailingDots()) {
             <span class="pagination-ellipsis">...</span>
           }
-          <button class="btn-page" (click)="goToPage(totalPages())">{{ totalPages() }}</button>
+          <button class="btn-page" (click)="goToPage(totalPages())">
+            {{ totalPages() }}
+          </button>
         }
       </div>
 
@@ -48,7 +55,11 @@
         [disabled]="currentPage() === totalPages()"
       >
         {{ nextLabel() }}
-        <lib-icon name="chevron-right-filled" variant="filled" [customSize]="20" />
+        <lib-icon
+          name="chevron-right-filled"
+          variant="filled"
+          [customSize]="20"
+        />
       </button>
     </div>
   </div>

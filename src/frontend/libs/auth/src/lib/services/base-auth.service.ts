@@ -1,7 +1,7 @@
-import { inject, Injectable } from '@angular/core';
-import Keycloak from 'keycloak-js';
-import type { KeycloakProfile } from 'keycloak-js';
-import { logError } from '@orange-car-rental/util';
+import { inject, Injectable } from "@angular/core";
+import Keycloak from "keycloak-js";
+import type { KeycloakProfile } from "keycloak-js";
+import { logError } from "@orange-car-rental/util";
 
 /**
  * Base authentication service using Keycloak
@@ -9,7 +9,7 @@ import { logError } from '@orange-car-rental/util';
  * or extended by portal-specific auth services
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BaseAuthService {
   protected readonly keycloak = inject(Keycloak);
@@ -31,7 +31,7 @@ export class BaseAuthService {
       }
       return null;
     } catch (error) {
-      logError('BaseAuthService', 'Error loading user profile', error);
+      logError("BaseAuthService", "Error loading user profile", error);
       return null;
     }
   }
@@ -55,7 +55,7 @@ export class BaseAuthService {
    */
   async getToken(): Promise<string> {
     await this.keycloak.updateToken(30);
-    return this.keycloak.token ?? '';
+    return this.keycloak.token ?? "";
   }
 
   /**
@@ -76,19 +76,23 @@ export class BaseAuthService {
    * Get username from token
    */
   getUsername(): string {
-    return this.keycloak.tokenParsed?.['preferred_username'] ?? '';
+    return this.keycloak.tokenParsed?.["preferred_username"] ?? "";
   }
 
   /**
    * Call center agent roles
    */
-  private readonly agentRoles = ['call-center-agent', 'call-center-supervisor', 'admin'] as const;
+  private readonly agentRoles = [
+    "call-center-agent",
+    "call-center-supervisor",
+    "admin",
+  ] as const;
 
   /**
    * Check if user is a call center agent (has any agent role)
    */
   isCallCenterAgent(): boolean {
-    return this.agentRoles.some(role => this.hasRole(role));
+    return this.agentRoles.some((role) => this.hasRole(role));
   }
 
   /**
@@ -104,15 +108,15 @@ export class BaseAuthService {
    */
   getPostLoginRedirect(returnUrl?: string | null): string {
     // If there's a specific return URL (not root or login), use it
-    if (returnUrl && returnUrl !== '/' && returnUrl !== '/login') {
+    if (returnUrl && returnUrl !== "/" && returnUrl !== "/login") {
       return returnUrl;
     }
 
     // Role-based default redirect
     if (this.isCallCenterAgent()) {
-      return '/admin';
+      return "/admin";
     }
 
-    return '/my-bookings';
+    return "/my-bookings";
   }
 }

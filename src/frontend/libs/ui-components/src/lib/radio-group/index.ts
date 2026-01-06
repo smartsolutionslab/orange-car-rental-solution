@@ -3,4 +3,4 @@ export {
   type RadioGroupSize,
   type RadioGroupOrientation,
   type RadioOption,
-} from './radio-group.component';
+} from "./radio-group.component";

@@ -1,1 +1,1 @@
-export { SwitchComponent, type SwitchSize } from './switch.component';
+export { SwitchComponent, type SwitchSize } from "./switch.component";

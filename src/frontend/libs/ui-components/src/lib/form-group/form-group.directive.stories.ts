@@ -1,14 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { Component } from '@angular/core';
-import { FormGroupDirective, FormRowDirective, FullWidthDirective } from './form-group.directive';
-import { InputComponent } from '../input';
-import { TextareaComponent } from '../textarea';
-import { CheckboxComponent } from '../checkbox';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { Component } from "@angular/core";
+import {
+  FormGroupDirective,
+  FormRowDirective,
+  FullWidthDirective,
+} from "./form-group.directive";
+import { InputComponent } from "../input";
+import { TextareaComponent } from "../textarea";
+import { CheckboxComponent } from "../checkbox";
 
 // Helper component for stories
 @Component({
-  selector: 'story-form-group-demo',
+  selector: "story-form-group-demo",
   standalone: true,
   imports: [
     FormGroupDirective,
@@ -23,9 +27,9 @@ import { CheckboxComponent } from '../checkbox';
 class FormGroupDemoComponent {}
 
 const meta: Meta = {
-  title: 'Forms/FormGroup',
+  title: "Forms/FormGroup",
   parameters: {
-    layout: 'padded',
+    layout: "padded",
     docs: {
       description: {
         component: `
@@ -68,7 +72,7 @@ Makes a field span the full width in a grid layout.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [

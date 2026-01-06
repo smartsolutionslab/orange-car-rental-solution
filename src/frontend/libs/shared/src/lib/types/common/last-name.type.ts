@@ -2,7 +2,7 @@
  * Last Name - branded type for type safety
  * Matches backend LastName value object
  */
-export type LastName = string & { readonly __brand: 'LastName' };
+export type LastName = string & { readonly __brand: "LastName" };
 
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 100;
@@ -28,7 +28,9 @@ export function createLastName(value: string): LastName {
 /**
  * Safely convert a string to LastName, returning undefined if invalid
  */
-export function toLastName(value: string | null | undefined): LastName | undefined {
+export function toLastName(
+  value: string | null | undefined,
+): LastName | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isLastName(trimmed) ? trimmed : undefined;

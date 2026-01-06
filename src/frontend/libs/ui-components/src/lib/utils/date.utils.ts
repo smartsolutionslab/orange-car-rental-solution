@@ -11,7 +11,7 @@
  * Useful for form input min/max attributes
  */
 export function getTodayDateString(): string {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().split("T")[0];
 }
 
 /**
@@ -20,7 +20,7 @@ export function getTodayDateString(): string {
 export function getTomorrowDateString(): string {
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
-  return tomorrow.toISOString().split('T')[0];
+  return tomorrow.toISOString().split("T")[0];
 }
 
 /**
@@ -30,9 +30,9 @@ export function getTomorrowDateString(): string {
  * @returns ISO date string (YYYY-MM-DD)
  */
 export function addDays(date: string | Date, days: number): string {
-  const d = typeof date === 'string' ? new Date(date) : new Date(date);
+  const d = typeof date === "string" ? new Date(date) : new Date(date);
   d.setDate(d.getDate() + days);
-  return d.toISOString().split('T')[0];
+  return d.toISOString().split("T")[0];
 }
 
 /**
@@ -80,7 +80,10 @@ export function isLicenseExpired(expiryDate: string): boolean {
  * @param days - Number of days to check
  * @returns true if the license expires within the specified days (and is not already expired)
  */
-export function isLicenseExpiringSoon(expiryDate: string, days: number): boolean {
+export function isLicenseExpiringSoon(
+  expiryDate: string,
+  days: number,
+): boolean {
   const expiry = new Date(expiryDate);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -103,7 +106,10 @@ export function calculateAge(dateOfBirth: string): number {
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
 
-  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+  if (
+    monthDiff < 0 ||
+    (monthDiff === 0 && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
 
@@ -203,7 +209,7 @@ export function isSameDay(date1: string, date2: string): boolean {
 export function getMaxDateOfBirthForAge(minAge: number): string {
   const date = new Date();
   date.setFullYear(date.getFullYear() - minAge);
-  return date.toISOString().split('T')[0];
+  return date.toISOString().split("T")[0];
 }
 
 /**
@@ -213,14 +219,18 @@ export function getMaxDateOfBirthForAge(minAge: number): string {
  * @param locale - Locale for formatting (default: 'de-DE')
  * @returns Formatted date range string
  */
-export function formatDateRange(startDate: string, endDate: string, locale = 'de-DE'): string {
+export function formatDateRange(
+  startDate: string,
+  endDate: string,
+  locale = "de-DE",
+): string {
   const start = new Date(startDate);
   const end = new Date(endDate);
 
   const options: Intl.DateTimeFormatOptions = {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
   };
 
   return `${start.toLocaleDateString(locale, options)} - ${end.toLocaleDateString(locale, options)}`;

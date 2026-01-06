@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { TextareaComponent } from './textarea.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { TextareaComponent } from "./textarea.component";
 
 const meta: Meta<TextareaComponent> = {
-  title: 'Forms/Textarea',
+  title: "Forms/Textarea",
   component: TextareaComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -42,24 +42,24 @@ error states, and reactive forms integration.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
     resize: {
-      control: 'select',
-      options: ['none', 'vertical', 'horizontal', 'both'],
+      control: "select",
+      options: ["none", "vertical", "horizontal", "both"],
     },
     rows: {
-      control: { type: 'number', min: 1, max: 20 },
+      control: { type: "number", min: 1, max: 20 },
     },
   },
   decorators: [
     (story) => ({
       ...story,
-      styles: ['div { width: 400px; }'],
+      styles: ["div { width: 400px; }"],
     }),
   ],
 };
@@ -72,11 +72,11 @@ type Story = StoryObj<TextareaComponent>;
  */
 export const Default: Story = {
   args: {
-    label: 'Description',
-    placeholder: 'Enter a description...',
+    label: "Description",
+    placeholder: "Enter a description...",
     rows: 4,
-    size: 'md',
-    resize: 'vertical',
+    size: "md",
+    resize: "vertical",
   },
 };
 
@@ -85,8 +85,8 @@ export const Default: Story = {
  */
 export const WithCharacterCount: Story = {
   args: {
-    label: 'Bio',
-    placeholder: 'Tell us about yourself...',
+    label: "Bio",
+    placeholder: "Tell us about yourself...",
     maxLength: 200,
     showCharCount: true,
     rows: 4,
@@ -115,9 +115,9 @@ export const AtCharacterLimit: Story = {
  */
 export const Small: Story = {
   args: {
-    label: 'Small Textarea',
-    placeholder: 'Small placeholder...',
-    size: 'sm',
+    label: "Small Textarea",
+    placeholder: "Small placeholder...",
+    size: "sm",
     rows: 3,
   },
 };
@@ -127,9 +127,9 @@ export const Small: Story = {
  */
 export const Large: Story = {
   args: {
-    label: 'Large Textarea',
-    placeholder: 'Large placeholder...',
-    size: 'lg',
+    label: "Large Textarea",
+    placeholder: "Large placeholder...",
+    size: "lg",
     rows: 5,
   },
 };
@@ -139,8 +139,8 @@ export const Large: Story = {
  */
 export const Required: Story = {
   args: {
-    label: 'Required Field',
-    placeholder: 'This field is required',
+    label: "Required Field",
+    placeholder: "This field is required",
     required: true,
     rows: 4,
   },
@@ -151,9 +151,9 @@ export const Required: Story = {
  */
 export const WithError: Story = {
   args: {
-    label: 'Comments',
-    placeholder: 'Enter your comments...',
-    error: 'Please enter at least 10 characters',
+    label: "Comments",
+    placeholder: "Enter your comments...",
+    error: "Please enter at least 10 characters",
     rows: 4,
   },
 };
@@ -163,9 +163,9 @@ export const WithError: Story = {
  */
 export const WithHint: Story = {
   args: {
-    label: 'Notes',
-    placeholder: 'Add any notes...',
-    hint: 'Optional: Add any additional information',
+    label: "Notes",
+    placeholder: "Add any notes...",
+    hint: "Optional: Add any additional information",
     rows: 4,
   },
 };
@@ -175,9 +175,9 @@ export const WithHint: Story = {
  */
 export const NoResize: Story = {
   args: {
-    label: 'Fixed Size',
-    placeholder: 'This textarea cannot be resized',
-    resize: 'none',
+    label: "Fixed Size",
+    placeholder: "This textarea cannot be resized",
+    resize: "none",
     rows: 4,
   },
 };
@@ -187,9 +187,9 @@ export const NoResize: Story = {
  */
 export const BothResize: Story = {
   args: {
-    label: 'Free Resize',
-    placeholder: 'Resize in any direction',
-    resize: 'both',
+    label: "Free Resize",
+    placeholder: "Resize in any direction",
+    resize: "both",
     rows: 4,
   },
 };
@@ -199,8 +199,8 @@ export const BothResize: Story = {
  */
 export const Disabled: Story = {
   args: {
-    label: 'Disabled Textarea',
-    placeholder: 'This textarea is disabled',
+    label: "Disabled Textarea",
+    placeholder: "This textarea is disabled",
     disabled: true,
     rows: 4,
   },
@@ -211,8 +211,8 @@ export const Disabled: Story = {
  */
 export const ReadOnly: Story = {
   args: {
-    label: 'Read Only',
-    placeholder: 'This textarea is read-only',
+    label: "Read Only",
+    placeholder: "This textarea is read-only",
     readonly: true,
     rows: 4,
   },
@@ -223,8 +223,8 @@ export const ReadOnly: Story = {
  */
 export const ManyRows: Story = {
   args: {
-    label: 'Long Form Content',
-    placeholder: 'Enter detailed content...',
+    label: "Long Form Content",
+    placeholder: "Enter detailed content...",
     rows: 10,
     maxLength: 1000,
     showCharCount: true,

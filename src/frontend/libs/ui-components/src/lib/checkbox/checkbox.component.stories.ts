@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { CheckboxComponent } from './checkbox.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { CheckboxComponent } from "./checkbox.component";
 
 const meta: Meta<CheckboxComponent> = {
-  title: 'Forms/Checkbox',
+  title: "Forms/Checkbox",
   component: CheckboxComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -46,11 +46,11 @@ and reactive forms integration.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
   },
 };
@@ -63,8 +63,8 @@ type Story = StoryObj<CheckboxComponent>;
  */
 export const Default: Story = {
   args: {
-    label: 'Accept terms and conditions',
-    size: 'md',
+    label: "Accept terms and conditions",
+    size: "md",
   },
 };
 
@@ -84,8 +84,8 @@ export const Checked: Story = {
  */
 export const Small: Story = {
   args: {
-    label: 'Small checkbox',
-    size: 'sm',
+    label: "Small checkbox",
+    size: "sm",
   },
 };
 
@@ -94,8 +94,8 @@ export const Small: Story = {
  */
 export const Large: Story = {
   args: {
-    label: 'Large checkbox',
-    size: 'lg',
+    label: "Large checkbox",
+    size: "lg",
   },
 };
 
@@ -104,7 +104,7 @@ export const Large: Story = {
  */
 export const Required: Story = {
   args: {
-    label: 'Required checkbox',
+    label: "Required checkbox",
     required: true,
   },
 };
@@ -114,9 +114,9 @@ export const Required: Story = {
  */
 export const WithError: Story = {
   args: {
-    label: 'Accept terms and conditions',
+    label: "Accept terms and conditions",
     required: true,
-    error: 'You must accept the terms to continue',
+    error: "You must accept the terms to continue",
   },
 };
 
@@ -125,8 +125,8 @@ export const WithError: Story = {
  */
 export const WithHint: Story = {
   args: {
-    label: 'Subscribe to newsletter',
-    hint: 'We will send you weekly updates',
+    label: "Subscribe to newsletter",
+    hint: "We will send you weekly updates",
   },
 };
 
@@ -135,7 +135,7 @@ export const WithHint: Story = {
  */
 export const DisabledUnchecked: Story = {
   args: {
-    label: 'Disabled checkbox',
+    label: "Disabled checkbox",
     disabled: true,
   },
 };

@@ -1,5 +1,5 @@
-import { Component, forwardRef, input } from '@angular/core';
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { Component, forwardRef, input } from "@angular/core";
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
 
 type SelectOption = {
   value: number | null;
@@ -11,7 +11,7 @@ type SelectOption = {
  * Provides min seats filter options (2+, 4+, 5+, 7+)
  */
 @Component({
-  selector: 'ui-select-seats',
+  selector: "ui-select-seats",
   standalone: true,
   template: `
     <select
@@ -38,18 +38,18 @@ type SelectOption = {
   ],
 })
 export class SelectSeatsComponent implements ControlValueAccessor {
-  readonly id = input<string>('minSeats');
-  readonly placeholder = input<string>('Alle');
-  readonly cssClass = input<string>('form-input');
+  readonly id = input<string>("minSeats");
+  readonly placeholder = input<string>("Alle");
+  readonly cssClass = input<string>("form-input");
 
   value: number | null = null;
   disabled = false;
 
   readonly options: SelectOption[] = [
-    { value: 2, label: '2+ Sitze' },
-    { value: 4, label: '4+ Sitze' },
-    { value: 5, label: '5+ Sitze' },
-    { value: 7, label: '7+ Sitze' },
+    { value: 2, label: "2+ Sitze" },
+    { value: 4, label: "4+ Sitze" },
+    { value: 5, label: "5+ Sitze" },
+    { value: 7, label: "7+ Sitze" },
   ];
 
   private onChange: (value: number | null) => void = () => {};
@@ -74,7 +74,7 @@ export class SelectSeatsComponent implements ControlValueAccessor {
   onSelectChange(event: Event): void {
     const target = event.target as HTMLSelectElement;
     const val = target.value;
-    this.value = val === 'null' || val === '' ? null : parseInt(val, 10);
+    this.value = val === "null" || val === "" ? null : parseInt(val, 10);
     this.onChange(this.value);
   }
 }

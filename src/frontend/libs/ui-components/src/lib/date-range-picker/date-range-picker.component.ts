@@ -6,12 +6,12 @@ import {
   computed,
   effect,
   output,
-} from '@angular/core';
+} from "@angular/core";
 import {
   type ControlValueAccessor,
   NG_VALUE_ACCESSOR,
   FormsModule,
-} from '@angular/forms';
+} from "@angular/forms";
 
 export interface DateRange {
   startDate: string;
@@ -19,7 +19,7 @@ export interface DateRange {
 }
 
 @Component({
-  selector: 'ui-date-range-picker',
+  selector: "ui-date-range-picker",
   standalone: true,
   imports: [FormsModule],
   template: `
@@ -93,13 +93,13 @@ export interface DateRange {
   ],
 })
 export class DateRangePickerComponent implements ControlValueAccessor {
-  readonly startDateId = input<string>('startDate');
-  readonly endDateId = input<string>('endDate');
-  readonly startDateLabel = input<string>('Startdatum');
-  readonly endDateLabel = input<string>('Enddatum');
+  readonly startDateId = input<string>("startDate");
+  readonly endDateId = input<string>("endDate");
+  readonly startDateLabel = input<string>("Startdatum");
+  readonly endDateLabel = input<string>("Enddatum");
   readonly showLabels = input<boolean>(true);
-  readonly inputClass = input<string>('form-input date-input');
-  readonly containerClass = input<string>('');
+  readonly inputClass = input<string>("form-input date-input");
+  readonly containerClass = input<string>("");
   readonly required = input<boolean>(false);
   readonly minStartDate = input<string>(this.getToday());
   readonly maxStartDate = input<string | null>(null);
@@ -108,8 +108,8 @@ export class DateRangePickerComponent implements ControlValueAccessor {
 
   readonly dateRangeChange = output<DateRange>();
 
-  readonly startDate = signal<string>('');
-  readonly endDate = signal<string>('');
+  readonly startDate = signal<string>("");
+  readonly endDate = signal<string>("");
 
   readonly minEndDate = computed(() => {
     const start = this.startDate();
@@ -143,11 +143,11 @@ export class DateRangePickerComponent implements ControlValueAccessor {
 
   writeValue(value: DateRange | null): void {
     if (value) {
-      this.startDate.set(value.startDate ?? '');
-      this.endDate.set(value.endDate ?? '');
+      this.startDate.set(value.startDate ?? "");
+      this.endDate.set(value.endDate ?? "");
     } else {
-      this.startDate.set('');
-      this.endDate.set('');
+      this.startDate.set("");
+      this.endDate.set("");
     }
   }
 
@@ -189,6 +189,6 @@ export class DateRangePickerComponent implements ControlValueAccessor {
   }
 
   private formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   }
 }

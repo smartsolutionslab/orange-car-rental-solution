@@ -3,7 +3,7 @@
  * Format: 3+ uppercase characters (e.g., "BER-HBF", "MUC-FLG")
  * Matches backend LocationCode value object
  */
-export type LocationCode = string & { readonly __brand: 'LocationCode' };
+export type LocationCode = string & { readonly __brand: "LocationCode" };
 
 const LOCATION_CODE_REGEX = /^[A-Z0-9-]{3,20}$/;
 
@@ -22,7 +22,9 @@ export function createLocationCode(value: string): LocationCode {
 /**
  * Safely convert a string to LocationCode, returning undefined if invalid
  */
-export function toLocationCode(value: string | null | undefined): LocationCode | undefined {
+export function toLocationCode(
+  value: string | null | undefined,
+): LocationCode | undefined {
   if (!value) return undefined;
   const normalized = value.toUpperCase();
   return isLocationCode(normalized) ? normalized : undefined;

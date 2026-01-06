@@ -1,25 +1,26 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { LoadingStateComponent } from './loading-state.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { LoadingStateComponent } from "./loading-state.component";
 
 const meta: Meta<LoadingStateComponent> = {
-  title: 'Components/Feedback/LoadingState',
+  title: "Components/Feedback/LoadingState",
   component: LoadingStateComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     message: {
-      control: 'text',
-      description: 'Loading message to display below the spinner',
+      control: "text",
+      description: "Loading message to display below the spinner",
     },
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
-      description: 'Size of the loading spinner',
+      control: "select",
+      options: ["sm", "md", "lg"],
+      description: "Size of the loading spinner",
     },
   },
   parameters: {
     docs: {
       description: {
-        component: 'Displays a spinner with customizable loading message. Uses the Orange brand color for the spinner accent.',
+        component:
+          "Displays a spinner with customizable loading message. Uses the Orange brand color for the spinner accent.",
       },
     },
   },
@@ -30,36 +31,36 @@ type Story = StoryObj<LoadingStateComponent>;
 
 export const Default: Story = {
   args: {
-    message: 'Laden...',
-    size: 'md',
+    message: "Laden...",
+    size: "md",
   },
 };
 
 export const Small: Story = {
   args: {
-    message: 'Laden...',
-    size: 'sm',
+    message: "Laden...",
+    size: "sm",
   },
 };
 
 export const Large: Story = {
   args: {
-    message: 'Laden...',
-    size: 'lg',
+    message: "Laden...",
+    size: "lg",
   },
 };
 
 export const CustomMessage: Story = {
   args: {
-    message: 'Lade Fahrzeuge...',
-    size: 'md',
+    message: "Lade Fahrzeuge...",
+    size: "md",
   },
 };
 
 export const NoMessage: Story = {
   args: {
-    message: '',
-    size: 'md',
+    message: "",
+    size: "md",
   },
 };
 
@@ -82,7 +83,8 @@ export const AllSizes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Comparison of all spinner sizes: small (1.5rem), medium (2.5rem), and large (3.5rem).',
+        story:
+          "Comparison of all spinner sizes: small (1.5rem), medium (2.5rem), and large (3.5rem).",
       },
     },
   },
@@ -100,7 +102,7 @@ export const InContext: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of the loading state within a card context.',
+        story: "Example of the loading state within a card context.",
       },
     },
   },

@@ -1,5 +1,8 @@
-import { Directive, input, contentChild, TemplateRef } from '@angular/core';
-import type { DataTableCellContext, DataTableHeaderContext } from './data-table.types';
+import { Directive, input, contentChild, TemplateRef } from "@angular/core";
+import type {
+  DataTableCellContext,
+  DataTableHeaderContext,
+} from "./data-table.types";
 
 /**
  * Directive for defining a data table column
@@ -14,7 +17,7 @@ import type { DataTableCellContext, DataTableHeaderContext } from './data-table.
  * </ocr-data-table>
  */
 @Directive({
-  selector: '[ocrDataTableColumn]',
+  selector: "[ocrDataTableColumn]",
   standalone: true,
 })
 export class DataTableColumnDirective<T = unknown> {
@@ -51,7 +54,7 @@ export class DataTableColumnDirective<T = unknown> {
   /**
    * Text alignment
    */
-  readonly align = input<'left' | 'center' | 'right'>('left');
+  readonly align = input<"left" | "center" | "right">("left");
 
   /**
    * Whether to hide on mobile
@@ -61,12 +64,14 @@ export class DataTableColumnDirective<T = unknown> {
   /**
    * Cell template
    */
-  readonly cellTemplate = contentChild<TemplateRef<DataTableCellContext<T>>>('cell');
+  readonly cellTemplate =
+    contentChild<TemplateRef<DataTableCellContext<T>>>("cell");
 
   /**
    * Header template
    */
-  readonly headerTemplate = contentChild<TemplateRef<DataTableHeaderContext<T>>>('header');
+  readonly headerTemplate =
+    contentChild<TemplateRef<DataTableHeaderContext<T>>>("header");
 
   /**
    * Get the column key

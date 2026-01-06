@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { AccordionComponent } from './accordion.component';
-import { AccordionItemComponent } from './accordion-item.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { AccordionComponent } from "./accordion.component";
+import { AccordionItemComponent } from "./accordion-item.component";
 
 const meta: Meta<AccordionComponent> = {
-  title: 'Components/Layout/Accordion',
+  title: "Components/Layout/Accordion",
   component: AccordionComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [AccordionComponent, AccordionItemComponent],
@@ -14,12 +14,12 @@ const meta: Meta<AccordionComponent> = {
   ],
   argTypes: {
     multiple: {
-      control: 'boolean',
-      description: 'Allow multiple items to be expanded at once',
+      control: "boolean",
+      description: "Allow multiple items to be expanded at once",
     },
     keepAlive: {
-      control: 'boolean',
-      description: 'Keep content in DOM after collapse',
+      control: "boolean",
+      description: "Keep content in DOM after collapse",
     },
   },
   parameters: {
@@ -54,7 +54,7 @@ export const Default: Story = {
   render: (args) => ({
     props: {
       ...args,
-      onItemChange: (event: unknown) => console.log('Item changed:', event),
+      onItemChange: (event: unknown) => console.log("Item changed:", event),
     },
     template: `
       <ocr-accordion
@@ -137,7 +137,8 @@ export const MultipleOpen: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'In multiple mode, several accordion items can be open simultaneously.',
+        story:
+          "In multiple mode, several accordion items can be open simultaneously.",
       },
     },
   },
@@ -192,7 +193,7 @@ export const WithSubtitles: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Accordion items with subtitles for additional context.',
+        story: "Accordion items with subtitles for additional context.",
       },
     },
   },
@@ -223,7 +224,8 @@ export const WithDisabledItem: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example with a disabled accordion item that cannot be expanded.',
+        story:
+          "Example with a disabled accordion item that cannot be expanded.",
       },
     },
   },
@@ -275,7 +277,7 @@ export const FAQSection: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of accordion used as a FAQ section.',
+        story: "Example of accordion used as a FAQ section.",
       },
     },
   },
@@ -330,7 +332,7 @@ export const OrderDetails: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Accordion used to display order details in a compact format.',
+        story: "Accordion used to display order details in a compact format.",
       },
     },
   },

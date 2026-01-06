@@ -2,7 +2,7 @@
  * Vehicle Name - branded type for type safety
  * Matches backend VehicleName value object
  */
-export type VehicleName = string & { readonly __brand: 'VehicleName' };
+export type VehicleName = string & { readonly __brand: "VehicleName" };
 
 const MAX_LENGTH = 100;
 
@@ -21,7 +21,9 @@ export function createVehicleName(value: string): VehicleName {
 /**
  * Safely convert a string to VehicleName, returning undefined if invalid
  */
-export function toVehicleName(value: string | null | undefined): VehicleName | undefined {
+export function toVehicleName(
+  value: string | null | undefined,
+): VehicleName | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isVehicleName(trimmed) ? trimmed : undefined;

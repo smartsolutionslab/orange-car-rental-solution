@@ -1,9 +1,9 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import type { CustomerProfile } from '../models';
-import type { CustomerId } from '@orange-car-rental/reservation-api';
-import { API_CONFIG } from '@orange-car-rental/shared';
+import { Injectable, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
+import type { CustomerProfile } from "../models";
+import type { CustomerId } from "@orange-car-rental/reservation-api";
+import { API_CONFIG } from "@orange-car-rental/shared";
 
 /**
  * Base service for accessing the Customer API
@@ -14,7 +14,7 @@ import { API_CONFIG } from '@orange-car-rental/shared';
  * providers: [{ provide: API_CONFIG, useExisting: ConfigService }]
  */
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class BaseCustomerService {
   protected readonly http = inject(HttpClient);

@@ -86,14 +86,18 @@ export class RegisterComponent {
     passwordRequired: this.translate.instant('auth.validation.passwordRequired'),
     passwordMinLength: this.translate.instant('auth.validation.passwordMinLength'),
     passwordWeak: this.translate.instant('auth.register.validation.passwordWeak'),
-    confirmPasswordRequired: this.translate.instant('auth.register.validation.confirmPasswordRequired'),
+    confirmPasswordRequired: this.translate.instant(
+      'auth.register.validation.confirmPasswordRequired',
+    ),
     passwordMismatch: this.translate.instant('auth.register.validation.passwordMismatch'),
     firstNameRequired: this.translate.instant('auth.register.validation.firstNameRequired'),
     lastNameRequired: this.translate.instant('auth.register.validation.lastNameRequired'),
     phoneRequired: this.translate.instant('auth.register.validation.phoneRequired'),
     phoneInvalid: this.translate.instant('auth.register.validation.phoneInvalid'),
     dateOfBirthRequired: this.translate.instant('auth.register.validation.dateOfBirthRequired'),
-    minAgeError: this.translate.instant('auth.register.validation.minAge', { minAge: BUSINESS_RULES.MINIMUM_RENTAL_AGE }),
+    minAgeError: this.translate.instant('auth.register.validation.minAge', {
+      minAge: BUSINESS_RULES.MINIMUM_RENTAL_AGE,
+    }),
     termsRequired: this.translate.instant('auth.register.validation.termsRequired'),
     privacyRequired: this.translate.instant('auth.register.validation.privacyRequired'),
   }));

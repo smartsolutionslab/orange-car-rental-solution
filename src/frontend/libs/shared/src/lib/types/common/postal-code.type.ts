@@ -2,7 +2,7 @@
  * Postal Code - branded type for type safety
  * Matches backend PostalCode value object (German 5-digit format)
  */
-export type PostalCode = string & { readonly __brand: 'PostalCode' };
+export type PostalCode = string & { readonly __brand: "PostalCode" };
 
 // German postal codes: 5 digits
 const POSTAL_CODE_REGEX = /^\d{5}$/;
@@ -22,7 +22,9 @@ export function createPostalCode(value: string): PostalCode {
 /**
  * Safely convert a string to PostalCode, returning undefined if invalid
  */
-export function toPostalCode(value: string | null | undefined): PostalCode | undefined {
+export function toPostalCode(
+  value: string | null | undefined,
+): PostalCode | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isPostalCode(trimmed) ? trimmed : undefined;

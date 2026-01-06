@@ -1,4 +1,4 @@
-import { InjectionToken } from '@angular/core';
+import { InjectionToken } from "@angular/core";
 
 /**
  * Interface for API configuration
@@ -11,7 +11,7 @@ export interface ApiConfig {
 /**
  * Default API URL used as fallback
  */
-const DEFAULT_API_URL = 'http://localhost:5000';
+const DEFAULT_API_URL = "http://localhost:5000";
 
 /**
  * Injection token for API configuration
@@ -26,7 +26,7 @@ const DEFAULT_API_URL = 'http://localhost:5000';
  *   { provide: API_CONFIG, useExisting: ConfigService }
  * ]
  */
-export const API_CONFIG = new InjectionToken<ApiConfig>('API_CONFIG', {
-  providedIn: 'root',
-  factory: () => ({ apiUrl: DEFAULT_API_URL })
+export const API_CONFIG = new InjectionToken<ApiConfig>("API_CONFIG", {
+  providedIn: "root",
+  factory: () => ({ apiUrl: DEFAULT_API_URL }),
 });

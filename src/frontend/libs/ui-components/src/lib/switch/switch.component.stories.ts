@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { SwitchComponent } from './switch.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { SwitchComponent } from "./switch.component";
 
 const meta: Meta<SwitchComponent> = {
-  title: 'Forms/Switch',
+  title: "Forms/Switch",
   component: SwitchComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -45,15 +45,15 @@ and reactive forms integration.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
     labelPosition: {
-      control: 'select',
-      options: ['left', 'right'],
+      control: "select",
+      options: ["left", "right"],
     },
   },
 };
@@ -66,9 +66,9 @@ type Story = StoryObj<SwitchComponent>;
  */
 export const Default: Story = {
   args: {
-    label: 'Enable notifications',
-    size: 'md',
-    labelPosition: 'right',
+    label: "Enable notifications",
+    size: "md",
+    labelPosition: "right",
   },
 };
 
@@ -86,8 +86,8 @@ export const Checked: Story = {
  */
 export const LabelLeft: Story = {
   args: {
-    label: 'Dark mode',
-    labelPosition: 'left',
+    label: "Dark mode",
+    labelPosition: "left",
   },
 };
 
@@ -96,8 +96,8 @@ export const LabelLeft: Story = {
  */
 export const WithDescription: Story = {
   args: {
-    label: 'Auto-save',
-    description: 'Automatically save your changes every 5 minutes',
+    label: "Auto-save",
+    description: "Automatically save your changes every 5 minutes",
   },
 };
 
@@ -106,8 +106,8 @@ export const WithDescription: Story = {
  */
 export const Small: Story = {
   args: {
-    label: 'Small switch',
-    size: 'sm',
+    label: "Small switch",
+    size: "sm",
   },
 };
 
@@ -116,8 +116,8 @@ export const Small: Story = {
  */
 export const Large: Story = {
   args: {
-    label: 'Large switch',
-    size: 'lg',
+    label: "Large switch",
+    size: "lg",
   },
 };
 
@@ -126,7 +126,7 @@ export const Large: Story = {
  */
 export const DisabledOff: Story = {
   args: {
-    label: 'Disabled switch',
+    label: "Disabled switch",
     disabled: true,
   },
 };
@@ -145,7 +145,7 @@ export const DisabledOn: Story = {
  */
 export const WithoutLabel: Story = {
   args: {
-    ariaLabel: 'Toggle setting',
+    ariaLabel: "Toggle setting",
   },
 };
 

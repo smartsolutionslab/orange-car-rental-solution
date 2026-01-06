@@ -7,14 +7,22 @@ import {
   forwardRef,
   ElementRef,
   viewChild,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import type { ControlValueAccessor } from '@angular/forms';
-import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
-import { IconComponent } from '../icon';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import type { ControlValueAccessor } from "@angular/forms";
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from "@angular/forms";
+import { IconComponent } from "../icon";
 
-export type InputSize = 'sm' | 'md' | 'lg';
-export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search' | 'date';
+export type InputSize = "sm" | "md" | "lg";
+export type InputType =
+  | "text"
+  | "email"
+  | "password"
+  | "number"
+  | "tel"
+  | "url"
+  | "search"
+  | "date";
 
 /**
  * Styled Input Component
@@ -32,7 +40,7 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
  * />
  */
 @Component({
-  selector: 'ocr-input',
+  selector: "ocr-input",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, IconComponent],
   providers: [
@@ -59,12 +67,18 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
         [class.input-lg]="size() === 'lg'"
         [class.has-error]="error()"
         [class.has-leading-icon]="leadingIcon()"
-        [class.has-trailing-icon]="trailingIcon() || (type() === 'password' && showPasswordToggle())"
+        [class.has-trailing-icon]="
+          trailingIcon() || (type() === 'password' && showPasswordToggle())
+        "
         [class.focused]="isFocused()"
       >
         @if (leadingIcon()) {
           <span class="input-icon leading">
-            <lib-icon [name]="leadingIcon()!" variant="outline" [size]="iconSize()" />
+            <lib-icon
+              [name]="leadingIcon()!"
+              variant="outline"
+              [size]="iconSize()"
+            />
           </span>
         }
 
@@ -87,12 +101,14 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           (focus)="onFocus()"
         />
 
-        @if (type() === 'password' && showPasswordToggle()) {
+        @if (type() === "password" && showPasswordToggle()) {
           <button
             type="button"
             class="input-icon trailing password-toggle"
             (click)="togglePasswordVisibility()"
-            [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'"
+            [attr.aria-label]="
+              showPassword() ? 'Hide password' : 'Show password'
+            "
             tabindex="-1"
           >
             <lib-icon
@@ -103,152 +119,162 @@ export type InputType = 'text' | 'email' | 'password' | 'number' | 'tel' | 'url'
           </button>
         } @else if (trailingIcon()) {
           <span class="input-icon trailing">
-            <lib-icon [name]="trailingIcon()!" variant="outline" [size]="iconSize()" />
+            <lib-icon
+              [name]="trailingIcon()!"
+              variant="outline"
+              [size]="iconSize()"
+            />
           </span>
         }
       </div>
 
       @if (error()) {
-        <span [id]="inputId() + '-error'" class="input-error">{{ error() }}</span>
+        <span [id]="inputId() + '-error'" class="input-error">{{
+          error()
+        }}</span>
       } @else if (hint()) {
         <span class="input-hint">{{ hint() }}</span>
       }
     </div>
   `,
-  styles: [`
-    .input-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      width: 100%;
-    }
+  styles: [
+    `
+      .input-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        width: 100%;
+      }
 
-    .input-wrapper.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+      .input-wrapper.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
 
-    .input-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .input-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
 
-    .required-marker {
-      color: #ef4444;
-      margin-left: 0.125rem;
-    }
+      .required-marker {
+        color: #ef4444;
+        margin-left: 0.125rem;
+      }
 
-    .input-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      width: 100%;
-      background: white;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
+      .input-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        background: white;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
 
-    .input-container.focused {
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
+      .input-container.focused {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
 
-    .input-container.has-error {
-      border-color: #ef4444;
-    }
+      .input-container.has-error {
+        border-color: #ef4444;
+      }
 
-    .input-container.has-error.focused {
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-    }
+      .input-container.has-error.focused {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
 
-    .input-field {
-      flex: 1;
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      font-size: 0.875rem;
-      color: #111827;
-      background: transparent;
-      border: none;
-      outline: none;
-    }
+      .input-field {
+        flex: 1;
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        font-size: 0.875rem;
+        color: #111827;
+        background: transparent;
+        border: none;
+        outline: none;
+      }
 
-    .input-field::placeholder {
-      color: #9ca3af;
-    }
+      .input-field::placeholder {
+        color: #9ca3af;
+      }
 
-    .input-field:disabled {
-      cursor: not-allowed;
-    }
+      .input-field:disabled {
+        cursor: not-allowed;
+      }
 
-    /* Size variants */
-    .input-sm .input-field {
-      padding: 0.375rem 0.625rem;
-      font-size: 0.75rem;
-    }
+      /* Size variants */
+      .input-sm .input-field {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+      }
 
-    .input-lg .input-field {
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-    }
+      .input-lg .input-field {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+      }
 
-    /* Icon adjustments */
-    .input-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #6b7280;
-      flex-shrink: 0;
-    }
+      /* Icon adjustments */
+      .input-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        flex-shrink: 0;
+      }
 
-    .input-icon.leading {
-      padding-left: 0.75rem;
-    }
+      .input-icon.leading {
+        padding-left: 0.75rem;
+      }
 
-    .input-icon.trailing {
-      padding-right: 0.75rem;
-    }
+      .input-icon.trailing {
+        padding-right: 0.75rem;
+      }
 
-    .has-leading-icon .input-field {
-      padding-left: 0.375rem;
-    }
+      .has-leading-icon .input-field {
+        padding-left: 0.375rem;
+      }
 
-    .has-trailing-icon .input-field {
-      padding-right: 0.375rem;
-    }
+      .has-trailing-icon .input-field {
+        padding-right: 0.375rem;
+      }
 
-    .password-toggle {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 0.25rem;
-      margin-right: 0.5rem;
-      border-radius: 0.25rem;
-      transition: background-color 0.15s ease;
-    }
+      .password-toggle {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.25rem;
+        margin-right: 0.5rem;
+        border-radius: 0.25rem;
+        transition: background-color 0.15s ease;
+      }
 
-    .password-toggle:hover {
-      background-color: #f3f4f6;
-    }
+      .password-toggle:hover {
+        background-color: #f3f4f6;
+      }
 
-    .password-toggle:focus {
-      outline: none;
-    }
+      .password-toggle:focus {
+        outline: none;
+      }
 
-    /* Error and hint messages */
-    .input-error {
-      font-size: 0.75rem;
-      color: #ef4444;
-      margin-top: 0.25rem;
-    }
+      /* Error and hint messages */
+      .input-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+      }
 
-    .input-hint {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-top: 0.25rem;
-    }
-  `],
+      .input-hint {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+      }
+    `,
+  ],
 })
 export class InputComponent implements ControlValueAccessor {
   private static idCounter = 0;
@@ -257,13 +283,13 @@ export class InputComponent implements ControlValueAccessor {
   readonly label = input<string>();
 
   /** Input placeholder */
-  readonly placeholder = input<string>('');
+  readonly placeholder = input<string>("");
 
   /** Input type */
-  readonly type = input<InputType>('text');
+  readonly type = input<InputType>("text");
 
   /** Input size */
-  readonly size = input<InputSize>('md');
+  readonly size = input<InputSize>("md");
 
   /** Leading icon name */
   readonly leadingIcon = input<string>();
@@ -287,7 +313,7 @@ export class InputComponent implements ControlValueAccessor {
   readonly readonly = input(false);
 
   /** Autocomplete attribute */
-  readonly autocomplete = input<string>('off');
+  readonly autocomplete = input<string>("off");
 
   /** Show password toggle for password inputs */
   readonly showPasswordToggle = input(true);
@@ -305,13 +331,14 @@ export class InputComponent implements ControlValueAccessor {
   readonly inputFocus = output<void>();
 
   /** Reference to input element */
-  private readonly inputElement = viewChild<ElementRef<HTMLInputElement>>('inputElement');
+  private readonly inputElement =
+    viewChild<ElementRef<HTMLInputElement>>("inputElement");
 
   /** Unique ID for input */
   readonly inputId = signal(`ocr-input-${++InputComponent.idCounter}`);
 
   /** Current value */
-  readonly value = signal('');
+  readonly value = signal("");
 
   /** Focus state */
   readonly isFocused = signal(false);
@@ -321,8 +348,8 @@ export class InputComponent implements ControlValueAccessor {
 
   /** Computed actual type for password toggle */
   readonly actualType = computed(() => {
-    if (this.type() === 'password' && this.showPassword()) {
-      return 'text';
+    if (this.type() === "password" && this.showPassword()) {
+      return "text";
     }
     return this.type();
   });
@@ -330,16 +357,16 @@ export class InputComponent implements ControlValueAccessor {
   /** Computed icon size based on input size */
   readonly iconSize = computed(() => {
     const size = this.size();
-    if (size === 'sm') return 'xs';
-    if (size === 'lg') return 'md';
-    return 'sm';
+    if (size === "sm") return "xs";
+    if (size === "lg") return "md";
+    return "sm";
   });
 
   private onChange: (value: string) => void = () => {};
   private onTouched: () => void = () => {};
 
   writeValue(value: string): void {
-    this.value.set(value ?? '');
+    this.value.set(value ?? "");
   }
 
   registerOnChange(fn: (value: string) => void): void {

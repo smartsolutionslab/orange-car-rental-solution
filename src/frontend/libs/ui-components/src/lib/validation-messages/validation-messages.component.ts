@@ -1,7 +1,7 @@
-import { Component, input, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AbstractControl } from '@angular/forms';
-import { IconComponent } from '../icon';
+import { Component, input, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AbstractControl } from "@angular/forms";
+import { IconComponent } from "../icon";
 
 /**
  * Custom validation message configuration
@@ -17,19 +17,41 @@ export interface ValidationMessageConfig {
  * Default German validation messages
  */
 export const DEFAULT_VALIDATION_MESSAGES: ValidationMessageConfig[] = [
-  { key: 'required', message: 'Dieses Feld ist erforderlich' },
-  { key: 'email', message: 'Bitte geben Sie eine gültige E-Mail-Adresse ein' },
-  { key: 'minlength', message: (p) => `Mindestens ${p['requiredLength']} Zeichen erforderlich` },
-  { key: 'maxlength', message: (p) => `Maximal ${p['requiredLength']} Zeichen erlaubt` },
-  { key: 'min', message: (p) => `Der Wert muss mindestens ${p['min']} sein` },
-  { key: 'max', message: (p) => `Der Wert darf maximal ${p['max']} sein` },
-  { key: 'pattern', message: 'Ungültiges Format' },
-  { key: 'weakPassword', message: 'Passwort muss Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen enthalten' },
-  { key: 'passwordMismatch', message: 'Passwörter stimmen nicht überein' },
-  { key: 'underage', message: (p) => `Sie müssen mindestens ${p['minAge']} Jahre alt sein` },
-  { key: 'pastDate', message: 'Das Datum darf nicht in der Vergangenheit liegen' },
-  { key: 'invalidPhone', message: 'Bitte geben Sie eine gültige Telefonnummer ein' },
-  { key: 'invalidPostalCode', message: 'Bitte geben Sie eine gültige Postleitzahl ein' },
+  { key: "required", message: "Dieses Feld ist erforderlich" },
+  { key: "email", message: "Bitte geben Sie eine gültige E-Mail-Adresse ein" },
+  {
+    key: "minlength",
+    message: (p) => `Mindestens ${p["requiredLength"]} Zeichen erforderlich`,
+  },
+  {
+    key: "maxlength",
+    message: (p) => `Maximal ${p["requiredLength"]} Zeichen erlaubt`,
+  },
+  { key: "min", message: (p) => `Der Wert muss mindestens ${p["min"]} sein` },
+  { key: "max", message: (p) => `Der Wert darf maximal ${p["max"]} sein` },
+  { key: "pattern", message: "Ungültiges Format" },
+  {
+    key: "weakPassword",
+    message:
+      "Passwort muss Groß-/Kleinbuchstaben, Zahlen und Sonderzeichen enthalten",
+  },
+  { key: "passwordMismatch", message: "Passwörter stimmen nicht überein" },
+  {
+    key: "underage",
+    message: (p) => `Sie müssen mindestens ${p["minAge"]} Jahre alt sein`,
+  },
+  {
+    key: "pastDate",
+    message: "Das Datum darf nicht in der Vergangenheit liegen",
+  },
+  {
+    key: "invalidPhone",
+    message: "Bitte geben Sie eine gültige Telefonnummer ein",
+  },
+  {
+    key: "invalidPostalCode",
+    message: "Bitte geben Sie eine gültige Postleitzahl ein",
+  },
 ];
 
 /**
@@ -50,7 +72,7 @@ export const DEFAULT_VALIDATION_MESSAGES: ValidationMessageConfig[] = [
  * />
  */
 @Component({
-  selector: 'ocr-validation-messages',
+  selector: "ocr-validation-messages",
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
@@ -72,48 +94,50 @@ export const DEFAULT_VALIDATION_MESSAGES: ValidationMessageConfig[] = [
       </div>
     }
   `,
-  styles: [`
-    .validation-messages {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      margin-top: 0.25rem;
-    }
-
-    .validation-message {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.375rem;
-      font-size: 0.75rem;
-      color: #ef4444;
-      line-height: 1.25;
-    }
-
-    .validation-icon {
-      flex-shrink: 0;
-      margin-top: 0.0625rem;
-    }
-
-    .validation-text {
-      flex: 1;
-    }
-
-    /* Animation for appearing */
-    .validation-messages {
-      animation: fadeIn 0.15s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-4px);
+  styles: [
+    `
+      .validation-messages {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
       }
-      to {
-        opacity: 1;
-        transform: translateY(0);
+
+      .validation-message {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.375rem;
+        font-size: 0.75rem;
+        color: #ef4444;
+        line-height: 1.25;
       }
-    }
-  `]
+
+      .validation-icon {
+        flex-shrink: 0;
+        margin-top: 0.0625rem;
+      }
+
+      .validation-text {
+        flex: 1;
+      }
+
+      /* Animation for appearing */
+      .validation-messages {
+        animation: fadeIn 0.15s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-4px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    `,
+  ],
 })
 export class ValidationMessagesComponent {
   /** The form control to display errors for */
@@ -149,15 +173,16 @@ export class ValidationMessagesComponent {
     const allMessages = [...DEFAULT_VALIDATION_MESSAGES, ...this.messages()];
 
     // Map errors to messages
-    const errors = errorKeys.map(key => {
+    const errors = errorKeys.map((key) => {
       const errorValue = ctrl.errors![key];
-      const config = allMessages.find(m => m.key === key);
+      const config = allMessages.find((m) => m.key === key);
 
       let message: string;
       if (config) {
-        message = typeof config.message === 'function'
-          ? config.message(errorValue)
-          : config.message;
+        message =
+          typeof config.message === "function"
+            ? config.message(errorValue)
+            : config.message;
       } else {
         // Fallback for unknown errors
         message = `Validierungsfehler: ${key}`;

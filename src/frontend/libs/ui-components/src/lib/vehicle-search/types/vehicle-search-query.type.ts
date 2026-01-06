@@ -1,15 +1,15 @@
 /**
  * Vehicle search query interface
  */
-import type { ISODateString } from '@orange-car-rental/shared';
-import type { LocationCode } from '@orange-car-rental/location-api';
+import type { ISODateString } from "@orange-car-rental/shared";
+import type { LocationCode } from "@orange-car-rental/location-api";
 import type {
   CategoryCode,
   SeatingCapacity,
   DailyRate,
   FuelType,
   TransmissionType,
-} from '@orange-car-rental/vehicle-api';
+} from "@orange-car-rental/vehicle-api";
 
 export type VehicleSearchQuery = {
   readonly pickupDate?: ISODateString;

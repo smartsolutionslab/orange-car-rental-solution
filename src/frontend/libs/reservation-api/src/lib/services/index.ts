@@ -1,1 +1,1 @@
-export { BaseReservationService } from './base-reservation.service';
+export { BaseReservationService } from "./base-reservation.service";

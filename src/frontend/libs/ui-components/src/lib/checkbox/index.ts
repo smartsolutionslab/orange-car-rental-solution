@@ -1,1 +1,1 @@
-export { CheckboxComponent, type CheckboxSize } from './checkbox.component';
+export { CheckboxComponent, type CheckboxSize } from "./checkbox.component";

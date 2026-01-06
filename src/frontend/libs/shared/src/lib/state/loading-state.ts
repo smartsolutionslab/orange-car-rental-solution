@@ -1,5 +1,5 @@
-import { signal, computed } from '@angular/core';
-import type { Signal, WritableSignal } from '@angular/core';
+import { signal, computed } from "@angular/core";
+import type { Signal, WritableSignal } from "@angular/core";
 
 /**
  * State manager for loading, error, and success states.
@@ -51,13 +51,17 @@ export class LoadingState {
   readonly error: Signal<string | null> = computed(() => this._error());
 
   /** Current success message (null if no success message) */
-  readonly successMessage: Signal<string | null> = computed(() => this._successMessage());
+  readonly successMessage: Signal<string | null> = computed(() =>
+    this._successMessage(),
+  );
 
   /** Whether there is an error */
   readonly hasError: Signal<boolean> = computed(() => this._error() !== null);
 
   /** Whether there is a success message */
-  readonly hasSuccess: Signal<boolean> = computed(() => this._successMessage() !== null);
+  readonly hasSuccess: Signal<boolean> = computed(
+    () => this._successMessage() !== null,
+  );
 
   /**
    * Start a loading operation, clearing any previous error/success
@@ -162,7 +166,9 @@ export class ActionLoadingState<K extends string> extends LoadingState {
   }
 
   /** Set of currently active action names */
-  readonly activeActions: Signal<Set<K>> = computed(() => this._activeActions());
+  readonly activeActions: Signal<Set<K>> = computed(() =>
+    this._activeActions(),
+  );
 
   /**
    * Check if a specific action is loading
@@ -185,7 +191,7 @@ export class ActionLoadingState<K extends string> extends LoadingState {
    * @param clearMessages - Whether to clear error/success messages (default: true)
    */
   startAction(action: K, clearMessages = true): void {
-    this._activeActions.update(actions => {
+    this._activeActions.update((actions) => {
       const newActions = new Set(actions);
       newActions.add(action);
       return newActions;
@@ -200,7 +206,7 @@ export class ActionLoadingState<K extends string> extends LoadingState {
    * @param action - The action name
    */
   completeAction(action: K): void {
-    this._activeActions.update(actions => {
+    this._activeActions.update((actions) => {
       const newActions = new Set(actions);
       newActions.delete(action);
       return newActions;

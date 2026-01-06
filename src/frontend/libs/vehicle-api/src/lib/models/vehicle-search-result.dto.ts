@@ -1,7 +1,7 @@
 /**
  * Search result with pagination metadata
  */
-import type { Vehicle } from './vehicle.dto';
+import type { Vehicle } from "./vehicle.dto";
 
 export type VehicleSearchResult = {
   readonly vehicles: Vehicle[];

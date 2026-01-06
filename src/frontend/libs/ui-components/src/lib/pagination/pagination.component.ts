@@ -1,17 +1,17 @@
-import { Component, input, output, computed } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IconComponent } from '../icon/icon.component';
+import { Component, input, output, computed } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { IconComponent } from "../icon/icon.component";
 
 /**
  * Reusable pagination component
  * Displays page navigation with ellipsis for large page ranges
  */
 @Component({
-  selector: 'ui-pagination',
+  selector: "ui-pagination",
   standalone: true,
   imports: [CommonModule, IconComponent],
-  templateUrl: './pagination.component.html',
-  styleUrl: './pagination.component.css'
+  templateUrl: "./pagination.component.html",
+  styleUrl: "./pagination.component.css",
 })
 export class PaginationComponent {
   /** Number of pages to display before and after the current page */
@@ -40,12 +40,12 @@ export class PaginationComponent {
   /**
    * Label for previous button
    */
-  readonly previousLabel = input('Zurück');
+  readonly previousLabel = input("Zurück");
 
   /**
    * Label for next button
    */
-  readonly nextLabel = input('Weiter');
+  readonly nextLabel = input("Weiter");
 
   /**
    * Show item range info (e.g., "Showing 1-10 of 100")
@@ -55,12 +55,12 @@ export class PaginationComponent {
   /**
    * Item label for range display (singular)
    */
-  readonly itemLabel = input('Eintrag');
+  readonly itemLabel = input("Eintrag");
 
   /**
    * Item label for range display (plural)
    */
-  readonly itemLabelPlural = input('Einträge');
+  readonly itemLabelPlural = input("Einträge");
 
   /**
    * Emitted when page changes
@@ -75,7 +75,11 @@ export class PaginationComponent {
     const total = this.totalPages();
     const pages: number[] = [];
 
-    for (let i = current - PaginationComponent.PAGES_AROUND_CURRENT; i <= current + PaginationComponent.PAGES_AROUND_CURRENT; i++) {
+    for (
+      let i = current - PaginationComponent.PAGES_AROUND_CURRENT;
+      i <= current + PaginationComponent.PAGES_AROUND_CURRENT;
+      i++
+    ) {
       if (i > 0 && i <= total) {
         pages.push(i);
       }
@@ -87,14 +91,26 @@ export class PaginationComponent {
   /**
    * Check if we should show first page and leading ellipsis
    */
-  protected readonly showLeadingFirstPage = computed(() => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1);
-  protected readonly showLeadingDots = computed(() => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 2);
+  protected readonly showLeadingFirstPage = computed(
+    () => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 1,
+  );
+  protected readonly showLeadingDots = computed(
+    () => this.currentPage() > PaginationComponent.PAGES_AROUND_CURRENT + 2,
+  );
 
   /**
    * Check if we should show last page and trailing ellipsis
    */
-  protected readonly showTrailingLastPage = computed(() => this.currentPage() < this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT);
-  protected readonly showTrailingDots = computed(() => this.currentPage() < this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT - 1);
+  protected readonly showTrailingLastPage = computed(
+    () =>
+      this.currentPage() <
+      this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT,
+  );
+  protected readonly showTrailingDots = computed(
+    () =>
+      this.currentPage() <
+      this.totalPages() - PaginationComponent.PAGES_AROUND_CURRENT - 1,
+  );
 
   /**
    * Calculate range start

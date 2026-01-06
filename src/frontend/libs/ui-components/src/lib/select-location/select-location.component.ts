@@ -7,14 +7,17 @@ import {
   type OnInit,
   DestroyRef,
   output,
-} from '@angular/core';
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { LocationService, type Location } from '@orange-car-rental/location-api';
-import { logError } from '@orange-car-rental/util';
+} from "@angular/core";
+import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import {
+  LocationService,
+  type Location,
+} from "@orange-car-rental/location-api";
+import { logError } from "@orange-car-rental/util";
 
 @Component({
-  selector: 'ui-select-location',
+  selector: "ui-select-location",
   standalone: true,
   template: `
     <select
@@ -56,11 +59,11 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
   private readonly locationService = inject(LocationService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly id = input<string>('location');
-  readonly placeholder = input<string>('Alle Standorte');
-  readonly loadingText = input<string>('Lade Standorte...');
-  readonly errorText = input<string>('Fehler beim Laden');
-  readonly cssClass = input<string>('form-input');
+  readonly id = input<string>("location");
+  readonly placeholder = input<string>("Alle Standorte");
+  readonly loadingText = input<string>("Lade Standorte...");
+  readonly errorText = input<string>("Fehler beim Laden");
+  readonly cssClass = input<string>("form-input");
   readonly showCity = input<boolean>(false);
 
   readonly locationLoaded = output<Location[]>();
@@ -69,7 +72,7 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
 
-  value: string = '';
+  value: string = "";
   disabled = false;
 
   private onChange: (value: string) => void = () => {};
@@ -80,7 +83,7 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
   }
 
   writeValue(value: string): void {
-    this.value = value ?? '';
+    this.value = value ?? "";
   }
 
   registerOnChange(fn: (value: string) => void): void {
@@ -115,8 +118,8 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
           this.locationLoaded.emit(locations);
         },
         error: (err) => {
-          logError('SelectLocationComponent', 'Error loading locations', err);
-          this.error.set('Failed to load locations');
+          logError("SelectLocationComponent", "Error loading locations", err);
+          this.error.set("Failed to load locations");
           this.loading.set(false);
         },
       });

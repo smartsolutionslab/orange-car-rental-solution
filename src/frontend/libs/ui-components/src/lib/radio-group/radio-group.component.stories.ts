@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { RadioGroupComponent, RadioOption } from './radio-group.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { RadioGroupComponent, RadioOption } from "./radio-group.component";
 
 const meta: Meta<RadioGroupComponent> = {
-  title: 'Forms/Radio Group',
+  title: "Forms/Radio Group",
   component: RadioGroupComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -42,15 +42,15 @@ const options: RadioOption[] = [
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'select',
-      options: ['sm', 'md', 'lg'],
+      control: "select",
+      options: ["sm", "md", "lg"],
     },
     orientation: {
-      control: 'select',
-      options: ['vertical', 'horizontal'],
+      control: "select",
+      options: ["vertical", "horizontal"],
     },
   },
 };
@@ -59,28 +59,40 @@ export default meta;
 type Story = StoryObj<RadioGroupComponent>;
 
 const basicOptions: RadioOption[] = [
-  { value: 'option1', label: 'Option 1' },
-  { value: 'option2', label: 'Option 2' },
-  { value: 'option3', label: 'Option 3' },
+  { value: "option1", label: "Option 1" },
+  { value: "option2", label: "Option 2" },
+  { value: "option3", label: "Option 3" },
 ];
 
 const sizeOptions: RadioOption[] = [
-  { value: 'sm', label: 'Small' },
-  { value: 'md', label: 'Medium' },
-  { value: 'lg', label: 'Large' },
+  { value: "sm", label: "Small" },
+  { value: "md", label: "Medium" },
+  { value: "lg", label: "Large" },
 ];
 
 const planOptions: RadioOption[] = [
-  { value: 'free', label: 'Free', description: 'Basic features for personal use' },
-  { value: 'pro', label: 'Pro', description: 'Advanced features for professionals' },
-  { value: 'enterprise', label: 'Enterprise', description: 'Full features for large teams' },
+  {
+    value: "free",
+    label: "Free",
+    description: "Basic features for personal use",
+  },
+  {
+    value: "pro",
+    label: "Pro",
+    description: "Advanced features for professionals",
+  },
+  {
+    value: "enterprise",
+    label: "Enterprise",
+    description: "Full features for large teams",
+  },
 ];
 
 const colorOptions: RadioOption[] = [
-  { value: 'red', label: 'Red' },
-  { value: 'blue', label: 'Blue' },
-  { value: 'green', label: 'Green' },
-  { value: 'yellow', label: 'Yellow', disabled: true },
+  { value: "red", label: "Red" },
+  { value: "blue", label: "Blue" },
+  { value: "green", label: "Green" },
+  { value: "yellow", label: "Yellow", disabled: true },
 ];
 
 /**
@@ -88,10 +100,10 @@ const colorOptions: RadioOption[] = [
  */
 export const Default: Story = {
   args: {
-    label: 'Select an option',
+    label: "Select an option",
     options: basicOptions,
-    orientation: 'vertical',
-    size: 'md',
+    orientation: "vertical",
+    size: "md",
   },
 };
 
@@ -100,9 +112,9 @@ export const Default: Story = {
  */
 export const Horizontal: Story = {
   args: {
-    label: 'Select size',
+    label: "Select size",
     options: sizeOptions,
-    orientation: 'horizontal',
+    orientation: "horizontal",
   },
 };
 
@@ -111,9 +123,9 @@ export const Horizontal: Story = {
  */
 export const WithDescriptions: Story = {
   args: {
-    label: 'Select a plan',
+    label: "Select a plan",
     options: planOptions,
-    orientation: 'vertical',
+    orientation: "vertical",
   },
 };
 
@@ -122,9 +134,9 @@ export const WithDescriptions: Story = {
  */
 export const Small: Story = {
   args: {
-    label: 'Small radio group',
+    label: "Small radio group",
     options: basicOptions,
-    size: 'sm',
+    size: "sm",
   },
 };
 
@@ -133,9 +145,9 @@ export const Small: Story = {
  */
 export const Large: Story = {
   args: {
-    label: 'Large radio group',
+    label: "Large radio group",
     options: basicOptions,
-    size: 'lg',
+    size: "lg",
   },
 };
 
@@ -144,7 +156,7 @@ export const Large: Story = {
  */
 export const Required: Story = {
   args: {
-    label: 'Required selection',
+    label: "Required selection",
     options: basicOptions,
     required: true,
   },
@@ -155,10 +167,10 @@ export const Required: Story = {
  */
 export const WithError: Story = {
   args: {
-    label: 'Select an option',
+    label: "Select an option",
     options: basicOptions,
     required: true,
-    error: 'Please select an option to continue',
+    error: "Please select an option to continue",
   },
 };
 
@@ -167,13 +179,13 @@ export const WithError: Story = {
  */
 export const WithHint: Story = {
   args: {
-    label: 'Select preferred contact method',
+    label: "Select preferred contact method",
     options: [
-      { value: 'email', label: 'Email' },
-      { value: 'phone', label: 'Phone' },
-      { value: 'sms', label: 'SMS' },
+      { value: "email", label: "Email" },
+      { value: "phone", label: "Phone" },
+      { value: "sms", label: "SMS" },
     ],
-    hint: 'We will only contact you using this method',
+    hint: "We will only contact you using this method",
   },
 };
 
@@ -182,7 +194,7 @@ export const WithHint: Story = {
  */
 export const WithDisabledOption: Story = {
   args: {
-    label: 'Select a color',
+    label: "Select a color",
     options: colorOptions,
   },
 };
@@ -192,7 +204,7 @@ export const WithDisabledOption: Story = {
  */
 export const Disabled: Story = {
   args: {
-    label: 'Disabled group',
+    label: "Disabled group",
     options: basicOptions,
     disabled: true,
   },
@@ -204,7 +216,7 @@ export const Disabled: Story = {
 export const WithoutLabel: Story = {
   args: {
     options: sizeOptions,
-    orientation: 'horizontal',
+    orientation: "horizontal",
   },
 };
 
@@ -213,11 +225,23 @@ export const WithoutLabel: Story = {
  */
 export const PaymentMethod: Story = {
   args: {
-    label: 'Payment method',
+    label: "Payment method",
     options: [
-      { value: 'card', label: 'Credit Card', description: 'Visa, Mastercard, American Express' },
-      { value: 'paypal', label: 'PayPal', description: 'Pay with your PayPal account' },
-      { value: 'bank', label: 'Bank Transfer', description: 'Direct bank transfer (1-3 days)' },
+      {
+        value: "card",
+        label: "Credit Card",
+        description: "Visa, Mastercard, American Express",
+      },
+      {
+        value: "paypal",
+        label: "PayPal",
+        description: "Pay with your PayPal account",
+      },
+      {
+        value: "bank",
+        label: "Bank Transfer",
+        description: "Direct bank transfer (1-3 days)",
+      },
     ],
     required: true,
   },

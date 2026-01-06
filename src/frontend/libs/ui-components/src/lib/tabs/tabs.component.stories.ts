@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { TabsComponent } from './tabs.component';
-import { TabComponent } from './tab.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { TabsComponent } from "./tabs.component";
+import { TabComponent } from "./tab.component";
 
 const meta: Meta<TabsComponent> = {
-  title: 'Components/Navigation/Tabs',
+  title: "Components/Navigation/Tabs",
   component: TabsComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [TabsComponent, TabComponent],
@@ -14,17 +14,17 @@ const meta: Meta<TabsComponent> = {
   ],
   argTypes: {
     orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Orientation of the tabs',
+      control: "select",
+      options: ["horizontal", "vertical"],
+      description: "Orientation of the tabs",
     },
     keepAlive: {
-      control: 'boolean',
-      description: 'Keep visited tab content in DOM',
+      control: "boolean",
+      description: "Keep visited tab content in DOM",
     },
     ariaLabel: {
-      control: 'text',
-      description: 'Accessible label for the tab list',
+      control: "text",
+      description: "Accessible label for the tab list",
     },
   },
   parameters: {
@@ -59,7 +59,7 @@ export const Default: Story = {
   render: (args) => ({
     props: {
       ...args,
-      onTabChange: (event: unknown) => console.log('Tab changed:', event),
+      onTabChange: (event: unknown) => console.log("Tab changed:", event),
     },
     template: `
       <ocr-tabs
@@ -102,9 +102,9 @@ export const Default: Story = {
     `,
   }),
   args: {
-    orientation: 'horizontal',
+    orientation: "horizontal",
     keepAlive: false,
-    ariaLabel: 'Tabs',
+    ariaLabel: "Tabs",
   },
 };
 
@@ -144,7 +144,8 @@ export const VerticalOrientation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Tabs displayed in vertical orientation, suitable for settings pages.',
+        story:
+          "Tabs displayed in vertical orientation, suitable for settings pages.",
       },
     },
   },
@@ -181,7 +182,7 @@ export const WithBadges: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Tabs with badge counts for notifications or item counts.',
+        story: "Tabs with badge counts for notifications or item counts.",
       },
     },
   },
@@ -218,7 +219,7 @@ export const WithDisabledTab: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example with a disabled tab that cannot be selected.',
+        story: "Example with a disabled tab that cannot be selected.",
       },
     },
   },
@@ -274,7 +275,7 @@ export const VehicleDetails: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of tabs used in a vehicle details view.',
+        story: "Example of tabs used in a vehicle details view.",
       },
     },
   },

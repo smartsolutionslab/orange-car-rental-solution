@@ -1,37 +1,45 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { EmptyStateComponent } from './empty-state.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { EmptyStateComponent } from "./empty-state.component";
 
 const meta: Meta<EmptyStateComponent> = {
-  title: 'Components/Feedback/EmptyState',
+  title: "Components/Feedback/EmptyState",
   component: EmptyStateComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     icon: {
-      control: 'select',
-      options: ['default', 'car', 'reservation', 'location', 'search', 'document'],
-      description: 'Icon to display',
+      control: "select",
+      options: [
+        "default",
+        "car",
+        "reservation",
+        "location",
+        "search",
+        "document",
+      ],
+      description: "Icon to display",
     },
     title: {
-      control: 'text',
-      description: 'Main title text',
+      control: "text",
+      description: "Main title text",
     },
     description: {
-      control: 'text',
-      description: 'Optional description text',
+      control: "text",
+      description: "Optional description text",
     },
     showAction: {
-      control: 'boolean',
-      description: 'Whether to show the action button',
+      control: "boolean",
+      description: "Whether to show the action button",
     },
     actionLabel: {
-      control: 'text',
-      description: 'Label for the action button',
+      control: "text",
+      description: "Label for the action button",
     },
   },
   parameters: {
     docs: {
       description: {
-        component: 'Displays a placeholder when no data is available. Supports different icons, optional description, and an action button.',
+        component:
+          "Displays a placeholder when no data is available. Supports different icons, optional description, and an action button.",
       },
     },
   },
@@ -42,71 +50,74 @@ type Story = StoryObj<EmptyStateComponent>;
 
 export const Default: Story = {
   args: {
-    icon: 'default',
-    title: 'Keine Daten vorhanden',
-    description: 'Es wurden keine Einträge gefunden.',
+    icon: "default",
+    title: "Keine Daten vorhanden",
+    description: "Es wurden keine Einträge gefunden.",
     showAction: false,
-    actionLabel: '',
+    actionLabel: "",
   },
 };
 
 export const NoVehicles: Story = {
   args: {
-    icon: 'car',
-    title: 'Keine Fahrzeuge gefunden',
-    description: 'Es sind derzeit keine Fahrzeuge verfügbar, die Ihren Suchkriterien entsprechen.',
+    icon: "car",
+    title: "Keine Fahrzeuge gefunden",
+    description:
+      "Es sind derzeit keine Fahrzeuge verfügbar, die Ihren Suchkriterien entsprechen.",
     showAction: true,
-    actionLabel: 'Neue Suche starten',
+    actionLabel: "Neue Suche starten",
   },
 };
 
 export const NoReservations: Story = {
   args: {
-    icon: 'reservation',
-    title: 'Keine Reservierungen',
-    description: 'Sie haben noch keine Reservierungen. Starten Sie jetzt Ihre erste Buchung!',
+    icon: "reservation",
+    title: "Keine Reservierungen",
+    description:
+      "Sie haben noch keine Reservierungen. Starten Sie jetzt Ihre erste Buchung!",
     showAction: true,
-    actionLabel: 'Fahrzeug buchen',
+    actionLabel: "Fahrzeug buchen",
   },
 };
 
 export const NoLocations: Story = {
   args: {
-    icon: 'location',
-    title: 'Keine Standorte gefunden',
-    description: 'In Ihrer Nähe wurden keine Mietstationen gefunden.',
+    icon: "location",
+    title: "Keine Standorte gefunden",
+    description: "In Ihrer Nähe wurden keine Mietstationen gefunden.",
     showAction: true,
-    actionLabel: 'Standort ändern',
+    actionLabel: "Standort ändern",
   },
 };
 
 export const SearchNoResults: Story = {
   args: {
-    icon: 'search',
-    title: 'Keine Ergebnisse',
-    description: 'Ihre Suche ergab keine Treffer. Versuchen Sie andere Suchbegriffe.',
+    icon: "search",
+    title: "Keine Ergebnisse",
+    description:
+      "Ihre Suche ergab keine Treffer. Versuchen Sie andere Suchbegriffe.",
     showAction: false,
-    actionLabel: '',
+    actionLabel: "",
   },
 };
 
 export const NoDocuments: Story = {
   args: {
-    icon: 'document',
-    title: 'Keine Dokumente',
-    description: 'Es sind keine Rechnungen oder Dokumente vorhanden.',
+    icon: "document",
+    title: "Keine Dokumente",
+    description: "Es sind keine Rechnungen oder Dokumente vorhanden.",
     showAction: false,
-    actionLabel: '',
+    actionLabel: "",
   },
 };
 
 export const WithoutDescription: Story = {
   args: {
-    icon: 'car',
-    title: 'Keine Fahrzeuge verfügbar',
-    description: '',
+    icon: "car",
+    title: "Keine Fahrzeuge verfügbar",
+    description: "",
     showAction: false,
-    actionLabel: '',
+    actionLabel: "",
   },
 };
 
@@ -138,7 +149,7 @@ export const AllIcons: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'All available icons for the empty state component.',
+        story: "All available icons for the empty state component.",
       },
     },
   },

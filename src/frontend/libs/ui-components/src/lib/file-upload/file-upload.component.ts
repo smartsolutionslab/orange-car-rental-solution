@@ -6,9 +6,9 @@ import {
   computed,
   ElementRef,
   viewChild,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IconComponent } from '../icon';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { IconComponent } from "../icon";
 
 export interface UploadedFile {
   file: File;
@@ -34,7 +34,7 @@ export interface UploadedFile {
  * />
  */
 @Component({
-  selector: 'ocr-file-upload',
+  selector: "ocr-file-upload",
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
@@ -77,7 +77,8 @@ export interface UploadedFile {
               @if (isDragging()) {
                 Drop files here
               } @else {
-                <span class="dropzone-link">Click to upload</span> or drag and drop
+                <span class="dropzone-link">Click to upload</span> or drag and
+                drop
               }
             </span>
             <span class="dropzone-secondary">
@@ -97,7 +98,11 @@ export interface UploadedFile {
           @for (file of files(); track file.name; let i = $index) {
             <li class="file-item">
               @if (file.preview) {
-                <img [src]="file.preview" [alt]="file.name" class="file-preview" />
+                <img
+                  [src]="file.preview"
+                  [alt]="file.name"
+                  class="file-preview"
+                />
               } @else {
                 <div class="file-icon">
                   <lib-icon name="file" variant="outline" size="sm" />
@@ -127,199 +132,201 @@ export interface UploadedFile {
       }
     </div>
   `,
-  styles: [`
-    .file-upload-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      width: 100%;
-    }
+  styles: [
+    `
+      .file-upload-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+      }
 
-    .file-upload-wrapper.disabled {
-      opacity: 0.6;
-      pointer-events: none;
-    }
+      .file-upload-wrapper.disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
 
-    .file-upload-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .file-upload-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
 
-    .required-marker {
-      color: #ef4444;
-      margin-left: 0.125rem;
-    }
+      .required-marker {
+        color: #ef4444;
+        margin-left: 0.125rem;
+      }
 
-    .dropzone {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 10rem;
-      padding: 2rem;
-      border: 2px dashed #d1d5db;
-      border-radius: 0.5rem;
-      background-color: #f9fafb;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
+      .dropzone {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 10rem;
+        padding: 2rem;
+        border: 2px dashed #d1d5db;
+        border-radius: 0.5rem;
+        background-color: #f9fafb;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
 
-    .dropzone:hover {
-      border-color: #f97316;
-      background-color: #fff7ed;
-    }
+      .dropzone:hover {
+        border-color: #f97316;
+        background-color: #fff7ed;
+      }
 
-    .dropzone.dragging {
-      border-color: #f97316;
-      background-color: #fff7ed;
-      border-style: solid;
-    }
+      .dropzone.dragging {
+        border-color: #f97316;
+        background-color: #fff7ed;
+        border-style: solid;
+      }
 
-    .dropzone.has-error {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
+      .dropzone.has-error {
+        border-color: #ef4444;
+        background-color: #fef2f2;
+      }
 
-    .file-input {
-      position: absolute;
-      width: 0;
-      height: 0;
-      opacity: 0;
-      overflow: hidden;
-    }
+      .file-input {
+        position: absolute;
+        width: 0;
+        height: 0;
+        opacity: 0;
+        overflow: hidden;
+      }
 
-    .dropzone-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      text-align: center;
-    }
+      .dropzone-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        text-align: center;
+      }
 
-    .dropzone-icon {
-      color: #9ca3af;
-    }
+      .dropzone-icon {
+        color: #9ca3af;
+      }
 
-    .dropzone.dragging .dropzone-icon,
-    .dropzone:hover .dropzone-icon {
-      color: #f97316;
-    }
+      .dropzone.dragging .dropzone-icon,
+      .dropzone:hover .dropzone-icon {
+        color: #f97316;
+      }
 
-    .dropzone-text {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+      .dropzone-text {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
 
-    .dropzone-primary {
-      font-size: 0.875rem;
-      color: #374151;
-    }
+      .dropzone-primary {
+        font-size: 0.875rem;
+        color: #374151;
+      }
 
-    .dropzone-link {
-      color: #f97316;
-      font-weight: 500;
-      text-decoration: underline;
-    }
+      .dropzone-link {
+        color: #f97316;
+        font-weight: 500;
+        text-decoration: underline;
+      }
 
-    .dropzone-secondary {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
+      .dropzone-secondary {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
 
-    /* File list */
-    .file-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+      /* File list */
+      .file-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
 
-    .file-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem;
-      background-color: #f9fafb;
-      border: 1px solid #e5e7eb;
-      border-radius: 0.375rem;
-    }
+      .file-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background-color: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.375rem;
+      }
 
-    .file-preview {
-      width: 2.5rem;
-      height: 2.5rem;
-      object-fit: cover;
-      border-radius: 0.25rem;
-    }
+      .file-preview {
+        width: 2.5rem;
+        height: 2.5rem;
+        object-fit: cover;
+        border-radius: 0.25rem;
+      }
 
-    .file-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      background-color: #e5e7eb;
-      border-radius: 0.25rem;
-      color: #6b7280;
-    }
+      .file-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        background-color: #e5e7eb;
+        border-radius: 0.25rem;
+        color: #6b7280;
+      }
 
-    .file-info {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.125rem;
-    }
+      .file-info {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+      }
 
-    .file-name {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+      .file-name {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
-    .file-size {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
+      .file-size {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
 
-    .file-remove {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.75rem;
-      height: 1.75rem;
-      padding: 0;
-      background: none;
-      border: none;
-      border-radius: 0.25rem;
-      color: #6b7280;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
+      .file-remove {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        background: none;
+        border: none;
+        border-radius: 0.25rem;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
 
-    .file-remove:hover {
-      background-color: #fee2e2;
-      color: #ef4444;
-    }
+      .file-remove:hover {
+        background-color: #fee2e2;
+        color: #ef4444;
+      }
 
-    /* Error and hint */
-    .upload-error {
-      font-size: 0.75rem;
-      color: #ef4444;
-    }
+      /* Error and hint */
+      .upload-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+      }
 
-    .upload-hint {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
-  `],
+      .upload-hint {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
+    `,
+  ],
 })
 export class FileUploadComponent {
   /** Component label */
@@ -353,7 +360,8 @@ export class FileUploadComponent {
   readonly fileRejected = output<{ file: File; reason: string }>();
 
   /** Reference to file input element */
-  private readonly fileInput = viewChild<ElementRef<HTMLInputElement>>('fileInput');
+  private readonly fileInput =
+    viewChild<ElementRef<HTMLInputElement>>("fileInput");
 
   /** Uploaded files */
   readonly files = signal<UploadedFile[]>([]);
@@ -364,10 +372,10 @@ export class FileUploadComponent {
   /** Computed accepted types text */
   readonly acceptedTypesText = computed(() => {
     const accept = this.accept();
-    if (!accept) return '';
+    if (!accept) return "";
 
-    const types = accept.split(',').map(t => t.trim());
-    return types.join(', ').toUpperCase();
+    const types = accept.split(",").map((t) => t.trim());
+    return types.join(", ").toUpperCase();
   });
 
   openFileDialog(): void {
@@ -380,7 +388,7 @@ export class FileUploadComponent {
       this.processFiles(Array.from(input.files));
     }
     // Reset input so same file can be selected again
-    input.value = '';
+    input.value = "";
   }
 
   onDragOver(event: DragEvent): void {
@@ -431,13 +439,16 @@ export class FileUploadComponent {
     for (const file of fileList) {
       // Validate file type
       if (this.accept() && !this.isValidType(file)) {
-        this.fileRejected.emit({ file, reason: 'Invalid file type' });
+        this.fileRejected.emit({ file, reason: "Invalid file type" });
         continue;
       }
 
       // Validate file size
       if (this.maxSize() && file.size > this.maxSize()!) {
-        this.fileRejected.emit({ file, reason: `File exceeds maximum size of ${this.formatSize(this.maxSize()!)}` });
+        this.fileRejected.emit({
+          file,
+          reason: `File exceeds maximum size of ${this.formatSize(this.maxSize()!)}`,
+        });
         continue;
       }
 
@@ -449,7 +460,7 @@ export class FileUploadComponent {
       };
 
       // Create preview for images
-      if (file.type.startsWith('image/')) {
+      if (file.type.startsWith("image/")) {
         uploadedFile.preview = URL.createObjectURL(file);
       }
 
@@ -468,18 +479,18 @@ export class FileUploadComponent {
     const accept = this.accept();
     if (!accept) return true;
 
-    const types = accept.split(',').map(t => t.trim().toLowerCase());
+    const types = accept.split(",").map((t) => t.trim().toLowerCase());
 
     for (const type of types) {
       // Check for wildcard types like 'image/*'
-      if (type.endsWith('/*')) {
+      if (type.endsWith("/*")) {
         const prefix = type.slice(0, -2);
         if (file.type.toLowerCase().startsWith(prefix)) {
           return true;
         }
       }
       // Check for extension like '.pdf'
-      else if (type.startsWith('.')) {
+      else if (type.startsWith(".")) {
         if (file.name.toLowerCase().endsWith(type)) {
           return true;
         }
@@ -494,11 +505,11 @@ export class FileUploadComponent {
   }
 
   formatSize(bytes: number): string {
-    if (bytes === 0) return '0 B';
+    if (bytes === 0) return "0 B";
     const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const sizes = ["B", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
   }
 
   /** Clear all files */

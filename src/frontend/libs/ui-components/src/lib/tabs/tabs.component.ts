@@ -7,10 +7,10 @@ import {
   contentChildren,
   effect,
   HostListener,
-} from '@angular/core';
-import type { AfterContentInit } from '@angular/core';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
-import { TabComponent } from './tab.component';
+} from "@angular/core";
+import type { AfterContentInit } from "@angular/core";
+import { CommonModule, NgTemplateOutlet } from "@angular/common";
+import { TabComponent } from "./tab.component";
 
 /**
  * Event emitted when the active tab changes
@@ -41,7 +41,7 @@ export interface TabChangeEvent {
  * </ocr-tabs>
  */
 @Component({
-  selector: 'ocr-tabs',
+  selector: "ocr-tabs",
   standalone: true,
   imports: [CommonModule, NgTemplateOutlet],
   template: `
@@ -91,9 +91,13 @@ export interface TabChangeEvent {
             [attr.hidden]="tab.tabId() !== activeTabId() ? true : null"
             [attr.tabindex]="tab.tabId() === activeTabId() ? 0 : -1"
           >
-            @if (tab.tabId() === activeTabId() || (keepAlive() && tab.hasVisited())) {
+            @if (
+              tab.tabId() === activeTabId() || (keepAlive() && tab.hasVisited())
+            ) {
               @if (tab.contentTemplate()) {
-                <ng-container *ngTemplateOutlet="tab.contentTemplate()!"></ng-container>
+                <ng-container
+                  *ngTemplateOutlet="tab.contentTemplate()!"
+                ></ng-container>
               }
             }
           </div>
@@ -101,133 +105,139 @@ export interface TabChangeEvent {
       </div>
     </div>
   `,
-  styles: [`
-    .tabs {
-      display: flex;
-      flex-direction: column;
-    }
+  styles: [
+    `
+      .tabs {
+        display: flex;
+        flex-direction: column;
+      }
 
-    .tabs--vertical {
-      flex-direction: row;
-    }
+      .tabs--vertical {
+        flex-direction: row;
+      }
 
-    .tabs__list {
-      display: flex;
-      position: relative;
-      border-bottom: 1px solid #e5e7eb;
-      gap: 0;
-    }
+      .tabs__list {
+        display: flex;
+        position: relative;
+        border-bottom: 1px solid #e5e7eb;
+        gap: 0;
+      }
 
-    .tabs--vertical .tabs__list {
-      flex-direction: column;
-      border-bottom: none;
-      border-right: 1px solid #e5e7eb;
-      min-width: 12rem;
-    }
+      .tabs--vertical .tabs__list {
+        flex-direction: column;
+        border-bottom: none;
+        border-right: 1px solid #e5e7eb;
+        min-width: 12rem;
+      }
 
-    .tabs__tab {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.75rem 1rem;
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #6b7280;
-      transition: color 0.15s ease;
-      position: relative;
-      white-space: nowrap;
-    }
+      .tabs__tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        transition: color 0.15s ease;
+        position: relative;
+        white-space: nowrap;
+      }
 
-    .tabs__tab:hover:not(:disabled) {
-      color: #374151;
-    }
+      .tabs__tab:hover:not(:disabled) {
+        color: #374151;
+      }
 
-    .tabs__tab:focus-visible {
-      outline: 2px solid #f97316;
-      outline-offset: -2px;
-      border-radius: 0.25rem;
-    }
+      .tabs__tab:focus-visible {
+        outline: 2px solid #f97316;
+        outline-offset: -2px;
+        border-radius: 0.25rem;
+      }
 
-    .tabs__tab--active {
-      color: #f97316;
-    }
+      .tabs__tab--active {
+        color: #f97316;
+      }
 
-    .tabs__tab--disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+      .tabs__tab--disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-    .tabs__tab-icon {
-      font-size: 1rem;
-    }
+      .tabs__tab-icon {
+        font-size: 1rem;
+      }
 
-    .tabs__tab-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.25rem;
-      height: 1.25rem;
-      padding: 0 0.375rem;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background-color: #f3f4f6;
-      color: #6b7280;
-      border-radius: 9999px;
-    }
+      .tabs__tab-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 1.25rem;
+        height: 1.25rem;
+        padding: 0 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        background-color: #f3f4f6;
+        color: #6b7280;
+        border-radius: 9999px;
+      }
 
-    .tabs__tab--active .tabs__tab-badge {
-      background-color: #fff7ed;
-      color: #f97316;
-    }
+      .tabs__tab--active .tabs__tab-badge {
+        background-color: #fff7ed;
+        color: #f97316;
+      }
 
-    .tabs__indicator {
-      position: absolute;
-      bottom: -1px;
-      height: 2px;
-      background-color: #f97316;
-      transition: left 0.2s ease, width 0.2s ease;
-    }
+      .tabs__indicator {
+        position: absolute;
+        bottom: -1px;
+        height: 2px;
+        background-color: #f97316;
+        transition:
+          left 0.2s ease,
+          width 0.2s ease;
+      }
 
-    .tabs--vertical .tabs__indicator {
-      bottom: auto;
-      right: -1px;
-      left: auto !important;
-      width: 2px !important;
-      height: auto;
-      transition: top 0.2s ease, height 0.2s ease;
-    }
+      .tabs--vertical .tabs__indicator {
+        bottom: auto;
+        right: -1px;
+        left: auto !important;
+        width: 2px !important;
+        height: auto;
+        transition:
+          top 0.2s ease,
+          height 0.2s ease;
+      }
 
-    .tabs__panels {
-      flex: 1;
-      min-height: 0;
-    }
+      .tabs__panels {
+        flex: 1;
+        min-height: 0;
+      }
 
-    .tabs__panel {
-      display: none;
-      padding: 1rem 0;
-    }
+      .tabs__panel {
+        display: none;
+        padding: 1rem 0;
+      }
 
-    .tabs--vertical .tabs__panel {
-      padding: 0 1rem;
-    }
+      .tabs--vertical .tabs__panel {
+        padding: 0 1rem;
+      }
 
-    .tabs__panel--active {
-      display: block;
-    }
+      .tabs__panel--active {
+        display: block;
+      }
 
-    .tabs__panel:focus {
-      outline: none;
-    }
-  `]
+      .tabs__panel:focus {
+        outline: none;
+      }
+    `,
+  ],
 })
 export class TabsComponent implements AfterContentInit {
   /**
    * Orientation of the tabs
    */
-  readonly orientation = input<'horizontal' | 'vertical'>('horizontal');
+  readonly orientation = input<"horizontal" | "vertical">("horizontal");
 
   /**
    * Whether to keep visited tab content in DOM
@@ -242,7 +252,7 @@ export class TabsComponent implements AfterContentInit {
   /**
    * Accessible label for the tab list
    */
-  readonly ariaLabel = input('Tabs');
+  readonly ariaLabel = input("Tabs");
 
   /**
    * Emitted when active tab changes
@@ -257,47 +267,51 @@ export class TabsComponent implements AfterContentInit {
   /**
    * Currently active tab ID
    */
-  readonly activeTabId = signal<string>('');
+  readonly activeTabId = signal<string>("");
 
   /**
    * Active tab index
    */
   readonly activeIndex = computed(() => {
     const tabs = this.tabs();
-    return tabs.findIndex(t => t.tabId() === this.activeTabId());
+    return tabs.findIndex((t) => t.tabId() === this.activeTabId());
   });
 
   /**
    * Style for the active indicator
    */
-  readonly indicatorStyle = signal('');
+  readonly indicatorStyle = signal("");
 
   constructor() {
     // Initialize active tab when tabs change
-    effect(() => {
-      const tabs = this.tabs();
-      if (tabs.length === 0) return;
+    effect(
+      () => {
+        const tabs = this.tabs();
+        if (tabs.length === 0) return;
 
-      const currentActive = this.activeTabId();
-      const defaultId = this.defaultTabId();
+        const currentActive = this.activeTabId();
+        const defaultId = this.defaultTabId();
 
-      // If no active tab or active tab doesn't exist, set default
-      if (!currentActive || !tabs.some(t => t.tabId() === currentActive)) {
-        const newActiveId = defaultId && tabs.some(t => t.tabId() === defaultId)
-          ? defaultId
-          : tabs[0].tabId();
-        this.activeTabId.set(newActiveId);
-      }
-
-      // Update tab states
-      tabs.forEach(tab => {
-        const isActive = tab.tabId() === this.activeTabId();
-        tab.isActive.set(isActive);
-        if (isActive) {
-          tab.hasVisited.set(true);
+        // If no active tab or active tab doesn't exist, set default
+        if (!currentActive || !tabs.some((t) => t.tabId() === currentActive)) {
+          const newActiveId =
+            defaultId && tabs.some((t) => t.tabId() === defaultId)
+              ? defaultId
+              : tabs[0].tabId();
+          this.activeTabId.set(newActiveId);
         }
-      });
-    }, { allowSignalWrites: true });
+
+        // Update tab states
+        tabs.forEach((tab) => {
+          const isActive = tab.tabId() === this.activeTabId();
+          tab.isActive.set(isActive);
+          if (isActive) {
+            tab.hasVisited.set(true);
+          }
+        });
+      },
+      { allowSignalWrites: true },
+    );
   }
 
   ngAfterContentInit(): void {
@@ -310,7 +324,7 @@ export class TabsComponent implements AfterContentInit {
    */
   selectTab(tabId: string): void {
     const tabs = this.tabs();
-    const tab = tabs.find(t => t.tabId() === tabId);
+    const tab = tabs.find((t) => t.tabId() === tabId);
 
     if (!tab || tab.disabled()) return;
 
@@ -320,7 +334,7 @@ export class TabsComponent implements AfterContentInit {
     this.activeTabId.set(tabId);
 
     // Update tab states
-    tabs.forEach(t => {
+    tabs.forEach((t) => {
       const isActive = t.tabId() === tabId;
       t.isActive.set(isActive);
       if (isActive) {
@@ -344,12 +358,12 @@ export class TabsComponent implements AfterContentInit {
    */
   onTabKeydown(event: KeyboardEvent, currentIndex: number): void {
     const tabs = this.tabs();
-    const enabledTabs = tabs.filter(t => !t.disabled());
+    const enabledTabs = tabs.filter((t) => !t.disabled());
 
     let newIndex: number | null = null;
-    const isVertical = this.orientation() === 'vertical';
-    const prevKey = isVertical ? 'ArrowUp' : 'ArrowLeft';
-    const nextKey = isVertical ? 'ArrowDown' : 'ArrowRight';
+    const isVertical = this.orientation() === "vertical";
+    const prevKey = isVertical ? "ArrowUp" : "ArrowLeft";
+    const nextKey = isVertical ? "ArrowDown" : "ArrowRight";
 
     if (event.key === prevKey) {
       event.preventDefault();
@@ -357,24 +371,26 @@ export class TabsComponent implements AfterContentInit {
     } else if (event.key === nextKey) {
       event.preventDefault();
       newIndex = this.findNextEnabledIndex(currentIndex);
-    } else if (event.key === 'Home') {
+    } else if (event.key === "Home") {
       event.preventDefault();
       const firstEnabled = enabledTabs[0];
       if (firstEnabled) {
-        newIndex = tabs.findIndex(t => t === firstEnabled);
+        newIndex = tabs.findIndex((t) => t === firstEnabled);
       }
-    } else if (event.key === 'End') {
+    } else if (event.key === "End") {
       event.preventDefault();
       const lastEnabled = enabledTabs[enabledTabs.length - 1];
       if (lastEnabled) {
-        newIndex = tabs.findIndex(t => t === lastEnabled);
+        newIndex = tabs.findIndex((t) => t === lastEnabled);
       }
     }
 
     if (newIndex !== null && newIndex >= 0) {
       this.selectTab(tabs[newIndex].tabId());
       // Focus the new tab button
-      const tabButton = document.getElementById('tab-' + tabs[newIndex].tabId());
+      const tabButton = document.getElementById(
+        "tab-" + tabs[newIndex].tabId(),
+      );
       tabButton?.focus();
     }
   }
@@ -430,21 +446,27 @@ export class TabsComponent implements AfterContentInit {
     const activeIndex = this.activeIndex();
 
     if (activeIndex < 0) {
-      this.indicatorStyle.set('display: none');
+      this.indicatorStyle.set("display: none");
       return;
     }
 
-    const tabButton = document.getElementById('tab-' + tabs[activeIndex].tabId());
+    const tabButton = document.getElementById(
+      "tab-" + tabs[activeIndex].tabId(),
+    );
     if (!tabButton) return;
 
-    if (this.orientation() === 'horizontal') {
-      this.indicatorStyle.set(`left: ${tabButton.offsetLeft}px; width: ${tabButton.offsetWidth}px`);
+    if (this.orientation() === "horizontal") {
+      this.indicatorStyle.set(
+        `left: ${tabButton.offsetLeft}px; width: ${tabButton.offsetWidth}px`,
+      );
     } else {
-      this.indicatorStyle.set(`top: ${tabButton.offsetTop}px; height: ${tabButton.offsetHeight}px`);
+      this.indicatorStyle.set(
+        `top: ${tabButton.offsetTop}px; height: ${tabButton.offsetHeight}px`,
+      );
     }
   }
 
-  @HostListener('window:resize')
+  @HostListener("window:resize")
   onResize(): void {
     this.updateIndicator();
   }

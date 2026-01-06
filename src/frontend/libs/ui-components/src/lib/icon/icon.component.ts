@@ -1,7 +1,7 @@
-import { Component, input, computed } from '@angular/core';
-import { logError } from '@orange-car-rental/util';
-import { CommonModule } from '@angular/common';
-import { ICONS, type IconName, isValidIconName } from './icons';
+import { Component, input, computed } from "@angular/core";
+import { logError } from "@orange-car-rental/util";
+import { CommonModule } from "@angular/common";
+import { ICONS, type IconName, isValidIconName } from "./icons";
 
 /**
  * Reusable SVG Icon Component
@@ -29,7 +29,7 @@ import { ICONS, type IconName, isValidIconName } from './icons';
  * ```
  */
 @Component({
-  selector: 'lib-icon',
+  selector: "lib-icon",
   standalone: true,
   imports: [CommonModule],
   template: `
@@ -54,17 +54,19 @@ import { ICONS, type IconName, isValidIconName } from './icons';
       </svg>
     }
   `,
-  styles: [`
-    :host {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
+  styles: [
+    `
+      :host {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
 
-    svg {
-      flex-shrink: 0;
-    }
-  `]
+      svg {
+        flex-shrink: 0;
+      }
+    `,
+  ],
 })
 export class IconComponent {
   /**
@@ -81,7 +83,7 @@ export class IconComponent {
    * - lg: 24px
    * - xl: 32px
    */
-  readonly size = input<'xs' | 'sm' | 'md' | 'lg' | 'xl'>('md');
+  readonly size = input<"xs" | "sm" | "md" | "lg" | "xl">("md");
 
   /**
    * Custom size in pixels. Overrides the size preset.
@@ -93,7 +95,7 @@ export class IconComponent {
    * - outline: Stroke-based icons (default)
    * - filled: Fill-based icons
    */
-  readonly variant = input<'outline' | 'filled'>('outline');
+  readonly variant = input<"outline" | "filled">("outline");
 
   /**
    * Stroke width for outline icons.
@@ -104,7 +106,7 @@ export class IconComponent {
   /**
    * Additional CSS classes for the SVG element.
    */
-  readonly class = input<string>('');
+  readonly class = input<string>("");
 
   /**
    * Accessibility: Hide icon from screen readers.
@@ -137,7 +139,7 @@ export class IconComponent {
     if (isValidIconName(iconName)) {
       return ICONS[iconName];
     }
-    logError('IconComponent', `Icon '${iconName}' not found in registry`);
+    logError("IconComponent", `Icon '${iconName}' not found in registry`);
     return [];
   });
 
@@ -161,6 +163,6 @@ export class IconComponent {
     if (inputClass) {
       classes.push(inputClass);
     }
-    return classes.join(' ');
+    return classes.join(" ");
   });
 }

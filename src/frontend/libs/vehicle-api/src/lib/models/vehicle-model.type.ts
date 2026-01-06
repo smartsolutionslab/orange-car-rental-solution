@@ -2,7 +2,7 @@
  * Vehicle Model - branded type for type safety
  * Matches backend VehicleModel value object
  */
-export type VehicleModel = string & { readonly __brand: 'VehicleModel' };
+export type VehicleModel = string & { readonly __brand: "VehicleModel" };
 
 const MIN_LENGTH = 1;
 const MAX_LENGTH = 100;
@@ -22,7 +22,9 @@ export function createVehicleModel(value: string): VehicleModel {
 /**
  * Safely convert a string to VehicleModel, returning undefined if invalid
  */
-export function toVehicleModel(value: string | null | undefined): VehicleModel | undefined {
+export function toVehicleModel(
+  value: string | null | undefined,
+): VehicleModel | undefined {
   if (!value) return undefined;
   const trimmed = value.trim();
   return isVehicleModel(trimmed) ? trimmed : undefined;

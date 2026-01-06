@@ -3,7 +3,7 @@
  * Format: YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss.sssZ
  * Matches backend DateOnly and DateTime serialization
  */
-export type ISODateString = string & { readonly __brand: 'ISODateString' };
+export type ISODateString = string & { readonly __brand: "ISODateString" };
 
 // Matches YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss with optional milliseconds and Z
 const ISO_DATE_REGEX = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}(\.\d{3})?Z?)?$/;
@@ -27,10 +27,14 @@ export function createISODateString(value: string | Date): ISODateString {
 /**
  * Safely convert a string or Date to ISODateString, returning undefined if invalid
  */
-export function toISODateString(value: string | Date | null | undefined): ISODateString | undefined {
+export function toISODateString(
+  value: string | Date | null | undefined,
+): ISODateString | undefined {
   if (!value) return undefined;
   if (value instanceof Date) {
-    return isNaN(value.getTime()) ? undefined : (value.toISOString() as ISODateString);
+    return isNaN(value.getTime())
+      ? undefined
+      : (value.toISOString() as ISODateString);
   }
   return isISODateString(value) ? value : undefined;
 }
@@ -46,5 +50,5 @@ export function parseISODateString(value: ISODateString): Date {
  * Get date-only portion (YYYY-MM-DD) from ISODateString
  */
 export function toDateOnly(value: ISODateString): ISODateString {
-  return value.split('T')[0] as ISODateString;
+  return value.split("T")[0] as ISODateString;
 }

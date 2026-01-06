@@ -1,4 +1,11 @@
-import { Component, input, signal, TemplateRef, contentChild, computed } from '@angular/core';
+import {
+  Component,
+  input,
+  signal,
+  TemplateRef,
+  contentChild,
+  computed,
+} from "@angular/core";
 
 /**
  * Accordion Item Component
@@ -14,10 +21,16 @@ import { Component, input, signal, TemplateRef, contentChild, computed } from '@
  * </ocr-accordion-item>
  */
 @Component({
-  selector: 'ocr-accordion-item',
+  selector: "ocr-accordion-item",
   standalone: true,
   template: `<ng-content></ng-content>`,
-  styles: [`:host { display: contents; }`]
+  styles: [
+    `
+      :host {
+        display: contents;
+      }
+    `,
+  ],
 })
 export class AccordionItemComponent {
   /**

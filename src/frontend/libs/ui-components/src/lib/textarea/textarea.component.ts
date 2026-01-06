@@ -7,13 +7,13 @@ import {
   forwardRef,
   ElementRef,
   viewChild,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import type { ControlValueAccessor } from '@angular/forms';
-import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from '@angular/forms';
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import type { ControlValueAccessor } from "@angular/forms";
+import { NG_VALUE_ACCESSOR, ReactiveFormsModule } from "@angular/forms";
 
-export type TextareaSize = 'sm' | 'md' | 'lg';
-export type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
+export type TextareaSize = "sm" | "md" | "lg";
+export type TextareaResize = "none" | "vertical" | "horizontal" | "both";
 
 /**
  * Styled Textarea Component
@@ -31,7 +31,7 @@ export type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
  * />
  */
 @Component({
-  selector: 'ocr-textarea',
+  selector: "ocr-textarea",
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   providers: [
@@ -83,7 +83,9 @@ export type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
 
       <div class="textarea-footer">
         @if (error()) {
-          <span [id]="textareaId() + '-error'" class="textarea-error">{{ error() }}</span>
+          <span [id]="textareaId() + '-error'" class="textarea-error">{{
+            error()
+          }}</span>
         } @else if (hint()) {
           <span class="textarea-hint">{{ hint() }}</span>
         } @else {
@@ -98,132 +100,136 @@ export type TextareaResize = 'none' | 'vertical' | 'horizontal' | 'both';
       </div>
     </div>
   `,
-  styles: [`
-    .textarea-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-      width: 100%;
-    }
+  styles: [
+    `
+      .textarea-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        width: 100%;
+      }
 
-    .textarea-wrapper.disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+      .textarea-wrapper.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
 
-    .textarea-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .textarea-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
 
-    .required-marker {
-      color: #ef4444;
-      margin-left: 0.125rem;
-    }
+      .required-marker {
+        color: #ef4444;
+        margin-left: 0.125rem;
+      }
 
-    .textarea-container {
-      position: relative;
-      width: 100%;
-      background: white;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
+      .textarea-container {
+        position: relative;
+        width: 100%;
+        background: white;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
 
-    .textarea-container.focused {
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
+      .textarea-container.focused {
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
 
-    .textarea-container.has-error {
-      border-color: #ef4444;
-    }
+      .textarea-container.has-error {
+        border-color: #ef4444;
+      }
 
-    .textarea-container.has-error.focused {
-      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-    }
+      .textarea-container.has-error.focused {
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+      }
 
-    .textarea-field {
-      display: block;
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      font-size: 0.875rem;
-      font-family: inherit;
-      color: #111827;
-      background: transparent;
-      border: none;
-      outline: none;
-      line-height: 1.5;
-    }
+      .textarea-field {
+        display: block;
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        font-size: 0.875rem;
+        font-family: inherit;
+        color: #111827;
+        background: transparent;
+        border: none;
+        outline: none;
+        line-height: 1.5;
+      }
 
-    .textarea-field::placeholder {
-      color: #9ca3af;
-    }
+      .textarea-field::placeholder {
+        color: #9ca3af;
+      }
 
-    .textarea-field:disabled {
-      cursor: not-allowed;
-    }
+      .textarea-field:disabled {
+        cursor: not-allowed;
+      }
 
-    /* Size variants */
-    .textarea-sm .textarea-field {
-      padding: 0.375rem 0.625rem;
-      font-size: 0.75rem;
-    }
+      /* Size variants */
+      .textarea-sm .textarea-field {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+      }
 
-    .textarea-lg .textarea-field {
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-    }
+      .textarea-lg .textarea-field {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+      }
 
-    /* Resize options */
-    .resize-none {
-      resize: none;
-    }
+      /* Resize options */
+      .resize-none {
+        resize: none;
+      }
 
-    .resize-vertical {
-      resize: vertical;
-    }
+      .resize-vertical {
+        resize: vertical;
+      }
 
-    .resize-horizontal {
-      resize: horizontal;
-    }
+      .resize-horizontal {
+        resize: horizontal;
+      }
 
-    .resize-both {
-      resize: both;
-    }
+      .resize-both {
+        resize: both;
+      }
 
-    /* Footer */
-    .textarea-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-      min-height: 1.25rem;
-    }
+      /* Footer */
+      .textarea-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        min-height: 1.25rem;
+      }
 
-    .textarea-error {
-      font-size: 0.75rem;
-      color: #ef4444;
-    }
+      .textarea-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+      }
 
-    .textarea-hint {
-      font-size: 0.75rem;
-      color: #6b7280;
-    }
+      .textarea-hint {
+        font-size: 0.75rem;
+        color: #6b7280;
+      }
 
-    .char-count {
-      font-size: 0.75rem;
-      color: #6b7280;
-      margin-left: auto;
-      flex-shrink: 0;
-    }
+      .char-count {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
 
-    .char-count.at-limit {
-      color: #ef4444;
-      font-weight: 500;
-    }
-  `],
+      .char-count.at-limit {
+        color: #ef4444;
+        font-weight: 500;
+      }
+    `,
+  ],
 })
 export class TextareaComponent implements ControlValueAccessor {
   private static idCounter = 0;
@@ -232,10 +238,10 @@ export class TextareaComponent implements ControlValueAccessor {
   readonly label = input<string>();
 
   /** Textarea placeholder */
-  readonly placeholder = input<string>('');
+  readonly placeholder = input<string>("");
 
   /** Textarea size */
-  readonly size = input<TextareaSize>('md');
+  readonly size = input<TextareaSize>("md");
 
   /** Number of visible rows */
   readonly rows = input(4);
@@ -247,7 +253,7 @@ export class TextareaComponent implements ControlValueAccessor {
   readonly showCharCount = input(false);
 
   /** Resize behavior */
-  readonly resize = input<TextareaResize>('vertical');
+  readonly resize = input<TextareaResize>("vertical");
 
   /** Error message */
   readonly error = input<string | null>(null);
@@ -271,13 +277,14 @@ export class TextareaComponent implements ControlValueAccessor {
   readonly textareaFocus = output<void>();
 
   /** Reference to textarea element */
-  private readonly textareaElement = viewChild<ElementRef<HTMLTextAreaElement>>('textareaElement');
+  private readonly textareaElement =
+    viewChild<ElementRef<HTMLTextAreaElement>>("textareaElement");
 
   /** Unique ID for textarea */
   readonly textareaId = signal(`ocr-textarea-${++TextareaComponent.idCounter}`);
 
   /** Current value */
-  readonly value = signal('');
+  readonly value = signal("");
 
   /** Focus state */
   readonly isFocused = signal(false);
@@ -295,7 +302,7 @@ export class TextareaComponent implements ControlValueAccessor {
   private onTouched: () => void = () => {};
 
   writeValue(value: string): void {
-    this.value.set(value ?? '');
+    this.value.set(value ?? "");
   }
 
   registerOnChange(fn: (value: string) => void): void {

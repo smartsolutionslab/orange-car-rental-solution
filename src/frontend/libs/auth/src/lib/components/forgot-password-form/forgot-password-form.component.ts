@@ -1,17 +1,33 @@
-import { Component, input, output, signal, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
-import { ErrorAlertComponent, SuccessAlertComponent, IconComponent } from '@orange-car-rental/ui-components';
+import {
+  Component,
+  input,
+  output,
+  signal,
+  computed,
+  inject,
+} from "@angular/core";
+import { CommonModule } from "@angular/common";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { RouterModule } from "@angular/router";
+import {
+  ErrorAlertComponent,
+  SuccessAlertComponent,
+  IconComponent,
+} from "@orange-car-rental/ui-components";
 import type {
   AuthFormConfig,
   ForgotPasswordFormSubmitEvent,
   ForgotPasswordFormLabels,
-} from '../auth-forms.types';
+} from "../auth-forms.types";
 import {
   DEFAULT_AUTH_CONFIG,
   DEFAULT_FORGOT_PASSWORD_LABELS_DE,
-} from '../auth-forms.types';
+} from "../auth-forms.types";
 
 /**
  * Reusable Forgot Password Form Component
@@ -29,7 +45,7 @@ import {
  * />
  */
 @Component({
-  selector: 'lib-forgot-password-form',
+  selector: "lib-forgot-password-form",
   standalone: true,
   imports: [
     CommonModule,
@@ -45,7 +61,11 @@ import {
         <!-- Header -->
         <div class="header">
           @if (config().logoUrl) {
-            <img [src]="config().logoUrl" [alt]="config().brandName || 'Logo'" class="logo" />
+            <img
+              [src]="config().logoUrl"
+              [alt]="config().brandName || 'Logo'"
+              class="logo"
+            />
           }
           <div class="icon-wrapper">
             <lib-icon name="mail" variant="outline" size="lg" />
@@ -57,7 +77,9 @@ import {
         <!-- Success State -->
         @if (success()) {
           <div class="success-state">
-            <ui-success-alert [message]="labels().successMessage"></ui-success-alert>
+            <ui-success-alert
+              [message]="labels().successMessage"
+            ></ui-success-alert>
             <div class="back-link-container">
               <a [routerLink]="config().loginRoute" class="back-link">
                 <lib-icon name="arrow-left" variant="outline" size="sm" />
@@ -72,10 +94,16 @@ import {
           }
 
           <!-- Forgot Password Form -->
-          <form [formGroup]="forgotPasswordForm" (ngSubmit)="onSubmit()" class="form">
+          <form
+            [formGroup]="forgotPasswordForm"
+            (ngSubmit)="onSubmit()"
+            class="form"
+          >
             <!-- Email Field -->
             <div class="form-group">
-              <label for="forgot-email" class="form-label">{{ labels().emailLabel }}</label>
+              <label for="forgot-email" class="form-label">{{
+                labels().emailLabel
+              }}</label>
               <input
                 id="forgot-email"
                 type="email"
@@ -112,162 +140,170 @@ import {
       </div>
     </div>
   `,
-  styles: [`
-    .forgot-password-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100%;
-      padding: 2rem 1rem;
-    }
+  styles: [
+    `
+      .forgot-password-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100%;
+        padding: 2rem 1rem;
+      }
 
-    .forgot-password-card {
-      width: 100%;
-      max-width: 24rem;
-      background: white;
-      border-radius: 0.75rem;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      padding: 2rem;
-    }
+      .forgot-password-card {
+        width: 100%;
+        max-width: 24rem;
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        padding: 2rem;
+      }
 
-    .header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
+      .header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
 
-    .logo {
-      height: 3rem;
-      margin-bottom: 1rem;
-    }
+      .logo {
+        height: 3rem;
+        margin-bottom: 1rem;
+      }
 
-    .icon-wrapper {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-      color: #f97316;
-    }
+      .icon-wrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+        color: #f97316;
+      }
 
-    .title {
-      margin: 0;
-      font-size: 1.5rem;
-      font-weight: 700;
-      color: #111827;
-    }
+      .title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
 
-    .subtitle {
-      margin: 0.5rem 0 0;
-      font-size: 0.875rem;
-      color: #6b7280;
-      line-height: 1.5;
-    }
+      .subtitle {
+        margin: 0.5rem 0 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+        line-height: 1.5;
+      }
 
-    .form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+      .form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
 
-    .form-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #374151;
-    }
+      .form-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #374151;
+      }
 
-    .form-input {
-      width: 100%;
-      padding: 0.625rem 0.75rem;
-      border: 1px solid #d1d5db;
-      border-radius: 0.375rem;
-      font-size: 0.875rem;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-    }
+      .form-input {
+        width: 100%;
+        padding: 0.625rem 0.75rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        transition:
+          border-color 0.15s ease,
+          box-shadow 0.15s ease;
+      }
 
-    .form-input:focus {
-      outline: none;
-      border-color: #f97316;
-      box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
-    }
+      .form-input:focus {
+        outline: none;
+        border-color: #f97316;
+        box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+      }
 
-    .form-input.input-error {
-      border-color: #ef4444;
-    }
+      .form-input.input-error {
+        border-color: #ef4444;
+      }
 
-    .field-error {
-      font-size: 0.75rem;
-      color: #ef4444;
-      margin-top: 0.25rem;
-    }
+      .field-error {
+        font-size: 0.75rem;
+        color: #ef4444;
+        margin-top: 0.25rem;
+      }
 
-    .submit-button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.625rem 1rem;
-      background-color: #f97316;
-      color: white;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border: none;
-      border-radius: 0.375rem;
-      cursor: pointer;
-      transition: background-color 0.15s ease;
-    }
+      .submit-button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        width: 100%;
+        padding: 0.625rem 1rem;
+        background-color: #f97316;
+        color: white;
+        font-size: 0.875rem;
+        font-weight: 500;
+        border: none;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.15s ease;
+      }
 
-    .submit-button:hover:not(:disabled) {
-      background-color: #ea580c;
-    }
+      .submit-button:hover:not(:disabled) {
+        background-color: #ea580c;
+      }
 
-    .submit-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
+      .submit-button:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+      }
 
-    .spinner {
-      width: 1rem;
-      height: 1rem;
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
+      .spinner {
+        width: 1rem;
+        height: 1rem;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    .success-state {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
+      .success-state {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+      }
 
-    .back-link-container {
-      text-align: center;
-      margin-top: 1.5rem;
-    }
+      .back-link-container {
+        text-align: center;
+        margin-top: 1.5rem;
+      }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: #6b7280;
-      text-decoration: none;
-      transition: color 0.15s ease;
-    }
+      .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+        text-decoration: none;
+        transition: color 0.15s ease;
+      }
 
-    .back-link:hover {
-      color: #f97316;
-    }
-  `]
+      .back-link:hover {
+        color: #f97316;
+      }
+    `,
+  ],
 })
 export class ForgotPasswordFormComponent {
   private readonly fb = inject(FormBuilder);
@@ -280,7 +316,9 @@ export class ForgotPasswordFormComponent {
   /**
    * Form labels (for i18n)
    */
-  readonly labels = input<ForgotPasswordFormLabels>(DEFAULT_FORGOT_PASSWORD_LABELS_DE);
+  readonly labels = input<ForgotPasswordFormLabels>(
+    DEFAULT_FORGOT_PASSWORD_LABELS_DE,
+  );
 
   /**
    * External loading state
@@ -314,7 +352,7 @@ export class ForgotPasswordFormComponent {
 
   constructor() {
     this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ["", [Validators.required, Validators.email]],
     });
   }
 
@@ -323,11 +361,11 @@ export class ForgotPasswordFormComponent {
    */
   readonly emailError = computed(() => {
     this.emailTouched();
-    const email = this.forgotPasswordForm.get('email');
-    if (email?.hasError('required') && email?.touched) {
+    const email = this.forgotPasswordForm.get("email");
+    if (email?.hasError("required") && email?.touched) {
       return this.labels().emailRequired;
     }
-    if (email?.hasError('email') && email?.touched) {
+    if (email?.hasError("email") && email?.touched) {
       return this.labels().emailInvalid;
     }
     return null;

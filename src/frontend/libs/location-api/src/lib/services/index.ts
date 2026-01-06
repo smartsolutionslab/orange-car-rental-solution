@@ -1,1 +1,1 @@
-export { LocationService } from './location.service';
+export { LocationService } from "./location.service";

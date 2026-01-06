@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { PaginationComponent } from './pagination.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { PaginationComponent } from "./pagination.component";
 
 const meta: Meta<PaginationComponent> = {
-  title: 'Components/Navigation/Pagination',
+  title: "Components/Navigation/Pagination",
   component: PaginationComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [PaginationComponent],
@@ -13,46 +13,47 @@ const meta: Meta<PaginationComponent> = {
   ],
   argTypes: {
     currentPage: {
-      control: { type: 'number', min: 1 },
-      description: 'Current page number (1-indexed)',
+      control: { type: "number", min: 1 },
+      description: "Current page number (1-indexed)",
     },
     totalPages: {
-      control: { type: 'number', min: 1 },
-      description: 'Total number of pages',
+      control: { type: "number", min: 1 },
+      description: "Total number of pages",
     },
     totalItems: {
-      control: 'number',
-      description: 'Total count of items (optional, for display)',
+      control: "number",
+      description: "Total count of items (optional, for display)",
     },
     pageSize: {
-      control: 'number',
-      description: 'Items per page (optional, for display)',
+      control: "number",
+      description: "Items per page (optional, for display)",
     },
     previousLabel: {
-      control: 'text',
-      description: 'Label for previous button',
+      control: "text",
+      description: "Label for previous button",
     },
     nextLabel: {
-      control: 'text',
-      description: 'Label for next button',
+      control: "text",
+      description: "Label for next button",
     },
     showItemRange: {
-      control: 'boolean',
+      control: "boolean",
       description: 'Show item range info (e.g., "Showing 1-10 of 100")',
     },
     itemLabel: {
-      control: 'text',
-      description: 'Item label for range display (singular)',
+      control: "text",
+      description: "Item label for range display (singular)",
     },
     itemLabelPlural: {
-      control: 'text',
-      description: 'Item label for range display (plural)',
+      control: "text",
+      description: "Item label for range display (plural)",
     },
   },
   parameters: {
     docs: {
       description: {
-        component: 'Reusable pagination component with ellipsis for large page ranges. Supports item range display and German localization.',
+        component:
+          "Reusable pagination component with ellipsis for large page ranges. Supports item range display and German localization.",
       },
     },
   },
@@ -65,8 +66,8 @@ export const Default: Story = {
   args: {
     currentPage: 5,
     totalPages: 10,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
 };
@@ -75,8 +76,8 @@ export const FirstPage: Story = {
   args: {
     currentPage: 1,
     totalPages: 10,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
 };
@@ -85,8 +86,8 @@ export const LastPage: Story = {
   args: {
     currentPage: 10,
     totalPages: 10,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
 };
@@ -95,8 +96,8 @@ export const FewPages: Story = {
   args: {
     currentPage: 2,
     totalPages: 3,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
 };
@@ -105,14 +106,15 @@ export const ManyPages: Story = {
   args: {
     currentPage: 25,
     totalPages: 50,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
   parameters: {
     docs: {
       description: {
-        story: 'With many pages, ellipsis are shown between the first page, current page region, and last page.',
+        story:
+          "With many pages, ellipsis are shown between the first page, current page region, and last page.",
       },
     },
   },
@@ -125,15 +127,16 @@ export const WithItemRange: Story = {
     totalItems: 95,
     pageSize: 10,
     showItemRange: true,
-    itemLabel: 'Eintrag',
-    itemLabelPlural: 'Einträge',
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    itemLabel: "Eintrag",
+    itemLabelPlural: "Einträge",
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
   },
   parameters: {
     docs: {
       description: {
-        story: 'Shows item range information like "Showing 21-30 of 95 entries".',
+        story:
+          'Shows item range information like "Showing 21-30 of 95 entries".',
       },
     },
   },
@@ -146,15 +149,15 @@ export const EnglishLabels: Story = {
     totalItems: 195,
     pageSize: 10,
     showItemRange: true,
-    itemLabel: 'item',
-    itemLabelPlural: 'items',
-    previousLabel: 'Previous',
-    nextLabel: 'Next',
+    itemLabel: "item",
+    itemLabelPlural: "items",
+    previousLabel: "Previous",
+    nextLabel: "Next",
   },
   parameters: {
     docs: {
       description: {
-        story: 'Example with English labels instead of German.',
+        story: "Example with English labels instead of German.",
       },
     },
   },
@@ -164,14 +167,15 @@ export const SinglePage: Story = {
   args: {
     currentPage: 1,
     totalPages: 1,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
     showItemRange: false,
   },
   parameters: {
     docs: {
       description: {
-        story: 'When there is only one page, both navigation buttons are disabled.',
+        story:
+          "When there is only one page, both navigation buttons are disabled.",
       },
     },
   },
@@ -184,7 +188,7 @@ export const VehicleList: Story = {
       totalPages: 8,
       totalItems: 75,
       pageSize: 10,
-      onPageChange: (page: number) => console.log('Page changed to:', page),
+      onPageChange: (page: number) => console.log("Page changed to:", page),
     },
     template: `
       <div style="border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 1rem;">
@@ -210,7 +214,7 @@ export const VehicleList: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Example of pagination in a vehicle list context.',
+        story: "Example of pagination in a vehicle list context.",
       },
     },
   },

@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { FormSectionComponent } from './form-section.component';
-import { InputComponent } from '../input';
-import { TextareaComponent } from '../textarea';
-import { CheckboxComponent } from '../checkbox';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { FormSectionComponent } from "./form-section.component";
+import { InputComponent } from "../input";
+import { TextareaComponent } from "../textarea";
+import { CheckboxComponent } from "../checkbox";
 
 const meta: Meta<FormSectionComponent> = {
-  title: 'Forms/FormSection',
+  title: "Forms/FormSection",
   component: FormSectionComponent,
   parameters: {
-    layout: 'padded',
+    layout: "padded",
     docs: {
       description: {
         component: `
@@ -58,11 +58,11 @@ optional description, and optional icon.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'card', 'bordered', 'compact'],
+      control: "select",
+      options: ["default", "card", "bordered", "compact"],
     },
   },
   decorators: [
@@ -71,7 +71,7 @@ optional description, and optional icon.
     }),
     (story) => ({
       ...story,
-      styles: ['div { max-width: 500px; }'],
+      styles: ["div { max-width: 500px; }"],
     }),
   ],
 };

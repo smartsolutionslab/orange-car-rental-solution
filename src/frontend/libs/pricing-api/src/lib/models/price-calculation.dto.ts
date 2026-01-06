@@ -2,10 +2,10 @@
  * Price calculation result matching backend PriceCalculationResult
  * All prices include German VAT (19%)
  */
-import type { Currency, Price } from '@orange-car-rental/shared';
-import type { CategoryCode, DailyRate } from '@orange-car-rental/vehicle-api';
-import type { TotalDays } from '@orange-car-rental/reservation-api';
-import type { VatRate } from './vat-rate.type';
+import type { Currency, Price } from "@orange-car-rental/shared";
+import type { CategoryCode, DailyRate } from "@orange-car-rental/vehicle-api";
+import type { TotalDays } from "@orange-car-rental/reservation-api";
+import type { VatRate } from "./vat-rate.type";
 
 export type PriceCalculation = {
   readonly categoryCode: CategoryCode;

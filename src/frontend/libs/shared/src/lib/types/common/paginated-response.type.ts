@@ -1,10 +1,10 @@
 /**
  * Generic paginated response type
  */
-import type { TotalCount } from './total-count.type';
-import type { PageNumber } from './page-number.type';
-import type { PageSize } from './page-size.type';
-import type { TotalPages } from './total-pages.type';
+import type { TotalCount } from "./total-count.type";
+import type { PageNumber } from "./page-number.type";
+import type { PageSize } from "./page-size.type";
+import type { TotalPages } from "./total-pages.type";
 
 export type PaginatedResponse<T> = {
   readonly items: T[];

@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { signal } from '@angular/core';
-import { WizardComponent } from './wizard.component';
-import { WizardStepComponent } from './wizard-step.component';
-import type { WizardStepConfig } from './wizard.types';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { signal } from "@angular/core";
+import { WizardComponent } from "./wizard.component";
+import { WizardStepComponent } from "./wizard-step.component";
+import type { WizardStepConfig } from "./wizard.types";
 
 const meta: Meta<WizardComponent> = {
-  title: 'Components/Navigation/Wizard',
+  title: "Components/Navigation/Wizard",
   component: WizardComponent,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [WizardComponent, WizardStepComponent],
@@ -16,33 +16,34 @@ const meta: Meta<WizardComponent> = {
   ],
   argTypes: {
     linear: {
-      control: 'boolean',
-      description: 'Whether navigation is linear (must complete steps in order)',
+      control: "boolean",
+      description:
+        "Whether navigation is linear (must complete steps in order)",
     },
     orientation: {
-      control: 'select',
-      options: ['horizontal', 'vertical'],
-      description: 'Layout orientation of the wizard',
+      control: "select",
+      options: ["horizontal", "vertical"],
+      description: "Layout orientation of the wizard",
     },
     showNavigation: {
-      control: 'boolean',
-      description: 'Whether to show navigation buttons',
+      control: "boolean",
+      description: "Whether to show navigation buttons",
     },
     previousLabel: {
-      control: 'text',
-      description: 'Label for the previous button',
+      control: "text",
+      description: "Label for the previous button",
     },
     nextLabel: {
-      control: 'text',
-      description: 'Label for the next button',
+      control: "text",
+      description: "Label for the next button",
     },
     skipLabel: {
-      control: 'text',
-      description: 'Label for the skip button',
+      control: "text",
+      description: "Label for the skip button",
     },
     completeLabel: {
-      control: 'text',
-      description: 'Label for the complete button',
+      control: "text",
+      description: "Label for the complete button",
     },
   },
   parameters: {
@@ -91,10 +92,15 @@ export default meta;
 type Story = StoryObj<WizardComponent>;
 
 const basicSteps: WizardStepConfig[] = [
-  { id: 'step1', title: 'Fahrzeug', subtitle: 'Wählen Sie Ihr Fahrzeug' },
-  { id: 'step2', title: 'Zeitraum', subtitle: 'Buchungszeitraum festlegen' },
-  { id: 'step3', title: 'Extras', subtitle: 'Zusatzoptionen auswählen', canSkip: true },
-  { id: 'step4', title: 'Bestätigung', subtitle: 'Buchung abschließen' },
+  { id: "step1", title: "Fahrzeug", subtitle: "Wählen Sie Ihr Fahrzeug" },
+  { id: "step2", title: "Zeitraum", subtitle: "Buchungszeitraum festlegen" },
+  {
+    id: "step3",
+    title: "Extras",
+    subtitle: "Zusatzoptionen auswählen",
+    canSkip: true,
+  },
+  { id: "step4", title: "Bestätigung", subtitle: "Buchung abschließen" },
 ];
 
 export const Default: Story = {
@@ -102,8 +108,8 @@ export const Default: Story = {
     props: {
       ...args,
       steps: basicSteps,
-      onStepChange: (event: unknown) => console.log('Step changed:', event),
-      onComplete: (event: unknown) => console.log('Wizard completed:', event),
+      onStepChange: (event: unknown) => console.log("Step changed:", event),
+      onComplete: (event: unknown) => console.log("Wizard completed:", event),
     },
     template: `
       <ocr-wizard
@@ -207,12 +213,12 @@ export const Default: Story = {
   }),
   args: {
     linear: true,
-    orientation: 'horizontal',
+    orientation: "horizontal",
     showNavigation: true,
-    previousLabel: 'Zurück',
-    nextLabel: 'Weiter',
-    skipLabel: 'Überspringen',
-    completeLabel: 'Buchung abschließen',
+    previousLabel: "Zurück",
+    nextLabel: "Weiter",
+    skipLabel: "Überspringen",
+    completeLabel: "Buchung abschließen",
   },
 };
 
@@ -263,7 +269,7 @@ export const VerticalOrientation: Story = {
   }),
   args: {
     linear: true,
-    orientation: 'vertical',
+    orientation: "vertical",
     showNavigation: true,
   },
 };
@@ -317,7 +323,8 @@ export const NonLinear: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'In non-linear mode, users can navigate to any step by clicking on it directly.',
+        story:
+          "In non-linear mode, users can navigate to any step by clicking on it directly.",
       },
     },
   },
@@ -328,9 +335,9 @@ export const WithoutNavigation: Story = {
     props: {
       ...args,
       steps: [
-        { id: 's1', title: 'Step 1' },
-        { id: 's2', title: 'Step 2' },
-        { id: 's3', title: 'Step 3' },
+        { id: "s1", title: "Step 1" },
+        { id: "s2", title: "Step 2" },
+        { id: "s3", title: "Step 3" },
       ],
     },
     template: `
@@ -365,7 +372,8 @@ export const WithoutNavigation: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Navigation buttons can be hidden for custom navigation implementations.',
+        story:
+          "Navigation buttons can be hidden for custom navigation implementations.",
       },
     },
   },
@@ -375,9 +383,9 @@ export const SimpleThreeSteps: Story = {
   render: () => ({
     props: {
       steps: [
-        { id: 'info', title: 'Information' },
-        { id: 'review', title: 'Review' },
-        { id: 'done', title: 'Done' },
+        { id: "info", title: "Information" },
+        { id: "review", title: "Review" },
+        { id: "done", title: "Done" },
       ],
     },
     template: `
@@ -412,7 +420,7 @@ export const SimpleThreeSteps: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'A minimal wizard with just 3 steps.',
+        story: "A minimal wizard with just 3 steps.",
       },
     },
   },

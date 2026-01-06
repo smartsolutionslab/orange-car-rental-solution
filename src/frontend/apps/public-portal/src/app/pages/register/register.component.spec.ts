@@ -3,11 +3,7 @@ import { Router, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { RegisterComponent } from './register.component';
 import { AuthService } from '../../services/auth.service';
-import {
-  TEST_EMAILS,
-  TEST_PASSWORDS,
-  TEST_PERSONAL_INFO,
-} from '@orange-car-rental/shared/testing';
+import { TEST_EMAILS, TEST_PASSWORDS, TEST_PERSONAL_INFO } from '@orange-car-rental/shared/testing';
 import { UI_TIMING } from '../../constants/app.constants';
 
 describe('RegisterComponent', () => {

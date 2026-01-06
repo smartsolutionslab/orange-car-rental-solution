@@ -1,14 +1,14 @@
 // Services
-export * from './lib/services';
+export * from "./lib/services";
 
 // Guards
-export * from './lib/guards';
+export * from "./lib/guards";
 
 // Types
-export * from './lib/types';
+export * from "./lib/types";
 
 // Providers
-export * from './lib/providers';
+export * from "./lib/providers";
 
 // Components
-export * from './lib/components';
+export * from "./lib/components";

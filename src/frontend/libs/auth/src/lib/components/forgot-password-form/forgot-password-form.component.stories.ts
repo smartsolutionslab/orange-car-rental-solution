@@ -1,12 +1,18 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { ForgotPasswordFormComponent } from './forgot-password-form.component';
-import { RouterModule } from '@angular/router';
-import type { ForgotPasswordFormLabels, AuthFormConfig } from '../auth-forms.types';
-import { DEFAULT_FORGOT_PASSWORD_LABELS_DE, DEFAULT_AUTH_CONFIG } from '../auth-forms.types';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import { ForgotPasswordFormComponent } from "./forgot-password-form.component";
+import { RouterModule } from "@angular/router";
+import type {
+  ForgotPasswordFormLabels,
+  AuthFormConfig,
+} from "../auth-forms.types";
+import {
+  DEFAULT_FORGOT_PASSWORD_LABELS_DE,
+  DEFAULT_AUTH_CONFIG,
+} from "../auth-forms.types";
 
 const meta: Meta<ForgotPasswordFormComponent> = {
-  title: 'Auth/Forgot Password Form',
+  title: "Auth/Forgot Password Form",
   component: ForgotPasswordFormComponent,
   decorators: [
     moduleMetadata({
@@ -14,7 +20,7 @@ const meta: Meta<ForgotPasswordFormComponent> = {
     }),
   ],
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -44,19 +50,19 @@ and emits submit events. The parent component handles actual password reset logi
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     loading: {
-      control: 'boolean',
-      description: 'Shows loading spinner and disables submit button',
+      control: "boolean",
+      description: "Shows loading spinner and disables submit button",
     },
     error: {
-      control: 'text',
-      description: 'Error message to display',
+      control: "text",
+      description: "Error message to display",
     },
     success: {
-      control: 'boolean',
-      description: 'Shows success state with confirmation message',
+      control: "boolean",
+      description: "Shows success state with confirmation message",
     },
   },
 };
@@ -65,33 +71,35 @@ export default meta;
 type Story = StoryObj<ForgotPasswordFormComponent>;
 
 // German labels (default)
-const germanLabels: ForgotPasswordFormLabels = DEFAULT_FORGOT_PASSWORD_LABELS_DE;
+const germanLabels: ForgotPasswordFormLabels =
+  DEFAULT_FORGOT_PASSWORD_LABELS_DE;
 
 // English labels example
 const englishLabels: ForgotPasswordFormLabels = {
-  title: 'Forgot Password?',
+  title: "Forgot Password?",
   subtitle: "No worries, we'll send you reset instructions.",
-  emailLabel: 'Email Address',
-  emailPlaceholder: 'you@example.com',
-  emailRequired: 'Email is required',
-  emailInvalid: 'Please enter a valid email address',
-  submitButton: 'Send Reset Link',
-  submittingButton: 'Sending...',
-  backToLoginLink: 'Back to Login',
-  successTitle: 'Email Sent',
-  successMessage: 'Check your email for a link to reset your password. If it doesn\'t appear within a few minutes, check your spam folder.',
+  emailLabel: "Email Address",
+  emailPlaceholder: "you@example.com",
+  emailRequired: "Email is required",
+  emailInvalid: "Please enter a valid email address",
+  submitButton: "Send Reset Link",
+  submittingButton: "Sending...",
+  backToLoginLink: "Back to Login",
+  successTitle: "Email Sent",
+  successMessage:
+    "Check your email for a link to reset your password. If it doesn't appear within a few minutes, check your spam folder.",
 };
 
 // Config
 const config: AuthFormConfig = {
-  logoUrl: 'https://placehold.co/120x40/f97316/white?text=OCR',
-  brandName: 'Orange Car Rental',
-  loginRoute: '/auth/login',
+  logoUrl: "https://placehold.co/120x40/f97316/white?text=OCR",
+  brandName: "Orange Car Rental",
+  loginRoute: "/auth/login",
 };
 
 // Minimal config
 const minimalConfig: AuthFormConfig = {
-  loginRoute: '/auth/login',
+  loginRoute: "/auth/login",
 };
 
 /**
@@ -167,7 +175,7 @@ export const WithError: Story = {
     config: config,
     labels: germanLabels,
     loading: false,
-    error: 'Kein Konto mit dieser E-Mail-Adresse gefunden.',
+    error: "Kein Konto mit dieser E-Mail-Adresse gefunden.",
     success: false,
   },
 };
@@ -180,7 +188,7 @@ export const NetworkError: Story = {
     config: config,
     labels: englishLabels,
     loading: false,
-    error: 'Unable to connect to the server. Please try again later.',
+    error: "Unable to connect to the server. Please try again later.",
     success: false,
   },
 };

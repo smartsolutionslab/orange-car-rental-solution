@@ -1,9 +1,9 @@
-import { TemplateRef } from '@angular/core';
+import { TemplateRef } from "@angular/core";
 
 /**
  * Sort direction for columns
  */
-export type SortDirection = 'asc' | 'desc' | null;
+export type SortDirection = "asc" | "desc" | null;
 
 /**
  * Column definition for the data table
@@ -34,7 +34,7 @@ export interface DataTableColumn<T = unknown> {
   minWidth?: string;
 
   /** Text alignment */
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
 
   /** Whether to hide on mobile */
   hideOnMobile?: boolean;

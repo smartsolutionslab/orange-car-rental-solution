@@ -6,15 +6,21 @@
   [class.layout--full-width]="fullWidth()"
   [class.layout--theme-admin]="theme() === 'admin'"
 >
-  @if (navPosition() === 'top') {
+  @if (navPosition() === "top") {
     <!-- Top Navigation Layout -->
     <header class="layout__header">
-      <div class="layout__header-content" [style.max-width]="fullWidth() ? '100%' : maxWidth()">
+      <div
+        class="layout__header-content"
+        [style.max-width]="fullWidth() ? '100%' : maxWidth()"
+      >
         <ng-content select="[navigation]" />
       </div>
     </header>
 
-    <div class="layout__body" [style.max-width]="fullWidth() ? '100%' : maxWidth()">
+    <div
+      class="layout__body"
+      [style.max-width]="fullWidth() ? '100%' : maxWidth()"
+    >
       <main class="layout__main">
         <ng-content select="[content]" />
       </main>
@@ -31,7 +37,10 @@
       <ng-content select="[navigation]" />
     </aside>
 
-    <div class="layout__body" [style.max-width]="fullWidth() ? '100%' : maxWidth()">
+    <div
+      class="layout__body"
+      [style.max-width]="fullWidth() ? '100%' : maxWidth()"
+    >
       <main class="layout__main">
         <ng-content select="[content]" />
       </main>

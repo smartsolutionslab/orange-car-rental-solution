@@ -1,8 +1,8 @@
-import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IconComponent, type IconName } from '../icon';
+import { Component, input } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { IconComponent, type IconName } from "../icon";
 
-export type FormSectionVariant = 'default' | 'card' | 'bordered' | 'compact';
+export type FormSectionVariant = "default" | "card" | "bordered" | "compact";
 
 /**
  * Form Section Component
@@ -21,7 +21,7 @@ export type FormSectionVariant = 'default' | 'card' | 'bordered' | 'compact';
  * </ocr-form-section>
  */
 @Component({
-  selector: 'ocr-form-section',
+  selector: "ocr-form-section",
   standalone: true,
   imports: [CommonModule, IconComponent],
   template: `
@@ -68,143 +68,150 @@ export type FormSectionVariant = 'default' | 'card' | 'bordered' | 'compact';
         </header>
       }
 
-      <div class="form-section__content" [class.form-section__content--hidden]="isCollapsed">
+      <div
+        class="form-section__content"
+        [class.form-section__content--hidden]="isCollapsed"
+      >
         <ng-content></ng-content>
       </div>
     </section>
   `,
-  styles: [`
-    .form-section {
-      display: flex;
-      flex-direction: column;
-    }
+  styles: [
+    `
+      .form-section {
+        display: flex;
+        flex-direction: column;
+      }
 
-    /* Variant: Card */
-    .form-section--card {
-      background: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-      padding: 1.5rem;
-    }
+      /* Variant: Card */
+      .form-section--card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow:
+          0 1px 3px 0 rgba(0, 0, 0, 0.1),
+          0 1px 2px -1px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+      }
 
-    /* Variant: Bordered */
-    .form-section--bordered {
-      border: 1px solid #e5e7eb;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-    }
+      /* Variant: Bordered */
+      .form-section--bordered {
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+      }
 
-    /* Variant: Compact */
-    .form-section--compact .form-section__header {
-      margin-bottom: 0.75rem;
-    }
+      /* Variant: Compact */
+      .form-section--compact .form-section__header {
+        margin-bottom: 0.75rem;
+      }
 
-    .form-section--compact .form-section__content {
-      gap: 0.75rem;
-    }
+      .form-section--compact .form-section__content {
+        gap: 0.75rem;
+      }
 
-    /* Header */
-    .form-section__header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 1.25rem;
-    }
+      /* Header */
+      .form-section__header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+      }
 
-    .form-section__header--clickable {
-      cursor: pointer;
-      user-select: none;
-      padding: 0.5rem;
-      margin: -0.5rem;
-      margin-bottom: 0.75rem;
-      border-radius: 0.375rem;
-      transition: background-color 0.15s ease;
-    }
+      .form-section__header--clickable {
+        cursor: pointer;
+        user-select: none;
+        padding: 0.5rem;
+        margin: -0.5rem;
+        margin-bottom: 0.75rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.15s ease;
+      }
 
-    .form-section__header--clickable:hover {
-      background-color: #f9fafb;
-    }
+      .form-section__header--clickable:hover {
+        background-color: #f9fafb;
+      }
 
-    .form-section__header-content {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
+      .form-section__header-content {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
 
-    .form-section__icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 2.5rem;
-      height: 2.5rem;
-      background-color: #fff7ed;
-      color: #f97316;
-      border-radius: 0.5rem;
-      flex-shrink: 0;
-    }
+      .form-section__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        background-color: #fff7ed;
+        color: #f97316;
+        border-radius: 0.5rem;
+        flex-shrink: 0;
+      }
 
-    .form-section__titles {
-      display: flex;
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+      .form-section__titles {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
 
-    .form-section__title {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #111827;
-      line-height: 1.5;
-    }
+      .form-section__title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+        line-height: 1.5;
+      }
 
-    .form-section__description {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #6b7280;
-      line-height: 1.5;
-    }
+      .form-section__description {
+        margin: 0;
+        font-size: 0.875rem;
+        color: #6b7280;
+        line-height: 1.5;
+      }
 
-    .form-section__toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 1.5rem;
-      height: 1.5rem;
-      color: #6b7280;
-      transition: transform 0.2s ease;
-    }
+      .form-section__toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.5rem;
+        height: 1.5rem;
+        color: #6b7280;
+        transition: transform 0.2s ease;
+      }
 
-    /* Content */
-    .form-section__content {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
+      /* Content */
+      .form-section__content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    .form-section__content--hidden {
-      display: none;
-    }
+      .form-section__content--hidden {
+        display: none;
+      }
 
-    /* Collapsed state */
-    .form-section--collapsed .form-section__header {
-      margin-bottom: 0;
-    }
+      /* Collapsed state */
+      .form-section--collapsed .form-section__header {
+        margin-bottom: 0;
+      }
 
-    /* Section divider (when used with multiple sections) */
-    .form-section + .form-section {
-      margin-top: 1.5rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid #e5e7eb;
-    }
+      /* Section divider (when used with multiple sections) */
+      .form-section + .form-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e5e7eb;
+      }
 
-    /* Card and bordered variants don't need the divider */
-    .form-section--card + .form-section--card,
-    .form-section--bordered + .form-section--bordered {
-      margin-top: 1rem;
-      padding-top: 0;
-      border-top: none;
-    }
-  `]
+      /* Card and bordered variants don't need the divider */
+      .form-section--card + .form-section--card,
+      .form-section--bordered + .form-section--bordered {
+        margin-top: 1rem;
+        padding-top: 0;
+        border-top: none;
+      }
+    `,
+  ],
 })
 export class FormSectionComponent {
   /** Section title */
@@ -217,7 +224,7 @@ export class FormSectionComponent {
   readonly icon = input<IconName>();
 
   /** Visual variant */
-  readonly variant = input<FormSectionVariant>('default');
+  readonly variant = input<FormSectionVariant>("default");
 
   /** Whether the section can be collapsed */
   readonly collapsible = input(false);

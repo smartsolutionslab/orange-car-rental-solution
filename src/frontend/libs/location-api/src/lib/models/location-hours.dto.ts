@@ -1,8 +1,8 @@
 /**
  * Location operating hours
  */
-import type { DayOfWeek } from './day-of-week.enum';
-import type { TimeString } from './time-string.type';
+import type { DayOfWeek } from "./day-of-week.enum";
+import type { TimeString } from "./time-string.type";
 
 export type LocationHours = {
   readonly dayOfWeek: DayOfWeek;

@@ -1,7 +1,7 @@
-import { Directive, input, HostBinding } from '@angular/core';
+import { Directive, input, HostBinding } from "@angular/core";
 
-export type FormGroupLayout = 'vertical' | 'horizontal' | 'inline';
-export type FormGroupSpacing = 'none' | 'sm' | 'md' | 'lg';
+export type FormGroupLayout = "vertical" | "horizontal" | "inline";
+export type FormGroupSpacing = "none" | "sm" | "md" | "lg";
 
 /**
  * Form Group Directive
@@ -31,15 +31,15 @@ export type FormGroupSpacing = 'none' | 'sm' | 'md' | 'lg';
  * </div>
  */
 @Directive({
-  selector: '[ocrFormGroup]',
+  selector: "[ocrFormGroup]",
   standalone: true,
 })
 export class FormGroupDirective {
   /** Layout direction */
-  readonly layout = input<FormGroupLayout>('vertical');
+  readonly layout = input<FormGroupLayout>("vertical");
 
   /** Spacing between fields */
-  readonly spacing = input<FormGroupSpacing>('md');
+  readonly spacing = input<FormGroupSpacing>("md");
 
   /** Number of columns for grid layout (horizontal only) */
   readonly columns = input<number>(2);
@@ -48,63 +48,65 @@ export class FormGroupDirective {
   readonly wrap = input(true);
 
   /** Align items (for horizontal/inline) */
-  readonly alignItems = input<'start' | 'center' | 'end' | 'stretch'>('stretch');
+  readonly alignItems = input<"start" | "center" | "end" | "stretch">(
+    "stretch",
+  );
 
-  @HostBinding('class')
+  @HostBinding("class")
   get hostClasses(): string {
-    const classes = ['ocr-form-group'];
+    const classes = ["ocr-form-group"];
     classes.push(`ocr-form-group--${this.layout()}`);
     classes.push(`ocr-form-group--spacing-${this.spacing()}`);
     classes.push(`ocr-form-group--align-${this.alignItems()}`);
     if (this.wrap()) {
-      classes.push('ocr-form-group--wrap');
+      classes.push("ocr-form-group--wrap");
     }
-    return classes.join(' ');
+    return classes.join(" ");
   }
 
-  @HostBinding('style.--form-group-columns')
+  @HostBinding("style.--form-group-columns")
   get columnsStyle(): number {
     return this.columns();
   }
 
-  @HostBinding('style')
+  @HostBinding("style")
   get hostStyles(): Record<string, string> {
     const styles: Record<string, string> = {};
 
     // Layout styles
     switch (this.layout()) {
-      case 'vertical':
-        styles['display'] = 'flex';
-        styles['flex-direction'] = 'column';
+      case "vertical":
+        styles["display"] = "flex";
+        styles["flex-direction"] = "column";
         break;
-      case 'horizontal':
-        styles['display'] = 'grid';
-        styles['grid-template-columns'] = `repeat(${this.columns()}, 1fr)`;
+      case "horizontal":
+        styles["display"] = "grid";
+        styles["grid-template-columns"] = `repeat(${this.columns()}, 1fr)`;
         break;
-      case 'inline':
-        styles['display'] = 'flex';
-        styles['flex-direction'] = 'row';
-        styles['flex-wrap'] = this.wrap() ? 'wrap' : 'nowrap';
+      case "inline":
+        styles["display"] = "flex";
+        styles["flex-direction"] = "row";
+        styles["flex-wrap"] = this.wrap() ? "wrap" : "nowrap";
         break;
     }
 
     // Spacing
     const spacingMap: Record<FormGroupSpacing, string> = {
-      none: '0',
-      sm: '0.5rem',
-      md: '1rem',
-      lg: '1.5rem',
+      none: "0",
+      sm: "0.5rem",
+      md: "1rem",
+      lg: "1.5rem",
     };
-    styles['gap'] = spacingMap[this.spacing()];
+    styles["gap"] = spacingMap[this.spacing()];
 
     // Alignment
     const alignMap: Record<string, string> = {
-      start: 'flex-start',
-      center: 'center',
-      end: 'flex-end',
-      stretch: 'stretch',
+      start: "flex-start",
+      center: "center",
+      end: "flex-end",
+      stretch: "stretch",
     };
-    styles['align-items'] = alignMap[this.alignItems()];
+    styles["align-items"] = alignMap[this.alignItems()];
 
     return styles;
   }
@@ -126,31 +128,34 @@ export class FormGroupDirective {
  * </div>
  */
 @Directive({
-  selector: '[ocrFormRow]',
+  selector: "[ocrFormRow]",
   standalone: true,
 })
 export class FormRowDirective {
   /** Number of columns in the row */
-  readonly columns = input<number | 'auto'>(2);
+  readonly columns = input<number | "auto">(2);
 
   /** Gap between fields */
-  readonly gap = input<FormGroupSpacing>('md');
+  readonly gap = input<FormGroupSpacing>("md");
 
-  @HostBinding('style')
+  @HostBinding("style")
   get hostStyles(): Record<string, string> {
     const cols = this.columns();
     const gapMap: Record<FormGroupSpacing, string> = {
-      none: '0',
-      sm: '0.5rem',
-      md: '1rem',
-      lg: '1.5rem',
+      none: "0",
+      sm: "0.5rem",
+      md: "1rem",
+      lg: "1.5rem",
     };
 
     return {
-      display: 'grid',
-      'grid-template-columns': cols === 'auto' ? 'repeat(auto-fit, minmax(200px, 1fr))' : `repeat(${cols}, 1fr)`,
+      display: "grid",
+      "grid-template-columns":
+        cols === "auto"
+          ? "repeat(auto-fit, minmax(200px, 1fr))"
+          : `repeat(${cols}, 1fr)`,
       gap: gapMap[this.gap()],
-      width: '100%',
+      width: "100%",
     };
   }
 }
@@ -168,10 +173,10 @@ export class FormRowDirective {
  * </div>
  */
 @Directive({
-  selector: '[ocrFullWidth]',
+  selector: "[ocrFullWidth]",
   standalone: true,
 })
 export class FullWidthDirective {
-  @HostBinding('style.grid-column')
-  readonly gridColumn = '1 / -1';
+  @HostBinding("style.grid-column")
+  readonly gridColumn = "1 / -1";
 }

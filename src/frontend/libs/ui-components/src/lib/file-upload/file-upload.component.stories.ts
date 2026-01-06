@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { FileUploadComponent } from './file-upload.component';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { FileUploadComponent } from "./file-upload.component";
 
 const meta: Meta<FileUploadComponent> = {
-  title: 'Forms/File Upload',
+  title: "Forms/File Upload",
   component: FileUploadComponent,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
     docs: {
       description: {
         component: `
@@ -44,11 +44,11 @@ and file type/size validation.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (story) => ({
       ...story,
-      styles: ['div { width: 400px; }'],
+      styles: ["div { width: 400px; }"],
     }),
   ],
 };
@@ -61,7 +61,7 @@ type Story = StoryObj<FileUploadComponent>;
  */
 export const Default: Story = {
   args: {
-    label: 'Upload files',
+    label: "Upload files",
   },
 };
 
@@ -70,9 +70,9 @@ export const Default: Story = {
  */
 export const WithAcceptedTypes: Story = {
   args: {
-    label: 'Upload documents',
-    accept: '.pdf,.doc,.docx',
-    hint: 'Only PDF and Word documents are accepted',
+    label: "Upload documents",
+    accept: ".pdf,.doc,.docx",
+    hint: "Only PDF and Word documents are accepted",
   },
 };
 
@@ -81,9 +81,9 @@ export const WithAcceptedTypes: Story = {
  */
 export const ImagesOnly: Story = {
   args: {
-    label: 'Upload images',
-    accept: 'image/*',
-    hint: 'Drag and drop images here',
+    label: "Upload images",
+    accept: "image/*",
+    hint: "Drag and drop images here",
   },
 };
 
@@ -92,9 +92,9 @@ export const ImagesOnly: Story = {
  */
 export const WithSizeLimit: Story = {
   args: {
-    label: 'Upload file',
+    label: "Upload file",
     maxSize: 5242880, // 5MB
-    hint: 'Maximum file size is 5MB',
+    hint: "Maximum file size is 5MB",
   },
 };
 
@@ -103,8 +103,8 @@ export const WithSizeLimit: Story = {
  */
 export const MultipleFiles: Story = {
   args: {
-    label: 'Upload documents',
-    accept: '.pdf,.doc,.docx',
+    label: "Upload documents",
+    accept: ".pdf,.doc,.docx",
     maxSize: 10485760, // 10MB
     multiple: true,
   },
@@ -115,9 +115,9 @@ export const MultipleFiles: Story = {
  */
 export const Required: Story = {
   args: {
-    label: 'Required upload',
+    label: "Required upload",
     required: true,
-    accept: 'image/*',
+    accept: "image/*",
   },
 };
 
@@ -126,8 +126,8 @@ export const Required: Story = {
  */
 export const WithError: Story = {
   args: {
-    label: 'Upload file',
-    error: 'Please upload at least one file',
+    label: "Upload file",
+    error: "Please upload at least one file",
   },
 };
 
@@ -136,10 +136,10 @@ export const WithError: Story = {
  */
 export const WithHint: Story = {
   args: {
-    label: 'Profile picture',
-    accept: 'image/jpeg,image/png',
+    label: "Profile picture",
+    accept: "image/jpeg,image/png",
     maxSize: 2097152, // 2MB
-    hint: 'Upload a JPG or PNG image (max 2MB)',
+    hint: "Upload a JPG or PNG image (max 2MB)",
   },
 };
 
@@ -148,7 +148,7 @@ export const WithHint: Story = {
  */
 export const Disabled: Story = {
   args: {
-    label: 'Upload file',
+    label: "Upload file",
     disabled: true,
   },
 };
@@ -158,8 +158,8 @@ export const Disabled: Story = {
  */
 export const WithoutLabel: Story = {
   args: {
-    accept: 'image/*',
-    hint: 'Drop images here or click to browse',
+    accept: "image/*",
+    hint: "Drop images here or click to browse",
   },
 };
 
@@ -169,10 +169,10 @@ export const WithoutLabel: Story = {
 export const DriversLicenseUpload: Story = {
   args: {
     label: "Driver's License",
-    accept: 'image/jpeg,image/png,.pdf',
+    accept: "image/jpeg,image/png,.pdf",
     maxSize: 5242880,
     required: true,
-    hint: 'Upload a clear photo or scan of your driver\'s license',
+    hint: "Upload a clear photo or scan of your driver's license",
   },
 };
 
@@ -181,10 +181,10 @@ export const DriversLicenseUpload: Story = {
  */
 export const VehiclePhotos: Story = {
   args: {
-    label: 'Vehicle Photos',
-    accept: 'image/*',
+    label: "Vehicle Photos",
+    accept: "image/*",
     maxSize: 10485760,
     multiple: true,
-    hint: 'Upload photos of vehicle damage (if any)',
+    hint: "Upload photos of vehicle damage (if any)",
   },
 };

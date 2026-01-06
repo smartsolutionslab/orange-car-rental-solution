@@ -1,14 +1,19 @@
-import type { Meta, StoryObj } from '@storybook/angular';
-import { moduleMetadata } from '@storybook/angular';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ValidationMessagesComponent } from './validation-messages.component';
-import { InputComponent } from '../input';
+import type { Meta, StoryObj } from "@storybook/angular";
+import { moduleMetadata } from "@storybook/angular";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
+import { ValidationMessagesComponent } from "./validation-messages.component";
+import { InputComponent } from "../input";
 
 const meta: Meta<ValidationMessagesComponent> = {
-  title: 'Forms/ValidationMessages',
+  title: "Forms/ValidationMessages",
   component: ValidationMessagesComponent,
   parameters: {
-    layout: 'padded',
+    layout: "padded",
     docs: {
       description: {
         component: `
@@ -46,7 +51,7 @@ Automatically detects errors and shows appropriate German messages.
       },
     },
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     moduleMetadata({
       imports: [ReactiveFormsModule, InputComponent],
@@ -59,7 +64,7 @@ type Story = StoryObj<ValidationMessagesComponent>;
 
 // Create form controls for demos
 const createControl = (validators: any[] = []) => {
-  const ctrl = new FormControl('', validators);
+  const ctrl = new FormControl("", validators);
   ctrl.markAsTouched();
   return ctrl;
 };
@@ -88,7 +93,7 @@ export const RequiredError: Story = {
  */
 export const EmailError: Story = {
   render: () => {
-    const control = new FormControl('invalid-email', [Validators.email]);
+    const control = new FormControl("invalid-email", [Validators.email]);
     control.markAsTouched();
 
     return {
@@ -108,7 +113,7 @@ export const EmailError: Story = {
  */
 export const MinLengthError: Story = {
   render: () => {
-    const control = new FormControl('abc', [Validators.minLength(8)]);
+    const control = new FormControl("abc", [Validators.minLength(8)]);
     control.markAsTouched();
 
     return {
@@ -128,7 +133,7 @@ export const MinLengthError: Story = {
  */
 export const MultipleErrorsShowFirst: Story = {
   render: () => {
-    const control = new FormControl('', [
+    const control = new FormControl("", [
       Validators.required,
       Validators.email,
       Validators.minLength(5),
@@ -155,7 +160,7 @@ export const MultipleErrorsShowFirst: Story = {
  */
 export const MultipleErrorsShowAll: Story = {
   render: () => {
-    const control = new FormControl('ab', [
+    const control = new FormControl("ab", [
       Validators.required,
       Validators.email,
       Validators.minLength(5),
@@ -201,14 +206,14 @@ export const WithoutIcon: Story = {
  */
 export const CustomMessages: Story = {
   render: () => {
-    const control = new FormControl('12', [
+    const control = new FormControl("12", [
       Validators.required,
       Validators.min(18),
     ]);
     control.markAsTouched();
 
     const customMessages = [
-      { key: 'min', message: 'You must be at least 18 years old to register' },
+      { key: "min", message: "You must be at least 18 years old to register" },
     ];
 
     return {
@@ -232,7 +237,10 @@ export const CustomMessages: Story = {
  */
 export const NoErrors: Story = {
   render: () => {
-    const control = new FormControl('valid@email.com', [Validators.required, Validators.email]);
+    const control = new FormControl("valid@email.com", [
+      Validators.required,
+      Validators.email,
+    ]);
     control.markAsTouched();
 
     return {
@@ -256,14 +264,17 @@ export const NoErrors: Story = {
 export const FormIntegration: Story = {
   render: () => {
     const form = new FormGroup({
-      email: new FormControl('', [Validators.required, Validators.email]),
-      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+      email: new FormControl("", [Validators.required, Validators.email]),
+      password: new FormControl("", [
+        Validators.required,
+        Validators.minLength(8),
+      ]),
     });
 
     // Mark as touched for demo
-    form.get('email')?.markAsTouched();
-    form.get('password')?.setValue('123');
-    form.get('password')?.markAsTouched();
+    form.get("email")?.markAsTouched();
+    form.get("password")?.setValue("123");
+    form.get("password")?.markAsTouched();
 
     return {
       props: { form },

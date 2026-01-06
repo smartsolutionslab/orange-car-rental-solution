@@ -3,7 +3,7 @@
  * Matches backend VehicleCategory value object
  * Examples: KLEIN, KOMPAKT, MITTEL, OBER, SUV, KOMBI, TRANS, LUXUS
  */
-export type CategoryCode = string & { readonly __brand: 'CategoryCode' };
+export type CategoryCode = string & { readonly __brand: "CategoryCode" };
 
 const CATEGORY_CODE_REGEX = /^[A-Z]{2,10}$/;
 
@@ -22,7 +22,9 @@ export function createCategoryCode(value: string): CategoryCode {
 /**
  * Safely convert a string to CategoryCode, returning undefined if invalid
  */
-export function toCategoryCode(value: string | null | undefined): CategoryCode | undefined {
+export function toCategoryCode(
+  value: string | null | undefined,
+): CategoryCode | undefined {
   if (!value) return undefined;
   const normalized = value.toUpperCase().trim();
   return isCategoryCode(normalized) ? normalized : undefined;

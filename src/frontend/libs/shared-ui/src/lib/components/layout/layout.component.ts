@@ -1,5 +1,5 @@
-import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input } from "@angular/core";
+import { CommonModule } from "@angular/common";
 
 /**
  * Shared layout component with navigation, content, and optional sidebar areas.
@@ -22,11 +22,11 @@ import { CommonModule } from '@angular/common';
  * ```
  */
 @Component({
-  selector: 'ocr-layout',
+  selector: "ocr-layout",
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './layout.component.html',
-  styleUrl: './layout.component.css'
+  templateUrl: "./layout.component.html",
+  styleUrl: "./layout.component.css",
 })
 export class LayoutComponent {
   /**
@@ -39,7 +39,7 @@ export class LayoutComponent {
    * Navigation position: 'top' (horizontal) or 'left' (vertical sidebar).
    * Default: 'top'
    */
-  navPosition = input<'top' | 'left'>('top');
+  navPosition = input<"top" | "left">("top");
 
   /**
    * Whether the layout should be full-width or contained.
@@ -51,11 +51,11 @@ export class LayoutComponent {
    * Maximum width for contained layout (in pixels or CSS value).
    * Default: '1400px'
    */
-  maxWidth = input<string>('1400px');
+  maxWidth = input<string>("1400px");
 
   /**
    * Theme variant for different portals.
    * Default: 'default'
    */
-  theme = input<'default' | 'admin'>('default');
+  theme = input<"default" | "admin">("default");
 }

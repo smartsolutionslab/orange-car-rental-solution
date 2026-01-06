@@ -1,1 +1,1 @@
-export { BaseVehicleService } from './base-vehicle.service';
+export { BaseVehicleService } from "./base-vehicle.service";
