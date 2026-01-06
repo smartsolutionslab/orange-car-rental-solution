@@ -41,11 +41,13 @@ public class KeycloakTokenProvider
             ["password"] = password
         };
 
+        Console.WriteLine($"[TokenProvider] Getting token for user '{username}' from {_tokenEndpoint}");
         var response = await _httpClient.PostAsync(_tokenEndpoint, new FormUrlEncodedContent(tokenRequest));
 
         if (!response.IsSuccessStatusCode)
         {
             var error = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"[TokenProvider] FAILED to get token: {response.StatusCode} - {error}");
             throw new InvalidOperationException($"Failed to get token from Keycloak: {response.StatusCode} - {error}");
         }
 
@@ -53,7 +55,28 @@ public class KeycloakTokenProvider
 
         if (tokenResponse?.AccessToken == null)
         {
+            Console.WriteLine("[TokenProvider] Token response did not contain an access token");
             throw new InvalidOperationException("Token response did not contain an access token");
+        }
+
+        Console.WriteLine($"[TokenProvider] Successfully obtained token for '{username}' (expires in {tokenResponse.ExpiresIn}s)");
+
+        // Decode and log token claims for debugging
+        try
+        {
+            var parts = tokenResponse.AccessToken.Split('.');
+            if (parts.Length >= 2)
+            {
+                var payload = parts[1];
+                // Add padding if needed
+                payload = payload.PadRight(payload.Length + (4 - payload.Length % 4) % 4, '=');
+                var decoded = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(payload));
+                Console.WriteLine($"[TokenProvider] Token payload: {decoded}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[TokenProvider] Could not decode token: {ex.Message}");
         }
 
         _tokenCache[cacheKey] = new CachedToken(tokenResponse.AccessToken, tokenResponse.ExpiresIn);
