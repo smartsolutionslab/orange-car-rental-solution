@@ -6,6 +6,7 @@ import {
 } from '@angular/core';
 import type { ApplicationConfig, EnvironmentProviders, Provider } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import type { HttpInterceptorFn } from '@angular/common/http';
 import { provideHttpClient, withFetch, withInterceptors, HttpClient } from '@angular/common/http';
 import {
   provideKeycloak,
@@ -25,9 +26,22 @@ import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
 
+// Check if Keycloak is enabled
+const isKeycloakEnabled = !!environment.keycloak.url;
+
 const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
   urlPattern: /^(https?:\/\/[^/]+)?(\/api)(\/.*)?$/i,
 });
+
+/**
+ * Returns HTTP interceptors. Only includes bearer token interceptor when Keycloak is enabled.
+ */
+function getHttpInterceptors(): HttpInterceptorFn[] {
+  if (!isKeycloakEnabled) {
+    return [];
+  }
+  return [includeBearerTokenInterceptor];
+}
 
 /**
  * Returns Keycloak providers only if a valid Keycloak URL is configured.
@@ -35,12 +49,16 @@ const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
  */
 function getKeycloakProviders(): (Provider | EnvironmentProviders)[] {
   // Skip Keycloak initialization if no URL is configured (e.g., in E2E tests)
-  if (!environment.keycloak.url) {
+  if (!isKeycloakEnabled) {
     console.log('Keycloak URL not configured - skipping authentication');
     return [];
   }
 
   return [
+    {
+      provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+      useValue: [urlCondition],
+    },
     provideKeycloak({
       config: {
         url: environment.keycloak.url,
@@ -68,14 +86,10 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withFetch(), withInterceptors([includeBearerTokenInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors(getHttpInterceptors())),
     ...provideI18n(),
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: API_CONFIG, useExisting: ConfigService },
-    {
-      provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-      useValue: [urlCondition],
-    },
     {
       provide: APP_INITIALIZER,
       useFactory: initializeApp,
