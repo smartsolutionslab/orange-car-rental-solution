@@ -136,3 +136,15 @@ export { RadioGroupComponent, type RadioGroupSize, type RadioGroupOrientation, t
 export { SwitchComponent, type SwitchSize } from './lib/switch';
 export { FileUploadComponent, type UploadedFile } from './lib/file-upload';
 export { FormSectionComponent, type FormSectionVariant } from './lib/form-section';
+export {
+  ValidationMessagesComponent,
+  DEFAULT_VALIDATION_MESSAGES,
+  type ValidationMessageConfig,
+} from './lib/validation-messages';
+export {
+  FormGroupDirective,
+  FormRowDirective,
+  FullWidthDirective,
+  type FormGroupLayout,
+  type FormGroupSpacing,
+} from './lib/form-group';
