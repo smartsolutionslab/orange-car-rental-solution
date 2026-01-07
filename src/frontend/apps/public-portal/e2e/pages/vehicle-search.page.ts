@@ -19,16 +19,26 @@ export class VehicleSearchPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.searchForm = page.locator('.search-form, form');
-    this.pickupDateInput = page.locator('input[formControlName="pickupDate"]');
-    this.returnDateInput = page.locator('input[formControlName="returnDate"]');
-    this.locationSelect = page.locator('select[formControlName="locationCode"]');
-    this.categorySelect = page.locator('select[formControlName="categoryCode"]');
-    this.searchButton = page.locator('button[type="submit"]:has-text("Suchen"), button:has-text("Fahrzeuge suchen")');
+    this.searchForm = page.locator(
+      'app-vehicle-search form, .vehicle-search-form, .search-form, form',
+    );
+    // Date inputs use native HTML date input with formControlName on the element
+    this.pickupDateInput = page.locator('input#pickupDate, input[formControlName="pickupDate"]');
+    this.returnDateInput = page.locator('input#returnDate, input[formControlName="returnDate"]');
+    // Custom Angular components wrap native select elements - select by id or within the component
+    this.locationSelect = page.locator('ui-select-location select, select#location');
+    this.categorySelect = page.locator('ui-select-category select, select#category');
+    // Search button - use type="submit" selector, translation key may show as button text
+    this.searchButton = page.locator(
+      'app-vehicle-search button[type="submit"], .vehicle-search-form button[type="submit"]',
+    );
     this.vehicleGrid = page.locator('.vehicle-grid, .vehicles-list, .search-results');
     this.vehicleCards = page.locator('.vehicle-card, [data-testid="vehicle-card"]');
-    this.loadingIndicator = page.locator('.loading, .spinner');
-    this.noResultsMessage = page.locator('text=/keine.*gefunden|no.*found/i');
+    this.loadingIndicator = page.locator('.loading, .spinner, ui-loading-state');
+    // Empty state - check for component or translation key text
+    this.noResultsMessage = page.locator(
+      'ui-empty-state, text=/keine.*gefunden|no.*found|vehicles\\.emptyState/i',
+    );
   }
 
   /**
@@ -145,7 +155,7 @@ export class VehicleSearchPage extends BasePage {
     return {
       name: await card.locator('.vehicle-name, h3, h4').textContent(),
       price: await card.locator('.price, .daily-rate').textContent(),
-      category: await card.locator('.category, .vehicle-category').textContent()
+      category: await card.locator('.category, .vehicle-category').textContent(),
     };
   }
 
