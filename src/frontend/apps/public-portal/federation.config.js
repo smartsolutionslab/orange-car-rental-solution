@@ -16,6 +16,18 @@ module.exports = withNativeFederation({
       strictVersion: true,
       requiredVersion: 'auto',
     }),
+    // Explicitly ensure ngx-translate is shared as singleton
+    // This prevents duplication between the i18n library and lazy-loaded components
+    '@ngx-translate/core': {
+      singleton: true,
+      strictVersion: false,
+      requiredVersion: 'auto',
+    },
+    '@ngx-translate/http-loader': {
+      singleton: true,
+      strictVersion: false,
+      requiredVersion: 'auto',
+    },
   },
 
   skip: [
@@ -24,5 +36,8 @@ module.exports = withNativeFederation({
     'rxjs/testing',
     'rxjs/webSocket',
     '@angular/common/locales/de',
+    // Skip keycloak-angular in E2E builds - its class field initializers
+    // call inject() at module load time, before DI is available
+    'keycloak-angular',
   ],
 });

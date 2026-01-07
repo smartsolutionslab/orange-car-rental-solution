@@ -72,12 +72,13 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   /* In CI with PLAYWRIGHT_SKIP_WEB_SERVER=true, we serve the built app externally */
+  /* Uses E2E build configuration to avoid keycloak-angular DI issues */
   ...(process.env['PLAYWRIGHT_SKIP_WEB_SERVER'] ? {} : {
     webServer: {
-      command: 'yarn start:dev',
+      command: 'yarn build:e2e && npx serve dist/public-portal/browser -l 4301 -s',
       url: 'http://localhost:4301',
       reuseExistingServer: !process.env['CI'],
-      timeout: 180000,
+      timeout: 300000,
     },
   }),
 });

@@ -109,13 +109,21 @@
 							"sourceMap": true
 						},
 						"e2e": {
-							"optimization": false,
+							"optimization": true,
 							"extractLicenses": false,
-							"sourceMap": true,
+							"sourceMap": false,
 							"fileReplacements": [
 								{
 									"replace": "src/environments/environment.ts",
 									"with": "src/environments/environment.e2e.ts"
+								},
+								{
+									"replace": "src/app/app.config.ts",
+									"with": "src/app/app.config.e2e.ts"
+								},
+								{
+									"replace": "src/app/app.routes.ts",
+									"with": "src/app/app.routes.e2e.ts"
 								}
 							]
 						}

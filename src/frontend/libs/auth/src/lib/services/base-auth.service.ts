@@ -4,15 +4,37 @@ import type { KeycloakProfile } from "keycloak-js";
 import { logError } from "@orange-car-rental/util";
 
 /**
+ * Creates a mock Keycloak instance for use when Keycloak is not configured.
+ * This allows the application to run in E2E test mode without a Keycloak server.
+ */
+function createMockKeycloak(): Keycloak {
+  return {
+    authenticated: false,
+    token: undefined,
+    refreshToken: undefined,
+    tokenParsed: undefined,
+    realmAccess: { roles: [] },
+    init: () => Promise.resolve(false),
+    login: () => Promise.resolve(),
+    logout: () => Promise.resolve(),
+    updateToken: () => Promise.resolve(false),
+    loadUserProfile: () => Promise.resolve({}),
+  } as unknown as Keycloak;
+}
+
+/**
  * Base authentication service using Keycloak
  * Provides common authentication methods that can be used directly
- * or extended by portal-specific auth services
+ * or extended by portal-specific auth services.
+ *
+ * When Keycloak is not available (e.g., in E2E tests), this service
+ * falls back to a mock implementation that reports user as not authenticated.
  */
 @Injectable({
   providedIn: "root",
 })
 export class BaseAuthService {
-  protected readonly keycloak = inject(Keycloak);
+  protected readonly keycloak: Keycloak = inject(Keycloak, { optional: true }) ?? createMockKeycloak();
 
   /**
    * Check if user is authenticated
