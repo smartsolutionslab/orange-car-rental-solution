@@ -28,18 +28,14 @@ test.describe('US-1: Vehicle Search with Filters', () => {
 
   test.describe('Basic Search Functionality', () => {
     test('should display vehicle search form on homepage', async ({ page }) => {
-      // Check if search form is visible
-      await expect(page.locator('app-vehicle-search, .vehicle-search-form')).toBeVisible();
+      // Check if search form is visible - use .first() to avoid strict mode violation
+      await expect(page.locator('app-vehicle-search').first()).toBeVisible();
 
       // Check if essential search fields are present (using id selectors for Angular components)
-      await expect(
-        page.locator('input#pickupDate, input[formControlName="pickupDate"]'),
-      ).toBeVisible();
-      await expect(
-        page.locator('input#returnDate, input[formControlName="returnDate"]'),
-      ).toBeVisible();
+      await expect(page.locator('input#pickupDate').first()).toBeVisible();
+      await expect(page.locator('input#returnDate').first()).toBeVisible();
       // Location uses custom Angular component ui-select-location which renders a native select
-      await expect(page.locator('ui-select-location select, select#location')).toBeVisible();
+      await expect(page.locator('ui-select-location select').first()).toBeVisible();
     });
 
     test('should perform basic vehicle search with dates', async ({ page }) => {
@@ -65,13 +61,14 @@ test.describe('US-1: Vehicle Search with Filters', () => {
 
       if (resultsVisible) {
         // Should show vehicle cards
-        await expect(page.locator('.vehicle-card, .vehicle-result')).toHaveCount({ min: 1 });
+        await expect(page.locator('.vehicle-card, .vehicle-result').first()).toBeVisible();
       } else {
-        // Or show empty state (component or translation key text)
-        const emptyState = page.locator(
-          'ui-empty-state, .empty-state, text=/Keine.*Fahrzeuge|keine.*verfügbar|vehicles\\.emptyState/i',
-        );
-        await expect(emptyState).toBeVisible();
+        // Or show empty state - use .or() instead of comma for mixing selectors
+        const emptyState = page
+          .locator('ui-empty-state')
+          .or(page.locator('.empty-state'))
+          .or(page.getByText(/Keine.*Fahrzeuge|keine.*verfügbar/i));
+        await expect(emptyState.first()).toBeVisible();
       }
     });
 
@@ -147,7 +144,7 @@ test.describe('US-1: Vehicle Search with Filters', () => {
       await page.fill('input#returnDate', returnDate);
 
       // Select location - ui-select-location renders a native select inside
-      const locationSelect = page.locator('ui-select-location select, select#location');
+      const locationSelect = page.locator('ui-select-location select').first();
       const optionCount = await locationSelect.locator('option').count();
 
       if (optionCount > 1) {
@@ -241,7 +238,7 @@ test.describe('US-1: Vehicle Search with Filters', () => {
 
     test('should display all vehicle categories', async ({ page }) => {
       // Categories: KLEIN, KOMPAKT, MITTEL, OBER, SUV, KOMBI, TRANS, LUXUS
-      const categoryFilter = page.locator('ui-select-category select, select#category');
+      const categoryFilter = page.locator('ui-select-category select').first();
       const filterVisible = await categoryFilter.isVisible().catch(() => false);
 
       if (filterVisible) {
@@ -281,7 +278,7 @@ test.describe('US-1: Vehicle Search with Filters', () => {
     test('should display fuel type options (Petrol, Diesel, Electric, Hybrid)', async ({
       page,
     }) => {
-      const fuelFilter = page.locator('ui-select-fuel-type select, select#fuel');
+      const fuelFilter = page.locator('ui-select-fuel-type select').first();
       const filterVisible = await fuelFilter.isVisible().catch(() => false);
 
       if (filterVisible) {
@@ -334,7 +331,7 @@ test.describe('US-1: Vehicle Search with Filters', () => {
       await page.waitForTimeout(2000);
 
       // Look for seats filter
-      const seatsFilter = page.locator('select#minSeats, select[formControlName="minSeats"]');
+      const seatsFilter = page.locator('select#minSeats').first();
       const filterVisible = await seatsFilter.isVisible().catch(() => false);
 
       if (filterVisible) {
@@ -528,9 +525,14 @@ test.describe('US-1: Vehicle Search with Filters', () => {
       // Click search
       await page.click('app-vehicle-search button[type="submit"]');
 
-      // Should show loading indicator briefly
-      const loadingVisible = await page
-        .locator('.spinner, .loading, [role="progressbar"], text=/Laden|Loading/i')
+      // Should show loading indicator briefly - use .or() for mixing selectors
+      const loadingIndicator = page
+        .locator('.spinner')
+        .or(page.locator('.loading'))
+        .or(page.locator('[role="progressbar"]'))
+        .or(page.getByText(/Laden|Loading/i));
+      const loadingVisible = await loadingIndicator
+        .first()
         .isVisible()
         .catch(() => false);
 
@@ -555,9 +557,10 @@ test.describe('US-1: Vehicle Search with Filters', () => {
       const cardCount = await vehicleCards.count();
 
       if (cardCount === 0) {
-        // Should show empty state message
+        // Should show empty state message - use getByText for regex patterns
         const emptyStateVisible = await page
-          .locator('text=/Keine.*Fahrzeuge|keine.*verfügbar|keine.*Ergebnisse/i')
+          .getByText(/Keine.*Fahrzeuge|keine.*verfügbar|keine.*Ergebnisse/i)
+          .first()
           .isVisible()
           .catch(() => false);
         expect(emptyStateVisible).toBe(true);
@@ -573,8 +576,8 @@ test.describe('US-1: Vehicle Search with Filters', () => {
       await page.goto('/');
 
       // Search form should be visible and functional on mobile
-      await expect(page.locator('app-vehicle-search, .vehicle-search')).toBeVisible();
-      await expect(page.locator('input#pickupDate')).toBeVisible();
+      await expect(page.locator('app-vehicle-search').first()).toBeVisible();
+      await expect(page.locator('input#pickupDate').first()).toBeVisible();
     });
 
     test('should display vehicle results in responsive grid', async ({ page }) => {
