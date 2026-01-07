@@ -30,17 +30,29 @@ class MockKeycloak {
   refreshToken: string | undefined = undefined;
   tokenParsed: unknown = undefined;
   realmAccess = { roles: [] as string[] };
-  init() { return Promise.resolve(false); }
-  login() { return Promise.resolve(); }
-  logout() { return Promise.resolve(); }
-  updateToken() { return Promise.resolve(false); }
-  loadUserProfile() { return Promise.resolve({}); }
+  init() {
+    return Promise.resolve(false);
+  }
+  login() {
+    return Promise.resolve();
+  }
+  logout() {
+    return Promise.resolve();
+  }
+  updateToken() {
+    return Promise.resolve(false);
+  }
+  loadUserProfile() {
+    return Promise.resolve({});
+  }
 }
 
 // Create tokens that match keycloak-angular's tokens
 // We can't import from keycloak-angular as it causes DI issues in E2E
 const KEYCLOAK_EVENT_SIGNAL = new InjectionToken('Keycloak Events Signal');
-const INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG = new InjectionToken('Include the bearer token when explicitly defined int the URL pattern condition');
+const INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG = new InjectionToken(
+  'Include the bearer token when explicitly defined int the URL pattern condition',
+);
 
 /**
  * Custom error handler that logs detailed error information for debugging

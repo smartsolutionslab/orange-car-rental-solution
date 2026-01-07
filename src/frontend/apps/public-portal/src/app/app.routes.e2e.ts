@@ -18,50 +18,41 @@ export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/vehicle-list/vehicle-list.component').then(
-        (m) => m.VehicleListComponent
-      ),
+      import('./pages/vehicle-list/vehicle-list.component').then((m) => m.VehicleListComponent),
   },
   {
     path: 'login',
-    loadComponent: () =>
-      import('./pages/login/login.component').then((m) => m.LoginComponent),
+    loadComponent: () => import('./pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'register',
     loadComponent: () =>
-      import('./pages/register/register.component').then(
-        (m) => m.RegisterComponent
-      ),
+      import('./pages/register/register.component').then((m) => m.RegisterComponent),
   },
   {
     path: 'forgot-password',
     loadComponent: () =>
       import('./pages/forgot-password/forgot-password.component').then(
-        (m) => m.ForgotPasswordComponent
+        (m) => m.ForgotPasswordComponent,
       ),
   },
   {
     path: 'booking',
     loadComponent: () =>
-      import('./pages/booking/booking.component').then(
-        (m) => m.BookingComponent
-      ),
+      import('./pages/booking/booking.component').then((m) => m.BookingComponent),
     canActivate: [authGuard],
   },
   {
     path: 'confirmation',
     loadComponent: () =>
-      import('./pages/confirmation/confirmation.component').then(
-        (m) => m.ConfirmationComponent
-      ),
+      import('./pages/confirmation/confirmation.component').then((m) => m.ConfirmationComponent),
     canActivate: [authGuard],
   },
   {
     path: 'my-bookings',
     loadComponent: () =>
       import('./pages/booking-history/booking-history.component').then(
-        (m) => m.BookingHistoryComponent
+        (m) => m.BookingHistoryComponent,
       ),
     canActivate: [authGuard],
   },
