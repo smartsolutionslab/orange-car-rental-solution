@@ -12,8 +12,9 @@ export async function login(page: Page, email?: string, password?: string) {
   const user = testUsers.registered;
   await page.goto('/login');
 
-  await page.fill('input[name="email"]', email || user.email);
-  await page.fill('input[name="password"]', password || user.password);
+  // Login form uses id selectors: #login-email and #login-password
+  await page.fill('#login-email', email || user.email);
+  await page.fill('#login-password', password || user.password);
 
   await page.click('button[type="submit"]');
 
@@ -23,20 +24,35 @@ export async function login(page: Page, email?: string, password?: string) {
 
 /**
  * Register a new user
+ * The register form is multi-step:
+ * - Step 1: email, password, confirmPassword
+ * - Step 2: firstName, lastName, phoneNumber, dateOfBirth
+ * - Step 3: acceptTerms, acceptPrivacy checkboxes
  */
 export async function register(page: Page, userData = testUsers.newUser) {
   await page.goto('/register');
 
-  await page.fill('input[name="firstName"]', userData.firstName);
-  await page.fill('input[name="lastName"]', userData.lastName);
-  await page.fill('input[name="email"]', userData.email);
-  await page.fill('input[name="phoneNumber"]', userData.phoneNumber);
-  await page.fill('input[name="dateOfBirth"]', userData.dateOfBirth);
-  await page.fill('input[name="password"]', userData.password);
-  await page.fill('input[name="confirmPassword"]', userData.confirmPassword);
+  // Step 1: Account Information
+  // Uses ocr-input components which wrap native inputs
+  await page.fill('ocr-input[formControlName="email"] input', userData.email);
+  await page.fill('ocr-input[formControlName="password"] input', userData.password);
+  await page.fill('ocr-input[formControlName="confirmPassword"] input', userData.confirmPassword);
+  await page.click('button.primary-button'); // Next button
 
-  // Accept terms
-  await page.check('input[type="checkbox"][formControlName="acceptTerms"]');
+  // Step 2: Personal Information
+  await page.waitForTimeout(300); // Wait for step transition
+  await page.fill('ocr-input[formControlName="firstName"] input', userData.firstName);
+  await page.fill('ocr-input[formControlName="lastName"] input', userData.lastName);
+  await page.fill('ocr-input[formControlName="phoneNumber"] input', userData.phoneNumber);
+  // dateOfBirth uses native input with id="dateOfBirth"
+  await page.fill('#dateOfBirth', userData.dateOfBirth);
+  await page.click('button.primary-button'); // Next button
+
+  // Step 3: Terms and Conditions
+  await page.waitForTimeout(300); // Wait for step transition
+  // Accept terms using ocr-checkbox components
+  await page.click('ocr-checkbox[formControlName="acceptTerms"]');
+  await page.click('ocr-checkbox[formControlName="acceptPrivacy"]');
 
   await page.click('button[type="submit"]');
 

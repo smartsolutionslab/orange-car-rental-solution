@@ -24,33 +24,38 @@ export async function startBooking(page: Page, vehicleId?: string) {
 
 /**
  * Fill in customer information step
+ * Uses ocr-input custom components which wrap native inputs
  */
 export async function fillCustomerInfo(page: Page, userData = testUsers.guest) {
-  await page.fill('input[formControlName="firstName"]', userData.firstName);
-  await page.fill('input[formControlName="lastName"]', userData.lastName);
-  await page.fill('input[formControlName="email"]', userData.email);
-  await page.fill('input[formControlName="phoneNumber"]', userData.phoneNumber);
-  await page.fill('input[formControlName="dateOfBirth"]', userData.dateOfBirth);
+  await page.fill('ocr-input[formControlName="firstName"] input', userData.firstName);
+  await page.fill('ocr-input[formControlName="lastName"] input', userData.lastName);
+  await page.fill('ocr-input[formControlName="email"] input', userData.email);
+  await page.fill('ocr-input[formControlName="phoneNumber"] input', userData.phoneNumber);
+  await page.fill('ocr-input[formControlName="dateOfBirth"] input', userData.dateOfBirth);
 }
 
 /**
  * Fill in address information step
+ * Uses ocr-input custom components (country is also an input, not a select)
  */
 export async function fillAddress(page: Page, address = testUsers.guest.address) {
-  await page.fill('input[formControlName="street"]', address.street);
-  await page.fill('input[formControlName="city"]', address.city);
-  await page.fill('input[formControlName="postalCode"]', address.postalCode);
-  await page.selectOption('select[formControlName="country"]', address.country);
+  await page.fill('ocr-input[formControlName="street"] input', address.street);
+  await page.fill('ocr-input[formControlName="city"] input', address.city);
+  await page.fill('ocr-input[formControlName="postalCode"] input', address.postalCode);
+  // Country is pre-filled with "Deutschland" and uses ocr-input, not select
+  await page.fill('ocr-input[formControlName="country"] input', address.country);
 }
 
 /**
  * Fill in driver's license information step
+ * Uses ocr-input custom components
  */
 export async function fillDriversLicense(page: Page, license = testUsers.guest.driversLicense) {
-  await page.fill('input[formControlName="licenseNumber"]', license.licenseNumber);
-  await page.selectOption('select[formControlName="licenseIssueCountry"]', license.licenseIssueCountry);
-  await page.fill('input[formControlName="licenseIssueDate"]', license.licenseIssueDate);
-  await page.fill('input[formControlName="licenseExpiryDate"]', license.licenseExpiryDate);
+  await page.fill('ocr-input[formControlName="licenseNumber"] input', license.licenseNumber);
+  // licenseIssueCountry uses ocr-input, not select
+  await page.fill('ocr-input[formControlName="licenseIssueCountry"] input', license.licenseIssueCountry);
+  await page.fill('ocr-input[formControlName="licenseIssueDate"] input', license.licenseIssueDate);
+  await page.fill('ocr-input[formControlName="licenseExpiryDate"] input', license.licenseExpiryDate);
 }
 
 /**
@@ -92,9 +97,9 @@ export async function completeBooking(page: Page, userData = testUsers.guest) {
  * Check if form fields are pre-filled
  */
 export async function checkPrefilledData(page: Page, expectedData: { firstName: string; lastName: string; email: string }) {
-  const firstName = await page.inputValue('input[formControlName="firstName"]');
-  const lastName = await page.inputValue('input[formControlName="lastName"]');
-  const email = await page.inputValue('input[formControlName="email"]');
+  const firstName = await page.inputValue('ocr-input[formControlName="firstName"] input');
+  const lastName = await page.inputValue('ocr-input[formControlName="lastName"] input');
+  const email = await page.inputValue('ocr-input[formControlName="email"] input');
 
   expect(firstName).toBe(expectedData.firstName);
   expect(lastName).toBe(expectedData.lastName);

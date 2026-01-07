@@ -213,8 +213,8 @@ test.describe('US-6: Similar Vehicle Suggestions', () => {
       await page.waitForTimeout(2000);
 
       // Get current booking dates
-      const pickupDate = await page.inputValue('input[formControlName="pickupDate"]');
-      const returnDate = await page.inputValue('input[formControlName="returnDate"]');
+      const pickupDate = await page.inputValue('#pickupDate');
+      const returnDate = await page.inputValue('#returnDate');
 
       const vehicleCards = page.locator('.vehicle-card');
       const cardCount = await vehicleCards.count();
@@ -227,8 +227,8 @@ test.describe('US-6: Similar Vehicle Suggestions', () => {
         await page.waitForTimeout(1000);
 
         // Booking dates should remain the same
-        const newPickupDate = await page.inputValue('input[formControlName="pickupDate"]');
-        const newReturnDate = await page.inputValue('input[formControlName="returnDate"]');
+        const newPickupDate = await page.inputValue('#pickupDate');
+        const newReturnDate = await page.inputValue('#returnDate');
 
         expect(newPickupDate).toBe(pickupDate);
         expect(newReturnDate).toBe(returnDate);
@@ -242,8 +242,8 @@ test.describe('US-6: Similar Vehicle Suggestions', () => {
       await page.waitForTimeout(2000);
 
       // Get current locations
-      const pickupLocation = await page.inputValue('select[formControlName="pickupLocationCode"]');
-      const dropoffLocation = await page.inputValue('select[formControlName="dropoffLocationCode"]');
+      const pickupLocation = await page.inputValue('ui-select-location[formControlName="pickupLocationCode"] select');
+      const dropoffLocation = await page.inputValue('ui-select-location[formControlName="dropoffLocationCode"] select');
 
       const vehicleCards = page.locator('.vehicle-card');
       const cardCount = await vehicleCards.count();
@@ -256,8 +256,8 @@ test.describe('US-6: Similar Vehicle Suggestions', () => {
         await page.waitForTimeout(1000);
 
         // Locations should remain the same
-        const newPickupLocation = await page.inputValue('select[formControlName="pickupLocationCode"]');
-        const newDropoffLocation = await page.inputValue('select[formControlName="dropoffLocationCode"]');
+        const newPickupLocation = await page.inputValue('ui-select-location[formControlName="pickupLocationCode"] select');
+        const newDropoffLocation = await page.inputValue('ui-select-location[formControlName="dropoffLocationCode"] select');
 
         expect(newPickupLocation).toBe(pickupLocation);
         expect(newDropoffLocation).toBe(dropoffLocation);

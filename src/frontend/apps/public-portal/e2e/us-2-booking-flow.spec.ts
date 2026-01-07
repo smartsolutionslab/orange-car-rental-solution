@@ -28,16 +28,16 @@ test.describe('US-2: Complete Booking Flow', () => {
       expect(vehicleInfoVisible).toBe(true);
 
       // Should show date fields
-      await expect(page.locator('input[formControlName="pickupDate"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="returnDate"]')).toBeVisible();
+      await expect(page.locator('#pickupDate')).toBeVisible();
+      await expect(page.locator('#returnDate')).toBeVisible();
     });
 
     test('should display pickup and dropoff location selects', async ({ page }) => {
       await startBooking(page);
 
       // Should have location selects
-      await expect(page.locator('select[formControlName="pickupLocationCode"]')).toBeVisible();
-      await expect(page.locator('select[formControlName="dropoffLocationCode"]')).toBeVisible();
+      await expect(page.locator('ui-select-location[formControlName="pickupLocationCode"] select')).toBeVisible();
+      await expect(page.locator('ui-select-location[formControlName="dropoffLocationCode"] select')).toBeVisible();
     });
 
     test('should calculate rental days automatically', async ({ page }) => {
@@ -64,8 +64,8 @@ test.describe('US-2: Complete Booking Flow', () => {
       const returnDate = yesterday.toISOString().split('T')[0];
 
       // Try to set invalid dates
-      await page.fill('input[formControlName="pickupDate"]', pickupDate);
-      await page.fill('input[formControlName="returnDate"]', returnDate);
+      await page.fill('#pickupDate', pickupDate);
+      await page.fill('#returnDate', returnDate);
 
       // Try to proceed
       const nextButton = page.locator('button:has-text("Weiter")');
@@ -86,10 +86,10 @@ test.describe('US-2: Complete Booking Flow', () => {
       const newPickupDate = testBooking.pickupDate();
 
       // Change pickup date
-      await page.fill('input[formControlName="pickupDate"]', newPickupDate);
+      await page.fill('#pickupDate', newPickupDate);
 
       // Value should be updated
-      const pickupValue = await page.inputValue('input[formControlName="pickupDate"]');
+      const pickupValue = await page.inputValue('#pickupDate');
       expect(pickupValue).toBe(newPickupDate);
     });
 
@@ -117,9 +117,9 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Should be on step 2
-      await expect(page.locator('input[formControlName="firstName"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="lastName"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="email"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="firstName"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="lastName"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="email"] input')).toBeVisible();
     });
 
     test('should validate required fields', async ({ page }) => {
@@ -131,7 +131,7 @@ test.describe('US-2: Complete Booking Flow', () => {
 
       // Should show validation errors or prevent navigation
       const errorVisible = await page.locator('.error-text, .invalid').count() > 0;
-      const stillOnStep2 = await page.locator('input[formControlName="firstName"]').isVisible();
+      const stillOnStep2 = await page.locator('ocr-input[formControlName="firstName"] input').isVisible();
 
       expect(errorVisible || stillOnStep2).toBe(true);
     });
@@ -141,11 +141,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter too short name
-      await page.fill('input[formControlName="firstName"]', 'A');
-      await page.locator('input[formControlName="firstName"]').blur();
+      await page.fill('ocr-input[formControlName="firstName"] input', 'A');
+      await page.locator('ocr-input[formControlName="firstName"] input').blur();
 
       // Should show validation error
-      const firstNameInput = page.locator('input[formControlName="firstName"]');
+      const firstNameInput = page.locator('ocr-input[formControlName="firstName"] input');
       const isInvalid = await firstNameInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -158,11 +158,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter invalid email
-      await page.fill('input[formControlName="email"]', 'invalid-email');
-      await page.locator('input[formControlName="email"]').blur();
+      await page.fill('ocr-input[formControlName="email"] input', 'invalid-email');
+      await page.locator('ocr-input[formControlName="email"] input').blur();
 
       // Should show validation error
-      const emailInput = page.locator('input[formControlName="email"]');
+      const emailInput = page.locator('ocr-input[formControlName="email"] input');
       const isInvalid = await emailInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -175,11 +175,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter invalid phone
-      await page.fill('input[formControlName="phoneNumber"]', 'invalid-phone');
-      await page.locator('input[formControlName="phoneNumber"]').blur();
+      await page.fill('ocr-input[formControlName="phoneNumber"] input', 'invalid-phone');
+      await page.locator('ocr-input[formControlName="phoneNumber"] input').blur();
 
       // Should show validation error
-      const phoneInput = page.locator('input[formControlName="phoneNumber"]');
+      const phoneInput = page.locator('ocr-input[formControlName="phoneNumber"] input');
       const isInvalid = await phoneInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -196,11 +196,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       const underageDate = new Date(today.getFullYear() - 17, today.getMonth(), today.getDate());
       const dateString = underageDate.toISOString().split('T')[0];
 
-      await page.fill('input[formControlName="dateOfBirth"]', dateString);
-      await page.locator('input[formControlName="dateOfBirth"]').blur();
+      await page.fill('ocr-input[formControlName="dateOfBirth"] input', dateString);
+      await page.locator('ocr-input[formControlName="dateOfBirth"] input').blur();
 
       // Should show validation error
-      const dobInput = page.locator('input[formControlName="dateOfBirth"]');
+      const dobInput = page.locator('ocr-input[formControlName="dateOfBirth"] input');
       const isInvalid = await dobInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -220,7 +220,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should navigate to step 3
-      await expect(page.locator('input[formControlName="street"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="street"] input')).toBeVisible();
     });
   });
 
@@ -232,10 +232,10 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Should show address fields
-      await expect(page.locator('input[formControlName="street"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="city"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="postalCode"]')).toBeVisible();
-      await expect(page.locator('select[formControlName="country"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="street"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="city"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="postalCode"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="country"] input')).toBeVisible();
     });
 
     test('should validate street minimum length (5 characters)', async ({ page }) => {
@@ -245,11 +245,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter too short street
-      await page.fill('input[formControlName="street"]', 'Str');
-      await page.locator('input[formControlName="street"]').blur();
+      await page.fill('ocr-input[formControlName="street"] input', 'Str');
+      await page.locator('ocr-input[formControlName="street"] input').blur();
 
       // Should show validation error
-      const streetInput = page.locator('input[formControlName="street"]');
+      const streetInput = page.locator('ocr-input[formControlName="street"] input');
       const isInvalid = await streetInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -264,11 +264,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter invalid postal code
-      await page.fill('input[formControlName="postalCode"]', '123');
-      await page.locator('input[formControlName="postalCode"]').blur();
+      await page.fill('ocr-input[formControlName="postalCode"] input', '123');
+      await page.locator('ocr-input[formControlName="postalCode"] input').blur();
 
       // Should show validation error
-      const postalInput = page.locator('input[formControlName="postalCode"]');
+      const postalInput = page.locator('ocr-input[formControlName="postalCode"] input');
       const isInvalid = await postalInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -288,7 +288,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should navigate to step 4
-      await expect(page.locator('input[formControlName="licenseNumber"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseNumber"] input')).toBeVisible();
     });
 
     test('should have Deutschland as default country', async ({ page }) => {
@@ -298,7 +298,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Country should default to Deutschland
-      const countryValue = await page.inputValue('select[formControlName="country"]');
+      const countryValue = await page.inputValue('ocr-input[formControlName="country"] input');
       expect(countryValue).toBe('Deutschland');
     });
   });
@@ -313,10 +313,10 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Should show license fields
-      await expect(page.locator('input[formControlName="licenseNumber"]')).toBeVisible();
-      await expect(page.locator('select[formControlName="licenseIssueCountry"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="licenseIssueDate"]')).toBeVisible();
-      await expect(page.locator('input[formControlName="licenseExpiryDate"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseNumber"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseIssueCountry"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseIssueDate"] input')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseExpiryDate"] input')).toBeVisible();
     });
 
     test('should validate license number minimum length', async ({ page }) => {
@@ -328,11 +328,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Enter too short license number
-      await page.fill('input[formControlName="licenseNumber"]', 'ABC');
-      await page.locator('input[formControlName="licenseNumber"]').blur();
+      await page.fill('ocr-input[formControlName="licenseNumber"] input', 'ABC');
+      await page.locator('ocr-input[formControlName="licenseNumber"] input').blur();
 
       // Should show validation error
-      const licenseInput = page.locator('input[formControlName="licenseNumber"]');
+      const licenseInput = page.locator('ocr-input[formControlName="licenseNumber"] input');
       const isInvalid = await licenseInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -353,11 +353,11 @@ test.describe('US-2: Complete Booking Flow', () => {
       futureDate.setFullYear(futureDate.getFullYear() + 1);
       const futureDateString = futureDate.toISOString().split('T')[0];
 
-      await page.fill('input[formControlName="licenseIssueDate"]', futureDateString);
-      await page.locator('input[formControlName="licenseIssueDate"]').blur();
+      await page.fill('ocr-input[formControlName="licenseIssueDate"] input', futureDateString);
+      await page.locator('ocr-input[formControlName="licenseIssueDate"] input').blur();
 
       // Should show validation error
-      const issueInput = page.locator('input[formControlName="licenseIssueDate"]');
+      const issueInput = page.locator('ocr-input[formControlName="licenseIssueDate"] input');
       const isInvalid = await issueInput.evaluate((el: HTMLInputElement) =>
         el.classList.contains('invalid') || el.classList.contains('ng-invalid')
       );
@@ -376,9 +376,9 @@ test.describe('US-2: Complete Booking Flow', () => {
       const issueDate = '2020-01-01';
       const expiryDate = '2019-01-01'; // Before issue date
 
-      await page.fill('input[formControlName="licenseIssueDate"]', issueDate);
-      await page.fill('input[formControlName="licenseExpiryDate"]', expiryDate);
-      await page.locator('input[formControlName="licenseExpiryDate"]').blur();
+      await page.fill('ocr-input[formControlName="licenseIssueDate"] input', issueDate);
+      await page.fill('ocr-input[formControlName="licenseExpiryDate"] input', expiryDate);
+      await page.locator('ocr-input[formControlName="licenseExpiryDate"] input').blur();
 
       // Expiry date should automatically adjust or show error
       await page.waitForTimeout(500);
@@ -388,7 +388,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should either fix the date or stay on step 4
-      const expiryInput = page.locator('input[formControlName="licenseExpiryDate"]');
+      const expiryInput = page.locator('ocr-input[formControlName="licenseExpiryDate"] input');
       const currentValue = await expiryInput.inputValue();
 
       // Value should be adjusted or form should show error
@@ -475,7 +475,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should go back to step 4
-      await expect(page.locator('input[formControlName="licenseNumber"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="licenseNumber"] input')).toBeVisible();
     });
 
     test('should show loading indicator during submission', async ({ page }) => {
@@ -597,7 +597,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should be back on step 2
-      await expect(page.locator('input[formControlName="firstName"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="firstName"] input')).toBeVisible();
     });
 
     test('should preserve data when navigating between steps', async ({ page }) => {
@@ -605,7 +605,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       const testFirstName = 'TestFirstName';
-      await page.fill('input[formControlName="firstName"]', testFirstName);
+      await page.fill('ocr-input[formControlName="firstName"] input', testFirstName);
 
       await fillCustomerInfo(page);
       await nextStep(page);
@@ -615,7 +615,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Data should be preserved
-      const firstName = await page.inputValue('input[formControlName="firstName"]');
+      const firstName = await page.inputValue('ocr-input[formControlName="firstName"] input');
       expect(firstName).toBe(testFirstName);
     });
 
@@ -631,7 +631,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(500);
 
       // Should still be on step 2
-      await expect(page.locator('input[formControlName="firstName"]')).toBeVisible();
+      await expect(page.locator('ocr-input[formControlName="firstName"] input')).toBeVisible();
     });
   });
 
@@ -682,7 +682,7 @@ test.describe('US-2: Complete Booking Flow', () => {
 
       // Form should be visible and functional
       await expect(page.locator('.booking-form')).toBeVisible();
-      await expect(page.locator('input[formControlName="pickupDate"]')).toBeVisible();
+      await expect(page.locator('#pickupDate')).toBeVisible();
     });
 
     test('should stack form fields vertically on mobile', async ({ page }) => {
@@ -692,8 +692,8 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Form fields should be visible
-      const firstNameInput = page.locator('input[formControlName="firstName"]');
-      const lastNameInput = page.locator('input[formControlName="lastName"]');
+      const firstNameInput = page.locator('ocr-input[formControlName="firstName"] input');
+      const lastNameInput = page.locator('ocr-input[formControlName="lastName"] input');
 
       await expect(firstNameInput).toBeVisible();
       await expect(lastNameInput).toBeVisible();

@@ -35,14 +35,14 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page);
 
       // Wait for form to be visible
-      await page.waitForSelector('input[formControlName="firstName"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="firstName"] input', { timeout: 5000 });
 
       // Check if customer info is pre-filled
-      const firstName = await page.inputValue('input[formControlName="firstName"]');
-      const lastName = await page.inputValue('input[formControlName="lastName"]');
-      const email = await page.inputValue('input[formControlName="email"]');
-      const phoneNumber = await page.inputValue('input[formControlName="phoneNumber"]');
-      const dateOfBirth = await page.inputValue('input[formControlName="dateOfBirth"]');
+      const firstName = await page.inputValue('ocr-input[formControlName="firstName"] input');
+      const lastName = await page.inputValue('ocr-input[formControlName="lastName"] input');
+      const email = await page.inputValue('ocr-input[formControlName="email"] input');
+      const phoneNumber = await page.inputValue('ocr-input[formControlName="phoneNumber"] input');
+      const dateOfBirth = await page.inputValue('ocr-input[formControlName="dateOfBirth"] input');
 
       expect(firstName).toBe(testUsers.registered.firstName);
       expect(lastName).toBe(testUsers.registered.lastName);
@@ -59,13 +59,13 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page); // Step 3
 
       // Wait for form to be visible
-      await page.waitForSelector('input[formControlName="street"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="street"] input', { timeout: 5000 });
 
       // Check if address is pre-filled
-      const street = await page.inputValue('input[formControlName="street"]');
-      const city = await page.inputValue('input[formControlName="city"]');
-      const postalCode = await page.inputValue('input[formControlName="postalCode"]');
-      const country = await page.inputValue('select[formControlName="country"]');
+      const street = await page.inputValue('ocr-input[formControlName="street"] input');
+      const city = await page.inputValue('ocr-input[formControlName="city"] input');
+      const postalCode = await page.inputValue('ocr-input[formControlName="postalCode"] input');
+      const country = await page.inputValue('ocr-input[formControlName="country"] input');
 
       expect(street).toBe(testUsers.registered.address.street);
       expect(city).toBe(testUsers.registered.address.city);
@@ -82,13 +82,13 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page); // Step 4
 
       // Wait for form to be visible
-      await page.waitForSelector('input[formControlName="licenseNumber"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="licenseNumber"] input', { timeout: 5000 });
 
       // Check if license info is pre-filled
-      const licenseNumber = await page.inputValue('input[formControlName="licenseNumber"]');
-      const licenseIssueCountry = await page.inputValue('select[formControlName="licenseIssueCountry"]');
-      const licenseIssueDate = await page.inputValue('input[formControlName="licenseIssueDate"]');
-      const licenseExpiryDate = await page.inputValue('input[formControlName="licenseExpiryDate"]');
+      const licenseNumber = await page.inputValue('ocr-input[formControlName="licenseNumber"] input');
+      const licenseIssueCountry = await page.inputValue('ocr-input[formControlName="licenseIssueCountry"] input');
+      const licenseIssueDate = await page.inputValue('ocr-input[formControlName="licenseIssueDate"] input');
+      const licenseExpiryDate = await page.inputValue('ocr-input[formControlName="licenseExpiryDate"] input');
 
       expect(licenseNumber).toBe(testUsers.registered.driversLicense.licenseNumber);
       expect(licenseIssueCountry).toBe(testUsers.registered.driversLicense.licenseIssueCountry);
@@ -103,14 +103,14 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page);
 
       // Wait for form
-      await page.waitForSelector('input[formControlName="firstName"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="firstName"] input', { timeout: 5000 });
 
       // Modify pre-filled data
       const newFirstName = 'ModifiedName';
-      await page.fill('input[formControlName="firstName"]', newFirstName);
+      await page.fill('ocr-input[formControlName="firstName"] input', newFirstName);
 
       // Value should be updated
-      const firstName = await page.inputValue('input[formControlName="firstName"]');
+      const firstName = await page.inputValue('ocr-input[formControlName="firstName"] input');
       expect(firstName).toBe(newFirstName);
 
       // Should be able to proceed to next step
@@ -145,11 +145,11 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page); // Step 2
 
       // Modify customer info
-      await page.fill('input[formControlName="phoneNumber"]', '+49 30 99999999');
+      await page.fill('ocr-input[formControlName="phoneNumber"] input', '+49 30 99999999');
       await nextStep(page); // Step 3
 
       // Modify address
-      await page.fill('input[formControlName="street"]', 'Neue Straße 999');
+      await page.fill('ocr-input[formControlName="street"] input', 'Neue Straße 999');
       await nextStep(page); // Step 4
       await nextStep(page); // Step 5
 
@@ -213,12 +213,12 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page);
 
       // Wait for form
-      await page.waitForSelector('input[formControlName="firstName"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="firstName"] input', { timeout: 5000 });
 
       // Check that fields are empty
-      const firstName = await page.inputValue('input[formControlName="firstName"]');
-      const lastName = await page.inputValue('input[formControlName="lastName"]');
-      const email = await page.inputValue('input[formControlName="email"]');
+      const firstName = await page.inputValue('ocr-input[formControlName="firstName"] input');
+      const lastName = await page.inputValue('ocr-input[formControlName="lastName"] input');
+      const email = await page.inputValue('ocr-input[formControlName="email"] input');
 
       expect(firstName).toBe('');
       expect(lastName).toBe('');
@@ -286,15 +286,15 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page); // Step 4
 
       // Wait for form
-      await page.waitForSelector('input[formControlName="licenseNumber"]', { timeout: 5000 });
+      await page.waitForSelector('ocr-input[formControlName="licenseNumber"] input', { timeout: 5000 });
 
       // Form should be present but fields might be empty if no license in profile
-      const formVisible = await page.locator('input[formControlName="licenseNumber"]').isVisible();
+      const formVisible = await page.locator('ocr-input[formControlName="licenseNumber"] input').isVisible();
       expect(formVisible).toBe(true);
 
       // User should be able to fill in the fields manually if not pre-filled
-      await page.fill('input[formControlName="licenseNumber"]', 'NEW123456789');
-      const licenseNumber = await page.inputValue('input[formControlName="licenseNumber"]');
+      await page.fill('ocr-input[formControlName="licenseNumber"] input', 'NEW123456789');
+      const licenseNumber = await page.inputValue('ocr-input[formControlName="licenseNumber"] input');
       expect(licenseNumber).toBe('NEW123456789');
     });
 
@@ -306,7 +306,7 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
 
       // Modify a field
       const modifiedPhone = '+49 30 11111111';
-      await page.fill('input[formControlName="phoneNumber"]', modifiedPhone);
+      await page.fill('ocr-input[formControlName="phoneNumber"] input', modifiedPhone);
 
       // Go to next step
       await nextStep(page);
@@ -315,7 +315,7 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await page.click('button:has-text("Zurück")');
 
       // Modified value should be preserved
-      const phoneNumber = await page.inputValue('input[formControlName="phoneNumber"]');
+      const phoneNumber = await page.inputValue('ocr-input[formControlName="phoneNumber"] input');
       expect(phoneNumber).toBe(modifiedPhone);
     });
   });
