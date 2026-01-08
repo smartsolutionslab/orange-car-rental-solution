@@ -105,12 +105,28 @@ class E2EErrorHandler implements ErrorHandler {
 
 console.log('Using E2E app config (no Keycloak)');
 
+/**
+ * Set German language preference before i18n initialization
+ * This ensures E2E tests use German UI regardless of browser language
+ */
+function setGermanLanguage(): () => void {
+  return () => {
+    localStorage.setItem('ocr-preferred-language', 'de');
+  };
+}
+
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideHttpClient(withFetch()),
+    // Set German language before i18n loads (APP_INITIALIZER order matters)
+    {
+      provide: APP_INITIALIZER,
+      useFactory: setGermanLanguage,
+      multi: true,
+    },
     ...provideI18n(),
     { provide: LOCALE_ID, useValue: 'de-DE' },
     { provide: API_CONFIG, useExisting: ConfigService },

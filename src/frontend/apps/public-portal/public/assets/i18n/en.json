@@ -1,0 +1,453 @@
+{
+  "common": {
+    "appName": "Orange Car Rental",
+    "actions": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "close": "Close",
+      "search": "Search",
+      "reset": "Reset",
+      "apply": "Apply",
+      "confirm": "Confirm",
+      "delete": "Delete",
+      "edit": "Edit",
+      "add": "Add",
+      "back": "Back",
+      "next": "Next",
+      "submit": "Submit",
+      "login": "Login",
+      "logout": "Logout",
+      "register": "Register",
+      "book": "Book now",
+      "bookNow": "Book now",
+      "details": "Details",
+      "viewDetails": "View details",
+      "print": "Print"
+    },
+    "labels": {
+      "email": "Email address",
+      "password": "Password",
+      "phone": "Phone number",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "name": "Name",
+      "dateOfBirth": "Date of birth",
+      "street": "Street and house number",
+      "city": "City",
+      "postalCode": "Postal code",
+      "country": "Country",
+      "status": "Status",
+      "price": "Price",
+      "total": "Total",
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "all": "All",
+      "none": "None",
+      "day": "day",
+      "days": "days"
+    },
+    "messages": {
+      "loading": "Loading...",
+      "saving": "Saving...",
+      "error": "An error occurred",
+      "success": "Successfully saved",
+      "noResults": "No results found",
+      "required": "This field is required",
+      "invalidEmail": "Invalid email address",
+      "confirmDelete": "Are you sure you want to delete this entry?"
+    },
+    "placeholders": {
+      "email": "your-email@example.com",
+      "search": "Search...",
+      "select": "Please select...",
+      "firstName": "John",
+      "lastName": "Doe",
+      "phone": "+1 555 123 4567",
+      "street": "123 Main Street",
+      "city": "New York",
+      "postalCode": "10001",
+      "country": "United States",
+      "licenseNumber": "D1234567"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "of": "of",
+      "entries": "entries",
+      "entriesPerPage": "Entries per page",
+      "page": "Page",
+      "first": "First",
+      "last": "Last",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
+  "navigation": {
+    "vehicles": "Vehicles",
+    "myBookings": "My Bookings",
+    "locations": "Locations",
+    "contact": "Contact"
+  },
+  "auth": {
+    "login": {
+      "title": "Orange Car Rental",
+      "subtitle": "Sign in to manage your bookings",
+      "email": "Email address",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "submit": "Sign in",
+      "submitting": "Signing in...",
+      "noAccount": "Don't have an account?",
+      "registerNow": "Register now",
+      "or": "or",
+      "loginWithGoogle": "Sign in with Google",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "register": {
+      "title": "Create account",
+      "subtitle": "Create your free account in a few simple steps",
+      "steps": {
+        "account": "Account",
+        "personal": "Personal",
+        "confirmation": "Confirmation"
+      },
+      "confirmPassword": "Confirm password",
+      "passwordHint": "At least 8 characters, with upper/lowercase letters, numbers and special characters",
+      "ageHint": "You must be at least 18 years old",
+      "acceptTermsPrefix": "I accept the",
+      "termsLink": "Terms and Conditions",
+      "acceptPrivacyPrefix": "I accept the",
+      "privacyLink": "Privacy Policy",
+      "acceptMarketing": "I would like to receive promotional emails and special offers (optional)",
+      "privacyInfoTitle": "Your privacy matters to us",
+      "privacyInfoText": "Your data is stored and processed in accordance with GDPR. You can withdraw your consent at any time.",
+      "submit": "Create account",
+      "submitting": "Creating account...",
+      "success": "Registration successful! You will be redirected shortly...",
+      "hasAccount": "Already registered?",
+      "loginNow": "Sign in now",
+      "validation": {
+        "passwordWeak": "Password must contain upper and lowercase letters, numbers and special characters",
+        "confirmPasswordRequired": "Password confirmation is required",
+        "passwordMismatch": "Passwords do not match",
+        "firstNameRequired": "First name is required",
+        "firstNameMinLength": "First name must be at least 2 characters",
+        "lastNameRequired": "Last name is required",
+        "lastNameMinLength": "Last name must be at least 2 characters",
+        "phoneRequired": "Phone number is required",
+        "phoneInvalid": "Please enter a valid phone number",
+        "dateOfBirthRequired": "Date of birth is required",
+        "minAge": "You must be at least {{minAge}} years old"
+      },
+      "errors": {
+        "emailExists": "This email address is already registered.",
+        "passwordWeak": "The password does not meet security requirements.",
+        "invalidEmail": "Please enter a valid email address.",
+        "generic": "Registration failed. Please try again."
+      }
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "subtitle": "Enter your email address and we'll send you a reset link",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "success": "A password reset email has been sent to {{email}}.",
+      "successGeneric": "If an account exists with this email, a reset link has been sent.",
+      "resend": "Send again",
+      "backToLogin": "Back to login",
+      "emailSent": {
+        "title": "Email sent",
+        "subtitle": "Check your inbox"
+      },
+      "nextSteps": {
+        "title": "Next steps:",
+        "step1": "Check your email inbox",
+        "step2": "Click the link in the email",
+        "step3": "Create a new password",
+        "step4": "Sign in with your new password",
+        "linkValidity": "The link is valid for 24 hours."
+      },
+      "errors": {
+        "sendFailed": "Failed to send email. Please try again."
+      }
+    },
+    "validation": {
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Please enter a valid email address",
+      "passwordRequired": "Password is required",
+      "passwordMinLength": "Password must be at least 8 characters long"
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email address or password",
+      "accountLocked": "Your account has been locked. Please contact support.",
+      "networkError": "Network error. Please check your internet connection.",
+      "loginFailed": "Login failed. Please try again."
+    }
+  },
+  "vehicles": {
+    "title": "Find your perfect vehicle",
+    "subtitle": "Affordable car rentals across Germany",
+    "search": {
+      "rentalPeriod": "Rental period",
+      "pickup": "Pickup",
+      "return": "Return",
+      "pickupDate": "Pickup date",
+      "returnDate": "Return date",
+      "filters": "Vehicle filters",
+      "location": "Location",
+      "category": "Vehicle class",
+      "fuelType": "Fuel type",
+      "transmission": "Transmission",
+      "minSeats": "Min. seats",
+      "searchButton": "Search available vehicles",
+      "allLocations": "All locations",
+      "allCategories": "All classes",
+      "allFuelTypes": "All",
+      "allTransmissions": "All"
+    },
+    "card": {
+      "seats": "{{count}} seats",
+      "perDay": "per day",
+      "inclVat": "incl. 19% VAT",
+      "available": "Available",
+      "notAvailable": "Not available"
+    },
+    "results": {
+      "found": "{{count}} vehicle found",
+      "foundPlural": "{{count}} vehicles found",
+      "noResults": "No vehicles found",
+      "noResultsHint": "Try adjusting your search criteria"
+    },
+    "details": {
+      "title": "Vehicle details",
+      "specifications": "Specifications",
+      "manufacturer": "Manufacturer",
+      "model": "Model",
+      "year": "Year",
+      "licensePlate": "License plate"
+    },
+    "status": {
+      "available": "Available",
+      "rented": "Rented",
+      "maintenance": "Maintenance",
+      "outOfService": "Out of service"
+    },
+    "category": {
+      "economy": "Economy",
+      "compact": "Compact",
+      "midSize": "Mid-size",
+      "luxury": "Luxury",
+      "van": "Van",
+      "suv": "SUV"
+    },
+    "fuelType": {
+      "petrol": "Petrol",
+      "diesel": "Diesel",
+      "electric": "Electric",
+      "hybrid": "Hybrid"
+    },
+    "transmission": {
+      "automatic": "Automatic",
+      "manual": "Manual"
+    }
+  },
+  "booking": {
+    "title": "Book vehicle",
+    "subtitle": "Complete your booking in {{steps}} easy steps",
+    "steps": {
+      "details": "Booking details",
+      "personal": "Personal data",
+      "address": "Address",
+      "license": "Driver's license",
+      "review": "Review"
+    },
+    "step1": {
+      "description": "Select pickup and return dates and stations"
+    },
+    "step2": {
+      "description": "Enter your personal information"
+    },
+    "step3": {
+      "description": "Enter your address"
+    },
+    "step4": {
+      "description": "Enter your driver's license details"
+    },
+    "step5": {
+      "description": "Review your booking details and confirm"
+    },
+    "fields": {
+      "pickupDate": "Pickup date",
+      "returnDate": "Return date",
+      "pickupStation": "Pickup station",
+      "returnStation": "Return station",
+      "streetAndNumber": "Street and house number",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email address",
+      "phone": "Phone number",
+      "dateOfBirth": "Date of birth",
+      "street": "Street and house number",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "licenseNumber": "License number",
+      "licenseIssueCountry": "Issue country",
+      "licenseIssueDate": "Issue date",
+      "licenseExpiryDate": "Expiry date"
+    },
+    "errors": {
+      "pickupDate": "Please select a valid pickup date",
+      "returnDate": "Please select a valid return date",
+      "pickupStation": "Please select a pickup station",
+      "returnStation": "Please select a return station",
+      "minLength2": "At least 2 characters required",
+      "minLength5": "At least 5 characters required",
+      "email": "Please enter a valid email address",
+      "phone": "Please enter a valid phone number",
+      "dateOfBirth": "Please enter your date of birth",
+      "postalCode": "Please enter a valid postal code",
+      "country": "Please enter a country",
+      "licenseIssueCountry": "Please enter the issue country",
+      "licenseIssueDate": "Please enter the issue date",
+      "licenseExpiryDate": "Please enter the expiry date",
+      "create": "Error creating booking. Please try again."
+    },
+    "validation": {
+      "pickupDateRequired": "Please select a valid pickup date",
+      "returnDateRequired": "Please select a valid return date",
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "emailRequired": "Email address is required",
+      "emailInvalid": "Invalid email address",
+      "phoneRequired": "Phone number is required",
+      "dateOfBirthRequired": "Date of birth is required",
+      "minAge": "You must be at least 18 years old"
+    },
+    "review": {
+      "rentalDuration": "Rental duration",
+      "address": "Address",
+      "validUntil": "Valid until",
+      "saveToProfile": "Save this data to my profile",
+      "saveToProfileHint": "Your data will be saved for future bookings"
+    },
+    "actions": {
+      "submitting": "Submitting...",
+      "completeBooking": "Complete booking"
+    },
+    "complete": "Complete booking",
+    "completing": "Submitting..."
+  },
+  "confirmation": {
+    "title": "Booking successful!",
+    "subtitle": "Your reservation has been confirmed",
+    "reservationNumber": "Reservation number",
+    "details": "Reservation details",
+    "rentalPeriod": "Rental period",
+    "pickup": "Pickup",
+    "return": "Return",
+    "duration": "Rental duration",
+    "days": "day(s)",
+    "stations": "Stations",
+    "pickupStation": "Pickup station",
+    "returnStation": "Return station",
+    "priceOverview": "Price overview",
+    "netTotal": "Net total",
+    "vat": "VAT (19%)",
+    "grossTotal": "Gross total",
+    "status": "Status",
+    "info": {
+      "title": "Important information",
+      "emailSent": "A confirmation email has been sent to your email address",
+      "bringDocuments": "Please bring a valid driver's license and ID for pickup",
+      "handover": "Vehicle handover will take place after verification of your documents",
+      "contact": "If you have any questions, please contact our customer service"
+    },
+    "printButton": "Print confirmation",
+    "homeButton": "Go to home",
+    "loading": "Loading reservation details...",
+    "error": "Error loading reservation"
+  },
+  "similarVehicles": {
+    "title": "Similar Vehicles",
+    "subtitle": "You might also be interested in one of these vehicles",
+    "unavailable": {
+      "title": "Vehicle not available",
+      "message": "{{vehicle}} is no longer available for the selected period. Here are similar alternatives:"
+    },
+    "pricePerDay": "€{{price}}/day",
+    "cheaper": "€{{amount}}/day cheaper",
+    "moreExpensive": "€{{amount}}/day more expensive",
+    "samePrice": "Same price",
+    "sameCategory": "Same category",
+    "similarCategory": "Similar category",
+    "cheaperLabel": "Cheaper",
+    "bookInstead": "Book instead",
+    "noResults": "Unfortunately no similar vehicles available"
+  },
+  "bookingHistory": {
+    "title": "My Bookings",
+    "subtitle": "Manage your reservations",
+    "loading": "Loading bookings...",
+    "sections": {
+      "upcoming": "Upcoming Bookings",
+      "pending": "Pending Confirmations",
+      "past": "Past Bookings"
+    },
+    "empty": {
+      "title": "No bookings found",
+      "description": "You don't have any bookings yet. Browse our vehicles and book now!",
+      "action": "Browse vehicles"
+    },
+    "guestLookup": {
+      "title": "Find your booking",
+      "description": "Enter your reservation number and email address to find your booking.",
+      "reservationId": "Reservation number",
+      "reservationIdPlaceholder": "e.g. 550e8400-e29b-41d4",
+      "searchButton": "Find booking",
+      "searching": "Searching...",
+      "result": "Your booking",
+      "validation": "Please enter both reservation number and email address",
+      "notFound": "Reservation not found. Please check your reservation number and email address."
+    },
+    "details": {
+      "title": "Booking details",
+      "reservation": "Reservation",
+      "reservationNumber": "Reservation number",
+      "rentalPeriod": "Rental period",
+      "pickup": "Pickup",
+      "return": "Return",
+      "pricing": "Pricing",
+      "netAmount": "Net amount",
+      "vat": "VAT (19%)",
+      "grossAmount": "Gross amount",
+      "cancellationPolicy": "Cancellation policy",
+      "cancellationFree": "Free cancellation up to 48 hours before pickup.",
+      "cancellationFee": "Later cancellations may incur fees."
+    },
+    "cancel": {
+      "title": "Cancel booking",
+      "message": "Are you sure you want to cancel this booking?",
+      "reason": "Cancellation reason",
+      "warning": "Note",
+      "warningText": "This action cannot be undone.",
+      "confirm": "Confirm cancellation",
+      "inProgress": "Cancelling...",
+      "success": "Reservation successfully cancelled!",
+      "error": "Cancellation failed. Please try again or contact support."
+    },
+    "errors": {
+      "userInfo": "Unable to retrieve user information",
+      "loadFailed": "Failed to load your booking history. Please try again later."
+    }
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "network": "Network error. Please check your connection.",
+    "notFound": "The requested resource was not found",
+    "unauthorized": "You are not authorized to perform this action",
+    "validation": "Please check your inputs"
+  }
+}
