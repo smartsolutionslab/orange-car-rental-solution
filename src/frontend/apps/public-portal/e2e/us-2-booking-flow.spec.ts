@@ -126,14 +126,12 @@ test.describe('US-2: Complete Booking Flow', () => {
       await startBooking(page);
       await nextStep(page);
 
-      // Try to proceed without filling fields
-      await page.click('button:has-text("Weiter")');
+      // Without filling required fields, Next button should be disabled
+      const nextButton = page.locator('button:has-text("Weiter")');
+      await expect(nextButton).toBeDisabled();
 
-      // Should show validation errors or prevent navigation
-      const errorVisible = await page.locator('.error-text, .invalid').count() > 0;
-      const stillOnStep2 = await page.locator('ocr-input[formControlName="firstName"] input').isVisible();
-
-      expect(errorVisible || stillOnStep2).toBe(true);
+      // Should still be on step 2
+      await expect(page.locator('ocr-input[formControlName="firstName"] input')).toBeVisible();
     });
 
     test('should validate first name minimum length (2 characters)', async ({ page }) => {
@@ -144,13 +142,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="firstName"] input', 'A');
       await page.locator('ocr-input[formControlName="firstName"] input').blur();
 
-      // Should show validation error
-      const firstNameInput = page.locator('ocr-input[formControlName="firstName"] input');
-      const isInvalid = await firstNameInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="firstName"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="firstName"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate email format', async ({ page }) => {
@@ -161,13 +163,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="email"] input', 'invalid-email');
       await page.locator('ocr-input[formControlName="email"] input').blur();
 
-      // Should show validation error
-      const emailInput = page.locator('ocr-input[formControlName="email"] input');
-      const isInvalid = await emailInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="email"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="email"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate phone number format', async ({ page }) => {
@@ -178,13 +184,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="phoneNumber"] input', 'invalid-phone');
       await page.locator('ocr-input[formControlName="phoneNumber"] input').blur();
 
-      // Should show validation error
-      const phoneInput = page.locator('ocr-input[formControlName="phoneNumber"] input');
-      const isInvalid = await phoneInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="phoneNumber"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="phoneNumber"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate age requirement (18+ years)', async ({ page }) => {
@@ -199,13 +209,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="dateOfBirth"] input', dateString);
       await page.locator('ocr-input[formControlName="dateOfBirth"] input').blur();
 
-      // Should show validation error
-      const dobInput = page.locator('ocr-input[formControlName="dateOfBirth"] input');
-      const isInvalid = await dobInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="dateOfBirth"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="dateOfBirth"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should accept valid customer information', async ({ page }) => {
@@ -248,13 +262,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="street"] input', 'Str');
       await page.locator('ocr-input[formControlName="street"] input').blur();
 
-      // Should show validation error
-      const streetInput = page.locator('ocr-input[formControlName="street"] input');
-      const isInvalid = await streetInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="street"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="street"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate postal code format (5 digits)', async ({ page }) => {
@@ -267,13 +285,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="postalCode"] input', '123');
       await page.locator('ocr-input[formControlName="postalCode"] input').blur();
 
-      // Should show validation error
-      const postalInput = page.locator('ocr-input[formControlName="postalCode"] input');
-      const isInvalid = await postalInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="postalCode"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="postalCode"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should accept valid address information', async ({ page }) => {
@@ -331,13 +353,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="licenseNumber"] input', 'ABC');
       await page.locator('ocr-input[formControlName="licenseNumber"] input').blur();
 
-      // Should show validation error
-      const licenseInput = page.locator('ocr-input[formControlName="licenseNumber"] input');
-      const isInvalid = await licenseInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="licenseNumber"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="licenseNumber"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate that issue date is not in the future', async ({ page }) => {
@@ -356,13 +382,17 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="licenseIssueDate"] input', futureDateString);
       await page.locator('ocr-input[formControlName="licenseIssueDate"] input').blur();
 
-      // Should show validation error
-      const issueInput = page.locator('ocr-input[formControlName="licenseIssueDate"] input');
-      const isInvalid = await issueInput.evaluate((el: HTMLInputElement) =>
-        el.classList.contains('invalid') || el.classList.contains('ng-invalid')
-      );
+      // Wait for validation
+      await page.waitForTimeout(300);
 
-      expect(isInvalid).toBe(true);
+      // Check for validation - either ng-invalid on component or error message shown
+      const ocrInput = page.locator('ocr-input[formControlName="licenseIssueDate"]');
+      const isInvalid = await ocrInput.evaluate((el: Element) =>
+        el.classList.contains('ng-invalid')
+      );
+      const hasErrorMessage = await page.locator('ocr-input[formControlName="licenseIssueDate"] .input-error').isVisible().catch(() => false);
+
+      expect(isInvalid || hasErrorMessage).toBe(true);
     });
 
     test('should validate that expiry date is after issue date', async ({ page }) => {
@@ -380,19 +410,19 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.fill('ocr-input[formControlName="licenseExpiryDate"] input', expiryDate);
       await page.locator('ocr-input[formControlName="licenseExpiryDate"] input').blur();
 
-      // Expiry date should automatically adjust or show error
+      // Wait for validation
       await page.waitForTimeout(500);
 
-      // Check if form allows proceeding
-      await page.click('button:has-text("Weiter")');
-      await page.waitForTimeout(500);
-
-      // Should either fix the date or stay on step 4
+      // With invalid dates, Next button should be disabled OR expiry date should auto-correct
+      const nextButton = page.locator('button:has-text("Weiter")');
       const expiryInput = page.locator('ocr-input[formControlName="licenseExpiryDate"] input');
       const currentValue = await expiryInput.inputValue();
 
-      // Value should be adjusted or form should show error
-      expect(currentValue >= issueDate || true).toBe(true);
+      // Either the date was auto-corrected, or button should be disabled
+      const isDisabled = await nextButton.isDisabled();
+      const wasAutoCorrected = currentValue > issueDate;
+
+      expect(isDisabled || wasAutoCorrected).toBe(true);
     });
 
     test('should accept valid driver\'s license information', async ({ page }) => {
@@ -408,8 +438,8 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.click('button:has-text("Weiter")');
       await page.waitForTimeout(500);
 
-      // Should navigate to step 5 (review)
-      await expect(page.locator('.review-section, h2:has-text("Überprüfen")')).toBeVisible();
+      // Should navigate to step 5 (review) - use .first() since there are multiple review sections
+      await expect(page.locator('.review-section').first()).toBeVisible();
     });
   });
 
@@ -424,11 +454,12 @@ test.describe('US-2: Complete Booking Flow', () => {
       await fillDriversLicense(page);
       await nextStep(page);
 
-      // Should show review sections
-      await expect(page.locator('.review-section')).toHaveCount({ min: 1 });
+      // Should show review sections (at least one)
+      const reviewSections = await page.locator('.review-section').count();
+      expect(reviewSections).toBeGreaterThanOrEqual(1);
 
       // Should display customer information
-      await expect(page.locator('text=/Hans|Müller/i')).toBeVisible();
+      await expect(page.locator('text=/Hans|Müller/i').first()).toBeVisible();
     });
 
     test('should display booking summary with dates and location', async ({ page }) => {
@@ -457,7 +488,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Should have submit button
-      await expect(page.locator('button:has-text("Jetzt verbindlich buchen"), button[type="submit"]')).toBeVisible();
+      await expect(page.locator('button:has-text("Buchung abschließen")')).toBeVisible();
     });
 
     test('should allow going back to edit information', async ({ page }) => {
@@ -489,13 +520,12 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Click submit
-      const submitButton = page.locator('button:has-text("Jetzt verbindlich buchen"), button[type="submit"]');
+      const submitButton = page.locator('button:has-text("Buchung abschließen")');
       await submitButton.click();
 
-      // Should show loading indicator
+      // Should show loading indicator or button should be disabled
+      await page.waitForTimeout(500);
       const loadingVisible = await page.locator('.spinner, .loading').isVisible().catch(() => false);
-
-      // Or button should be disabled
       const buttonDisabled = await submitButton.isDisabled().catch(() => false);
 
       expect(loadingVisible || buttonDisabled || true).toBe(true);
@@ -514,7 +544,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Submit booking
-      await page.click('button:has-text("Jetzt verbindlich buchen"), button[type="submit"]');
+      await page.click('button:has-text("Buchung abschließen")');
 
       // Should navigate to confirmation page
       await page.waitForURL(/\/confirmation/, { timeout: 15000 });
@@ -650,10 +680,10 @@ test.describe('US-2: Complete Booking Flow', () => {
       await nextStep(page);
 
       // Submit booking
-      await page.click('button:has-text("Jetzt verbindlich buchen"), button[type="submit"]');
+      await page.click('button:has-text("Buchung abschließen")');
 
       // Should show error message
-      await expect(page.locator('.error-message, .alert-error, text=/Fehler|Error/i')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('.error-message, .alert-error, text=/Fehler|Error/i').first()).toBeVisible({ timeout: 10000 });
     });
 
     test('should allow retry after failed submission', async ({ page }) => {
@@ -666,7 +696,7 @@ test.describe('US-2: Complete Booking Flow', () => {
       await page.waitForTimeout(2000);
 
       // Should still be on review page
-      const submitButton = page.locator('button:has-text("Jetzt verbindlich buchen"), button[type="submit"]');
+      const submitButton = page.locator('button:has-text("Buchung abschließen")');
       const isVisible = await submitButton.isVisible();
 
       expect(isVisible).toBe(true);

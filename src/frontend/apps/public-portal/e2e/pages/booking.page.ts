@@ -68,7 +68,7 @@ export class BookingPage extends BasePage {
     this.currentStep = page.locator('.progress-step.current, .progress-step.active');
     this.nextButton = page.locator('button:has-text("Weiter")');
     this.previousButton = page.locator('button:has-text("Zurück")');
-    this.submitButton = page.locator('button:has-text("Jetzt verbindlich buchen")');
+    this.submitButton = page.locator('button:has-text("Buchung abschließen")');
     this.bookingForm = page.locator('.booking-form');
 
     // Step 1

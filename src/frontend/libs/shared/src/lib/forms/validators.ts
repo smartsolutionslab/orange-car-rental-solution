@@ -105,6 +105,22 @@ export const CustomValidators = {
   },
 
   /**
+   * Validates that a date is not in the future (must be today or earlier)
+   * @returns ValidatorFn that returns { futureDate: true } if date is in the future
+   */
+  notFutureDate(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) return null;
+
+      const date = new Date(control.value);
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+
+      return date <= today ? null : { futureDate: true };
+    };
+  },
+
+  /**
    * Validates that a date is before another date control
    * @param otherControlName - Name of the other date control
    * @returns ValidatorFn that returns { dateAfter: true } if not before

@@ -124,7 +124,7 @@ export class BookingComponent implements OnInit {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, CustomValidators.germanPhone()]],
-      dateOfBirth: ['', Validators.required],
+      dateOfBirth: ['', [Validators.required, CustomValidators.minimumAge(18)]],
 
       // Address details
       street: ['', [Validators.required, Validators.minLength(5)]],
@@ -135,8 +135,8 @@ export class BookingComponent implements OnInit {
       // Driver's license details
       licenseNumber: ['', [Validators.required, Validators.minLength(5)]],
       licenseIssueCountry: ['Deutschland', Validators.required],
-      licenseIssueDate: ['', Validators.required],
-      licenseExpiryDate: ['', Validators.required],
+      licenseIssueDate: ['', [Validators.required, CustomValidators.notFutureDate()]],
+      licenseExpiryDate: ['', [Validators.required, CustomValidators.futureDate()]],
 
       // Profile update option (only for authenticated users)
       updateMyProfile: [false],
@@ -156,11 +156,13 @@ export class BookingComponent implements OnInit {
       const pickupDate = params['pickupDate'];
       const returnDate = params['returnDate'];
       const locationCode = params['locationCode'];
+      const categoryCode = params['categoryCode']; // Allow categoryCode from query params for E2E tests
 
       if (vehicleId) {
         this.loadVehicle(vehicleId);
         this.bookingForm.patchValue({
           vehicleId,
+          categoryCode: categoryCode || '', // Use from query param if provided
           pickupDate: pickupDate || '',
           returnDate: returnDate || '',
           pickupLocationCode: locationCode || '',

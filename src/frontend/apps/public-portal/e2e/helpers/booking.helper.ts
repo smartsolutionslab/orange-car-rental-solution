@@ -10,12 +10,13 @@ import { testBooking, testVehicles, testUsers } from '../fixtures/test-data';
  */
 export async function startBooking(page: Page, vehicleId?: string) {
   const vehicle = vehicleId || testVehicles.available.id;
+  const categoryCode = testVehicles.available.categoryCode;
   const pickupDate = testBooking.pickupDate();
   const returnDate = testBooking.returnDate();
   const locationCode = testBooking.locationCode;
 
   await page.goto(
-    `/booking?vehicleId=${vehicle}&pickupDate=${pickupDate}&returnDate=${returnDate}&locationCode=${locationCode}`
+    `/booking?vehicleId=${vehicle}&categoryCode=${categoryCode}&pickupDate=${pickupDate}&returnDate=${returnDate}&locationCode=${locationCode}`
   );
 
   // Wait for form to load
@@ -62,7 +63,14 @@ export async function fillDriversLicense(page: Page, license = testUsers.guest.d
  * Navigate through booking form steps
  */
 export async function nextStep(page: Page) {
-  await page.click('button:has-text("Weiter")');
+  // Wait for the Next button to be visible and enabled
+  const nextButton = page.locator('button:has-text("Weiter")');
+  await nextButton.waitFor({ state: 'visible', timeout: 10000 });
+
+  // Wait until button is enabled using Playwright's isEnabled check with retry
+  await expect(nextButton).toBeEnabled({ timeout: 10000 });
+
+  await nextButton.click();
   await page.waitForTimeout(500); // Wait for animation
 }
 
@@ -87,7 +95,7 @@ export async function completeBooking(page: Page, userData = testUsers.guest) {
   await nextStep(page);
 
   // Step 5: Review and submit
-  await page.click('button:has-text("Jetzt verbindlich buchen")');
+  await page.click('button:has-text("Buchung abschließen")');
 
   // Wait for confirmation page
   await page.waitForURL(/\/confirmation/, { timeout: 15000 });

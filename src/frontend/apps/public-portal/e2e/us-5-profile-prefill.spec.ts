@@ -60,7 +60,9 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await startBooking(page);
 
       // Navigate to address step (Step 3)
+      // In E2E mode with MockKeycloak, profile may not be pre-filled, so fill data first
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
 
       // Wait for form to be visible
@@ -84,8 +86,11 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await startBooking(page);
 
       // Navigate to driver's license step (Step 4)
+      // In E2E mode with MockKeycloak, profile may not be pre-filled, so fill data first
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
+      await fillAddress(page);
       await nextStep(page); // Step 4
 
       // Wait for form to be visible
@@ -130,9 +135,13 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await startBooking(page);
 
       // Navigate to review step (Step 5)
+      // In E2E mode, fill data to enable navigation
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
+      await fillAddress(page);
       await nextStep(page); // Step 4
+      await fillDriversLicense(page);
       await nextStep(page); // Step 5
 
       // Wait for review step
@@ -155,10 +164,13 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
     test('should update profile when checkbox is checked', async ({ page }) => {
       await startBooking(page);
 
-      // Navigate through all steps
+      // Navigate through all steps (fill data in E2E mode)
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
+      await fillAddress(page);
       await nextStep(page); // Step 4
+      await fillDriversLicense(page);
       await nextStep(page); // Step 5
 
       // Check if we reached review step
@@ -173,7 +185,7 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       }
 
       // Try to submit booking
-      const submitButton = page.locator('button:has-text("Jetzt verbindlich buchen")');
+      const submitButton = page.locator('button:has-text("Buchung abschließen")');
       const hasSubmit = await submitButton.isVisible().catch(() => false);
 
       if (hasSubmit) {
@@ -188,10 +200,13 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
     test('should not update profile when checkbox is unchecked', async ({ page }) => {
       await startBooking(page);
 
-      // Navigate through all steps
+      // Navigate through all steps (fill data in E2E mode)
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
+      await fillAddress(page);
       await nextStep(page); // Step 4
+      await fillDriversLicense(page);
       await nextStep(page); // Step 5
 
       await page.waitForTimeout(1000);
@@ -301,7 +316,7 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
       await nextStep(page);
 
       // Try to submit booking
-      const submitButton = page.locator('button:has-text("Jetzt verbindlich buchen")');
+      const submitButton = page.locator('button:has-text("Buchung abschließen")');
       const hasSubmit = await submitButton.isVisible().catch(() => false);
 
       if (hasSubmit) {
@@ -324,9 +339,11 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
     test('should handle profile with missing driver license gracefully', async ({ page }) => {
       await startBooking(page);
 
-      // Navigate to driver's license step
+      // Navigate to driver's license step (fill data in E2E mode)
       await nextStep(page); // Step 2
+      await fillCustomerInfo(page);
       await nextStep(page); // Step 3
+      await fillAddress(page);
       await nextStep(page); // Step 4
 
       // Wait for form
@@ -359,6 +376,9 @@ test.describe('US-5: Profile Pre-fill for Registered Users', () => {
         expect(true).toBe(true);
         return;
       }
+
+      // Fill all required customer info first
+      await fillCustomerInfo(page);
 
       // Modify a field
       const modifiedPhone = '+49 30 11111111';

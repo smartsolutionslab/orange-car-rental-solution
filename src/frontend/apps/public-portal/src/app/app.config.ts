@@ -8,6 +8,7 @@ import type { ApplicationConfig, EnvironmentProviders, Provider } from '@angular
 import { provideRouter } from '@angular/router';
 import type { HttpInterceptorFn } from '@angular/common/http';
 import { provideHttpClient, withFetch, withInterceptors, HttpClient } from '@angular/common/http';
+import { signal } from '@angular/core';
 import {
   provideKeycloak,
   withAutoRefreshToken,
@@ -16,8 +17,11 @@ import {
   includeBearerTokenInterceptor,
   createInterceptorCondition,
   INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+  KEYCLOAK_EVENT_SIGNAL,
+  KeycloakEventType,
 } from 'keycloak-angular';
-import type { IncludeBearerTokenCondition } from 'keycloak-angular';
+import type { IncludeBearerTokenCondition, KeycloakEvent } from 'keycloak-angular';
+import Keycloak from 'keycloak-js';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import { provideI18n } from '@orange-car-rental/i18n';
 import { ConfigService } from './services/config.service';
@@ -44,14 +48,57 @@ function getHttpInterceptors(): HttpInterceptorFn[] {
 }
 
 /**
+ * Mock Keycloak class for E2E tests.
+ * This satisfies the DI requirement without connecting to a real Keycloak server.
+ * Using a class instead of factory to ensure it's available at class initialization time.
+ */
+class MockKeycloak {
+  authenticated = false;
+  token: string | undefined = undefined;
+  refreshToken: string | undefined = undefined;
+  tokenParsed: unknown = undefined;
+  realmAccess = { roles: [] as string[] };
+  init() { return Promise.resolve(false); }
+  login() { return Promise.resolve(); }
+  logout() { return Promise.resolve(); }
+  updateToken() { return Promise.resolve(false); }
+  loadUserProfile() { return Promise.resolve({}); }
+}
+
+/**
  * Returns Keycloak providers only if a valid Keycloak URL is configured.
  * This allows E2E tests to run without a Keycloak server.
+ * When disabled, provides a mock Keycloak to satisfy DI requirements.
  */
 function getKeycloakProviders(): (Provider | EnvironmentProviders)[] {
   // Skip Keycloak initialization if no URL is configured (e.g., in E2E tests)
   if (!isKeycloakEnabled) {
     console.log('Keycloak URL not configured - skipping authentication');
-    return [];
+    // Provide mock instances to satisfy DI for services that inject Keycloak or keycloak-angular tokens
+    // This includes mock providers for keycloak-angular internal services that may be tree-shaken in
+    return [
+      {
+        provide: Keycloak,
+        useClass: MockKeycloak,
+      },
+      {
+        provide: KEYCLOAK_EVENT_SIGNAL,
+        useValue: signal<KeycloakEvent>({ type: KeycloakEventType.KeycloakAngularNotInitialized }),
+      },
+      {
+        provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
+        useValue: [],
+      },
+      // Mock keycloak-angular services that might be instantiated
+      {
+        provide: AutoRefreshTokenService,
+        useValue: { start: () => {}, stop: () => {} },
+      },
+      {
+        provide: UserActivityService,
+        useValue: { startMonitoring: () => {}, stopMonitoring: () => {}, lastActivitySignal: signal(Date.now()) },
+      },
+    ];
   }
 
   return [
