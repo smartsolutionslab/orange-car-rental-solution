@@ -7,11 +7,10 @@
 module.exports = {
   ci: {
     collect: {
-      // URLs to test
+      // URLs to test (port 4302 matches lighthouse-ci.yml workflow)
+      // Only testing the main page (other routes require authentication)
       url: [
         'http://localhost:4302',
-        'http://localhost:4302/reservations',
-        'http://localhost:4302/customers',
       ],
 
       // Number of runs per URL

@@ -68,7 +68,15 @@ jobs:
           dotnet restore
           dotnet build -p:RunAnalyzers=false
           dotnet run &
-          sleep 30
+          echo "Waiting for backend API to be ready..."
+          for i in {1..60}; do
+            if curl -s http://localhost:5002/health > /dev/null 2>&1; then
+              echo "Backend API is ready!"
+              break
+            fi
+            echo "Attempt $i: Backend not ready yet..."
+            sleep 2
+          done
         env:
           ASPNETCORE_ENVIRONMENT: Development
           ConnectionStrings__DefaultConnection: Server=localhost;Database=orange_rental;User Id=sa;Password=TestPassword123!;TrustServerCertificate=True
