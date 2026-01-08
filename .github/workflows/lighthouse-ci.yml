@@ -56,13 +56,15 @@ jobs:
 
       - name: Serve Public Portal
         run: |
-          npx http-server src/frontend/apps/public-portal/dist/public-portal/browser -p 4301 &
-          sleep 10
+          npx serve src/frontend/apps/public-portal/dist/public-portal/browser -l 4301 -s &
+          sleep 5
+          curl -s http://localhost:4301 > /dev/null && echo "Public Portal serving on 4301"
 
       - name: Serve Call Center Portal
         run: |
-          npx http-server src/frontend/apps/call-center-portal/dist/call-center-portal/browser -p 4302 &
-          sleep 10
+          npx serve src/frontend/apps/call-center-portal/dist/call-center-portal/browser -l 4302 -s &
+          sleep 5
+          curl -s http://localhost:4302 > /dev/null && echo "Call Center Portal serving on 4302"
 
       - name: Run Lighthouse CI - Public Portal
         run: |
