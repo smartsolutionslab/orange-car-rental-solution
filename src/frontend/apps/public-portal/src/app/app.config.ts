@@ -58,11 +58,21 @@ class MockKeycloak {
   refreshToken: string | undefined = undefined;
   tokenParsed: unknown = undefined;
   realmAccess = { roles: [] as string[] };
-  init() { return Promise.resolve(false); }
-  login() { return Promise.resolve(); }
-  logout() { return Promise.resolve(); }
-  updateToken() { return Promise.resolve(false); }
-  loadUserProfile() { return Promise.resolve({}); }
+  init() {
+    return Promise.resolve(false);
+  }
+  login() {
+    return Promise.resolve();
+  }
+  logout() {
+    return Promise.resolve();
+  }
+  updateToken() {
+    return Promise.resolve(false);
+  }
+  loadUserProfile() {
+    return Promise.resolve({});
+  }
 }
 
 /**
@@ -93,15 +103,23 @@ function getKeycloakProviders(): (Provider | EnvironmentProviders)[] {
       {
         provide: AutoRefreshTokenService,
         useValue: {
-          start: (): void => { /* no-op for E2E */ },
-          stop: (): void => { /* no-op for E2E */ },
+          start: (): void => {
+            /* no-op for E2E */
+          },
+          stop: (): void => {
+            /* no-op for E2E */
+          },
         },
       },
       {
         provide: UserActivityService,
         useValue: {
-          startMonitoring: (): void => { /* no-op for E2E */ },
-          stopMonitoring: (): void => { /* no-op for E2E */ },
+          startMonitoring: (): void => {
+            /* no-op for E2E */
+          },
+          stopMonitoring: (): void => {
+            /* no-op for E2E */
+          },
           lastActivitySignal: signal(Date.now()),
         },
       },
