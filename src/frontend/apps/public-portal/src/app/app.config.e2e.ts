@@ -22,28 +22,56 @@ import { routes } from './app.routes';
 
 /**
  * Mock Keycloak class for E2E tests.
- * This satisfies the DI requirement without connecting to a real Keycloak server.
+ * Simulates an authenticated user to allow E2E tests to access protected routes.
  */
 class MockKeycloak {
-  authenticated = false;
-  token: string | undefined = undefined;
-  refreshToken: string | undefined = undefined;
-  tokenParsed: unknown = undefined;
-  realmAccess = { roles: [] as string[] };
+  // Simulate authenticated user for E2E tests
+  authenticated = true;
+  token: string | undefined = 'mock-e2e-token';
+  refreshToken: string | undefined = 'mock-e2e-refresh-token';
+  tokenParsed: unknown = {
+    sub: 'e2e-test-user-id',
+    email: 'e2e-test@orange-rental.de',
+    preferred_username: 'e2e-test-user',
+    given_name: 'E2E',
+    family_name: 'TestUser',
+    name: 'E2E TestUser',
+  };
+  realmAccess = { roles: ['user'] as string[] };
+  subject = 'e2e-test-user-id';
+
   init() {
-    return Promise.resolve(false);
+    // Return true to indicate successful initialization with authenticated user
+    return Promise.resolve(true);
   }
   login() {
+    this.authenticated = true;
     return Promise.resolve();
   }
   logout() {
+    this.authenticated = false;
     return Promise.resolve();
   }
   updateToken() {
-    return Promise.resolve(false);
+    // Token is always valid in E2E
+    return Promise.resolve(true);
   }
   loadUserProfile() {
-    return Promise.resolve({});
+    return Promise.resolve({
+      id: 'e2e-test-user-id',
+      username: 'e2e-test-user',
+      email: 'e2e-test@orange-rental.de',
+      firstName: 'E2E',
+      lastName: 'TestUser',
+      emailVerified: true,
+    });
+  }
+  // Additional methods that might be called
+  getToken() {
+    return this.token;
+  }
+  isTokenExpired() {
+    return false;
   }
 }
 

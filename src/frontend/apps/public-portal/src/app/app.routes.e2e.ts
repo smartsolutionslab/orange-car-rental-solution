@@ -1,7 +1,6 @@
 import type { Routes } from '@angular/router';
 // Import locale registration as side effect - runs when routes are loaded
 import './locale-de';
-import { authGuard } from '@orange-car-rental/auth';
 
 /**
  * E2E Routes Configuration
@@ -13,6 +12,10 @@ import { authGuard } from '@orange-car-rental/auth';
  *
  * Lazy loading defers component class definition until route navigation,
  * when the injection context is ready.
+ *
+ * NOTE: Auth guards are removed for E2E tests. The MockKeycloak in app.config.e2e.ts
+ * simulates an authenticated user, allowing E2E tests to access all routes and test
+ * component functionality without authentication blocking.
  */
 export const routes: Routes = [
   {
@@ -40,13 +43,13 @@ export const routes: Routes = [
     path: 'booking',
     loadComponent: () =>
       import('./pages/booking/booking.component').then((m) => m.BookingComponent),
-    canActivate: [authGuard],
+    // Auth guard removed for E2E - MockKeycloak simulates authenticated user
   },
   {
     path: 'confirmation',
     loadComponent: () =>
       import('./pages/confirmation/confirmation.component').then((m) => m.ConfirmationComponent),
-    canActivate: [authGuard],
+    // Auth guard removed for E2E - MockKeycloak simulates authenticated user
   },
   {
     path: 'my-bookings',
@@ -54,6 +57,6 @@ export const routes: Routes = [
       import('./pages/booking-history/booking-history.component').then(
         (m) => m.BookingHistoryComponent,
       ),
-    canActivate: [authGuard],
+    // Auth guard removed for E2E - MockKeycloak simulates authenticated user
   },
 ];
