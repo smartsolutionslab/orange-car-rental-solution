@@ -1,5 +1,5 @@
 /**
- * Lighthouse CI Configuration - Public Portal
+ * Lighthouse CI Configuration - Call Center Portal
  *
  * Performance budgets and CI settings for automated Lighthouse testing.
  */
@@ -7,11 +7,11 @@
 module.exports = {
   ci: {
     collect: {
-      // URLs to test (port 4301 matches lighthouse-ci.yml workflow)
+      // URLs to test
       url: [
-        'http://localhost:4301',
-        'http://localhost:4301/booking-history',
-        'http://localhost:4301/search',
+        'http://localhost:4302',
+        'http://localhost:4302/reservations',
+        'http://localhost:4302/customers',
       ],
 
       // Number of runs per URL
@@ -69,11 +69,5 @@ module.exports = {
       // Upload results to temporary public storage
       target: 'temporary-public-storage',
     },
-
-    // Server configuration (if using LHCI server)
-    // server: {
-    //   baseURL: 'https://your-lhci-server.com',
-    //   token: process.env.LHCI_SERVER_TOKEN,
-    // },
   },
 };
