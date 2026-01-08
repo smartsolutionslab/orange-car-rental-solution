@@ -92,11 +92,18 @@ function getKeycloakProviders(): (Provider | EnvironmentProviders)[] {
       // Mock keycloak-angular services that might be instantiated
       {
         provide: AutoRefreshTokenService,
-        useValue: { start: () => {}, stop: () => {} },
+        useValue: {
+          start: (): void => { /* no-op for E2E */ },
+          stop: (): void => { /* no-op for E2E */ },
+        },
       },
       {
         provide: UserActivityService,
-        useValue: { startMonitoring: () => {}, stopMonitoring: () => {}, lastActivitySignal: signal(Date.now()) },
+        useValue: {
+          startMonitoring: (): void => { /* no-op for E2E */ },
+          stopMonitoring: (): void => { /* no-op for E2E */ },
+          lastActivitySignal: signal(Date.now()),
+        },
       },
     ];
   }
