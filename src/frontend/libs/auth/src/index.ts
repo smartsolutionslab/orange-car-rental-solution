@@ -7,9 +7,8 @@ export * from "./lib/guards";
 // Types
 export * from "./lib/types";
 
-// Providers - Note: keycloak.provider.ts is NOT exported from barrel
-// to avoid loading keycloak-angular in E2E tests. Import directly:
-// import { provideKeycloakAuth } from '@orange-car-rental/auth/lib/providers/keycloak.provider';
+// Providers
+export * from "./lib/providers";
 
 // Components
 export * from "./lib/components";

@@ -28,7 +28,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
     private KeycloakTokenProvider? tokenProvider;
-    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(12);
+    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(8);
     private string? sqlConnectionString;
 
     /// <summary>

@@ -26,13 +26,12 @@
     "..\\..\\node_modules\\@angular\\platform-browser\\fesm2022\\animations.mjs",
     "..\\..\\node_modules\\@angular\\platform-browser\\fesm2022\\animations-async.mjs",
     "..\\..\\node_modules\\@angular\\router\\fesm2022\\router.mjs",
+    "..\\..\\node_modules\\keycloak-angular\\fesm2022\\keycloak-angular.mjs",
     "..\\..\\node_modules\\keycloak-js\\lib\\keycloak.js",
     "..\\..\\node_modules\\keycloak-js\\lib\\keycloak-authz.js",
     "..\\..\\node_modules\\rxjs\\dist\\esm\\index.js",
     "..\\..\\node_modules\\rxjs\\dist\\esm\\operators\\index.js",
-    "..\\..\\node_modules\\tslib\\tslib.es6.mjs",
-    "..\\..\\node_modules\\@ngx-translate\\core\\fesm2022\\ngx-translate-core.mjs",
-    "..\\..\\node_modules\\@ngx-translate\\http-loader\\fesm2022\\ngx-translate-http-loader.mjs"
+    "..\\..\\node_modules\\tslib\\tslib.es6.mjs"
   ],
   "exclude": [
     "src/**/*.spec.ts"
