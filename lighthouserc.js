@@ -8,10 +8,9 @@ module.exports = {
   ci: {
     collect: {
       // URLs to test (port 4301 matches lighthouse-ci.yml workflow)
-      // Only testing public pages that don't require authentication
+      // Only testing the home page - other pages require data/API setup
       url: [
         'http://localhost:4301',
-        'http://localhost:4301/search',
       ],
 
       // Number of runs per URL
