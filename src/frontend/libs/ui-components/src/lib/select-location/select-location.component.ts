@@ -8,13 +8,14 @@ import {
   DestroyRef,
   output,
 } from "@angular/core";
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import {
   LocationService,
   type Location,
 } from "@orange-car-rental/location-api";
 import { logError } from "@orange-car-rental/util";
+import { BaseSelectComponent } from "../select";
 
 @Component({
   selector: "ui-select-location",
@@ -55,7 +56,7 @@ import { logError } from "@orange-car-rental/util";
     },
   ],
 })
-export class SelectLocationComponent implements ControlValueAccessor, OnInit {
+export class SelectLocationComponent extends BaseSelectComponent<string> implements OnInit {
   private readonly locationService = inject(LocationService);
   private readonly destroyRef = inject(DestroyRef);
 
@@ -72,36 +73,18 @@ export class SelectLocationComponent implements ControlValueAccessor, OnInit {
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
 
-  value: string = "";
-  disabled = false;
-
-  private onChange: (value: string) => void = () => {};
-  onTouched: () => void = () => {};
+  override value = "";
 
   ngOnInit(): void {
     this.loadLocations();
   }
 
-  writeValue(value: string): void {
-    this.value = value ?? "";
+  protected parseValue(rawValue: string): string {
+    return rawValue;
   }
 
-  registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  onSelectChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.value = target.value;
-    this.onChange(this.value);
+  protected getDefaultValue(): string {
+    return "";
   }
 
   private loadLocations(): void {

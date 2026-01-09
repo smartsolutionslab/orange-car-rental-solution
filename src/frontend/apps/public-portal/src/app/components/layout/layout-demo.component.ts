@@ -7,13 +7,15 @@
  */
 
 import { Component, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { LayoutComponent } from './layout.component';
 import { NavigationComponent } from '../navigation/navigation.component';
+import { CheckboxComponent, RadioGroupComponent, type RadioOption } from '@orange-car-rental/ui-components';
 
 @Component({
   selector: 'app-layout-demo',
   standalone: true,
-  imports: [LayoutComponent, NavigationComponent],
+  imports: [LayoutComponent, NavigationComponent, CheckboxComponent, RadioGroupComponent, FormsModule],
   template: `
     <app-layout
       [showSidebar]="showSidebar()"
@@ -32,78 +34,35 @@ import { NavigationComponent } from '../navigation/navigation.component';
             <div class="control-group">
               <h3>Layout Options</h3>
 
-              <label class="checkbox-label">
-                <input type="checkbox" [checked]="showSidebar()" (change)="toggleSidebar()" />
-                <span>Show Right Sidebar</span>
-              </label>
+              <ocr-checkbox
+                [label]="'Show Right Sidebar'"
+                [ngModel]="showSidebar()"
+                (ngModelChange)="showSidebar.set($event)"
+              />
 
-              <label class="checkbox-label">
-                <input type="checkbox" [checked]="fullWidth()" (change)="toggleFullWidth()" />
-                <span>Full Width Mode</span>
-              </label>
+              <ocr-checkbox
+                [label]="'Full Width Mode'"
+                [ngModel]="fullWidth()"
+                (ngModelChange)="fullWidth.set($event)"
+              />
             </div>
 
             <div class="control-group">
-              <h3>Navigation Position</h3>
-
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="navPosition"
-                  value="top"
-                  [checked]="navPosition() === 'top'"
-                  (change)="setNavPosition('top')"
-                />
-                <span>Top (Horizontal)</span>
-              </label>
-
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="navPosition"
-                  value="left"
-                  [checked]="navPosition() === 'left'"
-                  (change)="setNavPosition('left')"
-                />
-                <span>Left (Vertical Sidebar)</span>
-              </label>
+              <ocr-radio-group
+                [label]="'Navigation Position'"
+                [options]="navPositionOptions"
+                [ngModel]="navPosition()"
+                (ngModelChange)="navPosition.set($event)"
+              />
             </div>
 
             <div class="control-group">
-              <h3>Max Width</h3>
-
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="maxWidth"
-                  value="1200px"
-                  [checked]="maxWidth() === '1200px'"
-                  (change)="setMaxWidth('1200px')"
-                />
-                <span>1200px (Narrow)</span>
-              </label>
-
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="maxWidth"
-                  value="1400px"
-                  [checked]="maxWidth() === '1400px'"
-                  (change)="setMaxWidth('1400px')"
-                />
-                <span>1400px (Default)</span>
-              </label>
-
-              <label class="radio-label">
-                <input
-                  type="radio"
-                  name="maxWidth"
-                  value="1600px"
-                  [checked]="maxWidth() === '1600px'"
-                  (change)="setMaxWidth('1600px')"
-                />
-                <span>1600px (Wide)</span>
-              </label>
+              <ocr-radio-group
+                [label]="'Max Width'"
+                [options]="maxWidthOptions"
+                [ngModel]="maxWidth()"
+                (ngModelChange)="maxWidth.set($event)"
+              />
             </div>
           </div>
         </div>
@@ -220,18 +179,9 @@ import { NavigationComponent } from '../navigation/navigation.component';
         font-size: 1.125rem;
       }
 
-      .checkbox-label,
-      .radio-label {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
+      .control-group ocr-checkbox {
+        display: block;
         margin-bottom: 0.75rem;
-        cursor: pointer;
-      }
-
-      .checkbox-label input,
-      .radio-label input {
-        cursor: pointer;
       }
 
       .demo-content h2 {
@@ -390,24 +340,19 @@ import { NavigationComponent } from '../navigation/navigation.component';
   ],
 })
 export class LayoutDemoComponent {
-  protected showSidebar = signal(true);
-  protected navPosition = signal<'top' | 'left'>('top');
-  protected fullWidth = signal(false);
-  protected maxWidth = signal('1400px');
+  protected readonly showSidebar = signal(true);
+  protected readonly navPosition = signal<'top' | 'left'>('top');
+  protected readonly fullWidth = signal(false);
+  protected readonly maxWidth = signal('1400px');
 
-  protected toggleSidebar() {
-    this.showSidebar.update((v) => !v);
-  }
+  protected readonly navPositionOptions: RadioOption<'top' | 'left'>[] = [
+    { value: 'top', label: 'Top (Horizontal)' },
+    { value: 'left', label: 'Left (Vertical Sidebar)' },
+  ];
 
-  protected toggleFullWidth() {
-    this.fullWidth.update((v) => !v);
-  }
-
-  protected setNavPosition(position: 'top' | 'left') {
-    this.navPosition.set(position);
-  }
-
-  protected setMaxWidth(width: string) {
-    this.maxWidth.set(width);
-  }
+  protected readonly maxWidthOptions: RadioOption<string>[] = [
+    { value: '1200px', label: '1200px (Narrow)' },
+    { value: '1400px', label: '1400px (Default)' },
+    { value: '1600px', label: '1600px (Wide)' },
+  ];
 }

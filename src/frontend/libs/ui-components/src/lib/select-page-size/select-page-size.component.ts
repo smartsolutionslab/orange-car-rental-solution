@@ -1,10 +1,6 @@
 import { Component, forwardRef, input } from "@angular/core";
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
-
-type PageSizeOption = {
-  value: number;
-  label: string;
-};
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
+import { BaseSelectComponent, type SelectOption } from "../select";
 
 /**
  * Reusable page size selection component
@@ -36,42 +32,24 @@ type PageSizeOption = {
     },
   ],
 })
-export class SelectPageSizeComponent implements ControlValueAccessor {
+export class SelectPageSizeComponent extends BaseSelectComponent<number> {
   readonly id = input<string>("pageSize");
   readonly cssClass = input<string>("form-input");
 
-  value: number = 10;
-  disabled = false;
+  override value = 10;
 
-  readonly options: PageSizeOption[] = [
+  readonly options: SelectOption<number>[] = [
     { value: 10, label: "10" },
     { value: 25, label: "25" },
     { value: 50, label: "50" },
     { value: 100, label: "100" },
   ];
 
-  private onChange: (value: number) => void = () => {};
-  onTouched: () => void = () => {};
-
-  writeValue(value: number): void {
-    this.value = value ?? 10;
+  protected parseValue(rawValue: string): number {
+    return parseInt(rawValue, 10);
   }
 
-  registerOnChange(fn: (value: number) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  onSelectChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.value = parseInt(target.value, 10);
-    this.onChange(this.value);
+  protected getDefaultValue(): number {
+    return 10;
   }
 }

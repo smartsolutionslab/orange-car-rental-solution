@@ -1,14 +1,10 @@
 import { Component, forwardRef, input } from "@angular/core";
-import { type ControlValueAccessor, NG_VALUE_ACCESSOR } from "@angular/forms";
+import { NG_VALUE_ACCESSOR } from "@angular/forms";
 import {
   VehicleCategory,
   VehicleCategoryLabel,
 } from "@orange-car-rental/vehicle-api";
-
-export type SelectOption<T> = {
-  value: T;
-  label: string;
-};
+import { BaseSelectComponent, type SelectOption } from "../select";
 
 @Component({
   selector: "ui-select-category",
@@ -37,13 +33,12 @@ export type SelectOption<T> = {
     },
   ],
 })
-export class SelectCategoryComponent implements ControlValueAccessor {
+export class SelectCategoryComponent extends BaseSelectComponent<string> {
   readonly id = input<string>("category");
   readonly placeholder = input<string>("Alle Kategorien");
   readonly cssClass = input<string>("form-input");
 
-  value: string = "";
-  disabled = false;
+  override value = "";
 
   readonly options: SelectOption<string>[] = Object.entries(
     VehicleCategory,
@@ -52,28 +47,11 @@ export class SelectCategoryComponent implements ControlValueAccessor {
     label: VehicleCategoryLabel[enumValue as VehicleCategory],
   }));
 
-  private onChange: (value: string) => void = () => {};
-  onTouched: () => void = () => {};
-
-  writeValue(value: string): void {
-    this.value = value ?? "";
+  protected parseValue(rawValue: string): string {
+    return rawValue;
   }
 
-  registerOnChange(fn: (value: string) => void): void {
-    this.onChange = fn;
-  }
-
-  registerOnTouched(fn: () => void): void {
-    this.onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled = isDisabled;
-  }
-
-  onSelectChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    this.value = target.value;
-    this.onChange(this.value);
+  protected getDefaultValue(): string {
+    return "";
   }
 }
