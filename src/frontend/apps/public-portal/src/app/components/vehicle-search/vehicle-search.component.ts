@@ -17,6 +17,9 @@ import {
   getTodayDateString,
   addDays,
   IconComponent,
+  InputComponent,
+  SelectComponent,
+  type SelectOption,
 } from '@orange-car-rental/ui-components';
 
 /**
@@ -44,6 +47,8 @@ import {
     SelectFuelTypeComponent,
     SelectTransmissionComponent,
     IconComponent,
+    InputComponent,
+    SelectComponent,
   ],
   templateUrl: './vehicle-search.component.html',
   styleUrl: './vehicle-search.component.css',
@@ -62,6 +67,15 @@ export class VehicleSearchComponent implements OnInit {
   // Minimum dates for validation
   protected readonly today = getTodayDateString();
   protected readonly minReturnDate = signal(this.today);
+
+  // Min seats options
+  protected readonly minSeatsOptions: SelectOption<number | null>[] = [
+    { value: null, label: 'Alle' },
+    { value: 2, label: '2+' },
+    { value: 4, label: '4+' },
+    { value: 5, label: '5+' },
+    { value: 7, label: '7+' },
+  ];
 
   constructor() {
     // Initialize form with default values (day-wise rentals)

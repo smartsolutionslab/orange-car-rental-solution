@@ -38,52 +38,12 @@
 @if (!loading() && vehicles().length > 0) {
   <div class="vehicles-grid">
     @for (vehicle of vehicles(); track vehicle.id) {
-      <div class="vehicle-card">
-        <div class="vehicle-image">
-          @if (vehicle.imageUrl) {
-            <img [src]="vehicle.imageUrl" [alt]="vehicle.name" />
-          } @else {
-            <div class="placeholder-image">
-              <lib-icon name="car-filled" variant="filled" size="sm" />
-            </div>
-          }
-        </div>
-        <div class="vehicle-details">
-          <h3>{{ vehicle.name }}</h3>
-          <div class="vehicle-info">
-            <span class="category">{{ vehicle.categoryName }}</span>
-            <span class="location">{{ vehicle.city }}</span>
-          </div>
-          <div class="vehicle-specs">
-            <span class="spec">
-              <lib-icon name="seats" variant="filled" size="sm" />
-              {{ 'vehicles.card.seats' | translate: { count: vehicle.seats } }}
-            </span>
-            <span class="spec">
-              <lib-icon name="transmission" variant="filled" size="sm" />
-              {{ vehicle.transmissionType }}
-            </span>
-            <span class="spec">
-              <lib-icon name="fuel" variant="filled" size="sm" />
-              {{ vehicle.fuelType }}
-            </span>
-          </div>
-          <div class="vehicle-pricing">
-            <div class="price-main">
-              <span class="price-amount"
-                >{{ vehicle.dailyRateGross | number: '1.2-2' : 'de-DE' }} €</span
-              >
-              <span class="price-period">{{ 'vehicles.card.perDay' | translate }}</span>
-            </div>
-            <div class="price-details">
-              <span>{{ 'vehicles.card.inclVat' | translate }}</span>
-            </div>
-          </div>
-          <button class="btn-book" (click)="onBookVehicle(vehicle)">
-            {{ 'common.actions.bookNow' | translate }}
-          </button>
-        </div>
-      </div>
+      <ocr-vehicle-card
+        [vehicle]="vehicle"
+        variant="browse"
+        [showLocation]="true"
+        (action)="onBookVehicle($event)"
+      />
     }
   </div>
 }

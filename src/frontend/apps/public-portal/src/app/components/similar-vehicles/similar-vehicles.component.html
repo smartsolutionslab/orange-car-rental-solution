@@ -2,14 +2,7 @@
   <!-- Unavailability Warning -->
   @if (showUnavailableWarning() && currentVehicle()) {
     <div class="unavailable-warning">
-      <svg class="warning-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-        ></path>
-      </svg>
+      <lib-icon name="alert-triangle" variant="outline" size="lg" class="warning-icon" />
       <div class="warning-content">
         <h3 class="warning-title">{{ 'similarVehicles.unavailable.title' | translate }}</h3>
         <p class="warning-text">
@@ -33,133 +26,21 @@
   @if (similarVehicles().length > 0) {
     <div class="vehicles-grid">
       @for (vehicle of similarVehicles(); track vehicle.id) {
-        <div class="vehicle-card">
-          <!-- Vehicle Image -->
-          <div class="vehicle-image">
-            @if (vehicle.imageUrl) {
-              <img [src]="vehicle.imageUrl" [alt]="vehicle.name" />
-            } @else {
-              <div class="image-placeholder">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"
-                  ></path>
-                </svg>
-              </div>
-            }
-          </div>
-
-          <!-- Vehicle Info -->
-          <div class="vehicle-info">
-            <div class="vehicle-header">
-              <h3 class="vehicle-name">{{ vehicle.name }}</h3>
-              <span class="vehicle-category">{{ vehicle.categoryName }}</span>
-            </div>
-
-            <!-- Price Comparison -->
-            <div class="price-comparison">
-              <span class="current-price">{{
-                'similarVehicles.pricePerDay'
-                  | translate: { price: vehicle.dailyRateGross.toFixed(2) }
-              }}</span>
-              @if (getPriceDifference(vehicle).text) {
-                <span
-                  class="price-difference"
-                  [class.cheaper]="getPriceDifference(vehicle).amount > 0"
-                  [class.more-expensive]="getPriceDifference(vehicle).amount < 0"
-                >
-                  {{ getPriceDifference(vehicle).text }}
-                </span>
-              }
-            </div>
-
-            <!-- Specifications -->
-            <div class="vehicle-specs">
-              <div class="spec-item">
-                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                  ></path>
-                </svg>
-                <span>{{ 'vehicles.card.seats' | translate: { count: vehicle.seats } }}</span>
-              </div>
-
-              <div class="spec-item">
-                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  ></path>
-                </svg>
-                <span>{{ formatFuelType(vehicle.fuelType) }}</span>
-              </div>
-
-              <div class="spec-item">
-                <svg class="spec-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                  ></path>
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                  ></path>
-                </svg>
-                <span>{{ formatTransmissionType(vehicle.transmissionType) }}</span>
-              </div>
-            </div>
-
-            <!-- Similarity Reason -->
-            <div class="similarity-reason">
-              <svg class="reason-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                ></path>
-              </svg>
-              <span>{{ getSimilarityReason(vehicle) }}</span>
-            </div>
-
-            <!-- Action Button -->
-            <button type="button" class="book-instead-button" (click)="selectVehicle(vehicle)">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5l7 7-7 7"
-                ></path>
-              </svg>
-              {{ 'similarVehicles.bookInstead' | translate }}
-            </button>
-          </div>
-        </div>
+        <ocr-vehicle-card
+          [vehicle]="vehicle"
+          variant="similar"
+          [showLocation]="false"
+          [showPriceComparison]="true"
+          [comparisonVehicle]="currentVehicle()"
+          [similarityReason]="getSimilarityReason(vehicle)"
+          [actionLabel]="'similarVehicles.bookInstead' | translate"
+          (action)="selectVehicle($event)"
+        />
       }
     </div>
   } @else {
     <div class="no-vehicles">
-      <svg class="no-vehicles-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-        ></path>
-      </svg>
+      <lib-icon name="emoji-sad" variant="outline" size="xl" class="no-vehicles-icon" />
       <p>{{ 'similarVehicles.noResults' | translate }}</p>
     </div>
   }

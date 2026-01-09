@@ -5,38 +5,26 @@
     <div class="date-range-group">
       <!-- Pickup Date -->
       <div class="date-time-group">
-        <label for="pickupDate" class="form-label">
-          <lib-icon name="calendar-filled" variant="filled" size="sm" class="label-icon" />
-          {{ 'vehicles.search.pickup' | translate }}
-        </label>
-        <div class="date-time-inputs">
-          <input
-            type="date"
-            id="pickupDate"
-            formControlName="pickupDate"
-            [min]="today"
-            class="form-input date-input"
-            required
-          />
-        </div>
+        <ocr-input
+          [label]="'vehicles.search.pickup' | translate"
+          type="date"
+          formControlName="pickupDate"
+          [min]="today"
+          [required]="true"
+          leadingIcon="calendar"
+        />
       </div>
 
       <!-- Return Date -->
       <div class="date-time-group">
-        <label for="returnDate" class="form-label">
-          <lib-icon name="calendar-filled" variant="filled" size="sm" class="label-icon" />
-          {{ 'vehicles.search.return' | translate }}
-        </label>
-        <div class="date-time-inputs">
-          <input
-            type="date"
-            id="returnDate"
-            formControlName="returnDate"
-            [min]="minReturnDate()"
-            class="form-input date-input"
-            required
-          />
-        </div>
+        <ocr-input
+          [label]="'vehicles.search.return' | translate"
+          type="date"
+          formControlName="returnDate"
+          [min]="minReturnDate()"
+          [required]="true"
+          leadingIcon="calendar"
+        />
       </div>
     </div>
   </div>
@@ -103,17 +91,12 @@
 
       <!-- Min Seats -->
       <div class="filter-group">
-        <label for="minSeats" class="form-label">
-          <lib-icon name="seats" variant="filled" size="sm" class="label-icon" />
-          {{ 'vehicles.search.minSeats' | translate }}
-        </label>
-        <select id="minSeats" formControlName="minSeats" class="form-input">
-          <option [value]="null">{{ 'common.labels.all' | translate }}</option>
-          <option [value]="2">2+</option>
-          <option [value]="4">4+</option>
-          <option [value]="5">5+</option>
-          <option [value]="7">7+</option>
-        </select>
+        <ocr-select
+          [label]="'vehicles.search.minSeats' | translate"
+          [options]="minSeatsOptions"
+          formControlName="minSeats"
+          leadingIcon="users"
+        />
       </div>
     </div>
   </div>

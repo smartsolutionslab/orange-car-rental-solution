@@ -2,6 +2,7 @@ import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { Vehicle } from '@orange-car-rental/vehicle-api';
+import { VehicleCardComponent, IconComponent } from '@orange-car-rental/ui-components';
 
 /**
  * Similar Vehicles Component
@@ -13,7 +14,7 @@ import type { Vehicle } from '@orange-car-rental/vehicle-api';
 @Component({
   selector: 'app-similar-vehicles',
   standalone: true,
-  imports: [CommonModule, TranslateModule],
+  imports: [CommonModule, TranslateModule, VehicleCardComponent, IconComponent],
   templateUrl: './similar-vehicles.component.html',
   styleUrl: './similar-vehicles.component.css',
 })

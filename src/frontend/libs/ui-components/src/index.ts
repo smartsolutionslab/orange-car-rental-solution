@@ -186,3 +186,10 @@ export {
   type SelectSize,
   type SelectOption,
 } from "./lib/select";
+
+// Vehicle Card Component
+export {
+  VehicleCardComponent,
+  type VehicleCardVariant,
+  type PriceDifference,
+} from "./lib/vehicle-card";

@@ -1,7 +1,7 @@
 import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DecimalPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { Vehicle, VehicleSearchQuery } from '@orange-car-rental/vehicle-api';
@@ -11,6 +11,7 @@ import {
   EmptyStateComponent,
   ErrorStateComponent,
   IconComponent,
+  VehicleCardComponent,
 } from '@orange-car-rental/ui-components';
 import { VehicleService } from '../../services/vehicle.service';
 import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-search.component';
@@ -23,13 +24,14 @@ import { VehicleSearchComponent } from '../../components/vehicle-search/vehicle-
   selector: 'app-vehicle-list',
   standalone: true,
   imports: [
-    DecimalPipe,
+    CommonModule,
     TranslateModule,
     VehicleSearchComponent,
     LoadingStateComponent,
     EmptyStateComponent,
     ErrorStateComponent,
     IconComponent,
+    VehicleCardComponent,
   ],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.css',
