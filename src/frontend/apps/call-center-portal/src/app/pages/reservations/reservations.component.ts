@@ -27,6 +27,8 @@ import {
   IconComponent,
   InputComponent,
   TextareaComponent,
+  SelectComponent,
+  type SelectOption,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { UI_TIMING, DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
@@ -64,6 +66,7 @@ type GroupedReservations = Record<string, Reservation[]>;
     IconComponent,
     InputComponent,
     TextareaComponent,
+    SelectComponent,
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',
@@ -167,21 +170,21 @@ export class ReservationsComponent implements OnInit {
 
   protected readonly groupKeys = computed(() => Object.keys(this.groupedReservations()));
 
-  // Sort options (using translation keys)
-  protected readonly sortOptions = [
-    { value: 'PickupDate', labelKey: 'reservations.sorting.pickupDate' },
-    { value: 'Price', labelKey: 'reservations.sorting.price' },
-    { value: 'Status', labelKey: 'reservations.sorting.status' },
-    { value: 'CreatedDate', labelKey: 'reservations.sorting.createdDate' },
-  ];
+  // Sort options - computed with translations
+  protected readonly sortOptions = computed<SelectOption<string>[]>(() => [
+    { value: 'PickupDate', label: this.translate.instant('reservations.sorting.pickupDate') },
+    { value: 'Price', label: this.translate.instant('reservations.sorting.price') },
+    { value: 'Status', label: this.translate.instant('reservations.sorting.status') },
+    { value: 'CreatedDate', label: this.translate.instant('reservations.sorting.createdDate') },
+  ]);
 
-  // Group options (using translation keys)
-  protected readonly groupOptions = [
-    { value: 'none', labelKey: 'reservations.grouping.none' },
-    { value: 'status', labelKey: 'reservations.grouping.byStatus' },
-    { value: 'pickupDate', labelKey: 'reservations.grouping.byPickupDate' },
-    { value: 'location', labelKey: 'reservations.grouping.byLocation' },
-  ];
+  // Group options - computed with translations
+  protected readonly groupOptions = computed<SelectOption<string>[]>(() => [
+    { value: 'none', label: this.translate.instant('reservations.grouping.none') },
+    { value: 'status', label: this.translate.instant('reservations.grouping.byStatus') },
+    { value: 'pickupDate', label: this.translate.instant('reservations.grouping.byPickupDate') },
+    { value: 'location', label: this.translate.instant('reservations.grouping.byLocation') },
+  ]);
 
   ngOnInit(): void {
     // Load filters from URL parameters

@@ -250,15 +250,13 @@
           {{ formatDate(selectedReservation()!.pickupDate) }}
         </p>
 
-        <div class="form-group">
-          <label for="cancellationReason">{{ 'bookingHistory.cancel.reason' | translate }} *</label>
-          <select id="cancellationReason" [(ngModel)]="cancellationReason" class="form-control">
-            <option value="">{{ 'common.placeholders.select' | translate }}</option>
-            @for (reason of cancellationReasons; track reason) {
-              <option [value]="reason">{{ reason }}</option>
-            }
-          </select>
-        </div>
+        <ocr-select
+          [label]="'bookingHistory.cancel.reason' | translate"
+          [placeholder]="'common.placeholders.select' | translate"
+          [options]="cancellationReasonOptions"
+          [(ngModel)]="cancellationReason"
+          [required]="true"
+        />
 
         <div class="warning-box">
           <p>

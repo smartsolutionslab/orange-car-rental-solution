@@ -70,7 +70,7 @@ export const WithLogging: Story = {
   render: () => ({
     props: {
       searchQuery: null as unknown,
-      onSearch: function (query: unknown) {
+      onSearch: function (this: { searchQuery: unknown }, query: unknown) {
         this.searchQuery = query;
       },
     },

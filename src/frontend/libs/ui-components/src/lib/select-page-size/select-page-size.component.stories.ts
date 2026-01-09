@@ -86,6 +86,7 @@ export const InPaginationContext: Story = {
       pageSize: 10,
       currentPage: 1,
       totalItems: 156,
+      Math: Math,
     },
     template: `
       <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem; background: #f9fafb; border-radius: 0.5rem;">
@@ -104,12 +105,6 @@ export const InPaginationContext: Story = {
         </div>
       </div>
     `,
-    props: {
-      pageSize: 10,
-      currentPage: 1,
-      totalItems: 156,
-      Math: Math,
-    },
     styles: [
       `
         :host ::ng-deep .form-input-sm {

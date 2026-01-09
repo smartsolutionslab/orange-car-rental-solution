@@ -29,6 +29,8 @@ import {
   getReservationStatusLabel,
   ErrorAlertComponent,
   InputComponent,
+  SelectComponent,
+  type SelectOption,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -50,6 +52,7 @@ import type { GroupedReservations } from '../../types';
     DetailRowComponent,
     ErrorAlertComponent,
     InputComponent,
+    SelectComponent,
     TranslateModule,
   ],
   templateUrl: './booking-history.component.html',
@@ -85,12 +88,12 @@ export class BookingHistoryComponent implements OnInit {
   showCancelModal = signal(false);
   selectedReservation = signal<Reservation | null>(null);
   cancellationReason = '';
-  cancellationReasons = [
-    'Change of plans',
-    'Found alternative transportation',
-    'Trip cancelled',
-    'Booking error',
-    'Other',
+  cancellationReasonOptions: SelectOption<string>[] = [
+    { value: 'Change of plans', label: 'Change of plans' },
+    { value: 'Found alternative transportation', label: 'Found alternative transportation' },
+    { value: 'Trip cancelled', label: 'Trip cancelled' },
+    { value: 'Booking error', label: 'Booking error' },
+    { value: 'Other', label: 'Other' },
   ];
 
   // Detail modal

@@ -56,35 +56,25 @@
 
         <div class="form-grid">
           <div class="form-field full-width">
-            <label for="pickupDate">{{ 'booking.fields.pickupDate' | translate }} *</label>
-            <input
+            <ocr-input
+              [label]="'booking.fields.pickupDate' | translate"
               type="date"
-              id="pickupDate"
               formControlName="pickupDate"
               [min]="today"
-              [class.invalid]="
-                bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched
-              "
+              [required]="true"
+              [error]="bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched ? ('booking.errors.pickupDate' | translate) : null"
             />
-            @if (bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched) {
-              <span class="error-text">{{ 'booking.errors.pickupDate' | translate }}</span>
-            }
           </div>
 
           <div class="form-field full-width">
-            <label for="returnDate">{{ 'booking.fields.returnDate' | translate }} *</label>
-            <input
+            <ocr-input
+              [label]="'booking.fields.returnDate' | translate"
               type="date"
-              id="returnDate"
               formControlName="returnDate"
               [min]="minReturnDate()"
-              [class.invalid]="
-                bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched
-              "
+              [required]="true"
+              [error]="bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched ? ('booking.errors.returnDate' | translate) : null"
             />
-            @if (bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched) {
-              <span class="error-text">{{ 'booking.errors.returnDate' | translate }}</span>
-            }
           </div>
 
           @if (getRentalDays() > 0) {

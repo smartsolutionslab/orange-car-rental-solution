@@ -152,6 +152,12 @@ export const InBookingForm: Story = {
   render: () => ({
     props: {
       dateRange: { startDate: "", endDate: "" } as DateRange,
+      getDays: (range: DateRange) => {
+        if (!range.startDate || !range.endDate) return 0;
+        const start = new Date(range.startDate);
+        const end = new Date(range.endDate);
+        return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      },
     },
     template: `
       <div style="max-width: 500px; padding: 1.5rem; background: white; border: 1px solid #e5e7eb; border-radius: 0.5rem;">
@@ -175,15 +181,6 @@ export const InBookingForm: Story = {
         }
       </div>
     `,
-    props: {
-      dateRange: { startDate: "", endDate: "" } as DateRange,
-      getDays: (range: DateRange) => {
-        if (!range.startDate || !range.endDate) return 0;
-        const start = new Date(range.startDate);
-        const end = new Date(range.endDate);
-        return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-      },
-    },
     styles: [
       `
         :host ::ng-deep .form-input {

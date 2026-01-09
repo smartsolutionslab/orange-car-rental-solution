@@ -156,13 +156,14 @@
     <div class="controls-row">
       <!-- Sorting -->
       <div class="control-group">
-        <label>{{ 'common.sorting.label' | translate }}</label>
         <div class="sort-controls">
-          <select [(ngModel)]="sortBy" (change)="applyFilters()">
-            @for (option of sortOptions; track option.value) {
-              <option [value]="option.value">{{ option.labelKey | translate }}</option>
-            }
-          </select>
+          <ocr-select
+            [label]="'common.sorting.label' | translate"
+            [options]="sortOptions()"
+            [(ngModel)]="sortBy"
+            (selectChange)="applyFilters()"
+            leadingIcon="arrow-up-down"
+          />
           <button
             class="btn-icon"
             (click)="changeSortBy(sortBy())"
@@ -198,12 +199,13 @@
 
       <!-- Grouping -->
       <div class="control-group">
-        <label>{{ 'common.grouping.label' | translate }}</label>
-        <select [(ngModel)]="groupBy" (change)="changeGroupBy(groupBy())">
-          @for (option of groupOptions; track option.value) {
-            <option [value]="option.value">{{ option.labelKey | translate }}</option>
-          }
-        </select>
+        <ocr-select
+          [label]="'common.grouping.label' | translate"
+          [options]="groupOptions()"
+          [(ngModel)]="groupBy"
+          (selectChange)="changeGroupBy(groupBy())"
+          leadingIcon="layers"
+        />
       </div>
 
       <!-- Page Size -->

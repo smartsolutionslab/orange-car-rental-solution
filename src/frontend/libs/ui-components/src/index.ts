@@ -179,3 +179,10 @@ export {
   CollapsiblePanelComponent,
   type CollapsiblePanelChangeEvent,
 } from "./lib/collapsible-panel";
+
+// Generic Select Component
+export {
+  SelectComponent,
+  type SelectSize,
+  type SelectOption,
+} from "./lib/select";
