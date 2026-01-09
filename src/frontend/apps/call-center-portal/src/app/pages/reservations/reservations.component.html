@@ -250,65 +250,59 @@
                 {{ 'reservations.groups.bookings' | translate }}</span
               >
             </div>
-            <div class="reservations-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.location' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.price' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.status' | translate }}</th>
-                    <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @for (
-                    reservation of groupedReservations()[groupKey];
-                    track reservation.reservationId
-                  ) {
-                    <tr>
-                      <td>
-                        <span class="reservation-id" [title]="reservation.reservationId">
-                          {{ reservation.reservationId.substring(0, 8) }}...
-                        </span>
-                      </td>
-                      <td>{{ reservation.customerId.substring(0, 8) }}...</td>
-                      <td>{{ formatDate(reservation.pickupDate) }}</td>
-                      <td>{{ formatDate(reservation.returnDate) }}</td>
-                      <td>{{ reservation.pickupLocationCode }}</td>
-                      <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
-                      <td>
-                        <ui-status-badge
-                          type="reservation"
-                          [status]="reservation.status"
-                        ></ui-status-badge>
-                      </td>
-                      <td class="actions-cell">
-                        <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
-                          {{ 'common.actions.details' | translate }}
-                        </button>
-                        @if (canConfirm(reservation)) {
-                          <button
-                            class="btn-sm btn-success"
-                            (click)="confirmReservation(reservation)"
-                          >
-                            {{ 'common.actions.confirm' | translate }}
-                          </button>
-                        }
-                        @if (canCancel(reservation)) {
-                          <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
-                            {{ 'reservations.cancel.button' | translate }}
-                          </button>
-                        }
-                      </td>
-                    </tr>
+            <ocr-data-table
+              [data]="groupedReservations()[groupKey]"
+              [rowClickable]="true"
+              (rowClick)="viewDetails($event.item)"
+            >
+              <ng-template ocrDataTableColumn="reservationId" [header]="'reservations.table.reservationId' | translate" let-row>
+                <span class="reservation-id" [title]="row.reservationId">
+                  {{ row.reservationId.substring(0, 8) }}...
+                </span>
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="customerId" [header]="'reservations.table.customer' | translate" let-row>
+                {{ row.customerId.substring(0, 8) }}...
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="pickupDate" [header]="'reservations.table.pickupDate' | translate" let-row>
+                {{ formatDate(row.pickupDate) }}
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="returnDate" [header]="'reservations.table.returnDate' | translate" let-row>
+                {{ formatDate(row.returnDate) }}
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="pickupLocationCode" [header]="'reservations.table.location' | translate" let-row>
+                {{ row.pickupLocationCode }}
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="totalPriceGross" [header]="'reservations.table.price' | translate" let-row>
+                <span class="price-cell">{{ formatPrice(row.totalPriceGross) }}</span>
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="status" [header]="'reservations.table.status' | translate" let-row>
+                <ui-status-badge type="reservation" [status]="row.status"></ui-status-badge>
+              </ng-template>
+
+              <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
+                <div class="actions-cell" (click)="$event.stopPropagation()">
+                  <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
+                    {{ 'common.actions.details' | translate }}
+                  </button>
+                  @if (canConfirm(row)) {
+                    <button class="btn-sm btn-success" (click)="confirmReservation(row)">
+                      {{ 'common.actions.confirm' | translate }}
+                    </button>
                   }
-                </tbody>
-              </table>
-            </div>
+                  @if (canCancel(row)) {
+                    <button class="btn-sm btn-danger" (click)="showCancelDialog(row)">
+                      {{ 'reservations.cancel.button' | translate }}
+                    </button>
+                  }
+                </div>
+              </ng-template>
+            </ocr-data-table>
           </div>
         }
       </div>
@@ -316,59 +310,59 @@
 
     <!-- Ungrouped Display -->
     @else {
-      <div class="reservations-table">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">{{ 'reservations.table.reservationId' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.customer' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.pickupDate' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.returnDate' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.location' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.price' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.status' | translate }}</th>
-              <th scope="col">{{ 'reservations.table.actions' | translate }}</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (reservation of reservations(); track reservation.reservationId) {
-              <tr>
-                <td>
-                  <span class="reservation-id" [title]="reservation.reservationId">
-                    {{ reservation.reservationId.substring(0, 8) }}...
-                  </span>
-                </td>
-                <td>{{ reservation.customerId.substring(0, 8) }}...</td>
-                <td>{{ formatDate(reservation.pickupDate) }}</td>
-                <td>{{ formatDate(reservation.returnDate) }}</td>
-                <td>{{ reservation.pickupLocationCode }}</td>
-                <td class="price-cell">{{ formatPrice(reservation.totalPriceGross) }}</td>
-                <td>
-                  <ui-status-badge
-                    type="reservation"
-                    [status]="reservation.status"
-                  ></ui-status-badge>
-                </td>
-                <td class="actions-cell">
-                  <button class="btn-sm btn-secondary" (click)="viewDetails(reservation)">
-                    {{ 'common.actions.details' | translate }}
-                  </button>
-                  @if (canConfirm(reservation)) {
-                    <button class="btn-sm btn-success" (click)="confirmReservation(reservation)">
-                      {{ 'common.actions.confirm' | translate }}
-                    </button>
-                  }
-                  @if (canCancel(reservation)) {
-                    <button class="btn-sm btn-danger" (click)="showCancelDialog(reservation)">
-                      {{ 'reservations.cancel.button' | translate }}
-                    </button>
-                  }
-                </td>
-              </tr>
+      <ocr-data-table
+        [data]="reservations()"
+        [rowClickable]="true"
+        (rowClick)="viewDetails($event.item)"
+      >
+        <ng-template ocrDataTableColumn="reservationId" [header]="'reservations.table.reservationId' | translate" let-row>
+          <span class="reservation-id" [title]="row.reservationId">
+            {{ row.reservationId.substring(0, 8) }}...
+          </span>
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="customerId" [header]="'reservations.table.customer' | translate" let-row>
+          {{ row.customerId.substring(0, 8) }}...
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="pickupDate" [header]="'reservations.table.pickupDate' | translate" let-row>
+          {{ formatDate(row.pickupDate) }}
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="returnDate" [header]="'reservations.table.returnDate' | translate" let-row>
+          {{ formatDate(row.returnDate) }}
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="pickupLocationCode" [header]="'reservations.table.location' | translate" let-row>
+          {{ row.pickupLocationCode }}
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="totalPriceGross" [header]="'reservations.table.price' | translate" let-row>
+          <span class="price-cell">{{ formatPrice(row.totalPriceGross) }}</span>
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="status" [header]="'reservations.table.status' | translate" let-row>
+          <ui-status-badge type="reservation" [status]="row.status"></ui-status-badge>
+        </ng-template>
+
+        <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
+          <div class="actions-cell" (click)="$event.stopPropagation()">
+            <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
+              {{ 'common.actions.details' | translate }}
+            </button>
+            @if (canConfirm(row)) {
+              <button class="btn-sm btn-success" (click)="confirmReservation(row)">
+                {{ 'common.actions.confirm' | translate }}
+              </button>
             }
-          </tbody>
-        </table>
-      </div>
+            @if (canCancel(row)) {
+              <button class="btn-sm btn-danger" (click)="showCancelDialog(row)">
+                {{ 'reservations.cancel.button' | translate }}
+              </button>
+            }
+          </div>
+        </ng-template>
+      </ocr-data-table>
     }
 
     <!-- Pagination -->

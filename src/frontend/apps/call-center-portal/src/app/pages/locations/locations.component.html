@@ -159,38 +159,31 @@
         }
 
         @if (!loadingVehicles() && locationVehicles().length > 0) {
-          <div class="vehicles-table">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th scope="col">{{ 'vehicles.table.licensePlate' | translate }}</th>
-                  <th scope="col">{{ 'vehicles.table.vehicle' | translate }}</th>
-                  <th scope="col">{{ 'vehicles.table.category' | translate }}</th>
-                  <th scope="col">{{ 'vehicles.table.dailyRate' | translate }}</th>
-                  <th scope="col">{{ 'vehicles.table.status' | translate }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (vehicle of locationVehicles(); track vehicle.id) {
-                  <tr>
-                    <td>
-                      @if (vehicle.licensePlate) {
-                        <span class="license-plate">{{ vehicle.licensePlate }}</span>
-                      } @else {
-                        <span class="text-muted">-</span>
-                      }
-                    </td>
-                    <td>{{ vehicle.manufacturer }} {{ vehicle.model }}</td>
-                    <td>{{ vehicle.categoryCode }}</td>
-                    <td>{{ vehicle.dailyRateGross.toFixed(2) }} {{ vehicle.currency }}</td>
-                    <td>
-                      <ui-status-badge type="vehicle" [status]="vehicle.status"></ui-status-badge>
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+          <ocr-data-table [data]="locationVehicles()">
+            <ng-template ocrDataTableColumn="licensePlate" [header]="'vehicles.table.licensePlate' | translate" let-row>
+              @if (row.licensePlate) {
+                <span class="license-plate">{{ row.licensePlate }}</span>
+              } @else {
+                <span class="text-muted">-</span>
+              }
+            </ng-template>
+
+            <ng-template ocrDataTableColumn="vehicle" [header]="'vehicles.table.vehicle' | translate" let-row>
+              {{ row.manufacturer }} {{ row.model }}
+            </ng-template>
+
+            <ng-template ocrDataTableColumn="categoryCode" [header]="'vehicles.table.category' | translate" let-row>
+              {{ row.categoryCode }}
+            </ng-template>
+
+            <ng-template ocrDataTableColumn="dailyRateGross" [header]="'vehicles.table.dailyRate' | translate" let-row>
+              {{ row.dailyRateGross.toFixed(2) }} {{ row.currency }}
+            </ng-template>
+
+            <ng-template ocrDataTableColumn="status" [header]="'vehicles.table.status' | translate" let-row>
+              <ui-status-badge type="vehicle" [status]="row.status"></ui-status-badge>
+            </ng-template>
+          </ocr-data-table>
         }
 
         @if (!loadingVehicles() && locationVehicles().length === 0) {

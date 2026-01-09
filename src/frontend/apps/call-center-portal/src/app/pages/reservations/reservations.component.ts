@@ -28,6 +28,8 @@ import {
   InputComponent,
   TextareaComponent,
   SelectComponent,
+  DataTableComponent,
+  DataTableColumnDirective,
   type SelectOption,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
@@ -67,6 +69,8 @@ type GroupedReservations = Record<string, Reservation[]>;
     InputComponent,
     TextareaComponent,
     SelectComponent,
+    DataTableComponent,
+    DataTableColumnDirective,
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',

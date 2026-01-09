@@ -17,6 +17,8 @@ import {
   ErrorStateComponent,
   StatCardComponent,
   IconComponent,
+  DataTableComponent,
+  DataTableColumnDirective,
   getVehicleStatusClass,
   getVehicleStatusLabel,
 } from '@orange-car-rental/ui-components';
@@ -41,6 +43,8 @@ import type { LocationStatistics, VehicleDistribution } from '../../types';
     ErrorStateComponent,
     StatCardComponent,
     IconComponent,
+    DataTableComponent,
+    DataTableColumnDirective,
   ],
   templateUrl: './locations.component.html',
   styleUrl: './locations.component.css',
