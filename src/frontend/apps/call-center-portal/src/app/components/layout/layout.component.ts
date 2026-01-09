@@ -1,55 +1,39 @@
 import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { LayoutComponent as SharedLayoutComponent, type NavPosition } from '@orange-car-rental/ui-components';
 
 /**
- * Main layout component with navigation, content, and optional sidebar areas.
+ * Layout wrapper component for call center portal.
+ * Re-exports the shared LayoutComponent with the app-layout selector for backward compatibility.
  *
- * Usage:
- * ```html
- * <app-layout>
- *   <nav navigation>
- *     <!-- Navigation content here -->
- *   </nav>
- *
- *   <main content>
- *     <!-- Main content here -->
- *   </main>
- *
- *   <aside sidebar>
- *     <!-- Optional sidebar content here -->
- *   </aside>
- * </app-layout>
- * ```
+ * @see SharedLayoutComponent from @orange-car-rental/ui-components
  */
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule],
-  templateUrl: './layout.component.html',
-  styleUrl: './layout.component.css',
+  imports: [SharedLayoutComponent],
+  template: `
+    <ocr-layout
+      [showSidebar]="showSidebar()"
+      [navPosition]="navPosition()"
+      [fullWidth]="fullWidth()"
+      [maxWidth]="maxWidth()"
+    >
+      <ng-content select="[navigation]" navigation />
+      <ng-content select="[content]" content />
+      <ng-content select="[sidebar]" sidebar />
+    </ocr-layout>
+  `,
 })
 export class LayoutComponent {
-  /**
-   * Whether to show the sidebar area.
-   * Default: false
-   */
-  showSidebar = input<boolean>(false);
+  /** Whether to show the sidebar area. */
+  readonly showSidebar = input<boolean>(false);
 
-  /**
-   * Navigation position: 'top' (horizontal) or 'left' (vertical sidebar).
-   * Default: 'top'
-   */
-  navPosition = input<'top' | 'left'>('top');
+  /** Navigation position: 'top' (horizontal) or 'left' (vertical sidebar). */
+  readonly navPosition = input<NavPosition>('top');
 
-  /**
-   * Whether the layout should be full-width or contained.
-   * Default: true
-   */
-  fullWidth = input<boolean>(false);
+  /** Whether the layout should be full-width or contained. */
+  readonly fullWidth = input<boolean>(false);
 
-  /**
-   * Maximum width for contained layout (in pixels or CSS value).
-   * Default: '1400px'
-   */
-  maxWidth = input<string>('1400px');
+  /** Maximum width for contained layout (CSS value). */
+  readonly maxWidth = input<string>('1400px');
 }

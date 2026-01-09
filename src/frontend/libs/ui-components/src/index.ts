@@ -196,3 +196,6 @@ export {
 
 // Navigation Component
 export { NavigationComponent } from "./lib/navigation";
+
+// Layout Component
+export { LayoutComponent, type NavPosition } from "./lib/layout";
