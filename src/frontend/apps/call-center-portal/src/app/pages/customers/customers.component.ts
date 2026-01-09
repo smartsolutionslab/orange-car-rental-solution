@@ -15,6 +15,7 @@ import {
   StatusBadgeComponent,
   SuccessAlertComponent,
   IconComponent,
+  InputComponent,
 } from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -48,6 +49,7 @@ import type { LicenseNumber } from '@orange-car-rental/reservation-api';
     StatusBadgeComponent,
     SuccessAlertComponent,
     IconComponent,
+    InputComponent,
   ],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css',

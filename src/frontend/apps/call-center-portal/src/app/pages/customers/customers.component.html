@@ -11,38 +11,32 @@
   <!-- Search Form -->
   <div class="search-section">
     <div class="search-grid">
-      <div class="search-field">
-        <label for="searchEmail">{{ 'customers.search.email' | translate }}</label>
-        <input
-          type="email"
-          id="searchEmail"
-          [(ngModel)]="searchEmail"
-          [placeholder]="'common.placeholders.email' | translate"
-          (keyup.enter)="searchCustomers()"
-        />
-      </div>
+      <ocr-input
+        [label]="'customers.search.email' | translate"
+        type="email"
+        [(ngModel)]="searchEmail"
+        [placeholder]="'common.placeholders.email' | translate"
+        leadingIcon="mail"
+        (keyup.enter)="searchCustomers()"
+      />
 
-      <div class="search-field">
-        <label for="searchPhone">{{ 'customers.search.phone' | translate }}</label>
-        <input
-          type="tel"
-          id="searchPhone"
-          [(ngModel)]="searchPhone"
-          placeholder="+49 123 456789"
-          (keyup.enter)="searchCustomers()"
-        />
-      </div>
+      <ocr-input
+        [label]="'customers.search.phone' | translate"
+        type="tel"
+        [(ngModel)]="searchPhone"
+        placeholder="+49 123 456789"
+        leadingIcon="phone"
+        (keyup.enter)="searchCustomers()"
+      />
 
-      <div class="search-field">
-        <label for="searchLastName">{{ 'customers.search.lastName' | translate }}</label>
-        <input
-          type="text"
-          id="searchLastName"
-          [(ngModel)]="searchLastName"
-          [placeholder]="'common.placeholders.lastName' | translate"
-          (keyup.enter)="searchCustomers()"
-        />
-      </div>
+      <ocr-input
+        [label]="'customers.search.lastName' | translate"
+        type="text"
+        [(ngModel)]="searchLastName"
+        [placeholder]="'common.placeholders.lastName' | translate"
+        leadingIcon="user"
+        (keyup.enter)="searchCustomers()"
+      />
     </div>
 
     <div class="search-actions">
@@ -187,56 +181,41 @@
           </div>
         } @else {
           <div class="form-grid">
-            <div class="form-field">
-              <label for="editFirstName">{{ 'common.labels.firstName' | translate }} *</label>
-              <input
-                type="text"
-                id="editFirstName"
-                [ngModel]="editForm().firstName"
-                (ngModelChange)="updateEditForm('firstName', $event)"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="editLastName">{{ 'common.labels.lastName' | translate }} *</label>
-              <input
-                type="text"
-                id="editLastName"
-                [ngModel]="editForm().lastName"
-                (ngModelChange)="updateEditForm('lastName', $event)"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="editEmail">{{ 'common.labels.email' | translate }} *</label>
-              <input
-                type="email"
-                id="editEmail"
-                [ngModel]="editForm().email"
-                (ngModelChange)="updateEditForm('email', $event)"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="editPhone">{{ 'common.labels.phone' | translate }} *</label>
-              <input
-                type="tel"
-                id="editPhone"
-                [ngModel]="editForm().phoneNumber"
-                (ngModelChange)="updateEditForm('phoneNumber', $event)"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="editDateOfBirth">{{ 'common.labels.dateOfBirth' | translate }} *</label>
-              <input
-                type="date"
-                id="editDateOfBirth"
-                [ngModel]="editForm().dateOfBirth"
-                (ngModelChange)="updateEditForm('dateOfBirth', $event)"
-                required
-              />
-            </div>
+            <ocr-input
+              [label]="'common.labels.firstName' | translate"
+              type="text"
+              [ngModel]="editForm().firstName"
+              (ngModelChange)="updateEditForm('firstName', $event)"
+              [required]="true"
+            />
+            <ocr-input
+              [label]="'common.labels.lastName' | translate"
+              type="text"
+              [ngModel]="editForm().lastName"
+              (ngModelChange)="updateEditForm('lastName', $event)"
+              [required]="true"
+            />
+            <ocr-input
+              [label]="'common.labels.email' | translate"
+              type="email"
+              [ngModel]="editForm().email"
+              (ngModelChange)="updateEditForm('email', $event)"
+              [required]="true"
+            />
+            <ocr-input
+              [label]="'common.labels.phone' | translate"
+              type="tel"
+              [ngModel]="editForm().phoneNumber"
+              (ngModelChange)="updateEditForm('phoneNumber', $event)"
+              [required]="true"
+            />
+            <ocr-input
+              [label]="'common.labels.dateOfBirth' | translate"
+              type="date"
+              [ngModel]="editForm().dateOfBirth"
+              (ngModelChange)="updateEditForm('dateOfBirth', $event)"
+              [required]="true"
+            />
           </div>
         }
       </div>
@@ -266,42 +245,30 @@
           </div>
         } @else {
           <div class="form-grid">
-            <div class="form-field">
-              <label for="editStreet">{{ 'common.labels.street' | translate }}</label>
-              <input
-                type="text"
-                id="editStreet"
-                [ngModel]="editForm().street"
-                (ngModelChange)="updateEditForm('street', $event)"
-              />
-            </div>
-            <div class="form-field">
-              <label for="editCity">{{ 'common.labels.city' | translate }}</label>
-              <input
-                type="text"
-                id="editCity"
-                [ngModel]="editForm().city"
-                (ngModelChange)="updateEditForm('city', $event)"
-              />
-            </div>
-            <div class="form-field">
-              <label for="editPostalCode">{{ 'common.labels.postalCode' | translate }}</label>
-              <input
-                type="text"
-                id="editPostalCode"
-                [ngModel]="editForm().postalCode"
-                (ngModelChange)="updateEditForm('postalCode', $event)"
-              />
-            </div>
-            <div class="form-field">
-              <label for="editCountry">{{ 'common.labels.country' | translate }}</label>
-              <input
-                type="text"
-                id="editCountry"
-                [ngModel]="editForm().country"
-                (ngModelChange)="updateEditForm('country', $event)"
-              />
-            </div>
+            <ocr-input
+              [label]="'common.labels.street' | translate"
+              type="text"
+              [ngModel]="editForm().street"
+              (ngModelChange)="updateEditForm('street', $event)"
+            />
+            <ocr-input
+              [label]="'common.labels.city' | translate"
+              type="text"
+              [ngModel]="editForm().city"
+              (ngModelChange)="updateEditForm('city', $event)"
+            />
+            <ocr-input
+              [label]="'common.labels.postalCode' | translate"
+              type="text"
+              [ngModel]="editForm().postalCode"
+              (ngModelChange)="updateEditForm('postalCode', $event)"
+            />
+            <ocr-input
+              [label]="'common.labels.country' | translate"
+              type="text"
+              [ngModel]="editForm().country"
+              (ngModelChange)="updateEditForm('country', $event)"
+            />
           </div>
         }
       </div>
@@ -331,51 +298,31 @@
           </div>
         } @else {
           <div class="form-grid">
-            <div class="form-field">
-              <label for="editLicenseNumber"
-                >{{ 'customers.details.license.number' | translate }} *</label
-              >
-              <input
-                type="text"
-                id="editLicenseNumber"
-                [ngModel]="editForm().licenseNumber"
-                (ngModelChange)="updateEditForm('licenseNumber', $event)"
-                required
-              />
-            </div>
-            <div class="form-field">
-              <label for="editLicenseCountry">{{
-                'customers.details.license.issueCountry' | translate
-              }}</label>
-              <input
-                type="text"
-                id="editLicenseCountry"
-                [ngModel]="editForm().licenseIssueCountry"
-                (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
-              />
-            </div>
-            <div class="form-field">
-              <label for="editLicenseIssueDate">{{
-                'customers.details.license.issueDate' | translate
-              }}</label>
-              <input
-                type="date"
-                id="editLicenseIssueDate"
-                [ngModel]="editForm().licenseIssueDate"
-                (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
-              />
-            </div>
-            <div class="form-field">
-              <label for="editLicenseExpiryDate">{{
-                'customers.details.license.expiryDate' | translate
-              }}</label>
-              <input
-                type="date"
-                id="editLicenseExpiryDate"
-                [ngModel]="editForm().licenseExpiryDate"
-                (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
-              />
-            </div>
+            <ocr-input
+              [label]="'customers.details.license.number' | translate"
+              type="text"
+              [ngModel]="editForm().licenseNumber"
+              (ngModelChange)="updateEditForm('licenseNumber', $event)"
+              [required]="true"
+            />
+            <ocr-input
+              [label]="'customers.details.license.issueCountry' | translate"
+              type="text"
+              [ngModel]="editForm().licenseIssueCountry"
+              (ngModelChange)="updateEditForm('licenseIssueCountry', $event)"
+            />
+            <ocr-input
+              [label]="'customers.details.license.issueDate' | translate"
+              type="date"
+              [ngModel]="editForm().licenseIssueDate"
+              (ngModelChange)="updateEditForm('licenseIssueDate', $event)"
+            />
+            <ocr-input
+              [label]="'customers.details.license.expiryDate' | translate"
+              type="date"
+              [ngModel]="editForm().licenseExpiryDate"
+              (ngModelChange)="updateEditForm('licenseExpiryDate', $event)"
+            />
           </div>
         }
       </div>
