@@ -102,35 +102,25 @@
       <p>{{ 'bookingHistory.guestLookup.description' | translate }}</p>
 
       <form class="lookup-form" (ngSubmit)="onGuestLookup()">
-        <ui-form-field
+        <ocr-input
           [label]="'bookingHistory.guestLookup.reservationId' | translate"
-          inputId="reservationId"
+          type="text"
+          [(ngModel)]="guestLookupForm.reservationId"
+          name="reservationId"
+          [placeholder]="'bookingHistory.guestLookup.reservationIdPlaceholder' | translate"
           [required]="true"
-        >
-          <input
-            type="text"
-            id="reservationId"
-            name="reservationId"
-            [(ngModel)]="guestLookupForm.reservationId"
-            [placeholder]="'bookingHistory.guestLookup.reservationIdPlaceholder' | translate"
-            required
-          />
-        </ui-form-field>
+          leadingIcon="clipboard-list"
+        />
 
-        <ui-form-field
+        <ocr-input
           [label]="'common.labels.email' | translate"
-          inputId="email"
+          type="email"
+          [(ngModel)]="guestLookupForm.email"
+          name="email"
+          [placeholder]="'common.placeholders.email' | translate"
           [required]="true"
-        >
-          <input
-            type="email"
-            id="email"
-            name="email"
-            [(ngModel)]="guestLookupForm.email"
-            [placeholder]="'common.placeholders.email' | translate"
-            required
-          />
-        </ui-form-field>
+          leadingIcon="mail"
+        />
 
         @if (guestLookupError()) {
           <ui-error-alert [message]="guestLookupError()!"></ui-error-alert>

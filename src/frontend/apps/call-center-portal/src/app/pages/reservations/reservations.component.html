@@ -515,16 +515,13 @@
         {{ selectedReservation()!.reservationId.substring(0, 8) }}...
       </p>
 
-      <div class="form-group">
-        <label for="cancelReason">{{ 'reservations.cancel.reason' | translate }} *</label>
-        <textarea
-          id="cancelReason"
-          [(ngModel)]="cancelReason"
-          rows="4"
-          [placeholder]="'reservations.cancel.reasonPlaceholder' | translate"
-          class="form-control"
-        ></textarea>
-      </div>
+      <ocr-textarea
+        [label]="'reservations.cancel.reason' | translate"
+        [(ngModel)]="cancelReason"
+        [rows]="4"
+        [placeholder]="'reservations.cancel.reasonPlaceholder' | translate"
+        [required]="true"
+      />
 
       @if (error()) {
         <ui-error-state variant="inline" [message]="error()!"></ui-error-state>

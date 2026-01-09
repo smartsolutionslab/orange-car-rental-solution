@@ -26,6 +26,7 @@ import {
   ErrorAlertComponent,
   IconComponent,
   InputComponent,
+  TextareaComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { UI_TIMING, DEFAULT_PAGE_SIZE } from '../../constants/app.constants';
@@ -62,6 +63,7 @@ type GroupedReservations = Record<string, Reservation[]>;
     ErrorAlertComponent,
     IconComponent,
     InputComponent,
+    TextareaComponent,
   ],
   templateUrl: './reservations.component.html',
   styleUrl: './reservations.component.css',

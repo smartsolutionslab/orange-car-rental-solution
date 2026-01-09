@@ -23,12 +23,12 @@ import {
   ErrorStateComponent,
   ReservationCardComponent,
   DetailRowComponent,
-  FormFieldComponent,
   formatDateDE,
   formatPriceDE,
   getReservationStatusClass,
   getReservationStatusLabel,
   ErrorAlertComponent,
+  InputComponent,
 } from '@orange-car-rental/ui-components';
 import { ReservationService } from '../../services/reservation.service';
 import { AuthService } from '../../services/auth.service';
@@ -48,8 +48,8 @@ import type { GroupedReservations } from '../../types';
     ErrorStateComponent,
     ReservationCardComponent,
     DetailRowComponent,
-    FormFieldComponent,
     ErrorAlertComponent,
+    InputComponent,
     TranslateModule,
   ],
   templateUrl: './booking-history.component.html',
