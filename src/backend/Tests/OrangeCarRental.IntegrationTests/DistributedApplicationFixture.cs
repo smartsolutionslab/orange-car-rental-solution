@@ -285,12 +285,22 @@ public class DistributedApplicationFixture : IAsyncLifetime
         // This is needed because HTTP→HTTPS redirects (307) strip auth headers by default
         var handler = new AuthPreservingRedirectHandler();
 
-        // Get the base address from Aspire (prefer HTTPS to avoid redirect issues)
-        var baseAddress = app.GetEndpoint(resourceName, "https") ?? app.GetEndpoint(resourceName, "http");
+        // Get the base address from Aspire (prefer HTTPS but fall back to HTTP)
+        // GetEndpoint throws ArgumentException if endpoint doesn't exist, so we need to try/catch
+        Uri? baseAddress = null;
+        try
+        {
+            baseAddress = app.GetEndpoint(resourceName, "https");
+        }
+        catch (ArgumentException)
+        {
+            // HTTPS endpoint not found, try HTTP
+            baseAddress = app.GetEndpoint(resourceName, "http");
+        }
 
         var client = new HttpClient(handler)
         {
-            BaseAddress = new Uri(baseAddress.ToString()),
+            BaseAddress = baseAddress,
             Timeout = TimeSpan.FromMinutes(2)
         };
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
