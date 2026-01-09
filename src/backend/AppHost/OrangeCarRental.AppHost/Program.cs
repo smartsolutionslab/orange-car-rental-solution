@@ -67,6 +67,7 @@ var dbMigrator = builder.AddProject<Projects.OrangeCarRental_Database_Migrator>(
 // Must be defined before Reservations API since Reservations depends on it
 var pricingApi = builder
     .AddProject<OrangeCarRental_Pricing_Api>("pricing-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(pricingDb)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
@@ -81,6 +82,7 @@ var pricingApi = builder
 // Must be defined before Reservations API since Reservations depends on it
 var customersApi = builder
     .AddProject<OrangeCarRental_Customers_Api>("customers-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(customersDb)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
@@ -94,6 +96,7 @@ var customersApi = builder
 // Payments API - Payment processing and invoice management
 var paymentsApi = builder
     .AddProject<OrangeCarRental_Payments_Api>("payments-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(paymentsDb)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
@@ -107,6 +110,7 @@ var paymentsApi = builder
 // Notifications API - Email and SMS notification management
 var notificationsApi = builder
     .AddProject<OrangeCarRental_Notifications_Api>("notifications-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(notificationsDb)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
@@ -120,6 +124,7 @@ var notificationsApi = builder
 // Location API - Rental location management
 var locationsApi = builder
     .AddProject<OrangeCarRental_Location_Api>("locations-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(locationsDb)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
     .WithEnvironment("Authentication__Keycloak__Authority", () => $"{keycloak.GetEndpoint("http").Url}/realms/orange-car-rental")
@@ -134,6 +139,7 @@ var locationsApi = builder
 // Uses Service Discovery to communicate with Pricing and Customers APIs
 var reservationsApi = builder
     .AddProject<OrangeCarRental_Reservations_Api>("reservations-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(reservationsDb)
     .WithReference(pricingApi)
     .WithReference(customersApi)
@@ -152,6 +158,7 @@ var reservationsApi = builder
 // Uses Service Discovery to communicate with Reservations API for availability checks
 var fleetApi = builder
     .AddProject<OrangeCarRental_Fleet_Api>("fleet-api")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithReference(fleetDb)
     .WithReference(reservationsApi)
     .WithEnvironment("SEQ_URL", seq.GetEndpoint("ui"))
@@ -170,6 +177,7 @@ var fleetApi = builder
 // Note: This is different from service-to-service communication which uses WithReference()
 // Pass EndpointReference directly to WithEnvironment for proper URL resolution
 var apiGateway = builder.AddProject<OrangeCarRental_ApiGateway>("api-gateway")
+    .WithHttpEndpoint(name: "http") // Explicitly allocate dynamic HTTP port
     .WithEnvironment("FLEET_API_URL", fleetApi.GetEndpoint("http"))
     .WithEnvironment("RESERVATIONS_API_URL", reservationsApi.GetEndpoint("http"))
     .WithEnvironment("PRICING_API_URL", pricingApi.GetEndpoint("http"))
