@@ -173,3 +173,9 @@ export {
   type FormGroupLayout,
   type FormGroupSpacing,
 } from "./lib/form-group";
+
+// Collapsible Panel Component
+export {
+  CollapsiblePanelComponent,
+  type CollapsiblePanelChangeEvent,
+} from "./lib/collapsible-panel";

@@ -122,6 +122,41 @@ jobs:
         path: src/frontend/apps/${{ matrix.app }}/dist/
 
   # ============================================================================
+  # Storybook Build Job
+  # ============================================================================
+  build-storybook:
+    name: Build Storybook
+    runs-on: ubuntu-latest
+    needs: version
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v6
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v6
+      with:
+        node-version: '24.x'
+        cache: 'yarn'
+        cache-dependency-path: src/frontend/yarn.lock
+
+    - name: Install dependencies
+      working-directory: src/frontend
+      run: yarn install --frozen-lockfile
+      env:
+        PUPPETEER_SKIP_DOWNLOAD: 'true'
+
+    - name: Build Storybook
+      working-directory: src/frontend
+      run: yarn build:storybook
+
+    - name: Upload Storybook artifacts
+      uses: actions/upload-artifact@v6
+      with:
+        name: storybook-static
+        path: src/frontend/storybook-static/
+
+  # ============================================================================
   # Docker Build Job - with semantic versioning
   # ============================================================================
   build-docker-images:
