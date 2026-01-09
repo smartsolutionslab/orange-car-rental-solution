@@ -16,6 +16,8 @@ import {
   SuccessAlertComponent,
   IconComponent,
   InputComponent,
+  DataTableComponent,
+  DataTableColumnDirective,
 } from '@orange-car-rental/ui-components';
 import { CustomerService } from '../../services/customer.service';
 import { ReservationService } from '../../services/reservation.service';
@@ -50,6 +52,8 @@ import type { LicenseNumber } from '@orange-car-rental/reservation-api';
     SuccessAlertComponent,
     IconComponent,
     InputComponent,
+    DataTableComponent,
+    DataTableColumnDirective,
   ],
   templateUrl: './customers.component.html',
   styleUrl: './customers.component.css',

@@ -68,43 +68,46 @@
       }}</span>
     </div>
 
-    <div class="table-container">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th scope="col">{{ 'customers.table.name' | translate }}</th>
-            <th scope="col">{{ 'customers.table.email' | translate }}</th>
-            <th scope="col">{{ 'customers.table.phone' | translate }}</th>
-            <th scope="col">{{ 'customers.table.dateOfBirth' | translate }}</th>
-            <th scope="col">{{ 'customers.table.city' | translate }}</th>
-            <th scope="col">{{ 'customers.table.registered' | translate }}</th>
-            <th scope="col">{{ 'customers.table.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (customer of customers(); track customer.id) {
-            <tr>
-              <td>{{ customer.firstName }} {{ customer.lastName }}</td>
-              <td>{{ customer.email }}</td>
-              <td>{{ customer.phoneNumber }}</td>
-              <td>{{ formatDate(customer.dateOfBirth) }}</td>
-              <td>{{ customer.city }}</td>
-              <td>{{ formatDate(customer.createdAt) }}</td>
-              <td>
-                <button
-                  class="btn-icon"
-                  (click)="viewDetails(customer)"
-                  [title]="'common.actions.viewDetails' | translate"
-                  [attr.aria-label]="'common.actions.viewDetails' | translate"
-                >
-                  <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+    <ocr-data-table
+      [data]="customers()"
+      [rowClickable]="true"
+      (rowClick)="viewDetails($event.item)"
+    >
+      <ng-template ocrDataTableColumn="name" [header]="'customers.table.name' | translate" let-row>
+        {{ row.firstName }} {{ row.lastName }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="email" [header]="'customers.table.email' | translate" let-row>
+        {{ row.email }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="phoneNumber" [header]="'customers.table.phone' | translate" let-row>
+        {{ row.phoneNumber }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="dateOfBirth" [header]="'customers.table.dateOfBirth' | translate" let-row>
+        {{ formatDate(row.dateOfBirth) }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="city" [header]="'customers.table.city' | translate" let-row>
+        {{ row.city }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="createdAt" [header]="'customers.table.registered' | translate" let-row>
+        {{ formatDate(row.createdAt) }}
+      </ng-template>
+
+      <ng-template ocrDataTableColumn="actions" [header]="'customers.table.actions' | translate" let-row>
+        <button
+          class="btn-icon"
+          (click)="viewDetails(row); $event.stopPropagation()"
+          [title]="'common.actions.viewDetails' | translate"
+          [attr.aria-label]="'common.actions.viewDetails' | translate"
+        >
+          <lib-icon name="eye-filled" variant="filled" size="sm" aria-hidden="true" />
+        </button>
+      </ng-template>
+    </ocr-data-table>
   }
 
   <!-- No Results -->
