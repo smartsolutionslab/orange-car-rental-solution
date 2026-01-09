@@ -193,3 +193,6 @@ export {
   type VehicleCardVariant,
   type PriceDifference,
 } from "./lib/vehicle-card";
+
+// Navigation Component
+export { NavigationComponent } from "./lib/navigation";

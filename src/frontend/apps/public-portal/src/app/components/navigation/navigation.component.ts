@@ -1,11 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { TranslateModule } from '@ngx-translate/core';
+import { NavigationComponent as SharedNavigationComponent } from '@orange-car-rental/ui-components';
 import { AuthService } from '../../services/auth.service';
-import { ICON_LOGIN, ICON_LOGOUT } from '@orange-car-rental/util';
-import { LanguageSwitcherComponent } from '@orange-car-rental/i18n';
 import { PUBLIC_PORTAL_NAV_ITEMS } from '../../constants/navigation.config';
 
 /**
@@ -18,9 +14,17 @@ import { PUBLIC_PORTAL_NAV_ITEMS } from '../../constants/navigation.config';
 @Component({
   selector: 'app-navigation',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive, CommonModule, TranslateModule, LanguageSwitcherComponent],
-  templateUrl: './navigation.component.html',
-  styleUrl: './navigation.component.css',
+  imports: [SharedNavigationComponent],
+  template: `
+    <ocr-navigation
+      [title]="'Orange Car Rental'"
+      [navItems]="navItems()"
+      [isAuthenticated]="isAuthenticated()"
+      [username]="username()"
+      (loginClick)="login()"
+      (logoutClick)="logout()"
+    />
+  `,
 })
 export class NavigationComponent implements OnInit {
   private readonly authService = inject(AuthService);
@@ -49,12 +53,6 @@ export class NavigationComponent implements OnInit {
       return true;
     });
   });
-
-  /** Icons for template access */
-  protected readonly icons = {
-    login: ICON_LOGIN,
-    logout: ICON_LOGOUT,
-  };
 
   ngOnInit(): void {
     this.updateAuthState();
