@@ -82,25 +82,31 @@
 
       <!-- Customer ID Filter -->
       <div class="filter-group">
-        <label for="customerFilter">{{ 'reservations.filters.customerId' | translate }}</label>
-        <input
+        <ocr-input
+          [label]="'reservations.filters.customerId' | translate"
           type="text"
-          id="customerFilter"
           [(ngModel)]="searchCustomerId"
           [placeholder]="'reservations.filters.customerIdPlaceholder' | translate"
+          leadingIcon="user"
         />
       </div>
 
       <!-- Pickup Date From -->
       <div class="filter-group">
-        <label for="dateFromFilter">{{ 'reservations.filters.pickupFrom' | translate }}</label>
-        <input type="date" id="dateFromFilter" [(ngModel)]="searchPickupDateFrom" />
+        <ocr-input
+          [label]="'reservations.filters.pickupFrom' | translate"
+          type="date"
+          [(ngModel)]="searchPickupDateFrom"
+        />
       </div>
 
       <!-- Pickup Date To -->
       <div class="filter-group">
-        <label for="dateToFilter">{{ 'reservations.filters.pickupTo' | translate }}</label>
-        <input type="date" id="dateToFilter" [(ngModel)]="searchPickupDateTo" />
+        <ocr-input
+          [label]="'reservations.filters.pickupTo' | translate"
+          type="date"
+          [(ngModel)]="searchPickupDateTo"
+        />
       </div>
 
       <!-- Location Filter -->
@@ -115,25 +121,25 @@
 
       <!-- Min Price Filter -->
       <div class="filter-group">
-        <label for="minPriceFilter">{{ 'reservations.filters.minPrice' | translate }}</label>
-        <input
+        <ocr-input
+          [label]="'reservations.filters.minPrice' | translate"
           type="number"
-          id="minPriceFilter"
           [(ngModel)]="searchMinPrice"
           placeholder="0"
           min="0"
+          leadingIcon="currency-euro"
         />
       </div>
 
       <!-- Max Price Filter -->
       <div class="filter-group">
-        <label for="maxPriceFilter">{{ 'reservations.filters.maxPrice' | translate }}</label>
-        <input
+        <ocr-input
+          [label]="'reservations.filters.maxPrice' | translate"
           type="number"
-          id="maxPriceFilter"
           [(ngModel)]="searchMaxPrice"
           placeholder="1000"
           min="0"
+          leadingIcon="currency-euro"
         />
       </div>
 
