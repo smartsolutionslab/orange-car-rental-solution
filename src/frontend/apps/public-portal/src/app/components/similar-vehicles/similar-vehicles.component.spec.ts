@@ -197,18 +197,18 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should render vehicle cards for each similar vehicle', () => {
-      const cards = fixture.nativeElement.querySelectorAll('.vehicle-card');
+      const cards = fixture.nativeElement.querySelectorAll('ocr-vehicle-card');
       expect(cards.length).toBe(2);
     });
 
     it('should display vehicle name in card', () => {
-      const firstCard = fixture.nativeElement.querySelector('.vehicle-card');
+      const firstCard = fixture.nativeElement.querySelector('ocr-vehicle-card');
       const name = firstCard.querySelector('.vehicle-name');
       expect(name.textContent).toContain('Opel Astra');
     });
 
     it('should display "Book This Instead" button', () => {
-      const button = fixture.nativeElement.querySelector('.book-instead-button');
+      const button = fixture.nativeElement.querySelector('ocr-vehicle-card .action-button');
       expect(button).toBeTruthy();
       // With TranslateModule.forRoot(), the translation key is rendered
       expect(button.textContent).toContain('similarVehicles.bookInstead');
@@ -223,12 +223,12 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should display vehicle specifications', () => {
-      const specs = fixture.nativeElement.querySelectorAll('.spec-item');
+      const specs = fixture.nativeElement.querySelectorAll('ocr-vehicle-card .spec');
       expect(specs.length).toBeGreaterThan(0);
     });
 
     it('should show price comparison', () => {
-      const priceComparison = fixture.nativeElement.querySelector('.price-comparison');
+      const priceComparison = fixture.nativeElement.querySelector('ocr-vehicle-card .price-comparison');
       expect(priceComparison).toBeTruthy();
     });
   });

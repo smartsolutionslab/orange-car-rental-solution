@@ -12,9 +12,9 @@ import { LayoutComponent } from './layout.component';
       [fullWidth]="fullWidth"
       [maxWidth]="maxWidth"
     >
-      <div class="layout-navigation">Navigation Content</div>
-      <div class="layout-content">Main Content</div>
-      <div class="layout-sidebar">Sidebar Content</div>
+      <div navigation class="layout-navigation">Navigation Content</div>
+      <div content class="layout-content">Main Content</div>
+      <div sidebar class="layout-sidebar">Sidebar Content</div>
     </app-layout>
   `,
 })

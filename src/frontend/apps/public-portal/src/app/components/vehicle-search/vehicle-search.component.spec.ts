@@ -196,16 +196,12 @@ describe('VehicleSearchComponent', () => {
     });
 
     it('should render pickup date input', () => {
-      const input = fixture.nativeElement.querySelector(
-        'input[type="date"][formControlName="pickupDate"]',
-      );
+      const input = fixture.nativeElement.querySelector('ocr-input[formControlName="pickupDate"]');
       expect(input).toBeTruthy();
     });
 
     it('should render return date input', () => {
-      const input = fixture.nativeElement.querySelector(
-        'input[type="date"][formControlName="returnDate"]',
-      );
+      const input = fixture.nativeElement.querySelector('ocr-input[formControlName="returnDate"]');
       expect(input).toBeTruthy();
     });
 

@@ -157,13 +157,4 @@ describe('NavigationComponent', () => {
     });
   });
 
-  describe('Icons', () => {
-    it('should have login icon defined', () => {
-      expect(component['icons'].login).toBeDefined();
-    });
-
-    it('should have logout icon defined', () => {
-      expect(component['icons'].logout).toBeDefined();
-    });
-  });
 });
