@@ -28,7 +28,7 @@ public class DistributedApplicationFixture : IAsyncLifetime
 {
     private DistributedApplication? app;
     private KeycloakTokenProvider? tokenProvider;
-    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(8);
+    private readonly TimeSpan resourceStartTimeout = TimeSpan.FromMinutes(10); // Increased for CI environments
     private string? sqlConnectionString;
 
     /// <summary>
@@ -135,10 +135,22 @@ public class DistributedApplicationFixture : IAsyncLifetime
 
         // First, wait for db-migrator to complete (it's a one-shot executable)
         Console.WriteLine("Waiting for 'db-migrator' to complete...");
-        await resourceNotificationService
-            .WaitForResourceAsync("db-migrator", KnownResourceStates.Finished)
-            .WaitAsync(resourceStartTimeout, cancellationToken);
-        Console.WriteLine("'db-migrator' completed successfully");
+        try
+        {
+            await resourceNotificationService
+                .WaitForResourceAsync("db-migrator", KnownResourceStates.Finished)
+                .WaitAsync(resourceStartTimeout, cancellationToken);
+            Console.WriteLine("'db-migrator' completed successfully");
+        }
+        catch (TimeoutException)
+        {
+            Console.WriteLine("ERROR: Timed out waiting for 'db-migrator' to complete. Check database connectivity.");
+            throw;
+        }
+
+        // Add a small delay to ensure databases are fully available after migration
+        Console.WriteLine("Waiting 5 seconds for databases to stabilize...");
+        await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
 
         // Wait for the API resources to be in Running state
         var resourcesToWait = new[] { "api-gateway", "fleet-api", "reservations-api", "pricing-api", "customers-api" };
@@ -146,10 +158,18 @@ public class DistributedApplicationFixture : IAsyncLifetime
         foreach (var resourceName in resourcesToWait)
         {
             Console.WriteLine($"Waiting for resource '{resourceName}' to enter Running state...");
-            await resourceNotificationService
-                .WaitForResourceAsync(resourceName, KnownResourceStates.Running)
-                .WaitAsync(resourceStartTimeout, cancellationToken);
-            Console.WriteLine($"Resource '{resourceName}' is now Running");
+            try
+            {
+                await resourceNotificationService
+                    .WaitForResourceAsync(resourceName, KnownResourceStates.Running)
+                    .WaitAsync(resourceStartTimeout, cancellationToken);
+                Console.WriteLine($"Resource '{resourceName}' is now Running");
+            }
+            catch (TimeoutException)
+            {
+                Console.WriteLine($"ERROR: Timed out waiting for '{resourceName}' to enter Running state. Possible port conflict or startup failure.");
+                throw;
+            }
         }
 
         // Additional health check to ensure APIs are fully ready
