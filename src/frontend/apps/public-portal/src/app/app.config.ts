@@ -41,9 +41,7 @@ const urlCondition = createInterceptorCondition<IncludeBearerTokenCondition>({
  * Returns HTTP interceptors. Only includes bearer token interceptor when Keycloak is enabled.
  */
 function getHttpInterceptors(): HttpInterceptorFn[] {
-  if (!isKeycloakEnabled) {
-    return [];
-  }
+  if (!isKeycloakEnabled) return [];
   return [includeBearerTokenInterceptor];
 }
 

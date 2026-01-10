@@ -58,9 +58,7 @@ export class DateFormatter {
    */
   static parseGermanDate(dateString: string): Date {
     const parts = dateString.split(".");
-    if (parts.length !== 3) {
-      throw new Error("Invalid German date format. Expected DD.MM.YYYY");
-    }
+    if (parts.length !== 3) throw new Error("Invalid German date format. Expected DD.MM.YYYY");
     const day = parseInt(parts[0], 10);
     const month = parseInt(parts[1], 10) - 1; // Months are 0-indexed
     const year = parseInt(parts[2], 10);

@@ -108,9 +108,7 @@ export class BookingHistoryComponent implements OnInit {
     const authenticated = this.authService.isAuthenticated();
     this.isAuthenticated.set(authenticated);
 
-    if (authenticated) {
-      await this.loadCustomerReservations();
-    }
+    if (authenticated) await this.loadCustomerReservations();
   }
 
   async loadCustomerReservations() {

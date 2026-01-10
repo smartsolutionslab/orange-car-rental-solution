@@ -483,9 +483,7 @@ export class ReservationsComponent implements OnInit {
    */
   protected executeConfirmation(): void {
     const reservation = this.selectedReservation();
-    if (!reservation) {
-      return;
-    }
+    if (!reservation) return;
 
     this.actionInProgress.set(true);
     this.error.set(null);

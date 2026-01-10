@@ -463,9 +463,7 @@ export class BookingComponent implements OnInit {
    */
   private updateProfileAfterBooking(formValue: BookingFormValue): void {
     const profile = this.customerProfile();
-    if (!profile) {
-      return;
-    }
+    if (!profile) return;
 
     const updateRequest: UpdateCustomerProfileRequest = {
       firstName: formValue.firstName as FirstName,

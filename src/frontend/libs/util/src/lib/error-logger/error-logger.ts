@@ -99,19 +99,13 @@ export function getErrorMessage(
     };
 
     // Try to extract message from nested error object (API response)
-    if (httpError.error?.message) {
-      return httpError.error.message;
-    }
+    if (httpError.error?.message) return httpError.error.message;
 
     // Try direct message property
-    if (httpError.message) {
-      return httpError.message;
-    }
+    if (httpError.message) return httpError.message;
 
     // Return status-based message for HTTP errors
-    if (httpError.status) {
-      return getHttpStatusMessage(httpError.status, defaultMessage);
-    }
+    if (httpError.status) return getHttpStatusMessage(httpError.status, defaultMessage);
   }
 
   return defaultMessage;

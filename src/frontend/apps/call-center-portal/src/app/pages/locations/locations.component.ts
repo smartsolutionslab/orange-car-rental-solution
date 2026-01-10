@@ -167,9 +167,7 @@ export class LocationsComponent implements OnInit {
    */
   protected getVehicleDistribution(locationCode: string): VehicleDistribution {
     const stats = this.locationStats().get(locationCode);
-    if (!stats) {
-      return { available: 0, rented: 0, maintenance: 0, outOfService: 0, reserved: 0 };
-    }
+    if (!stats) return { available: 0, rented: 0, maintenance: 0, outOfService: 0, reserved: 0 };
 
     return {
       available: stats.availableVehicles,

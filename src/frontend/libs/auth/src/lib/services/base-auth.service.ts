@@ -108,14 +108,10 @@ export class BaseAuthService {
    */
   getPostLoginRedirect(returnUrl?: string | null): string {
     // If there's a specific return URL (not root or login), use it
-    if (returnUrl && returnUrl !== "/" && returnUrl !== "/login") {
-      return returnUrl;
-    }
+    if (returnUrl && returnUrl !== "/" && returnUrl !== "/login") return returnUrl;
 
     // Role-based default redirect
-    if (this.isCallCenterAgent()) {
-      return "/admin";
-    }
+    if (this.isCallCenterAgent()) return "/admin";
 
     return "/my-bookings";
   }

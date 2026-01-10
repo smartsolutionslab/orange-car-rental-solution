@@ -124,9 +124,7 @@ export class VehicleSearchComponent implements OnInit {
    * Handle search form submission (day-wise rentals)
    */
   protected onSearch(): void {
-    if (this.searchForm.invalid) {
-      return;
-    }
+    if (this.searchForm.invalid) return;
 
     const formValue = this.searchForm.value;
 

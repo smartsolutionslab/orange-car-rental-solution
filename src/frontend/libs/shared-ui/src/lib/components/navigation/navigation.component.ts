@@ -96,19 +96,13 @@ export class NavigationComponent {
 
     return items.filter((item) => {
       // Hide items that require auth when not authenticated
-      if (item.requiresAuth && !authenticated) {
-        return false;
-      }
+      if (item.requiresAuth && !authenticated) return false;
       // Hide items that should be hidden when authenticated
-      if (item.hideWhenAuth && authenticated) {
-        return false;
-      }
+      if (item.hideWhenAuth && authenticated) return false;
       // Check role-based access
       if (item.roles && item.roles.length > 0) {
         const hasRequiredRole = item.roles.some((role) => roles.includes(role));
-        if (!hasRequiredRole) {
-          return false;
-        }
+        if (!hasRequiredRole) return false;
       }
       return true;
     });
