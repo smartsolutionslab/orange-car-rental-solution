@@ -1,7 +1,8 @@
 /**
  * Location model representing a rental location
+ * Matches backend LocationDto structure
  */
-import type { PostalCode } from "@orange-car-rental/shared";
+import type { PostalCode, EmailAddress, PhoneNumber } from "@orange-car-rental/shared";
 import type { LocationCode } from "./location-code.type";
 import type { LocationName } from "./location-name.type";
 import type { CityName } from "./city-name.type";
@@ -16,5 +17,8 @@ export type Location = {
   readonly city: CityName;
   readonly postalCode: PostalCode;
   readonly fullAddress: FullAddress;
+  readonly openingHours?: string;
+  readonly phone?: PhoneNumber;
+  readonly email?: EmailAddress;
   readonly status?: LocationStatus;
 };

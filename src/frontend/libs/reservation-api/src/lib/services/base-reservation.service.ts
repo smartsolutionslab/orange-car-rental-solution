@@ -94,7 +94,7 @@ export class BaseReservationService {
     reservationId: ReservationId,
     reason: string,
   ): Observable<void> {
-    const request: CancelReservationRequest = { reason };
+    const request: CancelReservationRequest = { cancellationReason: reason };
     return this.http.put<void>(
       `${this.reservationsUrl}/${reservationId}/cancel`,
       request,

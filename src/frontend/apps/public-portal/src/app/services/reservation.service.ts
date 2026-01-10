@@ -64,7 +64,7 @@ export class ReservationService {
    * @returns Observable of void (success/failure)
    */
   cancelReservation(reservationId: ReservationId, reason: string): Observable<void> {
-    const request: CancelReservationRequest = { reason };
+    const request: CancelReservationRequest = { cancellationReason: reason };
     return this.http.put<void>(`${this.apiUrl}/${reservationId}/cancel`, request);
   }
 

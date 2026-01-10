@@ -17,7 +17,10 @@ public sealed class GetAllLocationsQueryHandler(ILocationRepository locations)
         {
             Code = l.Code.Value,
             Name = l.Name.Value,
-            Address = l.Address.ToString(),
+            Street = l.Address.Street,
+            City = l.Address.City,
+            PostalCode = l.Address.PostalCode,
+            FullAddress = l.Address.ToString(),
             OpeningHours = l.OpeningHours.Value,
             Phone = l.Contact.Phone,
             Email = l.Contact.Email,

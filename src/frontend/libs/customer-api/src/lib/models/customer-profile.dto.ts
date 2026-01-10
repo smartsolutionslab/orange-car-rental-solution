@@ -1,6 +1,6 @@
 /**
  * Complete customer profile
- * Used for getting and updating customer information
+ * Matches backend CustomerDto structure
  */
 import type {
   ISODateString,
@@ -19,11 +19,16 @@ export type CustomerProfile = {
   readonly id: CustomerId;
   readonly firstName: FirstName;
   readonly lastName: LastName;
+  readonly fullName?: string;
   readonly email: EmailAddress;
   readonly phoneNumber: PhoneNumber;
+  readonly phoneNumberFormatted?: string;
   readonly dateOfBirth: ISODateString;
-  readonly address: AddressDetails;
+  readonly age?: number;
+  readonly address?: AddressDetails;
   readonly driversLicense?: DriversLicenseDetails;
-  readonly createdAt?: ISODateString;
-  readonly updatedAt?: ISODateString;
+  readonly status?: string;
+  readonly canMakeReservation?: boolean;
+  readonly registeredAtUtc?: ISODateString;
+  readonly updatedAtUtc?: ISODateString;
 };
