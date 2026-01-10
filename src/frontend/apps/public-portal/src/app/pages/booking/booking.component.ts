@@ -146,9 +146,7 @@ export class BookingComponent implements OnInit {
   ngOnInit(): void {
     // Check if user is authenticated and load their profile
     this.isAuthenticated.set(this.authService.isAuthenticated());
-    if (this.isAuthenticated()) {
-      this.loadCustomerProfile();
-    }
+    if (this.isAuthenticated()) this.loadCustomerProfile();
 
     // Get vehicle ID from route query params
     this.route.queryParams.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {

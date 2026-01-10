@@ -54,9 +54,7 @@ export class NavigationComponent implements OnInit {
   private updateAuthState(): void {
     const authenticated = this.authService.isAuthenticated();
     this.isAuthenticated.set(authenticated);
-    if (authenticated) {
-      this.username.set(this.authService.getUsername());
-    }
+    if (authenticated) this.username.set(this.authService.getUsername());
   }
 
   /**

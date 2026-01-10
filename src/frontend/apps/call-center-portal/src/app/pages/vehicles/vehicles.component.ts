@@ -202,15 +202,9 @@ export class VehiclesComponent implements OnInit {
       categoryCode?: CategoryCode;
     } = {};
 
-    if (this.searchStatus()) {
-      query.status = this.searchStatus() as VehicleStatus;
-    }
-    if (this.searchLocation()) {
-      query.locationCode = this.searchLocation() as LocationCode;
-    }
-    if (this.searchCategory()) {
-      query.categoryCode = this.searchCategory() as CategoryCode;
-    }
+    if (this.searchStatus()) query.status = this.searchStatus() as VehicleStatus;
+    if (this.searchLocation()) query.locationCode = this.searchLocation() as LocationCode;
+    if (this.searchCategory()) query.categoryCode = this.searchCategory() as CategoryCode;
 
     this.vehicleService
       .searchVehicles(query)

@@ -464,9 +464,7 @@ export class ReservationsComponent implements OnInit {
    * Show confirmation dialog for reservation
    */
   protected confirmReservation(reservation: Reservation): void {
-    if (!this.canConfirm(reservation)) {
-      return;
-    }
+    if (!this.canConfirm(reservation)) return;
     this.selectedReservation.set(reservation);
     this.showConfirmModal.set(true);
   }
@@ -512,9 +510,7 @@ export class ReservationsComponent implements OnInit {
    * Show cancel reservation modal
    */
   protected showCancelDialog(reservation: Reservation): void {
-    if (!this.canCancel(reservation)) {
-      return;
-    }
+    if (!this.canCancel(reservation)) return;
 
     this.selectedReservation.set(reservation);
     this.cancelReason.set('');

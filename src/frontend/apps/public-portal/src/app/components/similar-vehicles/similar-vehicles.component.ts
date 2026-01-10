@@ -30,9 +30,7 @@ export class SimilarVehiclesComponent {
    * Calculate price difference between current and alternative vehicle
    */
   protected getPriceDifference(vehicle: Vehicle): { amount: number; text: string } {
-    if (!this.currentVehicle()) {
-      return { amount: 0, text: '' };
-    }
+    if (!this.currentVehicle()) return { amount: 0, text: '' };
 
     const currentPrice = this.currentVehicle()!.dailyRateGross;
     const alternativePrice = vehicle.dailyRateGross;
@@ -65,9 +63,7 @@ export class SimilarVehiclesComponent {
    * Get similarity reason for the vehicle
    */
   protected getSimilarityReason(vehicle: Vehicle): string {
-    if (!this.currentVehicle()) {
-      return '';
-    }
+    if (!this.currentVehicle()) return '';
 
     const reasons: string[] = [];
 

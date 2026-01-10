@@ -94,9 +94,7 @@ class E2EErrorHandler implements ErrorHandler {
     }
     // Also check for nested errors
     const anyError = error as { rejection?: unknown; ngOriginalError?: unknown };
-    if (anyError.rejection) {
-      console.error('E2E Error Handler - Rejection:', anyError.rejection);
-    }
+    if (anyError.rejection) console.error('E2E Error Handler - Rejection:', anyError.rejection);
     if (anyError.ngOriginalError) {
       console.error('E2E Error Handler - ngOriginalError:', anyError.ngOriginalError);
     }
