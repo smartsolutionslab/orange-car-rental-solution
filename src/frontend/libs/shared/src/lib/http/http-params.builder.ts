@@ -26,9 +26,7 @@ export const HttpParamsBuilder = {
    * @returns HttpParams instance
    */
   fromObject<T extends object>(params: T | undefined | null): HttpParams {
-    if (!params) {
-      return new HttpParams();
-    }
+    if (!params) return new HttpParams();
 
     return Object.entries(params).reduce((httpParams, [key, value]) => {
       if (value === null || value === undefined || value === "") {
@@ -50,9 +48,7 @@ export const HttpParamsBuilder = {
     params: T | undefined | null,
     keys: (keyof T)[],
   ): HttpParams {
-    if (!params) {
-      return new HttpParams();
-    }
+    if (!params) return new HttpParams();
 
     return keys.reduce((httpParams, key) => {
       const value = params[key];
@@ -75,9 +71,7 @@ export const HttpParamsBuilder = {
     existing: HttpParams,
     params: T | undefined | null,
   ): HttpParams {
-    if (!params) {
-      return existing;
-    }
+    if (!params) return existing;
 
     return Object.entries(params).reduce((httpParams, [key, value]) => {
       if (value === null || value === undefined || value === "") {
