@@ -30,6 +30,8 @@ if (this.loading()) return;
 if (!hasRequiredRole) return false;
 ```
 
+**Frontend enforcement:** ESLint `curly: ["error", "multi-or-nest", "consistent"]` in `eslint.base.config.js`
+
 **Only use brackets when:**
 - Line is too long and needs breaking
 - Multiple statements inside the if block

@@ -4,6 +4,7 @@ using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Exceptions;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Infrastructure.Extensions;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Infrastructure.Persistence;
 
@@ -91,7 +92,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
         if (reservation != null) Reservations.Remove(reservation);
     }
 
-    public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
+    public async Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(
        BookingPeriod period,
         CancellationToken cancellationToken = default)
     {
@@ -105,7 +106,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
                 // reservation pickup <= requested return AND reservation return >= requested pickup
                 r.Period.PickupDate <= period.ReturnDate &&
                 r.Period.ReturnDate >= period.PickupDate)
-            .Select(r => r.VehicleIdentifier.Value) // Extract Guid from value object
+            .Select(r => r.VehicleIdentifier)
             .Distinct()
             .ToListAsync(cancellationToken);
 

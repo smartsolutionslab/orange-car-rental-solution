@@ -20,8 +20,11 @@ public sealed class GetVehicleAvailabilityQueryHandler(IReservationRepository re
             BookingPeriod.Of(pickupDate, returnDate),
             cancellationToken);
 
+        // Convert to Guids for API response
+        var vehicleIdGuids = bookedVehicleIds.Select(id => id.Value).ToList();
+
         return new GetVehicleAvailabilityResult(
-            bookedVehicleIds,
+            vehicleIdGuids,
             pickupDate,
             returnDate);
     }

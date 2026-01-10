@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
 
 namespace SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation;
 
@@ -53,7 +54,7 @@ public interface IReservationRepository
     /// <param name="period">Start date and end date of the period.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>List of vehicle IDs that have active or confirmed reservations during the period.</returns>
-    Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(
+    Task<IReadOnlyList<VehicleIdentifier>> GetBookedVehicleIdsAsync(
         BookingPeriod period,
         CancellationToken cancellationToken = default);
 
