@@ -39,25 +39,17 @@ export class BaseVehicleService {
     if (query) {
       if (query.pickupDate) params = params.set("pickupDate", query.pickupDate);
       if (query.returnDate) params = params.set("returnDate", query.returnDate);
-      if (query.locationCode)
-        params = params.set("locationCode", query.locationCode);
-      if (query.categoryCode)
-        params = params.set("categoryCode", query.categoryCode);
-      if (query.minSeats !== undefined)
-        params = params.set("minSeats", query.minSeats.toString());
+      if (query.locationCode) params = params.set("locationCode", query.locationCode);
+      if (query.categoryCode) params = params.set("categoryCode", query.categoryCode);
+      if (query.minSeats !== undefined) params = params.set("minSeats", query.minSeats.toString());
       if (query.fuelType) params = params.set("fuelType", query.fuelType);
-      if (query.transmissionType)
-        params = params.set("transmissionType", query.transmissionType);
-      if (query.maxDailyRateGross !== undefined)
-        params = params.set(
-          "maxDailyRateGross",
-          query.maxDailyRateGross.toString(),
-        );
+      if (query.transmissionType) params = params.set("transmissionType", query.transmissionType);
+      if (query.maxDailyRateGross !== undefined) {
+        params = params.set("maxDailyRateGross", query.maxDailyRateGross.toString());
+      }
       if (query.status) params = params.set("status", query.status);
-      if (query.pageNumber !== undefined)
-        params = params.set("pageNumber", query.pageNumber.toString());
-      if (query.pageSize !== undefined)
-        params = params.set("pageSize", query.pageSize.toString());
+      if (query.pageNumber !== undefined) params = params.set("pageNumber", query.pageNumber.toString());
+      if (query.pageSize !== undefined) params = params.set("pageSize", query.pageSize.toString());
     }
 
     return this.http.get<VehicleSearchResult>(this.vehiclesUrl, { params });

@@ -110,9 +110,7 @@ export const FormHelpers = {
   isDirty(formGroup: FormGroup): boolean {
     return Object.keys(formGroup.controls).some((key) => {
       const control = formGroup.get(key);
-      if (control instanceof FormGroup) {
-        return FormHelpers.isDirty(control);
-      }
+      if (control instanceof FormGroup) return FormHelpers.isDirty(control);
       return control?.dirty ?? false;
     });
   },
@@ -143,9 +141,7 @@ export const FormHelpers = {
    */
   disableAll(formGroup: FormGroup, except: string[] = []): void {
     Object.keys(formGroup.controls).forEach((key) => {
-      if (!except.includes(key)) {
-        formGroup.get(key)?.disable();
-      }
+      if (!except.includes(key)) formGroup.get(key)?.disable();
     });
   },
 
@@ -156,9 +152,7 @@ export const FormHelpers = {
    */
   enableAll(formGroup: FormGroup, except: string[] = []): void {
     Object.keys(formGroup.controls).forEach((key) => {
-      if (!except.includes(key)) {
-        formGroup.get(key)?.enable();
-      }
+      if (!except.includes(key)) formGroup.get(key)?.enable();
     });
   },
 

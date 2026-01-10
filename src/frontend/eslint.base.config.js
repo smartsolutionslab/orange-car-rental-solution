@@ -54,7 +54,8 @@ function createBaseConfig(options = {}) {
         "@angular-eslint/prefer-inject": "off",
         // Single-line if statements without brackets when possible
         // "multi-or-nest" requires braces if body spans multiple lines, otherwise no braces
-        "curly": ["error", "multi-or-nest", "consistent"],
+        // Set to "warn" as auto-fix doesn't format ideally - manual review preferred
+        "curly": ["warn", "multi-or-nest", "consistent"],
       },
     },
     {
