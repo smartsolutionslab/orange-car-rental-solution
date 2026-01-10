@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { NavigationComponent as SharedNavigationComponent } from '@orange-car-rental/ui-components';
+import { filterNavItems } from '@orange-car-rental/shared';
 import { AuthService } from '../../services/auth.service';
 import { PUBLIC_PORTAL_NAV_ITEMS } from '../../constants/navigation.config';
 
@@ -39,20 +40,9 @@ export class NavigationComponent implements OnInit {
   protected readonly username = signal('');
 
   /** Filtered navigation items based on auth state */
-  protected readonly navItems = computed(() => {
-    const authenticated = this.isAuthenticated();
-    return this.allNavItems.filter((item) => {
-      // Hide items that require auth when not authenticated
-      if (item.requiresAuth && !authenticated) {
-        return false;
-      }
-      // Hide items that should be hidden when authenticated
-      if (item.hideWhenAuth && authenticated) {
-        return false;
-      }
-      return true;
-    });
-  });
+  protected readonly navItems = computed(() =>
+    filterNavItems(this.allNavItems, this.isAuthenticated()),
+  );
 
   ngOnInit(): void {
     this.updateAuthState();

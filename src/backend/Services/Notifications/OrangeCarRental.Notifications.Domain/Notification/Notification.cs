@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 
 namespace SmartSolutionsLab.OrangeCarRental.Notifications.Domain.Notification;
 
@@ -125,7 +126,7 @@ public sealed class Notification : AggregateRoot<NotificationIdentifier>
     /// <param name="errorMessage">Error message describing the failure.</param>
     public Notification MarkAsFailed(string errorMessage)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(errorMessage, nameof(errorMessage));
+        Ensure.That(errorMessage, nameof(errorMessage)).IsNotNullOrWhiteSpace();
 
         return CreateMutatedCopy(
             status: NotificationStatus.Failed,

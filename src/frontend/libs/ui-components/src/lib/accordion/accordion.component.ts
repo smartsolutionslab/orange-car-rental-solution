@@ -311,9 +311,7 @@ export class AccordionComponent implements AfterContentInit {
    */
   expand(itemId: string): void {
     const item = this.items().find((i) => i.itemId() === itemId);
-    if (item && !item.isExpanded() && !item.disabled()) {
-      this.toggle(itemId);
-    }
+    if (item && !item.isExpanded() && !item.disabled()) this.toggle(itemId);
   }
 
   /**
@@ -321,9 +319,7 @@ export class AccordionComponent implements AfterContentInit {
    */
   collapse(itemId: string): void {
     const item = this.items().find((i) => i.itemId() === itemId);
-    if (item && item.isExpanded()) {
-      this.toggle(itemId);
-    }
+    if (item && item.isExpanded()) this.toggle(itemId);
   }
 
   /**

@@ -335,8 +335,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         VATId vatId,
         PaymentTerms paymentTerms)
     {
-        if (CustomerType == CustomerType.Business)
-            throw new InvalidOperationException("Customer is already a business customer");
+        Ensure.That(CustomerType, nameof(CustomerType))
+            .ThrowInvalidOperationIf(CustomerType == CustomerType.Business, "Customer is already a business customer");
 
         Ensure.That(vatId, nameof(vatId))
             .ThrowIf(!vatId.IsGerman, "Only German VAT IDs are supported");
@@ -368,8 +368,8 @@ public sealed class Customer : AggregateRoot<CustomerIdentifier>
         VATId vatId,
         PaymentTerms paymentTerms)
     {
-        if (CustomerType != CustomerType.Business)
-            throw new InvalidOperationException("Customer is not a business customer");
+        Ensure.That(CustomerType, nameof(CustomerType))
+            .ThrowInvalidOperationIf(CustomerType != CustomerType.Business, "Customer is not a business customer");
 
         Ensure.That(vatId, nameof(vatId))
             .ThrowIf(!vatId.IsGerman, "Only German VAT IDs are supported");

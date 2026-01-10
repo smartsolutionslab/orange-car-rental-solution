@@ -347,6 +347,20 @@
     "empty": {
       "title": "Keine Fahrzeuge gefunden",
       "description": "Versuchen Sie, die Filter anzupassen, oder fügen Sie ein neues Fahrzeug hinzu."
+    },
+    "errors": {
+      "loading": "Fehler beim Laden der Fahrzeuge",
+      "validation": "Bitte füllen Sie alle Pflichtfelder korrekt aus",
+      "addVehicle": "Fehler beim Hinzufügen des Fahrzeugs",
+      "updateStatus": "Fehler beim Aktualisieren des Status",
+      "updateLocation": "Fehler beim Aktualisieren des Standorts",
+      "updatePrice": "Fehler beim Aktualisieren des Preises"
+    },
+    "success": {
+      "added": "Fahrzeug \"{{name}}\" erfolgreich hinzugefügt",
+      "statusUpdated": "Status von \"{{name}}\" auf \"{{status}}\" aktualisiert",
+      "locationUpdated": "Standort von \"{{name}}\" erfolgreich aktualisiert",
+      "priceUpdated": "Tagespreis von \"{{name}}\" erfolgreich aktualisiert"
     }
   },
   "locations": {

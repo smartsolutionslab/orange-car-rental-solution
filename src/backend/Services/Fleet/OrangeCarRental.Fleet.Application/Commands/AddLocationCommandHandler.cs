@@ -43,9 +43,6 @@ public sealed class AddLocationCommandHandler(IFleetUnitOfWork unitOfWork)
     private async Task EnsureLocationCodeNotExists(LocationCode code, CancellationToken cancellationToken)
     {
         var existingLocation = await Locations.FindByCodeAsync(code, cancellationToken);
-        if (existingLocation != null)
-        {
-            throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
-        }
+        if (existingLocation != null) throw new InvalidOperationException($"A location with code '{code.Value}' already exists.");
     }
 }

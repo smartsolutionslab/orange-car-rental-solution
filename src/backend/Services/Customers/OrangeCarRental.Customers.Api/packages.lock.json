@@ -33,9 +33,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "Direct",
-        "requested": "[2.11.10, )",
-        "resolved": "2.11.10",
-        "contentHash": "tkiZTK3pxiniTl9sVz5WY2bn8Y+vaFu9yo2Qrs4guMXoBB3wTbKwXIwFvcZnpantGeYxSk9/+UZ5BQ6eFG69Dw=="
+        "requested": "[2.12.4, )",
+        "resolved": "2.12.4",
+        "contentHash": "z2AsZCSuota9x0o/E1pptMD0hH65cJFaAIiuVmm34hntZy2zR9LusRQkUvWIStf+jwBSHzzFcli88kDlrcNJ3w=="
       },
       "Serilog.AspNetCore": {
         "type": "Direct",
@@ -402,21 +402,21 @@
         "dependencies": {
           "Microsoft.AspNetCore.Authentication.JwtBearer": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore": "[10.0.1, )",
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
           "System.IdentityModel.Tokens.Jwt": "[8.15.0, )"
         }
       },
       "orangecarrental.customers.application": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
-          "OrangeCarRental.Customers.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "OrangeCarRental.Customers.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.customers.domain": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.customers.infrastructure": {
@@ -424,9 +424,9 @@
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.1, )",
-          "OrangeCarRental.BuildingBlocks.Infrastructure": "[1.0.0, )",
-          "OrangeCarRental.Customers.Application": "[1.0.0, )",
-          "OrangeCarRental.Customers.Domain": "[1.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Infrastructure": "[1.0.0-local, )",
+          "OrangeCarRental.Customers.Application": "[1.0.0-local, )",
+          "OrangeCarRental.Customers.Domain": "[1.0.0-local, )",
           "System.IdentityModel.Tokens.Jwt": "[8.15.0, )"
         }
       },

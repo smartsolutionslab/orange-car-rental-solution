@@ -9,6 +9,7 @@ export * from "./price.type";
 export * from "./paginated-response.type";
 export * from "./sort-order.type";
 export * from "./nav-item.type";
+export * from "./nav-item.utils";
 export * from "./first-name.type";
 export * from "./last-name.type";
 export * from "./page-number.type";

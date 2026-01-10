@@ -16,10 +16,7 @@ public sealed class CreateLocationCommandHandler(
 
         // Check if location with same code already exists
         var existingLocation = await locations.FindByCodeAsync(command.Code, cancellationToken);
-        if (existingLocation != null)
-        {
-            throw new InvalidOperationException($"A location with code '{command.Code.Value}' already exists.");
-        }
+        if (existingLocation != null) throw new InvalidOperationException($"A location with code '{command.Code.Value}' already exists.");
 
         // Create location aggregate
         var location = Domain.Location.Location.Create(

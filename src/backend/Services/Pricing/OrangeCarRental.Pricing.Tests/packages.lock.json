@@ -170,21 +170,38 @@
       "orangecarrental.buildingblocks.testing": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "Docker.DotNet": "[3.125.15, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "xunit.v3.assert": "[3.2.0, )"
         }
       },
       "orangecarrental.pricing.application": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
-          "OrangeCarRental.Pricing.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "OrangeCarRental.Pricing.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.pricing.domain": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )"
         }
+      },
+      "Docker.DotNet": {
+        "type": "CentralTransitive",
+        "requested": "[3.125.15, )",
+        "resolved": "3.125.15",
+        "contentHash": "XN8FKxVv8Mjmwu104/Hl9lM61pLY675s70gzwSj8KR5pwblo8HfWLcCuinh9kYsqujBkMH4HVRCEcRuU6al4BQ==",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1"
+        }
+      },
+      "xunit.v3.assert": {
+        "type": "CentralTransitive",
+        "requested": "[3.2.0, )",
+        "resolved": "3.2.0",
+        "contentHash": "AT3jVbptSazsf+aKQt14eyhw0NN9GWj6SaYifJfZ873r86NbPeTlxshjij9aOqmtrR+C1fHwqeneO4mMZKK7ag=="
       }
     }
   }

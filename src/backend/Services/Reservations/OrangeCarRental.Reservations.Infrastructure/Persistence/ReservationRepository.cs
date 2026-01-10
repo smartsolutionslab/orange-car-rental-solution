@@ -88,10 +88,7 @@ public sealed class ReservationRepository(ReservationsDbContext context) : IRese
     {
         var reservation = await Reservations.FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
 
-        if (reservation != null)
-        {
-            Reservations.Remove(reservation);
-        }
+        if (reservation != null) Reservations.Remove(reservation);
     }
 
     public async Task<IReadOnlyList<Guid>> GetBookedVehicleIdsAsync(

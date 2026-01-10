@@ -213,12 +213,8 @@ public static class CustomerEndpoints
                         CustomerIdentifier.From(id),
                         CustomerName.Of(profile.FirstName, profile.LastName),
                         PhoneNumber.From(profile.PhoneNumber),
-                        Address.Of(
-                            address.Street,
-                            address.City,
-                            address.PostalCode,
-                            address.Country)
-                        );
+                        Address.Of(address.Street, address.City, address.PostalCode, address.Country)
+                    );
 
                     var result = await handler.HandleAsync(command, cancellationToken);
                     return Results.Ok(result);

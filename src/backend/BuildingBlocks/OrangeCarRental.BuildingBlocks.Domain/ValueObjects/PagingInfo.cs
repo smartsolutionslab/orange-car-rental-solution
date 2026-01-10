@@ -1,3 +1,5 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
+
 namespace SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 /// <summary>
@@ -39,9 +41,8 @@ public sealed record PagingInfo
     /// <exception cref="ArgumentOutOfRangeException">Thrown when parameters are invalid.</exception>
     public static PagingInfo Create(int pageNumber = 1, int pageSize = DefaultPageSize)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(pageNumber, 1, nameof(pageNumber));
-        ArgumentOutOfRangeException.ThrowIfLessThan(pageSize, 1, nameof(pageSize));
-        ArgumentOutOfRangeException.ThrowIfGreaterThan(pageSize, MaxPageSize, nameof(pageSize));
+        Ensure.That(pageNumber, nameof(pageNumber)).IsGreaterThanOrEqual(1);
+        Ensure.That(pageSize, nameof(pageSize)).AndIsBetween(1, MaxPageSize);
 
         return new PagingInfo(pageNumber, pageSize);
     }

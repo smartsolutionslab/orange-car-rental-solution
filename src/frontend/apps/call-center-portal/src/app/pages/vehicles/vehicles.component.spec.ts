@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { VehiclesComponent } from './vehicles.component';
 import { VehicleService } from '../../services/vehicle.service';
 import { LocationService } from '@orange-car-rental/location-api';
@@ -134,12 +134,15 @@ describe('VehiclesComponent', () => {
       'updateVehicleDailyRate',
     ]);
     const locationServiceSpy = jasmine.createSpyObj('LocationService', ['getAllLocations']);
+    const translateServiceSpy = jasmine.createSpyObj('TranslateService', ['instant']);
+    translateServiceSpy.instant.and.callFake((key: string) => key);
 
     await TestBed.configureTestingModule({
       imports: [VehiclesComponent, TranslateModule.forRoot()],
       providers: [
         { provide: VehicleService, useValue: vehicleServiceSpy },
         { provide: LocationService, useValue: locationServiceSpy },
+        { provide: TranslateService, useValue: translateServiceSpy },
         { provide: API_CONFIG, useValue: { apiUrl: 'http://localhost:5000' } },
       ],
     }).compileComponents();
@@ -198,7 +201,7 @@ describe('VehiclesComponent', () => {
 
       component.ngOnInit();
 
-      expect(component['error']()).toBe('Fehler beim Laden der Fahrzeuge');
+      expect(component['error']()).toBe('vehicles.errors.loading');
       expect(component['loading']()).toBe(false);
     });
   });
@@ -350,7 +353,7 @@ describe('VehiclesComponent', () => {
       component['showAddVehicleModal']();
       component['addNewVehicle']();
 
-      expect(component['error']()).toBe('Bitte füllen Sie alle Pflichtfelder korrekt aus');
+      expect(component['error']()).toBe('vehicles.errors.validation');
       expect(mockVehicleService.addVehicle).not.toHaveBeenCalled();
     });
 
@@ -380,7 +383,7 @@ describe('VehiclesComponent', () => {
 
       expect(mockVehicleService.addVehicle).toHaveBeenCalled();
       expect(component['showAddModal']()).toBe(false);
-      expect(component['successMessage']()).toContain('erfolgreich hinzugefügt');
+      expect(component['successMessage']()).toContain('vehicles.success.added');
 
       tick(UI_TIMING.SUCCESS_MESSAGE_DURATION);
       expect(component['successMessage']()).toBeNull();
@@ -402,7 +405,7 @@ describe('VehiclesComponent', () => {
 
       component['addNewVehicle']();
 
-      expect(component['error']()).toBe('Fehler beim Hinzufügen des Fahrzeugs');
+      expect(component['error']()).toBe('vehicles.errors.addVehicle');
       expect(component['actionInProgress']()).toBe(false);
     });
   });
@@ -444,7 +447,7 @@ describe('VehiclesComponent', () => {
         VehicleStatus.Maintenance,
       );
       expect(component['showStatusModal']()).toBe(false);
-      expect(component['successMessage']()).toContain('aktualisiert');
+      expect(component['successMessage']()).toContain('vehicles.success.statusUpdated');
 
       tick(UI_TIMING.SUCCESS_MESSAGE_DURATION);
       expect(component['successMessage']()).toBeNull();
@@ -458,7 +461,7 @@ describe('VehiclesComponent', () => {
       component['showStatusUpdateModal'](mockVehicles[0]);
       component['updateStatus']();
 
-      expect(component['error']()).toBe('Fehler beim Aktualisieren des Status');
+      expect(component['error']()).toBe('vehicles.errors.updateStatus');
       expect(component['actionInProgress']()).toBe(false);
     });
   });
@@ -512,7 +515,7 @@ describe('VehiclesComponent', () => {
       component['showLocationUpdateModal'](mockVehicles[0]);
       component['updateLocation']();
 
-      expect(component['error']()).toBe('Fehler beim Aktualisieren des Standorts');
+      expect(component['error']()).toBe('vehicles.errors.updateLocation');
     });
   });
 
@@ -565,7 +568,7 @@ describe('VehiclesComponent', () => {
       component['showPricingUpdateModal'](mockVehicles[0]);
       component['updatePricing']();
 
-      expect(component['error']()).toBe('Fehler beim Aktualisieren des Preises');
+      expect(component['error']()).toBe('vehicles.errors.updatePrice');
     });
   });
 

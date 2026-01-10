@@ -244,9 +244,7 @@ export class BookingHistoryComponent implements OnInit {
 
   confirmCancellation() {
     const reservation = this.selectedReservation();
-    if (!reservation || !this.cancellationReason) {
-      return;
-    }
+    if (!reservation || !this.cancellationReason) return;
 
     this.isLoading.set(true);
 

@@ -69,17 +69,44 @@ csharp_prefer_braces = when_multiline:suggestion
 
 **Impact:** Single-line if statements no longer require braces.
 
+**PREFERRED STYLE - Single Line Without Brackets:**
 ```csharp
-// Now allowed:
+// ✅ PREFERRED: Short, simple if statements on single line, no else, no brackets
 if (value is null) return;
 if (count == 0) throw new InvalidOperationException();
+if (!IsValid()) return null;
+if (item.Status != Status.Active) continue;
 
-// Multi-line still requires braces:
+// ✅ PREFERRED: Guard clauses at method start
+if (customer is null) throw new ArgumentNullException(nameof(customer));
+if (string.IsNullOrEmpty(name)) return;
+
+// ⚠️ Only use brackets when line is too long and needs breaking:
+if (someVeryLongConditionThatRequiresLineBreaking && anotherCondition)
+{
+    throw new InvalidOperationException("Error message");
+}
+
+// Multi-line (multiple statements) requires braces:
 if (condition)
 {
     DoSomething();
     DoSomethingElse();
 }
+
+// ❌ AVOID: Unnecessary brackets for simple single-line if
+if (value is null)
+{
+    return;
+}
+```
+
+**This applies to BOTH Backend (C#) AND Frontend (TypeScript/Angular):**
+```typescript
+// TypeScript - same rules apply:
+if (!isValid) return;
+if (items.length === 0) return [];
+if (this.loading()) return;
 ```
 
 ### 2. New Fluent Validation Library

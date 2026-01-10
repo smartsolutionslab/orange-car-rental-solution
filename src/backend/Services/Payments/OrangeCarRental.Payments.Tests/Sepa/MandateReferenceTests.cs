@@ -51,14 +51,14 @@ public class MandateReferenceTests
     public void Create_ZeroSequenceNumber_ThrowsArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentOutOfRangeException>(() => MandateReference.Create(0));
+        Should.Throw<ArgumentException>(() => MandateReference.Create(0));
     }
 
     [Fact]
     public void Create_NegativeSequenceNumber_ThrowsArgumentException()
     {
         // Act & Assert
-        Should.Throw<ArgumentOutOfRangeException>(() => MandateReference.Create(-1));
+        Should.Throw<ArgumentException>(() => MandateReference.Create(-1));
     }
 
     [Fact]

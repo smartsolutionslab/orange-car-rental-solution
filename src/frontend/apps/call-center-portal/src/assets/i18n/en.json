@@ -347,6 +347,20 @@
     "empty": {
       "title": "No vehicles found",
       "description": "Try adjusting the filters, or add a new vehicle."
+    },
+    "errors": {
+      "loading": "Error loading vehicles",
+      "validation": "Please fill in all required fields correctly",
+      "addVehicle": "Error adding vehicle",
+      "updateStatus": "Error updating status",
+      "updateLocation": "Error updating location",
+      "updatePrice": "Error updating price"
+    },
+    "success": {
+      "added": "Vehicle \"{{name}}\" added successfully",
+      "statusUpdated": "Status of \"{{name}}\" updated to \"{{status}}\"",
+      "locationUpdated": "Location of \"{{name}}\" updated successfully",
+      "priceUpdated": "Daily rate of \"{{name}}\" updated successfully"
     }
   },
   "locations": {

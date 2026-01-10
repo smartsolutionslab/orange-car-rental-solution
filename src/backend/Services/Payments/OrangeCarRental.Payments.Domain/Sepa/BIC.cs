@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
@@ -49,18 +50,13 @@ public sealed partial record BIC : IValueObject
     /// <exception cref="ArgumentException">If the BIC is invalid.</exception>
     public static BIC Create(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
-        // Remove spaces and convert to uppercase
         var normalized = value.Replace(" ", "").ToUpperInvariant();
 
-        // BIC must be 8 or 11 characters
-        if (normalized.Length != 8 && normalized.Length != 11)
-            throw new ArgumentException("BIC must be 8 or 11 characters.", nameof(value));
-
-        // Validate format: 4 letters (bank) + 2 letters (country) + 2 alphanumeric (location) + optional 3 alphanumeric (branch)
-        if (!BICFormatRegex().IsMatch(normalized))
-            throw new ArgumentException("Invalid BIC format.", nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndSatisfies(v => v.Length == 8 || v.Length == 11, "BIC must be 8 or 11 characters.")
+            .AndSatisfies(v => BICFormatRegex().IsMatch(v), "Invalid BIC format.");
 
         return new BIC(normalized);
     }
@@ -71,9 +67,7 @@ public sealed partial record BIC : IValueObject
     public static bool TryCreate(string? value, out BIC? bic)
     {
         bic = null;
-
-        if (string.IsNullOrWhiteSpace(value))
-            return false;
+        if (string.IsNullOrWhiteSpace(value)) return false;
 
         try
         {

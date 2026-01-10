@@ -87,10 +87,7 @@ public sealed class VehicleRepository(FleetDbContext context, IReservationServic
     {
         var vehicle = await Vehicles.FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
 
-        if (vehicle != null)
-        {
-            Vehicles.Remove(vehicle);
-        }
+        if (vehicle != null) Vehicles.Remove(vehicle);
     }
 
     /// <summary>

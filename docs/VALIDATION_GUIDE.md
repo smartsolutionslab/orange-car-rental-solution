@@ -73,6 +73,14 @@ Ensure.That(items, nameof(items))
 - `AndIsOfType<T, TExpected>()` - Ensures value is of specified type
 - `AndSatisfies<T>(Func<T, bool>)` - Ensures custom predicate is satisfied
 
+### Guid Validation (`EnsureGuidExtensions`)
+
+- `IsNotEmpty()` - Ensures Guid is not Guid.Empty
+- `IsEmpty()` - Ensures Guid is Guid.Empty
+- `AndIsOneOf(params Guid[])` - Ensures Guid is one of the valid values
+- `AndIsNotOneOf(params Guid[])` - Ensures Guid is not one of the invalid values
+- `IsNotNullOrEmpty()` - For nullable Guid, ensures not null and not empty
+
 ### Collection Validation (`EnsureCollectionExtensions`)
 
 - `IsNotNull()` - Ensures collection is not null

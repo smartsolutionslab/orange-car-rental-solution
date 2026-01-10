@@ -1,5 +1,5 @@
 /**
- * Customer details (flat structure for call-center)
+ * Customer details matching backend CustomerDto structure
  */
 import type { CustomerId } from '@orange-car-rental/customer-api';
 import type {
@@ -8,25 +8,52 @@ import type {
   ISODateString,
   PostalCode,
   CountryCode,
+  FirstName,
+  LastName,
 } from '@orange-car-rental/shared';
 import type { LicenseNumber } from '@orange-car-rental/reservation-api';
-import type { CityName } from '@orange-car-rental/location-api';
+import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
 
-export interface Customer {
-  readonly id: CustomerId;
-  readonly firstName: string;
-  readonly lastName: string;
-  readonly email: EmailAddress;
-  readonly phoneNumber: PhoneNumber;
-  readonly dateOfBirth: ISODateString;
-  readonly street: string;
+/**
+ * Address details nested object
+ */
+export interface CustomerAddress {
+  readonly street: StreetAddress;
   readonly city: CityName;
   readonly postalCode: PostalCode;
   readonly country: CountryCode;
+}
+
+/**
+ * Driver's license details nested object
+ */
+export interface CustomerDriversLicense {
   readonly licenseNumber: LicenseNumber;
-  readonly licenseIssueCountry: CountryCode;
-  readonly licenseIssueDate: ISODateString;
-  readonly licenseExpiryDate: ISODateString;
-  readonly createdAt: ISODateString;
-  readonly updatedAt?: ISODateString;
+  readonly issueCountry: CountryCode;
+  readonly issueDate: ISODateString;
+  readonly expiryDate: ISODateString;
+  readonly isValid?: boolean;
+  readonly isEuLicense?: boolean;
+  readonly daysUntilExpiry?: number;
+}
+
+/**
+ * Customer details matching backend CustomerDto
+ */
+export interface Customer {
+  readonly id: CustomerId;
+  readonly firstName: FirstName;
+  readonly lastName: LastName;
+  readonly fullName?: string;
+  readonly email: EmailAddress;
+  readonly phoneNumber: PhoneNumber;
+  readonly phoneNumberFormatted?: string;
+  readonly dateOfBirth: ISODateString;
+  readonly age?: number;
+  readonly address: CustomerAddress | null;
+  readonly driversLicense: CustomerDriversLicense | null;
+  readonly status?: string;
+  readonly canMakeReservation?: boolean;
+  readonly registeredAtUtc?: ISODateString;
+  readonly updatedAtUtc?: ISODateString;
 }

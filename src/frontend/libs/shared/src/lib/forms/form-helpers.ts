@@ -210,9 +210,7 @@ export function getFieldError(
   const errorValue = control.errors[errorKey];
   const message = ValidationMessages[errorKey];
 
-  if (!message) {
-    return `Validierungsfehler: ${errorKey}`;
-  }
+  if (!message) return `Validierungsfehler: ${errorKey}`;
 
   return typeof message === "function" ? message(errorValue) : message;
 }
@@ -234,9 +232,7 @@ export function getAllFieldErrors(
     const errorValue = control.errors![errorKey];
     const message = ValidationMessages[errorKey];
 
-    if (!message) {
-      return `Validierungsfehler: ${errorKey}`;
-    }
+    if (!message) return `Validierungsfehler: ${errorKey}`;
 
     return typeof message === "function" ? message(errorValue) : message;
   });

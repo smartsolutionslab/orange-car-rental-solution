@@ -27,10 +27,7 @@ public sealed class RegisterCustomerCommandHandler(
 
         // Check email uniqueness
         var emailExists = await repository.ExistsWithEmailAsync(email, cancellationToken);
-        if (emailExists)
-        {
-            throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
-        }
+        if (emailExists) throw new InvalidOperationException($"A customer with email '{email.Value}' already exists.");
 
         // Create customer using static factory method
         var customer = Customer.Register(customerName, email, phoneNumber, dateOfBirth, address, driversLicense);

@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
@@ -188,8 +189,8 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// </summary>
     public Invoice MarkAsSent()
     {
-        if (Status != InvoiceStatus.Created)
-            throw new InvalidOperationException($"Cannot mark invoice as sent in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != InvoiceStatus.Created, $"Cannot mark invoice as sent in status: {Status}");
 
         return CreateMutatedCopy(
             status: InvoiceStatus.Sent,
@@ -201,8 +202,8 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// </summary>
     public Invoice MarkAsPaid()
     {
-        if (Status == InvoiceStatus.Voided)
-            throw new InvalidOperationException("Cannot mark voided invoice as paid");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status == InvoiceStatus.Voided, "Cannot mark voided invoice as paid");
 
         return CreateMutatedCopy(
             status: InvoiceStatus.Paid,
@@ -214,8 +215,8 @@ public sealed class Invoice : AggregateRoot<InvoiceIdentifier>
     /// </summary>
     public Invoice Void()
     {
-        if (Status == InvoiceStatus.Paid)
-            throw new InvalidOperationException("Cannot void a paid invoice");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status == InvoiceStatus.Paid, "Cannot void a paid invoice");
 
         return CreateMutatedCopy(
             status: InvoiceStatus.Voided,

@@ -712,34 +712,36 @@
           "Microsoft.EntityFrameworkCore": "[10.0.1, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[10.0.1, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.1, )",
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
           "System.IdentityModel.Tokens.Jwt": "[8.15.0, )"
         }
       },
       "orangecarrental.buildingblocks.testing": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "Docker.DotNet": "[3.125.15, )",
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "xunit.v3.assert": "[3.2.0, )"
         }
       },
       "orangecarrental.customers.domain": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.reservations.application": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )",
-          "OrangeCarRental.Customers.Domain": "[1.0.0, )",
-          "OrangeCarRental.Reservations.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )",
+          "OrangeCarRental.Customers.Domain": "[1.0.0-local, )",
+          "OrangeCarRental.Reservations.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.reservations.domain": {
         "type": "Project",
         "dependencies": {
-          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0, )"
+          "OrangeCarRental.BuildingBlocks.Domain": "[1.0.0-local, )"
         }
       },
       "orangecarrental.reservations.infrastructure": {
@@ -748,9 +750,9 @@
           "Microsoft.EntityFrameworkCore": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.Design": "[10.0.1, )",
           "Microsoft.EntityFrameworkCore.SqlServer": "[10.0.1, )",
-          "OrangeCarRental.BuildingBlocks.Infrastructure": "[1.0.0, )",
-          "OrangeCarRental.Reservations.Application": "[1.0.0, )",
-          "OrangeCarRental.Reservations.Domain": "[1.0.0, )",
+          "OrangeCarRental.BuildingBlocks.Infrastructure": "[1.0.0-local, )",
+          "OrangeCarRental.Reservations.Application": "[1.0.0-local, )",
+          "OrangeCarRental.Reservations.Domain": "[1.0.0-local, )",
           "System.IdentityModel.Tokens.Jwt": "[8.15.0, )"
         }
       },
@@ -763,6 +765,15 @@
           "Azure.Core": "1.46.1",
           "Microsoft.Identity.Client": "4.73.1",
           "Microsoft.Identity.Client.Extensions.Msal": "4.73.1"
+        }
+      },
+      "Docker.DotNet": {
+        "type": "CentralTransitive",
+        "requested": "[3.125.15, )",
+        "resolved": "3.125.15",
+        "contentHash": "XN8FKxVv8Mjmwu104/Hl9lM61pLY675s70gzwSj8KR5pwblo8HfWLcCuinh9kYsqujBkMH4HVRCEcRuU6al4BQ==",
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.1"
         }
       },
       "Microsoft.AspNetCore.Authentication.JwtBearer": {
@@ -832,6 +843,12 @@
           "Microsoft.IdentityModel.JsonWebTokens": "8.15.0",
           "Microsoft.IdentityModel.Tokens": "8.15.0"
         }
+      },
+      "xunit.v3.assert": {
+        "type": "CentralTransitive",
+        "requested": "[3.2.0, )",
+        "resolved": "3.2.0",
+        "contentHash": "AT3jVbptSazsf+aKQt14eyhw0NN9GWj6SaYifJfZ873r86NbPeTlxshjij9aOqmtrR+C1fHwqeneO4mMZKK7ag=="
       }
     }
   }

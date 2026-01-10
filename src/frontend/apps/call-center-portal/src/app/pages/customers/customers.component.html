@@ -90,11 +90,11 @@
       </ng-template>
 
       <ng-template ocrDataTableColumn="city" [header]="'customers.table.city' | translate" let-row>
-        {{ row.city }}
+        {{ row.address?.city }}
       </ng-template>
 
       <ng-template ocrDataTableColumn="createdAt" [header]="'customers.table.registered' | translate" let-row>
-        {{ formatDate(row.createdAt) }}
+        {{ formatDate(row.registeredAtUtc) }}
       </ng-template>
 
       <ng-template ocrDataTableColumn="actions" [header]="'customers.table.actions' | translate" let-row>
@@ -179,7 +179,7 @@
             </div>
             <div class="detail-item">
               <label>{{ 'common.labels.registered' | translate }}</label>
-              <p>{{ formatDate(selectedCustomer()!.createdAt) }}</p>
+              <p>{{ formatDate(selectedCustomer()!.registeredAtUtc) }}</p>
             </div>
           </div>
         } @else {
@@ -231,19 +231,19 @@
           <div class="detail-grid">
             <div class="detail-item">
               <label>{{ 'common.labels.street' | translate }}</label>
-              <p>{{ selectedCustomer()!.street }}</p>
+              <p>{{ selectedCustomer()!.address?.street }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'common.labels.city' | translate }}</label>
-              <p>{{ selectedCustomer()!.city }}</p>
+              <p>{{ selectedCustomer()!.address?.city }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'common.labels.postalCode' | translate }}</label>
-              <p>{{ selectedCustomer()!.postalCode }}</p>
+              <p>{{ selectedCustomer()!.address?.postalCode }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'common.labels.country' | translate }}</label>
-              <p>{{ selectedCustomer()!.country }}</p>
+              <p>{{ selectedCustomer()!.address?.country }}</p>
             </div>
           </div>
         } @else {
@@ -284,19 +284,19 @@
           <div class="detail-grid">
             <div class="detail-item">
               <label>{{ 'customers.details.license.number' | translate }}</label>
-              <p>{{ selectedCustomer()!.licenseNumber }}</p>
+              <p>{{ selectedCustomer()!.driversLicense?.licenseNumber }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'customers.details.license.issueCountry' | translate }}</label>
-              <p>{{ selectedCustomer()!.licenseIssueCountry }}</p>
+              <p>{{ selectedCustomer()!.driversLicense?.issueCountry }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'customers.details.license.issueDate' | translate }}</label>
-              <p>{{ formatDate(selectedCustomer()!.licenseIssueDate) }}</p>
+              <p>{{ formatDate(selectedCustomer()!.driversLicense?.issueDate) }}</p>
             </div>
             <div class="detail-item">
               <label>{{ 'customers.details.license.expiryDate' | translate }}</label>
-              <p>{{ formatDate(selectedCustomer()!.licenseExpiryDate) }}</p>
+              <p>{{ formatDate(selectedCustomer()!.driversLicense?.expiryDate) }}</p>
             </div>
           </div>
         } @else {

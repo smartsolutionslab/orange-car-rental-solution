@@ -1,8 +1,8 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ConfigService } from './config.service';
+import { HttpParamsBuilder } from '@orange-car-rental/shared';
+import { BaseCustomerService } from '@orange-car-rental/customer-api';
 import type {
   Customer,
   CustomerSearchQuery,
@@ -12,26 +12,19 @@ import type {
 
 /**
  * Service for accessing the Customers API
- * Handles customer lookup and management operations
+ * Extends BaseCustomerService with call-center specific operations
  */
 @Injectable({
   providedIn: 'root',
 })
-export class CustomerService {
-  private readonly http = inject(HttpClient);
-  private readonly configService = inject(ConfigService);
-
-  private get apiUrl(): string {
-    return `${this.configService.apiUrl}/api/customers`;
-  }
-
+export class CustomerService extends BaseCustomerService {
   /**
    * Get customer by ID
    * @param id Customer ID
    * @returns Observable of customer details
    */
   getCustomer(id: string): Observable<Customer> {
-    return this.http.get<Customer>(`${this.apiUrl}/${id}`);
+    return this.http.get<Customer>(`${this.customersUrl}/${id}`);
   }
 
   /**
@@ -40,18 +33,8 @@ export class CustomerService {
    * @returns Observable of search results with customers and pagination
    */
   searchCustomers(query?: CustomerSearchQuery): Observable<CustomerSearchResult> {
-    let params = new HttpParams();
-
-    if (query) {
-      if (query.email) params = params.set('email', query.email);
-      if (query.phoneNumber) params = params.set('phoneNumber', query.phoneNumber);
-      if (query.lastName) params = params.set('lastName', query.lastName);
-      if (query.pageNumber !== undefined)
-        params = params.set('pageNumber', query.pageNumber.toString());
-      if (query.pageSize !== undefined) params = params.set('pageSize', query.pageSize.toString());
-    }
-
-    return this.http.get<CustomerSearchResult>(`${this.apiUrl}/search`, { params });
+    const params = HttpParamsBuilder.fromObject(query);
+    return this.http.get<CustomerSearchResult>(`${this.customersUrl}/search`, { params });
   }
 
   /**
@@ -84,8 +67,8 @@ export class CustomerService {
     };
 
     // Update profile first, then license
-    return this.http.put<void>(`${this.apiUrl}/${id}/profile`, profileRequest).pipe(
-      switchMap(() => this.http.put<void>(`${this.apiUrl}/${id}/license`, licenseRequest)),
+    return this.http.put<void>(`${this.customersUrl}/${id}/profile`, profileRequest).pipe(
+      switchMap(() => this.http.put<void>(`${this.customersUrl}/${id}/license`, licenseRequest)),
       switchMap(() => this.getCustomer(id)),
     );
   }

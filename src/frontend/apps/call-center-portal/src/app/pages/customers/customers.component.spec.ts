@@ -6,7 +6,7 @@ import { ReservationService } from '../../services/reservation.service';
 import { of, throwError } from 'rxjs';
 import type { ReservationStatus, LicenseNumber } from '@orange-car-rental/reservation-api';
 import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
-import type { Customer, Reservation } from '../../types';
+import type { Customer, CustomerAddress, CustomerDriversLicense, Reservation } from '../../types';
 import { API_CONFIG } from '@orange-car-rental/shared';
 import type {
   Price,
@@ -33,7 +33,7 @@ describe('CustomersComponent', () => {
   let mockCustomerService: jasmine.SpyObj<CustomerService>;
   let mockReservationService: jasmine.SpyObj<ReservationService>;
 
-  // Use shared test fixtures
+  // Use shared test fixtures with nested structure matching backend CustomerDto
   const mockCustomers: Customer[] = [
     {
       id: TEST_CUSTOMER_IDS.HANS_MUELLER,
@@ -42,15 +42,19 @@ describe('CustomersComponent', () => {
       email: 'hans.mueller@example.de' as EmailAddress,
       phoneNumber: '+49 89 12345678' as PhoneNumber,
       dateOfBirth: '1985-06-15' as ISODateString,
-      street: 'Teststraße 1' as StreetAddress,
-      city: 'München' as CityName,
-      postalCode: '80331' as PostalCode,
-      country: 'Germany' as CountryCode,
-      licenseNumber: 'DE123456789' as LicenseNumber,
-      licenseIssueCountry: 'Germany' as CountryCode,
-      licenseIssueDate: '2010-01-01' as ISODateString,
-      licenseExpiryDate: '2030-01-01' as ISODateString,
-      createdAt: '2025-01-01' as ISODateString,
+      address: {
+        street: 'Teststraße 1' as StreetAddress,
+        city: 'München' as CityName,
+        postalCode: '80331' as PostalCode,
+        country: 'Germany' as CountryCode,
+      } as CustomerAddress,
+      driversLicense: {
+        licenseNumber: 'DE123456789' as LicenseNumber,
+        issueCountry: 'Germany' as CountryCode,
+        issueDate: '2010-01-01' as ISODateString,
+        expiryDate: '2030-01-01' as ISODateString,
+      } as CustomerDriversLicense,
+      registeredAtUtc: '2025-01-01' as ISODateString,
     },
     {
       id: TEST_CUSTOMER_IDS.ANNA_SCHMIDT,
@@ -59,15 +63,19 @@ describe('CustomersComponent', () => {
       email: 'anna.schmidt@example.de' as EmailAddress,
       phoneNumber: '+49 30 87654321' as PhoneNumber,
       dateOfBirth: '1990-03-20' as ISODateString,
-      street: 'Hauptstraße 42' as StreetAddress,
-      city: 'Berlin' as CityName,
-      postalCode: '10115' as PostalCode,
-      country: 'Germany' as CountryCode,
-      licenseNumber: 'DE987654321' as LicenseNumber,
-      licenseIssueCountry: 'Germany' as CountryCode,
-      licenseIssueDate: '2015-06-01' as ISODateString,
-      licenseExpiryDate: '2035-06-01' as ISODateString,
-      createdAt: '2025-02-15' as ISODateString,
+      address: {
+        street: 'Hauptstraße 42' as StreetAddress,
+        city: 'Berlin' as CityName,
+        postalCode: '10115' as PostalCode,
+        country: 'Germany' as CountryCode,
+      } as CustomerAddress,
+      driversLicense: {
+        licenseNumber: 'DE987654321' as LicenseNumber,
+        issueCountry: 'Germany' as CountryCode,
+        issueDate: '2015-06-01' as ISODateString,
+        expiryDate: '2035-06-01' as ISODateString,
+      } as CustomerDriversLicense,
+      registeredAtUtc: '2025-02-15' as ISODateString,
     },
   ];
 
@@ -339,7 +347,7 @@ describe('CustomersComponent', () => {
       expect(form.postalCode).toBe('80331');
       expect(form.country).toBe('Germany');
       expect(form.licenseNumber).toBe('DE123456789');
-      expect(form.licenseIssueCountry).toBe('Germany');
+      expect(form.licenseIssueCountry).toBe('Germany'); // From driversLicense.issueCountry
     });
 
     it('should cancel edit mode', () => {
@@ -359,8 +367,8 @@ describe('CustomersComponent', () => {
     it('should handle null values in customer data', () => {
       const customerWithNulls = {
         ...mockCustomers[0],
-        street: null as unknown as StreetAddress,
-        licenseNumber: null as unknown as LicenseNumber,
+        address: null,
+        driversLicense: null,
       };
       component['selectedCustomer'].set(customerWithNulls);
       component['enterEditMode']();
@@ -400,7 +408,7 @@ describe('CustomersComponent', () => {
       expect(component['saving']()).toBe(false);
       expect(component['successMessage']()).toBe('customers.edit.success');
 
-      tick(UI_TIMING.SUCCESS_MESSAGE_SHORT);
+      tick(UI_TIMING.SUCCESS_MESSAGE_DURATION);
       expect(component['successMessage']()).toBeNull();
     }));
 
@@ -423,7 +431,7 @@ describe('CustomersComponent', () => {
     });
 
     it('should refresh customer list after save', () => {
-      const updatedCustomer = { ...mockCustomers[0], firstName: 'Updated' };
+      const updatedCustomer = { ...mockCustomers[0], firstName: 'Updated' as FirstName };
       mockCustomerService.updateCustomer.and.returnValue(of(updatedCustomer));
       component['searchEmail'].set('test@example.de');
 

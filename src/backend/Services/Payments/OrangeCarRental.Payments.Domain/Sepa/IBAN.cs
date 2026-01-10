@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
@@ -49,22 +50,14 @@ public sealed partial record IBAN : IValueObject
     /// <exception cref="ArgumentException">If the IBAN is invalid.</exception>
     public static IBAN Create(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
-        // Remove spaces and convert to uppercase
         var normalized = value.Replace(" ", "").ToUpperInvariant();
 
-        // Basic format validation
-        if (!IBANFormatRegex().IsMatch(normalized))
-            throw new ArgumentException("Invalid IBAN format. Must be 2 letters followed by 2 digits and up to 30 alphanumeric characters.", nameof(value));
-
-        // German IBAN specific validation (DE + 20 characters = 22 total)
-        if (normalized.StartsWith("DE") && normalized.Length != 22)
-            throw new ArgumentException("German IBAN must be exactly 22 characters.", nameof(value));
-
-        // Validate check digits using MOD-97 algorithm
-        if (!ValidateCheckDigits(normalized))
-            throw new ArgumentException("Invalid IBAN check digits.", nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndSatisfies(v => IBANFormatRegex().IsMatch(v), "Invalid IBAN format. Must be 2 letters followed by 2 digits and up to 30 alphanumeric characters.")
+            .AndSatisfies(v => !v.StartsWith("DE") || v.Length == 22, "German IBAN must be exactly 22 characters.")
+            .AndSatisfies(ValidateCheckDigits, "Invalid IBAN check digits.");
 
         return new IBAN(normalized);
     }
@@ -75,9 +68,7 @@ public sealed partial record IBAN : IValueObject
     public static bool TryCreate(string? value, out IBAN? iban)
     {
         iban = null;
-
-        if (string.IsNullOrWhiteSpace(value))
-            return false;
+        if (string.IsNullOrWhiteSpace(value)) return false;
 
         try
         {

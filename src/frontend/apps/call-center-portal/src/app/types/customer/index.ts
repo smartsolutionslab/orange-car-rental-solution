@@ -1,7 +1,7 @@
 /**
  * Customer types barrel export
  */
-export type { Customer } from './customer.type';
+export type { Customer, CustomerAddress, CustomerDriversLicense } from './customer.type';
 export type { CustomerSearchQuery } from './customer-search-query.type';
 export type { CustomerSearchResult } from './customer-search-result.type';
 export type { UpdateCustomerRequest } from './update-customer-request.type';

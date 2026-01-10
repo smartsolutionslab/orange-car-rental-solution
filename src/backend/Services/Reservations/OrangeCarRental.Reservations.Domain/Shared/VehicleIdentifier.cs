@@ -28,8 +28,7 @@ public readonly record struct VehicleIdentifier(Guid Value) : IValueObject
 
     public static VehicleIdentifier? From(Guid? value)
     {
-        if (value == null || value == Guid.Empty) return null;
-
+        if (value is null) return null;
         return From(value.Value);
     }
 

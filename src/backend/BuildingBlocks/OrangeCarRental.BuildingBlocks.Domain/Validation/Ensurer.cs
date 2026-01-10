@@ -28,13 +28,21 @@ public sealed class Ensurer<T>
     public Ensurer<T> Throw(string message) => throw new ArgumentException(message, ParameterName);
 
     /// <summary>
-    ///     Throws an ArgumentException if the condition is false.
+    ///     Throws an ArgumentException if the condition is true.
     /// </summary>
     public Ensurer<T> ThrowIf(bool condition, string message)
     {
-        if (condition)
-            throw new ArgumentException(message, ParameterName);
+        if (condition) throw new ArgumentException(message, ParameterName);
+        return this;
+    }
 
+    /// <summary>
+    ///     Throws an InvalidOperationException if the condition is true.
+    ///     Use for state validation in domain aggregates.
+    /// </summary>
+    public Ensurer<T> ThrowInvalidOperationIf(bool condition, string message)
+    {
+        if (condition) throw new InvalidOperationException(message);
         return this;
     }
 }

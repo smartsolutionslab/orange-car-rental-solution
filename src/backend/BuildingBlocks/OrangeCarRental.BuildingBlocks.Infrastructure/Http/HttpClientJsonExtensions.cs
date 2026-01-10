@@ -85,10 +85,7 @@ public static class HttpClientJsonExtensions
         {
             var response = await client.GetAsync(requestUri, cancellationToken);
 
-            if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return null;
-            }
+            if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
 
             return await HandleResponseAsync<TResponse>(response, serviceName, requestUri, cancellationToken);
         }

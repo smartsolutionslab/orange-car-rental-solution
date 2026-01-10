@@ -73,9 +73,6 @@ public sealed class LocationRepository(FleetDbContext context) : ILocationReposi
     {
         var location = await Locations.FirstOrDefaultAsync(l => l.Id == code, cancellationToken);
 
-        if (location != null)
-        {
-            context.Locations.Remove(location);
-        }
+        if (location != null) context.Locations.Remove(location);
     }
 }

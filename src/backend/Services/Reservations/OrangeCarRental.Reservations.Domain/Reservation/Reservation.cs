@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Reservation.Events;
 using SmartSolutionsLab.OrangeCarRental.Reservations.Domain.Shared;
@@ -130,8 +131,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     /// </summary>
     public Reservation Confirm()
     {
-        if (Status != ReservationStatus.Pending)
-            throw new InvalidOperationException($"Cannot confirm reservation in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != ReservationStatus.Pending, $"Cannot confirm reservation in status: {Status}");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -152,11 +153,9 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
         if (Status == ReservationStatus.Cancelled)
             return this; // Already cancelled, idempotent
 
-        if (Status == ReservationStatus.Completed)
-            throw new InvalidOperationException("Cannot cancel a completed reservation");
-
-        if (Status == ReservationStatus.Active)
-            throw new InvalidOperationException("Cannot cancel an active rental. Please return the vehicle first.");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status == ReservationStatus.Completed, "Cannot cancel a completed reservation")
+            .ThrowInvalidOperationIf(Status == ReservationStatus.Active, "Cannot cancel an active rental. Please return the vehicle first.");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -175,12 +174,9 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     /// </summary>
     public Reservation MarkAsActive()
     {
-        if (Status != ReservationStatus.Confirmed)
-            throw new InvalidOperationException($"Cannot activate reservation in status: {Status}");
-
-        // Check if pickup date is today or in the past
-        if (Period.PickupDate > DateOnly.FromDateTime(DateTime.UtcNow))
-            throw new InvalidOperationException("Cannot activate reservation before pickup date");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != ReservationStatus.Confirmed, $"Cannot activate reservation in status: {Status}")
+            .ThrowInvalidOperationIf(Period.PickupDate > DateOnly.FromDateTime(DateTime.UtcNow), "Cannot activate reservation before pickup date");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(status: ReservationStatus.Active);
@@ -196,8 +192,8 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     /// </summary>
     public Reservation Complete()
     {
-        if (Status != ReservationStatus.Active)
-            throw new InvalidOperationException($"Cannot complete reservation in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != ReservationStatus.Active, $"Cannot complete reservation in status: {Status}");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(
@@ -215,12 +211,9 @@ public sealed class Reservation : AggregateRoot<ReservationIdentifier>
     /// </summary>
     public Reservation MarkAsNoShow()
     {
-        if (Status != ReservationStatus.Confirmed)
-            throw new InvalidOperationException($"Cannot mark as no-show in status: {Status}");
-
-        // Check if we're past the pickup date
-        if (DateOnly.FromDateTime(DateTime.UtcNow) <= Period.PickupDate)
-            throw new InvalidOperationException("Cannot mark as no-show before pickup date has passed");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != ReservationStatus.Confirmed, $"Cannot mark as no-show in status: {Status}")
+            .ThrowInvalidOperationIf(DateOnly.FromDateTime(DateTime.UtcNow) <= Period.PickupDate, "Cannot mark as no-show before pickup date has passed");
 
         var now = DateTime.UtcNow;
         var updated = CreateMutatedCopy(

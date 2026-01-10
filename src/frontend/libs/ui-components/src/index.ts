@@ -199,3 +199,10 @@ export { NavigationComponent } from "./lib/navigation";
 
 // Layout Component
 export { LayoutComponent, type NavPosition } from "./lib/layout";
+
+// Button Component
+export {
+  ButtonComponent,
+  type ButtonVariant,
+  type ButtonSize,
+} from "./lib/button";

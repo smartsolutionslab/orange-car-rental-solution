@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
@@ -11,7 +12,7 @@ public readonly record struct SepaMandateIdentifier(Guid Value) : IValueObject
 
     public static SepaMandateIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new SepaMandateIdentifier(value);
     }
 

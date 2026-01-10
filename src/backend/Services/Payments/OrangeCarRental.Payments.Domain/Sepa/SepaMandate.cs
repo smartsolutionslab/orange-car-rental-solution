@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Common;
 
@@ -130,8 +131,8 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// </summary>
     public SepaMandate RecordUsage()
     {
-        if (Status != MandateStatus.Active)
-            throw new InvalidOperationException($"Cannot use mandate in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != MandateStatus.Active, $"Cannot use mandate in status: {Status}");
 
         return CreateMutatedCopy(lastUsedAt: DateTime.UtcNow);
     }
@@ -141,8 +142,8 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// </summary>
     public SepaMandate Revoke()
     {
-        if (Status != MandateStatus.Active)
-            throw new InvalidOperationException($"Cannot revoke mandate in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != MandateStatus.Active, $"Cannot revoke mandate in status: {Status}");
 
         return CreateMutatedCopy(
             status: MandateStatus.Revoked,
@@ -155,8 +156,8 @@ public sealed class SepaMandate : AggregateRoot<SepaMandateIdentifier>
     /// </summary>
     public SepaMandate MarkAsExpired()
     {
-        if (Status != MandateStatus.Active)
-            throw new InvalidOperationException($"Cannot expire mandate in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != MandateStatus.Active, $"Cannot expire mandate in status: {Status}");
 
         return CreateMutatedCopy(status: MandateStatus.Expired);
     }

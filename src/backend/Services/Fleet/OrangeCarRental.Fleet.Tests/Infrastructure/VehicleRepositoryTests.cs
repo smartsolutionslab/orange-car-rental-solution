@@ -23,7 +23,7 @@ public class VehicleRepositoryTests : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        // Start the SQL Server container
+        // Start the SQL Server container (requires Docker to be running)
         await msSqlContainer.StartAsync();
 
         // Create DbContext with SQL Server connection

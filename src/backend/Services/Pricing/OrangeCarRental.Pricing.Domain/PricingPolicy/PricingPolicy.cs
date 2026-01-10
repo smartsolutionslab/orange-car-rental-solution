@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Pricing.Domain.PricingPolicy.Events;
 
@@ -157,8 +158,9 @@ public sealed class PricingPolicy : AggregateRoot<PricingPolicyIdentifier>
     /// </summary>
     public Money CalculatePrice(RentalPeriod period)
     {
-        if (!IsValidFor(period.PickupDate.ToDateTime(TimeOnly.MinValue)))
-            throw new InvalidOperationException("Pricing policy is not valid for the requested pickup date");
+        var pickupDateTime = period.PickupDate.ToDateTime(TimeOnly.MinValue);
+        Ensure.That(pickupDateTime, nameof(period))
+            .ThrowInvalidOperationIf(!IsValidFor(pickupDateTime), "Pricing policy is not valid for the requested pickup date");
 
         return DailyRate * period.TotalDays;
     }

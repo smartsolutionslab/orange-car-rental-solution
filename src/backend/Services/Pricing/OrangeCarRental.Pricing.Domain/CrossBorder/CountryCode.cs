@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Pricing.Domain.CrossBorder;
@@ -23,15 +24,12 @@ public readonly partial record struct CountryCode : IValueObject
     /// </summary>
     public static CountryCode Create(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-            throw new ArgumentException("Country code cannot be empty", nameof(value));
+        Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
         var normalized = value.Trim().ToUpperInvariant();
 
-        if (!CountryCodeRegex().IsMatch(normalized))
-            throw new ArgumentException(
-                "Country code must be exactly 2 letters (ISO 3166-1 alpha-2)",
-                nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndSatisfies(v => CountryCodeRegex().IsMatch(v), "Country code must be exactly 2 letters (ISO 3166-1 alpha-2)");
 
         return new CountryCode(normalized);
     }

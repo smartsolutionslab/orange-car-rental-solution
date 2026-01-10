@@ -13,9 +13,8 @@ export function isLocationCode(value: string): value is LocationCode {
 
 export function createLocationCode(value: string): LocationCode {
   const normalized = value.toUpperCase();
-  if (!isLocationCode(normalized)) {
-    throw new Error(`Invalid LocationCode format: ${value}`);
-  }
+  if (!isLocationCode(normalized)) throw new Error(`Invalid LocationCode format: ${value}`);
+
   return normalized;
 }
 

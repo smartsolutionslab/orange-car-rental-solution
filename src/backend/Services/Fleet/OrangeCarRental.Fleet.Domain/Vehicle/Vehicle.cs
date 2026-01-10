@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Location;
 using SmartSolutionsLab.OrangeCarRental.Fleet.Domain.Shared;
@@ -146,7 +147,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     {
         if (newLocationCode == CurrentLocationCode) return this;
 
-        if (Status == VehicleStatus.Rented) throw new InvalidOperationException("Cannot move a rented vehicle");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status == VehicleStatus.Rented, "Cannot move a rented vehicle");
 
         var oldLocationCode = CurrentLocationCode;
         var updated = CreateMutatedCopy(currentLocationCode: newLocationCode);
@@ -187,8 +189,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public Vehicle MarkAsRented()
     {
-        if (Status != VehicleStatus.Available && Status != VehicleStatus.Reserved)
-            throw new InvalidOperationException($"Cannot rent vehicle in status: {Status}");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status != VehicleStatus.Available && Status != VehicleStatus.Reserved, $"Cannot rent vehicle in status: {Status}");
 
         return ChangeStatus(VehicleStatus.Rented);
     }
@@ -199,8 +201,8 @@ public sealed class Vehicle : AggregateRoot<VehicleIdentifier>
     /// </summary>
     public Vehicle MarkAsUnderMaintenance()
     {
-        if (Status == VehicleStatus.Rented)
-            throw new InvalidOperationException("Cannot put rented vehicle under maintenance");
+        Ensure.That(Status, nameof(Status))
+            .ThrowInvalidOperationIf(Status == VehicleStatus.Rented, "Cannot put rented vehicle under maintenance");
 
         return ChangeStatus(VehicleStatus.Maintenance);
     }

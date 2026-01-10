@@ -46,14 +46,18 @@ public sealed record InvoiceNumber : IValueObject
         Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
         var parts = value.Split('-');
-        if (parts.Length != 3 || parts[0] != Prefix)
-            throw new ArgumentException($"Invalid invoice number format: {value}");
 
-        if (!int.TryParse(parts[1], out var year))
-            throw new ArgumentException($"Invalid year in invoice number: {value}");
+        Ensure.That(parts, nameof(value))
+            .AndSatisfies(p => p.Length == 3 && p[0] == Prefix, $"Invalid invoice number format: {value}");
 
-        if (!int.TryParse(parts[2], out var sequenceNumber))
-            throw new ArgumentException($"Invalid sequence number in invoice number: {value}");
+        Ensure.That(parts[1], nameof(value))
+            .AndSatisfies(p => int.TryParse(p, out _), $"Invalid year in invoice number: {value}");
+
+        Ensure.That(parts[2], nameof(value))
+            .AndSatisfies(p => int.TryParse(p, out _), $"Invalid sequence number in invoice number: {value}");
+
+        var year = int.Parse(parts[1]);
+        var sequenceNumber = int.Parse(parts[2]);
 
         return new InvoiceNumber(value, year, sequenceNumber);
     }

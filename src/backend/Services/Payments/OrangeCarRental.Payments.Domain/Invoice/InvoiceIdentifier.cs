@@ -1,3 +1,4 @@
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Invoice;
@@ -11,7 +12,7 @@ public readonly record struct InvoiceIdentifier(Guid Value) : IValueObject
 
     public static InvoiceIdentifier From(Guid value)
     {
-        ArgumentOutOfRangeException.ThrowIfEqual(value, Guid.Empty, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotEmpty();
         return new InvoiceIdentifier(value);
     }
 

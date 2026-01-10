@@ -1,4 +1,5 @@
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.CQRS;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.Payments.Application.Services;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain;
 using SmartSolutionsLab.OrangeCarRental.Payments.Domain.Payment;
@@ -19,21 +20,15 @@ public sealed class RefundPaymentCommandHandler(
             ?? throw new InvalidOperationException($"Payment with ID {command.PaymentId.Value} not found");
 
         // Validate payment can be refunded
-        if (payment.Status != PaymentStatus.Captured)
-        {
-            throw new InvalidOperationException($"Payment with status {payment.Status} cannot be refunded. Only Captured payments can be refunded.");
-        }
-
-        if (!payment.TransactionId.HasValue)
-        {
-            throw new InvalidOperationException("Payment does not have a transaction ID");
-        }
+        Ensure.That(payment.Status, nameof(payment.Status))
+            .ThrowInvalidOperationIf(payment.Status != PaymentStatus.Captured, $"Payment with status {payment.Status} cannot be refunded. Only Captured payments can be refunded.")
+            .ThrowInvalidOperationIf(!payment.TransactionId.HasValue, "Payment does not have a transaction ID");
 
         try
         {
             // Process refund with external provider
             var (success, errorMessage) = await paymentService.RefundPaymentAsync(
-                payment.TransactionId.Value.Value,
+                payment.TransactionId!.Value.Value,
                 payment.Amount.GrossAmount,
                 payment.Amount.Currency.Code,
                 cancellationToken);

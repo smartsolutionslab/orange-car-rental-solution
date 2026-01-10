@@ -23,14 +23,10 @@ public readonly partial record struct LicensePlate(string Value) : IValueObject
 
         Ensure.That(trimmed, nameof(value))
             .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(MaxLength);
-
-        if (!GermanLicensePlatePattern().IsMatch(trimmed))
-        {
-            throw new ArgumentException(
-                $"Invalid license plate format: '{value}'. Expected German format (e.g., 'B AB 1234').",
-                nameof(value));
-        }
+            .AndHasMaxLength(MaxLength)
+            .AndSatisfies(
+                v => GermanLicensePlatePattern().IsMatch(v),
+                $"Invalid license plate format: '{value}'. Expected German format (e.g., 'B AB 1234').");
 
         return new LicensePlate(trimmed);
     }

@@ -29,8 +29,10 @@ import type {
   ISODateString,
   PostalCode,
   CountryCode,
+  FirstName,
+  LastName,
 } from '@orange-car-rental/shared';
-import type { CityName } from '@orange-car-rental/location-api';
+import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
 import type { LicenseNumber } from '@orange-car-rental/reservation-api';
 
 /**
@@ -220,14 +222,14 @@ export class CustomersComponent {
         email: customer.email ?? '',
         phoneNumber: customer.phoneNumber ?? '',
         dateOfBirth: customer.dateOfBirth ?? '',
-        street: customer.street ?? '',
-        city: customer.city ?? '',
-        postalCode: customer.postalCode ?? '',
-        country: customer.country ?? '',
-        licenseNumber: customer.licenseNumber ?? '',
-        licenseIssueCountry: customer.licenseIssueCountry ?? '',
-        licenseIssueDate: customer.licenseIssueDate ?? '',
-        licenseExpiryDate: customer.licenseExpiryDate ?? '',
+        street: customer.address?.street ?? '',
+        city: customer.address?.city ?? '',
+        postalCode: customer.address?.postalCode ?? '',
+        country: customer.address?.country ?? '',
+        licenseNumber: customer.driversLicense?.licenseNumber ?? '',
+        licenseIssueCountry: customer.driversLicense?.issueCountry ?? '',
+        licenseIssueDate: customer.driversLicense?.issueDate ?? '',
+        licenseExpiryDate: customer.driversLicense?.expiryDate ?? '',
       });
       this.editMode.set(true);
     }
@@ -253,12 +255,12 @@ export class CustomersComponent {
     // Convert form values to UpdateCustomerRequest with type assertions
     const formValues = this.editForm();
     const request: UpdateCustomerRequest = {
-      firstName: formValues.firstName,
-      lastName: formValues.lastName,
+      firstName: formValues.firstName as FirstName,
+      lastName: formValues.lastName as LastName,
       email: formValues.email as EmailAddress,
       phoneNumber: formValues.phoneNumber as PhoneNumber,
       dateOfBirth: formValues.dateOfBirth as ISODateString,
-      street: formValues.street,
+      street: formValues.street as StreetAddress,
       city: formValues.city as CityName,
       postalCode: formValues.postalCode as PostalCode,
       country: formValues.country as CountryCode,
@@ -274,7 +276,7 @@ export class CustomersComponent {
         this.editMode.set(false);
         this.saving.set(false);
         this.successMessage.set(this.translate.instant('customers.edit.success'));
-        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_SHORT);
+        setTimeout(() => this.successMessage.set(null), UI_TIMING.SUCCESS_MESSAGE_DURATION);
         // Refresh the customer list
         this.searchCustomers();
       },

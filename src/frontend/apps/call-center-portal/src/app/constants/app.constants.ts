@@ -13,7 +13,6 @@ export const PAGE_SIZES = {
 // UI timing constants (in milliseconds)
 export const UI_TIMING = {
   SUCCESS_MESSAGE_DURATION: 5000,
-  SUCCESS_MESSAGE_SHORT: 3000,
   ERROR_MESSAGE_DURATION: 5000,
   DEBOUNCE_TIME: 300,
 } as const;

@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.Validation;
 using SmartSolutionsLab.OrangeCarRental.BuildingBlocks.Domain.ValueObjects;
 
 namespace SmartSolutionsLab.OrangeCarRental.Payments.Domain.Sepa;
@@ -27,7 +28,7 @@ public sealed partial record MandateReference : IValueObject
     /// <returns>A new mandate reference.</returns>
     public static MandateReference Create(int sequenceNumber, DateOnly? date = null)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(sequenceNumber, nameof(sequenceNumber));
+        Ensure.That(sequenceNumber, nameof(sequenceNumber)).IsGreaterThan(0);
 
         var mandateDate = date ?? DateOnly.FromDateTime(DateTime.UtcNow);
         var value = $"{Prefix}-{mandateDate:yyyyMMdd}-{sequenceNumber:D6}";
@@ -43,12 +44,12 @@ public sealed partial record MandateReference : IValueObject
     /// <exception cref="ArgumentException">If the format is invalid.</exception>
     public static MandateReference Parse(string value)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(value, nameof(value));
+        Ensure.That(value, nameof(value)).IsNotNullOrWhiteSpace();
 
         var normalized = value.Trim().ToUpperInvariant();
 
-        if (!MandateReferenceRegex().IsMatch(normalized))
-            throw new ArgumentException($"Invalid mandate reference format. Expected: {Prefix}-YYYYMMDD-NNNNNN", nameof(value));
+        Ensure.That(normalized, nameof(value))
+            .AndSatisfies(v => MandateReferenceRegex().IsMatch(v), $"Invalid mandate reference format. Expected: {Prefix}-YYYYMMDD-NNNNNN");
 
         return new MandateReference(normalized);
     }
@@ -59,9 +60,7 @@ public sealed partial record MandateReference : IValueObject
     public static bool TryParse(string? value, out MandateReference? reference)
     {
         reference = null;
-
-        if (string.IsNullOrWhiteSpace(value))
-            return false;
+        if (string.IsNullOrWhiteSpace(value)) return false;
 
         try
         {

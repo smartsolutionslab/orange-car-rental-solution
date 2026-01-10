@@ -1,11 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
-import { BaseAuthService } from '@orange-car-rental/auth';
+import { BaseAuthService, type RegisterData, type TokenResponse } from '@orange-car-rental/auth';
 import { environment } from '../../environments/environment';
 import { logError } from '@orange-car-rental/util';
-import type { RegisterData, TokenResponse } from '../types';
-export type { RegisterData } from '../types';
+export type { RegisterData } from '@orange-car-rental/auth';
 
 /**
  * Authentication service for public portal

@@ -140,9 +140,7 @@ export class ReservationsComponent implements OnInit {
     const reservations = this.reservations();
     const grouping = this.groupBy();
 
-    if (grouping === 'none') {
-      return { all: reservations };
-    }
+    if (grouping === 'none') return { all: reservations };
 
     const grouped: GroupedReservations = {};
 
@@ -163,9 +161,7 @@ export class ReservationsComponent implements OnInit {
           key = 'all';
       }
 
-      if (!grouped[key]) {
-        grouped[key] = [];
-      }
+      if (!grouped[key]) grouped[key] = [];
       grouped[key].push(reservation);
     });
 

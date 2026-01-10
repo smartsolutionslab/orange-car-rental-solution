@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit.v3.assert" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\OrangeCarRental.BuildingBlocks.Domain\OrangeCarRental.BuildingBlocks.Domain.csproj" />
   </ItemGroup>
 

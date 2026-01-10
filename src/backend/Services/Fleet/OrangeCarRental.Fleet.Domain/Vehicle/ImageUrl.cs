@@ -20,21 +20,13 @@ public readonly record struct ImageUrl(string Value) : IValueObject
 
         Ensure.That(trimmed, nameof(value))
             .IsNotNullOrWhiteSpace()
-            .AndHasMaxLength(MaxLength);
-
-        if (!Uri.TryCreate(trimmed, UriKind.Absolute, out var uri))
-        {
-            throw new ArgumentException(
-                $"Invalid URL format: '{value}'.",
-                nameof(value));
-        }
-
-        if (!AllowedSchemes.Contains(uri.Scheme.ToLowerInvariant()))
-        {
-            throw new ArgumentException(
-                $"URL must use HTTP or HTTPS scheme. Got: '{uri.Scheme}'.",
-                nameof(value));
-        }
+            .AndHasMaxLength(MaxLength)
+            .AndSatisfies(
+                v => Uri.TryCreate(v, UriKind.Absolute, out _),
+                $"Invalid URL format: '{value}'.")
+            .AndSatisfies(
+                v => Uri.TryCreate(v, UriKind.Absolute, out var u) && AllowedSchemes.Contains(u.Scheme.ToLowerInvariant()),
+                "URL must use HTTP or HTTPS scheme.");
 
         return new ImageUrl(trimmed);
     }

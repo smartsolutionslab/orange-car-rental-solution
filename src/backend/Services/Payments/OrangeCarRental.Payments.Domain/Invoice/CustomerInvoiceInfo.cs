@@ -75,8 +75,7 @@ public sealed record CustomerInvoiceInfo : IValueObject
         string country,
         string? vatId = null)
     {
-        Ensure.That(customerIdentifier.Value, nameof(customerIdentifier))
-            .ThrowIf(customerIdentifier.Value == Guid.Empty, "Customer identifier cannot be empty");
+        Ensure.That(customerIdentifier.Value, nameof(customerIdentifier)).IsNotEmpty();
         Ensure.That(name, nameof(name)).IsNotNullOrWhiteSpace();
 
         return new CustomerInvoiceInfo(
