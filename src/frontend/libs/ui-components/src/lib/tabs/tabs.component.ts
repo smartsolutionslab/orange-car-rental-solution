@@ -305,9 +305,7 @@ export class TabsComponent implements AfterContentInit {
         tabs.forEach((tab) => {
           const isActive = tab.tabId() === this.activeTabId();
           tab.isActive.set(isActive);
-          if (isActive) {
-            tab.hasVisited.set(true);
-          }
+          if (isActive) tab.hasVisited.set(true);
         });
       },
       { allowSignalWrites: true },
@@ -337,9 +335,7 @@ export class TabsComponent implements AfterContentInit {
     tabs.forEach((t) => {
       const isActive = t.tabId() === tabId;
       t.isActive.set(isActive);
-      if (isActive) {
-        t.hasVisited.set(true);
-      }
+      if (isActive) t.hasVisited.set(true);
     });
 
     // Update indicator
@@ -374,15 +370,11 @@ export class TabsComponent implements AfterContentInit {
     } else if (event.key === "Home") {
       event.preventDefault();
       const firstEnabled = enabledTabs[0];
-      if (firstEnabled) {
-        newIndex = tabs.findIndex((t) => t === firstEnabled);
-      }
+      if (firstEnabled) newIndex = tabs.findIndex((t) => t === firstEnabled);
     } else if (event.key === "End") {
       event.preventDefault();
       const lastEnabled = enabledTabs[enabledTabs.length - 1];
-      if (lastEnabled) {
-        newIndex = tabs.findIndex((t) => t === lastEnabled);
-      }
+      if (lastEnabled) newIndex = tabs.findIndex((t) => t === lastEnabled);
     }
 
     if (newIndex !== null && newIndex >= 0) {

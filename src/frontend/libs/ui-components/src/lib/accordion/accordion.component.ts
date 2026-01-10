@@ -288,9 +288,7 @@ export class AccordionComponent implements AfterContentInit {
 
     // Update the target item
     item.isExpanded.set(newExpanded);
-    if (newExpanded) {
-      item.hasOpened.set(true);
-    }
+    if (newExpanded) item.hasOpened.set(true);
 
     // Update expanded IDs
     const expandedSet = new Set(
@@ -367,15 +365,11 @@ export class AccordionComponent implements AfterContentInit {
     } else if (event.key === "Home") {
       event.preventDefault();
       const first = enabledItems[0];
-      if (first) {
-        targetIndex = items.findIndex((i) => i === first);
-      }
+      if (first) targetIndex = items.findIndex((i) => i === first);
     } else if (event.key === "End") {
       event.preventDefault();
       const last = enabledItems[enabledItems.length - 1];
-      if (last) {
-        targetIndex = items.findIndex((i) => i === last);
-      }
+      if (last) targetIndex = items.findIndex((i) => i === last);
     }
 
     if (targetIndex !== null && targetIndex >= 0) {

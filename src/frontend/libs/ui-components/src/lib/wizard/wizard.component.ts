@@ -553,9 +553,7 @@ export class WizardComponent implements AfterContentInit {
    * Go to the next step
    */
   nextStep(): void {
-    if (this.canProceed()) {
-      this.goToStep(this.currentIndex() + 1);
-    }
+    if (this.canProceed()) this.goToStep(this.currentIndex() + 1);
   }
 
   /**
@@ -584,9 +582,7 @@ export class WizardComponent implements AfterContentInit {
 
     // Mark current step as completed
     const current = this.currentStep();
-    if (current) {
-      this.updateStepState(current.id, { status: "completed" });
-    }
+    if (current) this.updateStepState(current.id, { status: "completed" });
 
     // Gather completion data
     const states = this.stepStates();
@@ -636,9 +632,7 @@ export class WizardComponent implements AfterContentInit {
       this.previousStep();
     } else if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       event.preventDefault();
-      if (this.canProceed()) {
-        this.nextStep();
-      }
+      if (this.canProceed()) this.nextStep();
     }
   }
 
@@ -647,9 +641,7 @@ export class WizardComponent implements AfterContentInit {
    */
   setStepError(stepId: string, hasError: boolean): void {
     const state = this.stepStates()[stepId];
-    if (state) {
-      this.updateStepState(stepId, { status: hasError ? "error" : "active" });
-    }
+    if (state) this.updateStepState(stepId, { status: hasError ? "error" : "active" });
   }
 
   /**

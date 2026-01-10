@@ -106,9 +106,7 @@ export class VehicleSearchComponent implements OnInit {
   }
 
   protected onSearch(): void {
-    if (this.searchForm.invalid) {
-      return;
-    }
+    if (this.searchForm.invalid) return;
 
     const formValue = this.searchForm.value;
 

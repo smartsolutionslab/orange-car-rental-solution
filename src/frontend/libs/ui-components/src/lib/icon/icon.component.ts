@@ -148,9 +148,7 @@ export class IconComponent {
    */
   readonly computedSize = computed<number>(() => {
     const custom = this.customSize();
-    if (custom !== undefined) {
-      return custom;
-    }
+    if (custom !== undefined) return custom;
     return this.sizeMap[this.size()] ?? 20;
   });
 
@@ -160,9 +158,7 @@ export class IconComponent {
   readonly svgClass = computed<string>(() => {
     const classes: string[] = [];
     const inputClass = this.class();
-    if (inputClass) {
-      classes.push(inputClass);
-    }
+    if (inputClass) classes.push(inputClass);
     return classes.join(" ");
   });
 }

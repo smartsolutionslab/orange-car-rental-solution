@@ -301,9 +301,7 @@ export class CollapsiblePanelComponent {
     const newExpanded = !this.isExpanded();
     this.isExpanded.set(newExpanded);
 
-    if (newExpanded) {
-      this.hasOpened.set(true);
-    }
+    if (newExpanded) this.hasOpened.set(true);
 
     this.expandedChange.emit({ expanded: newExpanded });
   }
@@ -312,17 +310,13 @@ export class CollapsiblePanelComponent {
    * Expand the panel
    */
   expand(): void {
-    if (!this.isExpanded() && !this.disabled()) {
-      this.toggle();
-    }
+    if (!this.isExpanded() && !this.disabled()) this.toggle();
   }
 
   /**
    * Collapse the panel
    */
   collapse(): void {
-    if (this.isExpanded()) {
-      this.toggle();
-    }
+    if (this.isExpanded()) this.toggle();
   }
 }

@@ -673,9 +673,7 @@ export class DataTableComponent<T = unknown> {
    */
   readonly effectiveColumns = computed<DataTableColumn<T>[]>(() => {
     const inputColumns = this.columns();
-    if (inputColumns.length > 0) {
-      return inputColumns;
-    }
+    if (inputColumns.length > 0) return inputColumns;
 
     // Convert directives to column definitions
     return this.columnDirectives().map((dir) => ({
@@ -705,9 +703,7 @@ export class DataTableComponent<T = unknown> {
 
     return data.filter((item) => {
       return this.effectiveColumns().some((col) => {
-        if (col.filterFn) {
-          return col.filterFn(item, filter);
-        }
+        if (col.filterFn) return col.filterFn(item, filter);
         const value = this.getCellValue(item, col);
         return String(value).toLowerCase().includes(filter);
       });
@@ -727,9 +723,7 @@ export class DataTableComponent<T = unknown> {
     if (!column) return data;
 
     return data.sort((a, b) => {
-      if (column.sortFn) {
-        return column.sortFn(a, b, sort.direction);
-      }
+      if (column.sortFn) return column.sortFn(a, b, sort.direction);
 
       const aValue = this.getCellValue(a, column);
       const bValue = this.getCellValue(b, column);
@@ -808,9 +802,7 @@ export class DataTableComponent<T = unknown> {
    * Get cell value for an item and column
    */
   getCellValue(item: T, column: DataTableColumn<T>): unknown {
-    if (column.valueAccessor) {
-      return column.valueAccessor(item);
-    }
+    if (column.valueAccessor) return column.valueAccessor(item);
     return (item as Record<string, unknown>)[column.key];
   }
 

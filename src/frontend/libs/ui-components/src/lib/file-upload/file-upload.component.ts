@@ -384,9 +384,7 @@ export class FileUploadComponent {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.processFiles(Array.from(input.files));
-    }
+    if (input.files) this.processFiles(Array.from(input.files));
     // Reset input so same file can be selected again
     input.value = "";
   }
@@ -394,9 +392,7 @@ export class FileUploadComponent {
   onDragOver(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    if (!this.disabled()) {
-      this.isDragging.set(true);
-    }
+    if (!this.disabled()) this.isDragging.set(true);
   }
 
   onDragLeave(event: DragEvent): void {
@@ -413,9 +409,7 @@ export class FileUploadComponent {
     if (this.disabled()) return;
 
     const files = event.dataTransfer?.files;
-    if (files) {
-      this.processFiles(Array.from(files));
-    }
+    if (files) this.processFiles(Array.from(files));
   }
 
   removeFile(index: number, event: Event): void {
@@ -424,9 +418,7 @@ export class FileUploadComponent {
     const file = currentFiles[index];
 
     // Revoke preview URL if exists
-    if (file.preview) {
-      URL.revokeObjectURL(file.preview);
-    }
+    if (file.preview) URL.revokeObjectURL(file.preview);
 
     const newFiles = currentFiles.filter((_, i) => i !== index);
     this.files.set(newFiles);
@@ -516,9 +508,7 @@ export class FileUploadComponent {
   clear(): void {
     // Revoke all preview URLs
     for (const file of this.files()) {
-      if (file.preview) {
-        URL.revokeObjectURL(file.preview);
-      }
+      if (file.preview) URL.revokeObjectURL(file.preview);
     }
     this.files.set([]);
     this.filesChange.emit([]);

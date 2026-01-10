@@ -110,9 +110,7 @@ export function calculateRentalDays(
   pickupDate: string | Date | null | undefined,
   returnDate: string | Date | null | undefined,
 ): number {
-  if (!pickupDate || !returnDate) {
-    return 0;
-  }
+  if (!pickupDate || !returnDate) return 0;
 
   const pickup =
     typeof pickupDate === "string" ? new Date(pickupDate) : pickupDate;
