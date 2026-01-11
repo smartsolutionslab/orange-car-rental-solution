@@ -2,22 +2,13 @@ import { Component, signal, inject, DestroyRef } from '@angular/core';
 import type { OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CustomValidators } from '@orange-car-rental/shared';
-import type {
-  EmailAddress,
-  PhoneNumber,
-  ISODateString,
-  PostalCode,
-  CountryCode,
-  FirstName,
-  LastName,
-} from '@orange-car-rental/shared';
+import type { PhoneNumber, FirstName, LastName } from '@orange-car-rental/shared';
 import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { Vehicle, VehicleId } from '@orange-car-rental/vehicle-api';
-import type { GuestReservationRequest, LicenseNumber } from '@orange-car-rental/reservation-api';
-import type { CityName, StreetAddress } from '@orange-car-rental/location-api';
+import type { GuestReservationRequest } from '@orange-car-rental/reservation-api';
 import type {
   CustomerProfile,
   UpdateCustomerProfileRequest,
@@ -244,18 +235,19 @@ export class BookingComponent implements OnInit {
             phoneNumber: profile.phoneNumber,
             dateOfBirth: profile.dateOfBirth,
 
-            // Pre-fill address
-            street: profile.address.street,
-            city: profile.address.city,
-            postalCode: profile.address.postalCode,
-            country: profile.address.country,
+            // Pre-fill address (if available)
+            street: profile.address?.street,
+            city: profile.address?.city,
+            postalCode: profile.address?.postalCode,
+            country: profile.address?.country,
 
             // Pre-fill driver's license if available
+            // Map from API response names to form field names
             ...(profile.driversLicense && {
               licenseNumber: profile.driversLicense.licenseNumber,
-              licenseIssueCountry: profile.driversLicense.licenseIssueCountry,
-              licenseIssueDate: profile.driversLicense.licenseIssueDate,
-              licenseExpiryDate: profile.driversLicense.licenseExpiryDate,
+              licenseIssueCountry: profile.driversLicense.issueCountry,
+              licenseIssueDate: profile.driversLicense.issueDate,
+              licenseExpiryDate: profile.driversLicense.expiryDate,
             }),
           });
         },
@@ -463,23 +455,18 @@ export class BookingComponent implements OnInit {
     const profile = this.customerProfile();
     if (!profile) return;
 
+    // Backend only supports updating profile (name, phone) and address
     const updateRequest: UpdateCustomerProfileRequest = {
-      firstName: formValue.firstName as FirstName,
-      lastName: formValue.lastName as LastName,
-      email: formValue.email as EmailAddress,
-      phoneNumber: formValue.phoneNumber as PhoneNumber,
-      dateOfBirth: formValue.dateOfBirth as ISODateString,
-      address: {
-        street: formValue.street as StreetAddress,
-        city: formValue.city as CityName,
-        postalCode: formValue.postalCode as PostalCode,
-        country: formValue.country as CountryCode,
+      profile: {
+        firstName: formValue.firstName as FirstName,
+        lastName: formValue.lastName as LastName,
+        phoneNumber: formValue.phoneNumber as PhoneNumber,
       },
-      driversLicense: {
-        licenseNumber: formValue.licenseNumber as LicenseNumber,
-        licenseIssueCountry: formValue.licenseIssueCountry as CountryCode,
-        licenseIssueDate: formValue.licenseIssueDate as ISODateString,
-        licenseExpiryDate: formValue.licenseExpiryDate as ISODateString,
+      address: {
+        street: formValue.street,
+        city: formValue.city,
+        postalCode: formValue.postalCode,
+        country: formValue.country,
       },
     };
 

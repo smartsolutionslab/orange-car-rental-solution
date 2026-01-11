@@ -66,7 +66,7 @@ export class VehicleListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.vehicles.set(result.vehicles);
+          this.vehicles.set(result.items);
           this.totalCount.set(result.totalCount);
           this.loading.set(false);
         },

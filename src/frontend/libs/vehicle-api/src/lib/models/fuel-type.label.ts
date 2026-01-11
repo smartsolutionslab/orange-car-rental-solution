@@ -9,4 +9,6 @@ export const FuelTypeLabel: Record<FuelType, string> = {
   [FT.Diesel]: "Diesel",
   [FT.Electric]: "Elektro",
   [FT.Hybrid]: "Hybrid",
+  [FT.PlugInHybrid]: "Plug-in Hybrid",
+  [FT.Hydrogen]: "Wasserstoff",
 };

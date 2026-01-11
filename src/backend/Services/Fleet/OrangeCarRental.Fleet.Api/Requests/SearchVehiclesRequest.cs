@@ -14,6 +14,7 @@ public sealed record SearchVehiclesRequest(
     string? TransmissionType,
     string? Transmission, // Alias for TransmissionType for user-friendliness
     decimal? MaxDailyRateGross,
+    string? Status, // Vehicle status filter (Available, Rented, Maintenance, etc.)
     int? PageNumber = null,
     int? PageSize = null)
 {

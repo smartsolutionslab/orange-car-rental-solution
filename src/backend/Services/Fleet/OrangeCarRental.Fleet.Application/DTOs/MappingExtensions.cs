@@ -60,7 +60,7 @@ public static class MappingExtensions
                 query.FuelType,
                 query.TransmissionType,
                 query.MaxDailyRate,
-                VehicleStatus.Available, // Always filter to available vehicles
+                query.Status, // null = all statuses, specific value = filter by status
                 query.Period,
                 query.Paging,
                 query.Sorting);

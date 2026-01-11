@@ -166,13 +166,13 @@ describe('CustomersComponent', () => {
       );
     });
 
-    it('should search customers by last name', () => {
-      component['searchLastName'].set('Müller');
+    it('should search customers by name', () => {
+      component['searchName'].set('Müller');
       component['searchCustomers']();
 
       expect(mockCustomerService.searchCustomers).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          lastName: 'Müller',
+          searchTerm: 'Müller',
         }),
       );
     });
@@ -180,14 +180,14 @@ describe('CustomersComponent', () => {
     it('should search with multiple criteria', () => {
       component['searchEmail'].set('hans@example.de');
       component['searchPhone'].set('+49 89 12345678');
-      component['searchLastName'].set('Müller');
+      component['searchName'].set('Müller');
       component['searchCustomers']();
 
       expect(mockCustomerService.searchCustomers).toHaveBeenCalledWith(
         jasmine.objectContaining({
           email: 'hans@example.de',
           phoneNumber: '+49 89 12345678',
-          lastName: 'Müller',
+          searchTerm: 'Müller',
         }),
       );
     });
@@ -195,7 +195,7 @@ describe('CustomersComponent', () => {
     it('should require at least one search criterion', () => {
       component['searchEmail'].set('');
       component['searchPhone'].set('');
-      component['searchLastName'].set('');
+      component['searchName'].set('');
       component['searchCustomers']();
 
       expect(mockCustomerService.searchCustomers).not.toHaveBeenCalled();
@@ -244,7 +244,7 @@ describe('CustomersComponent', () => {
     it('should clear all search filters', () => {
       component['searchEmail'].set('test@example.de');
       component['searchPhone'].set('+49 89 12345678');
-      component['searchLastName'].set('Müller');
+      component['searchName'].set('Müller');
       component['customers'].set(mockCustomers);
       component['totalCustomers'].set(2);
       component['searchPerformed'].set(true);
@@ -254,7 +254,7 @@ describe('CustomersComponent', () => {
 
       expect(component['searchEmail']()).toBe('');
       expect(component['searchPhone']()).toBe('');
-      expect(component['searchLastName']()).toBe('');
+      expect(component['searchName']()).toBe('');
       expect(component['customers']().length).toBe(0);
       expect(component['totalCustomers']()).toBe(0);
       expect(component['searchPerformed']()).toBe(false);

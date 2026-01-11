@@ -25,11 +25,12 @@ import type {
   Location,
   LocationCode,
   LocationName,
+  LocationStatus,
   CityName,
   StreetAddress,
 } from '@orange-car-rental/location-api';
 import { API_CONFIG } from '@orange-car-rental/shared';
-import type { Currency, PostalCode } from '@orange-car-rental/shared';
+import type { Currency, PostalCode, PhoneNumber, EmailAddress } from '@orange-car-rental/shared';
 import { UI_TIMING, GERMAN_VAT_MULTIPLIER } from '../../constants/app.constants';
 import { TEST_VEHICLE_IDS, SHORT_LOCATION_CODES } from '@orange-car-rental/shared/testing';
 
@@ -114,6 +115,10 @@ describe('VehiclesComponent', () => {
       street: 'Flughafenstraße 1' as StreetAddress,
       postalCode: '85356' as PostalCode,
       fullAddress: 'Flughafenstraße 1, 85356 München',
+      openingHours: 'Mo-So: 06:00-23:00',
+      phone: '+49 89 123456' as PhoneNumber,
+      email: 'muc@orange-car-rental.de' as EmailAddress,
+      status: 'Active' as LocationStatus,
     },
     {
       code: SHORT_LOCATION_CODES.BERLIN,
@@ -122,6 +127,10 @@ describe('VehiclesComponent', () => {
       street: 'Willy Brandt Platz 1' as StreetAddress,
       postalCode: '12529' as PostalCode,
       fullAddress: 'Willy Brandt Platz 1, 12529 Berlin',
+      openingHours: 'Mo-So: 06:00-22:00',
+      phone: '+49 30 123456' as PhoneNumber,
+      email: 'ber@orange-car-rental.de' as EmailAddress,
+      status: 'Active' as LocationStatus,
     },
   ];
 
@@ -153,11 +162,13 @@ describe('VehiclesComponent', () => {
     // Default mock responses
     mockVehicleService.searchVehicles.and.returnValue(
       of({
-        vehicles: mockVehicles,
+        items: mockVehicles,
         totalCount: 3,
         pageNumber: 1,
         pageSize: 25,
         totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
       }),
     );
     mockLocationService.getAllLocations.and.returnValue(of(mockLocations));
@@ -362,9 +373,11 @@ describe('VehiclesComponent', () => {
         vehicleId: 'new-id' as VehicleId,
         name: 'New Car' as VehicleName,
         category: 'MITTEL' as CategoryCode,
-        location: 'MUC' as LocationCode,
-        dailyRateGross: 95.2 as DailyRate,
         status: VehicleStatus.Available,
+        locationCode: 'MUC' as LocationCode,
+        dailyRateNet: 80.0 as DailyRate,
+        dailyRateVat: 15.2 as DailyRate,
+        dailyRateGross: 95.2 as DailyRate,
       };
       mockVehicleService.addVehicle.and.returnValue(of(addVehicleResult));
 

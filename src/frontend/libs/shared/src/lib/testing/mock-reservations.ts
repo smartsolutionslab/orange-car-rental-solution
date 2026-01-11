@@ -71,12 +71,17 @@ export function createMockReservation(
     returnDate: getFutureDate(12),
     pickupLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
     dropoffLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+    rentalDays: 5,
     totalPriceNet: totalPriceNet as Price,
     totalPriceVat: (Math.round(totalPriceVat * 100) / 100) as Price,
     totalPriceGross: (Math.round(totalPriceGross * 100) / 100) as Price,
     currency: "EUR" as Currency,
     status: "Confirmed" as ReservationStatus,
+    cancellationReason: null,
     createdAt: getPastDate(3),
+    confirmedAt: getPastDate(2),
+    cancelledAt: null,
+    completedAt: null,
     ...overrides,
   };
 }

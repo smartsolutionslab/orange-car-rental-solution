@@ -249,6 +249,7 @@ public class SearchVehiclesQueryHandlerTests
         FuelType? fuelType = null,
         TransmissionType? transmissionType = null,
         Money? maxDailyRate = null,
+        VehicleStatus? status = null,
         int pageNumber = 1,
         int pageSize = 10)
     {
@@ -260,6 +261,7 @@ public class SearchVehiclesQueryHandlerTests
             fuelType,
             transmissionType,
             maxDailyRate,
+            status,
             PagingInfo.Create(pageNumber, pageSize),
             SortingInfo.Create());
     }

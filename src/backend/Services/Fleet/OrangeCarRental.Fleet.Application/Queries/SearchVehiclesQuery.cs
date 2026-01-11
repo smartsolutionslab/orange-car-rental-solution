@@ -20,6 +20,7 @@ public sealed record SearchVehiclesQuery(
     FuelType? FuelType,
     TransmissionType? TransmissionType,
     Money? MaxDailyRate,
+    VehicleStatus? Status, // Optional status filter (defaults to Available for public search)
     PagingInfo Paging,
     SortingInfo Sorting
 ) : IQuery<PagedResult<VehicleDto>>;

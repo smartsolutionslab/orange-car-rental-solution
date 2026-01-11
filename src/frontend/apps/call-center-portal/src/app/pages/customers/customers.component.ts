@@ -96,7 +96,7 @@ export class CustomersComponent {
   // Search filters
   protected readonly searchEmail = signal<string>('');
   protected readonly searchPhone = signal<string>('');
-  protected readonly searchLastName = signal<string>('');
+  protected readonly searchName = signal<string>(''); // Searches both first and last name
 
   // Stats
   protected readonly totalCustomers = signal(0);
@@ -108,9 +108,9 @@ export class CustomersComponent {
   protected searchCustomers(): void {
     const email = this.searchEmail().trim();
     const phone = this.searchPhone().trim();
-    const lastName = this.searchLastName().trim();
+    const name = this.searchName().trim();
 
-    if (!email && !phone && !lastName) {
+    if (!email && !phone && !name) {
       this.error.set(this.translate.instant('customers.search.minCriteria'));
       return;
     }
@@ -122,7 +122,7 @@ export class CustomersComponent {
     const query = {
       ...(email && { email: email as EmailAddress }),
       ...(phone && { phoneNumber: phone as PhoneNumber }),
-      ...(lastName && { lastName }),
+      ...(name && { searchTerm: name }),
       pageSize: DEFAULT_PAGE_SIZE.CUSTOMERS,
     };
 
@@ -146,7 +146,7 @@ export class CustomersComponent {
   protected clearSearch(): void {
     this.searchEmail.set('');
     this.searchPhone.set('');
-    this.searchLastName.set('');
+    this.searchName.set('');
     this.customers.set([]);
     this.totalCustomers.set(0);
     this.searchPerformed.set(false);

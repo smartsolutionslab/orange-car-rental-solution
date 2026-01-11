@@ -65,7 +65,8 @@
       "search": "Suchen...",
       "select": "Bitte wählen...",
       "enterValue": "Wert eingeben...",
-      "lastName": "Mustermann"
+      "lastName": "Mustermann",
+      "name": "Max oder Mustermann"
     },
     "pagination": {
       "showing": "Zeige",
@@ -203,7 +204,7 @@
       "title": "Kundensuche",
       "email": "E-Mail",
       "phone": "Telefonnummer",
-      "lastName": "Nachname",
+      "name": "Name (Vor- oder Nachname)",
       "button": "Suchen",
       "searching": "Suche nach Kunden...",
       "minCriteria": "Bitte geben Sie mindestens ein Suchkriterium ein"

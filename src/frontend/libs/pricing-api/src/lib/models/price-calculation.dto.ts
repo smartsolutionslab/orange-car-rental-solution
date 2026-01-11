@@ -1,5 +1,5 @@
 /**
- * Price calculation result matching backend PriceCalculationResult
+ * Price calculation result matching backend PriceCalculationDto
  * All prices include German VAT (19%)
  */
 import type { Currency, Price } from "@orange-car-rental/shared";

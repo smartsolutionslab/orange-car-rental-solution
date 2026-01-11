@@ -35,8 +35,8 @@ export type Vehicle = {
   readonly currency: Currency;
   readonly status: VehicleStatus;
   readonly licensePlate: LicensePlate | null;
-  readonly manufacturer: Manufacturer;
-  readonly model: VehicleModel;
-  readonly year: ManufacturingYear;
+  readonly manufacturer: Manufacturer | null;
+  readonly model: VehicleModel | null;
+  readonly year: ManufacturingYear | null;
   readonly imageUrl: ImageUrl | null;
 };

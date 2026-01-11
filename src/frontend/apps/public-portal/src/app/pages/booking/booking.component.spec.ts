@@ -60,9 +60,12 @@ describe('BookingComponent', () => {
     id: TEST_CUSTOMER_IDS.HANS_MUELLER,
     firstName: 'Max' as FirstName,
     lastName: 'Mustermann' as LastName,
+    fullName: 'Max Mustermann',
     email: 'max.mustermann@example.com' as EmailAddress,
     phoneNumber: '+49 123 456789' as PhoneNumber,
+    phoneNumberFormatted: '+49 123 456789',
     dateOfBirth: '1990-01-15' as ISODateString,
+    age: 35,
     address: {
       street: 'Musterstraße 123' as StreetAddress,
       city: 'Berlin' as CityName,
@@ -71,10 +74,17 @@ describe('BookingComponent', () => {
     },
     driversLicense: {
       licenseNumber: 'B12345678' as LicenseNumber,
-      licenseIssueCountry: 'Deutschland' as CountryCode,
-      licenseIssueDate: '2015-03-01' as ISODateString,
-      licenseExpiryDate: '2035-03-01' as ISODateString,
+      issueCountry: 'Deutschland' as CountryCode,
+      issueDate: '2015-03-01' as ISODateString,
+      expiryDate: '2035-03-01' as ISODateString,
+      isValid: true,
+      isEuLicense: true,
+      daysUntilExpiry: 3650,
     },
+    status: 'Active',
+    canMakeReservation: true,
+    registeredAtUtc: '2023-01-15T10:30:00Z' as ISODateString,
+    updatedAtUtc: '2024-06-15T14:20:00Z' as ISODateString,
   };
 
   beforeEach(async () => {
@@ -427,7 +437,7 @@ describe('BookingComponent', () => {
     });
 
     it('should not pre-fill license fields when license is not available', () => {
-      const profileWithoutLicense = { ...mockCustomerProfile, driversLicense: undefined };
+      const profileWithoutLicense = { ...mockCustomerProfile, driversLicense: null };
       customerService.getMyProfile.and.returnValue(of(profileWithoutLicense));
 
       fixture.detectChanges();
@@ -513,9 +523,14 @@ describe('BookingComponent', () => {
 
       expect(customerService.updateMyProfile).toHaveBeenCalledWith(
         jasmine.objectContaining({
-          firstName: 'Updated',
-          lastName: 'Name',
-          email: 'updated@example.com',
+          profile: jasmine.objectContaining({
+            firstName: 'Updated',
+            lastName: 'Name',
+          }),
+          address: jasmine.objectContaining({
+            street: 'New Street 456',
+            city: 'Munich',
+          }),
         }),
       );
     });

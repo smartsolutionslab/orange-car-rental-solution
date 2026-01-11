@@ -71,7 +71,7 @@ export class VehicleService {
     return this.searchVehicles(query).pipe(
       map((result) => {
         // Filter out the current vehicle and find similar ones
-        const candidates = result.vehicles.filter((v) => v.id !== currentVehicle.id);
+        const candidates = result.items.filter((v) => v.id !== currentVehicle.id);
 
         // Category hierarchy for similarity matching
         const categories = ['KLEIN', 'KOMPAKT', 'MITTEL', 'OBER', 'SUV', 'KOMBI', 'TRANS', 'LUXUS'];

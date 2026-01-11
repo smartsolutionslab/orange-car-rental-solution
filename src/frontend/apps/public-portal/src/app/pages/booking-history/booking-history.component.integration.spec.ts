@@ -40,12 +40,17 @@ describe('BookingHistoryComponent (Integration)', () => {
       returnDate: getFutureDate(11), // 11 days from now
       pickupLocationCode: 'MUC' as LocationCode,
       dropoffLocationCode: 'MUC' as LocationCode,
+      rentalDays: 4,
       totalPriceNet: 336.13 as Price,
       totalPriceVat: 63.87 as Price,
       totalPriceGross: 400.0 as Price,
       currency: 'EUR' as Currency,
       status: 'Confirmed' as ReservationStatus,
+      cancellationReason: null,
       createdAt: getPastDate(15),
+      confirmedAt: getPastDate(14),
+      cancelledAt: null,
+      completedAt: null,
     },
     {
       id: TEST_RESERVATION_IDS.PENDING,
@@ -55,12 +60,17 @@ describe('BookingHistoryComponent (Integration)', () => {
       returnDate: getFutureDate(16), // 16 days from now
       pickupLocationCode: 'BER' as LocationCode,
       dropoffLocationCode: 'BER' as LocationCode,
+      rentalDays: 2,
       totalPriceNet: 168.07 as Price,
       totalPriceVat: 31.93 as Price,
       totalPriceGross: 200.0 as Price,
       currency: 'EUR' as Currency,
       status: 'Pending' as ReservationStatus,
+      cancellationReason: null,
       createdAt: getPastDate(15),
+      confirmedAt: null,
+      cancelledAt: null,
+      completedAt: null,
     },
   ];
 
@@ -303,7 +313,7 @@ describe('BookingHistoryComponent (Integration)', () => {
           request.url.includes(`/api/reservations/${reservation.id}/cancel`) &&
           request.method === 'PUT',
       );
-      expect(req.request.body).toEqual({ reason: 'Change of plans' });
+      expect(req.request.body).toEqual({ cancellationReason: 'Change of plans' });
 
       // Respond with success
       req.flush(null);

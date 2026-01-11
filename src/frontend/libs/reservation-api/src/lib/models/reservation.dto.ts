@@ -16,10 +16,15 @@ export type Reservation = {
   readonly returnDate: ISODateString;
   readonly pickupLocationCode: LocationCode;
   readonly dropoffLocationCode: LocationCode;
+  readonly rentalDays: number;
   readonly totalPriceNet: Price;
   readonly totalPriceVat: Price;
   readonly totalPriceGross: Price;
   readonly currency: Currency;
   readonly status: ReservationStatus;
-  readonly createdAt?: ISODateString;
+  readonly cancellationReason: string | null;
+  readonly createdAt: ISODateString;
+  readonly confirmedAt: ISODateString | null;
+  readonly cancelledAt: ISODateString | null;
+  readonly completedAt: ISODateString | null;
 };

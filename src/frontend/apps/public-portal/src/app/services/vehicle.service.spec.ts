@@ -31,11 +31,13 @@ describe('VehicleService', () => {
   const mockVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockSearchResult: VehicleSearchResult = {
-    vehicles: [mockVehicle],
+    items: [mockVehicle],
     totalCount: 1,
     pageNumber: 1,
     pageSize: 10,
     totalPages: 1,
+    hasPreviousPage: false,
+    hasNextPage: false,
   };
 
   beforeEach(() => {
@@ -62,7 +64,7 @@ describe('VehicleService', () => {
     it('should search vehicles without query parameters', () => {
       service.searchVehicles().subscribe((result) => {
         expect(result).toEqual(mockSearchResult);
-        expect(result.vehicles.length).toBe(1);
+        expect(result.items.length).toBe(1);
         expect(result.totalCount).toBe(1);
       });
 
@@ -150,15 +152,17 @@ describe('VehicleService', () => {
 
     it('should handle empty search results', () => {
       const emptyResult: VehicleSearchResult = {
-        vehicles: [],
+        items: [],
         totalCount: 0,
         pageNumber: 1,
         pageSize: 10,
         totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
       };
 
       service.searchVehicles().subscribe((result) => {
-        expect(result.vehicles.length).toBe(0);
+        expect(result.items.length).toBe(0);
         expect(result.totalCount).toBe(0);
       });
 

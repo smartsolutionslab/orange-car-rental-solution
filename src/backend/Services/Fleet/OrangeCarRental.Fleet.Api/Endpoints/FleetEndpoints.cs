@@ -38,6 +38,7 @@ public static class FleetEndpoints
                         request.MaxDailyRateGross.HasValue
                             ? Money.EuroGross(request.MaxDailyRateGross.Value)
                             : null,
+                        request.Status.TryParseVehicleStatus(),
                         PagingInfo.Create(request.PageNumber ?? 1, request.PageSize ?? PagingInfo.DefaultPageSize),
                         SortingInfo.Create());
 

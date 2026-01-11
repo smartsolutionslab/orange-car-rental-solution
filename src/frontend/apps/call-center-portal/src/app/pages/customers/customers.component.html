@@ -30,10 +30,10 @@
       />
 
       <ocr-input
-        [label]="'customers.search.lastName' | translate"
+        [label]="'customers.search.name' | translate"
         type="text"
-        [(ngModel)]="searchLastName"
-        [placeholder]="'common.placeholders.lastName' | translate"
+        [(ngModel)]="searchName"
+        [placeholder]="'common.placeholders.name' | translate"
         leadingIcon="user"
         (keyup.enter)="searchCustomers()"
       />

@@ -147,7 +147,7 @@ export class LocationsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.allVehicles.set(result.vehicles);
+          this.allVehicles.set(result.items);
         },
         error: (err) => {
           logError('LocationsComponent', 'Error loading vehicles', err);
@@ -214,7 +214,7 @@ export class LocationsComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.locationVehicles.set(result.vehicles);
+          this.locationVehicles.set(result.items);
           this.loadingVehicles.set(false);
         },
         error: (err) => {

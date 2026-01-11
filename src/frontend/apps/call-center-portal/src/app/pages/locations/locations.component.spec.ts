@@ -8,9 +8,11 @@ import type {
   Location,
   LocationCode,
   LocationName,
+  LocationStatus,
   CityName,
   StreetAddress,
 } from '@orange-car-rental/location-api';
+import type { PhoneNumber, EmailAddress } from '@orange-car-rental/shared';
 import type {
   Vehicle,
   VehicleName,
@@ -46,6 +48,10 @@ describe('LocationsComponent', () => {
       street: 'Flughafenstraße 1' as StreetAddress,
       postalCode: '85356' as PostalCode,
       fullAddress: 'Flughafenstraße 1, 85356 München',
+      openingHours: 'Mo-So: 06:00-23:00',
+      phone: '+49 89 123456' as PhoneNumber,
+      email: 'muc@orange-car-rental.de' as EmailAddress,
+      status: 'Active' as LocationStatus,
     },
     {
       code: SHORT_LOCATION_CODES.BERLIN,
@@ -54,6 +60,10 @@ describe('LocationsComponent', () => {
       street: 'Willy Brandt Platz 1' as StreetAddress,
       postalCode: '12529' as PostalCode,
       fullAddress: 'Willy Brandt Platz 1, 12529 Berlin',
+      openingHours: 'Mo-So: 06:00-22:00',
+      phone: '+49 30 123456' as PhoneNumber,
+      email: 'ber@orange-car-rental.de' as EmailAddress,
+      status: 'Active' as LocationStatus,
     },
     {
       code: SHORT_LOCATION_CODES.FRANKFURT,
@@ -62,6 +72,10 @@ describe('LocationsComponent', () => {
       street: 'Flughafenring 1' as StreetAddress,
       postalCode: '60549' as PostalCode,
       fullAddress: 'Flughafenring 1, 60549 Frankfurt',
+      openingHours: 'Mo-So: 05:00-00:00',
+      phone: '+49 69 123456' as PhoneNumber,
+      email: 'fra@orange-car-rental.de' as EmailAddress,
+      status: 'Active' as LocationStatus,
     },
   ];
 
@@ -172,11 +186,13 @@ describe('LocationsComponent', () => {
     mockLocationService.getAllLocations.and.returnValue(of(mockLocations));
     mockVehicleService.searchVehicles.and.returnValue(
       of({
-        vehicles: mockVehicles,
+        items: mockVehicles,
         totalCount: 4,
         pageNumber: 1,
         pageSize: 100,
         totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
       }),
     );
 
@@ -259,11 +275,13 @@ describe('LocationsComponent', () => {
     it('should handle zero vehicles for utilization', () => {
       mockVehicleService.searchVehicles.and.returnValue(
         of({
-          vehicles: [],
+          items: [],
           totalCount: 0,
           pageNumber: 1,
           pageSize: 100,
           totalPages: 0,
+          hasPreviousPage: false,
+          hasNextPage: false,
         }),
       );
 
@@ -503,11 +521,13 @@ describe('LocationsComponent', () => {
     it('should handle empty vehicles array', () => {
       mockVehicleService.searchVehicles.and.returnValue(
         of({
-          vehicles: [],
+          items: [],
           totalCount: 0,
           pageNumber: 1,
           pageSize: 100,
           totalPages: 0,
+          hasPreviousPage: false,
+          hasNextPage: false,
         }),
       );
 

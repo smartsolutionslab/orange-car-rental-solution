@@ -17,8 +17,8 @@ export type Location = {
   readonly city: CityName;
   readonly postalCode: PostalCode;
   readonly fullAddress: FullAddress;
-  readonly openingHours?: string;
-  readonly phone?: PhoneNumber;
-  readonly email?: EmailAddress;
-  readonly status?: LocationStatus;
+  readonly openingHours: string;
+  readonly phone: PhoneNumber;
+  readonly email: EmailAddress;
+  readonly status: LocationStatus;
 };

@@ -10,4 +10,5 @@ export const ReservationStatusLabel: Record<ReservationStatus, string> = {
   [RS.Active]: "Aktiv",
   [RS.Completed]: "Abgeschlossen",
   [RS.Cancelled]: "Storniert",
+  [RS.NoShow]: "Nicht erschienen",
 };

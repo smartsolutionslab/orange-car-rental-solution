@@ -286,7 +286,7 @@
               </ng-template>
 
               <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
-                <div class="actions-cell" (click)="$event.stopPropagation()">
+                <div class="actions-cell" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
                   <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
                     {{ 'common.actions.details' | translate }}
                   </button>
@@ -346,7 +346,7 @@
         </ng-template>
 
         <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
-          <div class="actions-cell" (click)="$event.stopPropagation()">
+          <div class="actions-cell" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
             <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
               {{ 'common.actions.details' | translate }}
             </button>

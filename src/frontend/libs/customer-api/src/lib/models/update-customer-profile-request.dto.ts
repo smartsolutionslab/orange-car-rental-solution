@@ -3,7 +3,6 @@
  * Matches backend UpdateCustomerProfileRequest nested structure
  */
 import type { FirstName, LastName, PhoneNumber } from "@orange-car-rental/shared";
-import type { AddressDetails } from "@orange-car-rental/reservation-api";
 
 /**
  * Profile data for update (matches backend CustomerProfileDto)

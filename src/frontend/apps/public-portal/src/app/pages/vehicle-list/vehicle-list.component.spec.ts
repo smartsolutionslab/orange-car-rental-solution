@@ -39,11 +39,13 @@ describe('VehicleListComponent', () => {
   const mockVehicle: Vehicle = MOCK_VEHICLES.VW_GOLF;
 
   const mockSearchResult: VehicleSearchResult = {
-    vehicles: [mockVehicle],
+    items: [mockVehicle],
     totalCount: 1,
     pageNumber: 1,
     pageSize: 10,
     totalPages: 1,
+    hasPreviousPage: false,
+    hasNextPage: false,
   };
 
   beforeEach(async () => {
@@ -156,11 +158,13 @@ describe('VehicleListComponent', () => {
 
     it('should handle empty search results', () => {
       const emptyResult: VehicleSearchResult = {
-        vehicles: [],
+        items: [],
         totalCount: 0,
         pageNumber: 1,
         pageSize: 10,
         totalPages: 0,
+        hasPreviousPage: false,
+        hasNextPage: false,
       };
 
       vehicleService.searchVehicles.and.returnValue(of(emptyResult));
@@ -283,11 +287,13 @@ describe('VehicleListComponent', () => {
 
     it('should update vehicles array on successful search', () => {
       const multiVehicleResult: VehicleSearchResult = {
-        vehicles: [mockVehicle, { ...mockVehicle, id: 'different-id' as VehicleId }],
+        items: [mockVehicle, { ...mockVehicle, id: 'different-id' as VehicleId }],
         totalCount: 2,
         pageNumber: 1,
         pageSize: 10,
         totalPages: 1,
+        hasPreviousPage: false,
+        hasNextPage: false,
       };
 
       vehicleService.searchVehicles.and.returnValue(of(multiVehicleResult));

@@ -7,6 +7,7 @@ export const ReservationStatus = {
   Active: "Active",
   Completed: "Completed",
   Cancelled: "Cancelled",
+  NoShow: "NoShow",
 } as const;
 
 export type ReservationStatus =

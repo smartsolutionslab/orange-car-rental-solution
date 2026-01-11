@@ -211,7 +211,7 @@ export class VehiclesComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (result) => {
-          this.vehicles.set(result.vehicles);
+          this.vehicles.set(result.items);
           this.loading.set(false);
         },
         error: (err) => {

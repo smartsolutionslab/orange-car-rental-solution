@@ -38,12 +38,17 @@ describe('BookingHistoryComponent', () => {
       returnDate: getFutureDate(11), // 11 days from now
       pickupLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
       dropoffLocationCode: TEST_LOCATION_CODES.MUNICH_AIRPORT,
+      rentalDays: 4,
       totalPriceNet: 336.13 as Price,
       totalPriceVat: 63.87 as Price,
       totalPriceGross: 400.0 as Price,
       currency: 'EUR',
       status: 'Confirmed' as ReservationStatus,
+      cancellationReason: null,
       createdAt: getPastDate(15),
+      confirmedAt: getPastDate(14),
+      cancelledAt: null,
+      completedAt: null,
     },
     {
       id: TEST_RESERVATION_IDS.PENDING,
@@ -53,12 +58,17 @@ describe('BookingHistoryComponent', () => {
       returnDate: getFutureDate(16), // 16 days from now
       pickupLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
       dropoffLocationCode: TEST_LOCATION_CODES.BERLIN_HBF,
+      rentalDays: 2,
       totalPriceNet: 168.07 as Price,
       totalPriceVat: 31.93 as Price,
       totalPriceGross: 200.0 as Price,
       currency: 'EUR',
       status: 'Pending' as ReservationStatus,
+      cancellationReason: null,
       createdAt: getPastDate(15),
+      confirmedAt: null,
+      cancelledAt: null,
+      completedAt: null,
     },
     {
       id: TEST_RESERVATION_IDS.COMPLETED,
@@ -68,12 +78,17 @@ describe('BookingHistoryComponent', () => {
       returnDate: getPastDate(58), // 58 days ago
       pickupLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
       dropoffLocationCode: TEST_LOCATION_CODES.FRANKFURT_CITY,
+      rentalDays: 2,
       totalPriceNet: 252.1 as Price,
       totalPriceVat: 47.9 as Price,
       totalPriceGross: 300.0 as Price,
       currency: 'EUR',
       status: 'Completed' as ReservationStatus,
+      cancellationReason: null,
       createdAt: getPastDate(75),
+      confirmedAt: getPastDate(74),
+      cancelledAt: null,
+      completedAt: getPastDate(58),
     },
   ];
 
