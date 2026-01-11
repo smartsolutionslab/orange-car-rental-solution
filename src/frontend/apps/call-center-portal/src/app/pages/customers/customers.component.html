@@ -77,15 +77,27 @@
         {{ row.firstName }} {{ row.lastName }}
       </ng-template>
 
-      <ng-template ocrDataTableColumn="email" [header]="'customers.table.email' | translate" let-row>
+      <ng-template
+        ocrDataTableColumn="email"
+        [header]="'customers.table.email' | translate"
+        let-row
+      >
         {{ row.email }}
       </ng-template>
 
-      <ng-template ocrDataTableColumn="phoneNumber" [header]="'customers.table.phone' | translate" let-row>
+      <ng-template
+        ocrDataTableColumn="phoneNumber"
+        [header]="'customers.table.phone' | translate"
+        let-row
+      >
         {{ row.phoneNumber }}
       </ng-template>
 
-      <ng-template ocrDataTableColumn="dateOfBirth" [header]="'customers.table.dateOfBirth' | translate" let-row>
+      <ng-template
+        ocrDataTableColumn="dateOfBirth"
+        [header]="'customers.table.dateOfBirth' | translate"
+        let-row
+      >
         {{ formatDate(row.dateOfBirth) }}
       </ng-template>
 
@@ -93,11 +105,19 @@
         {{ row.address?.city }}
       </ng-template>
 
-      <ng-template ocrDataTableColumn="createdAt" [header]="'customers.table.registered' | translate" let-row>
+      <ng-template
+        ocrDataTableColumn="createdAt"
+        [header]="'customers.table.registered' | translate"
+        let-row
+      >
         {{ formatDate(row.registeredAtUtc) }}
       </ng-template>
 
-      <ng-template ocrDataTableColumn="actions" [header]="'customers.table.actions' | translate" let-row>
+      <ng-template
+        ocrDataTableColumn="actions"
+        [header]="'customers.table.actions' | translate"
+        let-row
+      >
         <button
           class="btn-icon"
           (click)="viewDetails(row); $event.stopPropagation()"
