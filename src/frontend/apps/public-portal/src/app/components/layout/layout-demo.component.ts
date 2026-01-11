@@ -10,12 +10,22 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { LayoutComponent } from './layout.component';
 import { NavigationComponent } from '../navigation/navigation.component';
-import { CheckboxComponent, RadioGroupComponent, type RadioOption } from '@orange-car-rental/ui-components';
+import {
+  CheckboxComponent,
+  RadioGroupComponent,
+  type RadioOption,
+} from '@orange-car-rental/ui-components';
 
 @Component({
   selector: 'app-layout-demo',
   standalone: true,
-  imports: [LayoutComponent, NavigationComponent, CheckboxComponent, RadioGroupComponent, FormsModule],
+  imports: [
+    LayoutComponent,
+    NavigationComponent,
+    CheckboxComponent,
+    RadioGroupComponent,
+    FormsModule,
+  ],
   template: `
     <app-layout
       [showSidebar]="showSidebar()"

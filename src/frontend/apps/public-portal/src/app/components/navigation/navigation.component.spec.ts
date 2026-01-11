@@ -156,5 +156,4 @@ describe('NavigationComponent', () => {
       expect(logoutButton).toBeTruthy();
     });
   });
-
 });

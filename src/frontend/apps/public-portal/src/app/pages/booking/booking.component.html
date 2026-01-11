@@ -62,7 +62,11 @@
               formControlName="pickupDate"
               [min]="today"
               [required]="true"
-              [error]="bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched ? ('booking.errors.pickupDate' | translate) : null"
+              [error]="
+                bookingForm.get('pickupDate')?.invalid && bookingForm.get('pickupDate')?.touched
+                  ? ('booking.errors.pickupDate' | translate)
+                  : null
+              "
             />
           </div>
 
@@ -73,7 +77,11 @@
               formControlName="returnDate"
               [min]="minReturnDate()"
               [required]="true"
-              [error]="bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched ? ('booking.errors.returnDate' | translate) : null"
+              [error]="
+                bookingForm.get('returnDate')?.invalid && bookingForm.get('returnDate')?.touched
+                  ? ('booking.errors.returnDate' | translate)
+                  : null
+              "
             />
           </div>
 

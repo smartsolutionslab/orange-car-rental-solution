@@ -228,7 +228,9 @@ describe('SimilarVehiclesComponent', () => {
     });
 
     it('should show price comparison', () => {
-      const priceComparison = fixture.nativeElement.querySelector('ocr-vehicle-card .price-comparison');
+      const priceComparison = fixture.nativeElement.querySelector(
+        'ocr-vehicle-card .price-comparison',
+      );
       expect(priceComparison).toBeTruthy();
     });
   });
