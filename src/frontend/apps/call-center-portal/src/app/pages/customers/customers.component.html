@@ -281,24 +281,28 @@
         <h3>{{ 'customers.details.license.title' | translate }}</h3>
 
         @if (!editMode()) {
-          <div class="detail-grid">
-            <div class="detail-item">
-              <label>{{ 'customers.details.license.number' | translate }}</label>
-              <p>{{ selectedCustomer()!.driversLicense?.licenseNumber }}</p>
+          @if (selectedCustomer()!.driversLicense; as license) {
+            <div class="detail-grid">
+              <div class="detail-item">
+                <label>{{ 'customers.details.license.number' | translate }}</label>
+                <p>{{ license.licenseNumber }}</p>
+              </div>
+              <div class="detail-item">
+                <label>{{ 'customers.details.license.issueCountry' | translate }}</label>
+                <p>{{ license.issueCountry }}</p>
+              </div>
+              <div class="detail-item">
+                <label>{{ 'customers.details.license.issueDate' | translate }}</label>
+                <p>{{ formatDate(license.issueDate) }}</p>
+              </div>
+              <div class="detail-item">
+                <label>{{ 'customers.details.license.expiryDate' | translate }}</label>
+                <p>{{ formatDate(license.expiryDate) }}</p>
+              </div>
             </div>
-            <div class="detail-item">
-              <label>{{ 'customers.details.license.issueCountry' | translate }}</label>
-              <p>{{ selectedCustomer()!.driversLicense?.issueCountry }}</p>
-            </div>
-            <div class="detail-item">
-              <label>{{ 'customers.details.license.issueDate' | translate }}</label>
-              <p>{{ formatDate(selectedCustomer()!.driversLicense?.issueDate) }}</p>
-            </div>
-            <div class="detail-item">
-              <label>{{ 'customers.details.license.expiryDate' | translate }}</label>
-              <p>{{ formatDate(selectedCustomer()!.driversLicense?.expiryDate) }}</p>
-            </div>
-          </div>
+          } @else {
+            <p class="text-gray-500">{{ 'customers.details.license.notProvided' | translate }}</p>
+          }
         } @else {
           <div class="form-grid">
             <ocr-input

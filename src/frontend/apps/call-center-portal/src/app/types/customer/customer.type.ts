@@ -44,16 +44,16 @@ export interface Customer {
   readonly id: CustomerId;
   readonly firstName: FirstName;
   readonly lastName: LastName;
-  readonly fullName?: string;
+  readonly fullName: string;
   readonly email: EmailAddress;
   readonly phoneNumber: PhoneNumber;
-  readonly phoneNumberFormatted?: string;
+  readonly phoneNumberFormatted: string;
   readonly dateOfBirth: ISODateString;
-  readonly age?: number;
+  readonly age: number;
   readonly address: CustomerAddress | null;
   readonly driversLicense: CustomerDriversLicense | null;
-  readonly status?: string;
-  readonly canMakeReservation?: boolean;
-  readonly registeredAtUtc?: ISODateString;
-  readonly updatedAtUtc?: ISODateString;
+  readonly status: string;
+  readonly canMakeReservation: boolean;
+  readonly registeredAtUtc: ISODateString;
+  readonly updatedAtUtc: ISODateString;
 }

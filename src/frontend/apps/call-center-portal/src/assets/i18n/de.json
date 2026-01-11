@@ -233,7 +233,8 @@
         "number": "Führerscheinnummer",
         "issueCountry": "Ausstellungsland",
         "issueDate": "Ausstellungsdatum",
-        "expiryDate": "Ablaufdatum"
+        "expiryDate": "Ablaufdatum",
+        "notProvided": "Kein Führerschein hinterlegt"
       },
       "reservations": {
         "title": "Reservierungen",
