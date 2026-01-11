@@ -1,5 +1,8 @@
 import { Component, input } from '@angular/core';
-import { LayoutComponent as SharedLayoutComponent, type NavPosition } from '@orange-car-rental/ui-components';
+import {
+  LayoutComponent as SharedLayoutComponent,
+  type NavPosition,
+} from '@orange-car-rental/ui-components';
 
 /**
  * Layout wrapper component for call center portal.

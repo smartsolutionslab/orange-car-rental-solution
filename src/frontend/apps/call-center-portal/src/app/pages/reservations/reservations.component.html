@@ -255,38 +255,75 @@
               [rowClickable]="true"
               (rowClick)="viewDetails($event.item)"
             >
-              <ng-template ocrDataTableColumn="reservationId" [header]="'reservations.table.reservationId' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="reservationId"
+                [header]="'reservations.table.reservationId' | translate"
+                let-row
+              >
                 <span class="reservation-id" [title]="row.reservationId">
                   {{ row.reservationId.substring(0, 8) }}...
                 </span>
               </ng-template>
 
-              <ng-template ocrDataTableColumn="customerId" [header]="'reservations.table.customer' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="customerId"
+                [header]="'reservations.table.customer' | translate"
+                let-row
+              >
                 {{ row.customerId.substring(0, 8) }}...
               </ng-template>
 
-              <ng-template ocrDataTableColumn="pickupDate" [header]="'reservations.table.pickupDate' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="pickupDate"
+                [header]="'reservations.table.pickupDate' | translate"
+                let-row
+              >
                 {{ formatDate(row.pickupDate) }}
               </ng-template>
 
-              <ng-template ocrDataTableColumn="returnDate" [header]="'reservations.table.returnDate' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="returnDate"
+                [header]="'reservations.table.returnDate' | translate"
+                let-row
+              >
                 {{ formatDate(row.returnDate) }}
               </ng-template>
 
-              <ng-template ocrDataTableColumn="pickupLocationCode" [header]="'reservations.table.location' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="pickupLocationCode"
+                [header]="'reservations.table.location' | translate"
+                let-row
+              >
                 {{ row.pickupLocationCode }}
               </ng-template>
 
-              <ng-template ocrDataTableColumn="totalPriceGross" [header]="'reservations.table.price' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="totalPriceGross"
+                [header]="'reservations.table.price' | translate"
+                let-row
+              >
                 <span class="price-cell">{{ formatPrice(row.totalPriceGross) }}</span>
               </ng-template>
 
-              <ng-template ocrDataTableColumn="status" [header]="'reservations.table.status' | translate" let-row>
+              <ng-template
+                ocrDataTableColumn="status"
+                [header]="'reservations.table.status' | translate"
+                let-row
+              >
                 <ui-status-badge type="reservation" [status]="row.status"></ui-status-badge>
               </ng-template>
 
-              <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
-                <div class="actions-cell" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
+              <ng-template
+                ocrDataTableColumn="actions"
+                [header]="'reservations.table.actions' | translate"
+                let-row
+              >
+                <div
+                  class="actions-cell"
+                  (click)="$event.stopPropagation()"
+                  (keydown)="$event.stopPropagation()"
+                  tabindex="-1"
+                >
                   <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
                     {{ 'common.actions.details' | translate }}
                   </button>
@@ -315,38 +352,75 @@
         [rowClickable]="true"
         (rowClick)="viewDetails($event.item)"
       >
-        <ng-template ocrDataTableColumn="reservationId" [header]="'reservations.table.reservationId' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="reservationId"
+          [header]="'reservations.table.reservationId' | translate"
+          let-row
+        >
           <span class="reservation-id" [title]="row.reservationId">
             {{ row.reservationId.substring(0, 8) }}...
           </span>
         </ng-template>
 
-        <ng-template ocrDataTableColumn="customerId" [header]="'reservations.table.customer' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="customerId"
+          [header]="'reservations.table.customer' | translate"
+          let-row
+        >
           {{ row.customerId.substring(0, 8) }}...
         </ng-template>
 
-        <ng-template ocrDataTableColumn="pickupDate" [header]="'reservations.table.pickupDate' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="pickupDate"
+          [header]="'reservations.table.pickupDate' | translate"
+          let-row
+        >
           {{ formatDate(row.pickupDate) }}
         </ng-template>
 
-        <ng-template ocrDataTableColumn="returnDate" [header]="'reservations.table.returnDate' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="returnDate"
+          [header]="'reservations.table.returnDate' | translate"
+          let-row
+        >
           {{ formatDate(row.returnDate) }}
         </ng-template>
 
-        <ng-template ocrDataTableColumn="pickupLocationCode" [header]="'reservations.table.location' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="pickupLocationCode"
+          [header]="'reservations.table.location' | translate"
+          let-row
+        >
           {{ row.pickupLocationCode }}
         </ng-template>
 
-        <ng-template ocrDataTableColumn="totalPriceGross" [header]="'reservations.table.price' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="totalPriceGross"
+          [header]="'reservations.table.price' | translate"
+          let-row
+        >
           <span class="price-cell">{{ formatPrice(row.totalPriceGross) }}</span>
         </ng-template>
 
-        <ng-template ocrDataTableColumn="status" [header]="'reservations.table.status' | translate" let-row>
+        <ng-template
+          ocrDataTableColumn="status"
+          [header]="'reservations.table.status' | translate"
+          let-row
+        >
           <ui-status-badge type="reservation" [status]="row.status"></ui-status-badge>
         </ng-template>
 
-        <ng-template ocrDataTableColumn="actions" [header]="'reservations.table.actions' | translate" let-row>
-          <div class="actions-cell" (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" tabindex="-1">
+        <ng-template
+          ocrDataTableColumn="actions"
+          [header]="'reservations.table.actions' | translate"
+          let-row
+        >
+          <div
+            class="actions-cell"
+            (click)="$event.stopPropagation()"
+            (keydown)="$event.stopPropagation()"
+            tabindex="-1"
+          >
             <button class="btn-sm btn-secondary" (click)="viewDetails(row)">
               {{ 'common.actions.details' | translate }}
             </button>

@@ -203,5 +203,4 @@ describe('NavigationComponent', () => {
       expect(links.length).toBeGreaterThan(0);
     });
   });
-
 });
